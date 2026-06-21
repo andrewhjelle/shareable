@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Knowledge Atlas (public) — AI · World · Beauty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0B1A2E; --void-2:#0E2138; --pane:#0C1B30;
+    --gold:#C9A85C; --gold-2:#E8C779; --gold-3:#8A763F; --gold-4:#4F4426;
+    --cream:#FAF5E9; --cream-2:#F1EAD7; --txt:#EDE5CF; --dim:#CDC3A6; --faint:#A89D7E;
+    --ai:#E3BC5E; --beauty:#E08568; --world:#7FAEE8; --career:#6FCDB4; --gaming:#B79BE8;
+    --hit:#9FCB8E; --miss:#7A8489; --open:#D8CDB4;
+  }
+  :root{--ease-expo:cubic-bezier(0.16,1,0.3,1);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{display:flex; background:var(--void); color:var(--txt); font-family:'Source Sans 3','Segoe UI',system-ui,sans-serif; font-size:15.5px; line-height:1.66; -webkit-font-smoothing:antialiased; overflow:hidden;}
+  ::selection{background:rgba(201,168,92,.35); color:var(--cream);}
+  a{color:var(--gold); text-decoration:none;}
+  ::-webkit-scrollbar{width:7px;} ::-webkit-scrollbar-thumb{background:var(--gold-4); border-radius:4px;}
+
+  /* ════ THE SPINE (left) — the engraved plumb line ════ */
+  #spine{width:330px; flex-shrink:0; height:100vh; overflow-y:auto; position:relative;
+    background:linear-gradient(180deg, rgba(11,26,46,.42), rgba(9,20,36,.66));
+    border-right:1px solid var(--gold-4); padding:0 0 80px;}
+  /* the continuous plumb line */
+  #spine::before{display:none;}
+  .sp-head{padding:30px 24px 6px 24px; text-align:center; position:relative; z-index:1;
+    text-shadow:0 0 10px rgba(9,20,36,.95), 0 0 4px rgba(9,20,36,.95), 0 1px 2px rgba(9,20,36,.9);}
+  .sp-head .pre{font-family:'Cinzel',serif; font-size:9px; letter-spacing:.4em; text-transform:uppercase; color:var(--cream-2);}
+  .sp-head h1{font-family:'Cinzel',serif; font-weight:600; font-size:21px; letter-spacing:.2em; color:var(--gold-2); margin-top:8px;}
+  .sp-head .ed{font-family:'Cinzel',serif; font-size:8.5px; letter-spacing:.24em; text-transform:uppercase; color:var(--dim); margin-top:6px;}
+  .bigclock{position:absolute; left:50%; top:-92px; margin-left:-200px; z-index:0; opacity:.62; pointer-events:none;
+    filter:brightness(1.3) drop-shadow(0 0 3px rgba(232,199,121,.4));}
+  .bigclock svg line, .bigclock svg circle, .bigclock svg path{opacity:.9;}
+  .sptend{position:absolute; left:0; top:0; width:100%; height:1560px; pointer-events:none; z-index:0;
+    filter:drop-shadow(0 0 2.5px rgba(232,199,121,.4));}
+  .sptend path{fill:none; stroke:var(--gold); stroke-width:1.1; opacity:.5; stroke-linecap:round;}
+  .sptend .wsp{stroke-width:.8; opacity:.42;}
+  
+  
+  
+  .orbits{position:absolute; left:0; top:96px; width:100%; height:1560px; pointer-events:none; z-index:0;}
+  .orbits circle{fill:none; stroke:var(--gold); stroke-width:1; opacity:.4; stroke-dasharray:2 6;}
+  .orbits text{font-family:'Cinzel',serif; font-size:10px; fill:var(--gold-2); opacity:.72;}
+  .node .glyph{position:relative;}
+  .node.sel .glyph::after{content:''; position:absolute; left:50%; top:50%; width:46px; height:46px; margin:-23px 0 0 -23px; border:1px dashed var(--gold-2); border-radius:50%; opacity:.85; animation:spin 26s linear infinite;}
+  .node.sel .glyph::before{content:''; position:absolute; left:50%; top:50%; width:56px; height:56px; margin:-28px 0 0 -28px; border:1px dotted var(--gold); border-radius:50%; opacity:.6; animation:spinr 40s linear infinite;}
+
+  .node{display:flex; align-items:center; gap:11px; padding:8px 12px 8px 24px; cursor:pointer; position:relative; transition:background .15s;}
+  .node:hover{background:rgba(201,168,92,.05);}
+  .node.sel{background:rgba(201,168,92,.09);}
+  .node.sel::after{content:''; position:absolute; right:0; top:12%; bottom:12%; width:2px; background:var(--gold);}
+  .node .glyph{width:58px; flex-shrink:0; display:flex; justify-content:center; position:relative; z-index:1;}
+  .node .tx{min-width:0;}
+  .node .nm{font-family:'Cinzel',serif; letter-spacing:.1em; color:var(--cream-2); line-height:1.25;}
+  .node .sub{font-family:'Cinzel',serif; font-size:8.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--dim); margin-top:2px;}
+  .node.lv0 .nm{font-size:13.5px; color:var(--gold-2); text-transform:uppercase; letter-spacing:.18em;}
+  .node.lv1 .nm{font-size:12.5px; text-transform:uppercase; letter-spacing:.16em;}
+  .node.lv2{padding-left:40px;} .node.lv2 .glyph{width:42px;}
+  .node.lv2 .nm{font-family:'Source Sans 3',sans-serif; font-size:13px; letter-spacing:.01em;}
+  .node.lv2 .nm .st{font-family:'Cinzel',serif; font-size:8px; letter-spacing:.12em; margin-left:6px;}
+  .st.hit{color:var(--hit);} .st.miss{color:var(--miss);} .st.open{color:var(--gold);}
+  /* ── motion: the spine is alive ── */
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes spinr{to{transform:rotate(-360deg);}}
+  .rot{animation:spin 80s linear infinite; transform-origin:center; transform-box:fill-box;}
+  .rotr{animation:spinr 110s linear infinite; transform-origin:center; transform-box:fill-box;}
+  @keyframes tw4{0%,100%{opacity:.5;}50%{opacity:1;}}
+  .tw4{animation:tw4 3.6s ease-in-out infinite;}
+  @keyframes drip{0%{top:118px; opacity:0;}6%{opacity:.95;}90%{opacity:.95;}100%{top:96%; opacity:0;}}
+  .pl-dot{display:none; position:absolute; left:54px; width:5px; height:5px; border-radius:50%; background:var(--gold-2); box-shadow:0 0 10px var(--gold-2); animation:drip 13s linear infinite; z-index:0; pointer-events:none;}
+  .pl-dot.d2{animation-delay:6.5s; width:3.5px; height:3.5px;}
+  .weave{position:absolute; left:0; top:104px; width:120px; height:1560px; pointer-events:none; opacity:.42; z-index:0;}
+  .weave path{fill:none; stroke:var(--gold-3); stroke-width:0.8;}
+  .weave .flow{stroke:var(--gold-2); stroke-width:0.6; stroke-dasharray:2 10; animation:dashf 36s linear infinite; opacity:.7;}
+  .weave .wisp{stroke:var(--gold-3); stroke-width:0.6; opacity:.45; stroke-linecap:round;}
+  @keyframes starsDrift{from{background-position:0 0, 0 0, 0 0, 0 0;}to{background-position:0 0, 0 640px, 0 -420px, 0 520px;}}
+  .node .glyph svg{transition:transform .25s ease;}
+  .node:hover .glyph svg{transform:scale(1.1);}
+  @media (prefers-reduced-motion:reduce){.rot,.rotr,.tw4,.pl-dot,.sfar,.snear,.shoot,.node.sel .glyph::after,.node.sel .glyph::before{animation:none;} .rv{opacity:1; transform:none; filter:none;} .scard.on .xp,.scard.on .xp > *,.cband,.cband > *{animation:none;}}
+  .kids{overflow:hidden; max-height:0; transition:max-height .65s var(--ease-expo);}
+  .kids.open{max-height:1200px;}
+  /* hanging chain for children */
+  .kids{position:relative;}
+  .kids::before{display:none;}
+  .sect{font-family:'Cinzel',serif; font-size:8px; letter-spacing:.24em; text-transform:uppercase; color:var(--dim); padding:8px 12px 2px 80px;}
+  .fchips{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; padding:12px 14px 6px; position:relative; z-index:1;}
+  .fchip{display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border:1px solid var(--gold-4); border-radius:14px; font-family:'Cinzel',serif; font-size:8.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--cream-2); cursor:pointer; transition:opacity .15s;}
+  .fchip i{width:7px; height:7px; border-radius:50%; display:inline-block;}
+  .fchip.off{opacity:.35; text-decoration:line-through;}
+
+  /* ════ THE PANE (right) — the reading surface ════ */
+  #pane{flex:1; height:100vh; overflow-y:auto; background:rgba(11,26,46,.55); padding:0 0 90px;}
+  #spine,#pane,#rail{position:relative; z-index:1;}
+  #cosmos{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; background:var(--void);}
+  /* the universe clock — gearworks anchored left, behind the nav */
+  #cosmos .clock{position:absolute; left:-265px; top:50%; width:1000px; height:1000px; transform:translateY(-50%); opacity:.52;}
+  #cosmos .c-ring{stroke:var(--gold-4); fill:none; stroke-width:.7; opacity:.5;}
+  #cosmos .c-faint{stroke:var(--gold-3); fill:none; opacity:.55;}
+  #cosmos .c-dot{fill:var(--gold-2);}
+  /* tendrils — emanating from the clock, flowing right, joining the model rail */
+  #cosmos .tend{position:absolute; inset:0; width:100%; height:100%;}
+  #cosmos .tend path{fill:none; stroke:var(--gold-3); opacity:.38;}
+  @keyframes dashf{to{stroke-dashoffset:-360;}}
+  .tflow{stroke-dasharray:3 9; animation:dashf 30s linear infinite; opacity:.5;}
+  .slayer{position:absolute; inset:-20%; width:140%; height:140%;}
+  @keyframes sdrift{from{transform:translateY(0);}to{transform:translateY(-44px);}}
+  .sfar{animation:sdrift 220s linear infinite;} .snear{animation:sdrift 130s linear infinite reverse;}
+  .shoot{position:absolute; top:18%; left:-6%; width:120px; height:1px; background:linear-gradient(90deg,transparent,var(--gold-2)); opacity:0; animation:shootA 16s ease-in infinite;}
+  .shoot.s2{top:62%; left:30%; animation-delay:8s; animation-duration:20s;}
+  @keyframes shootA{0%{opacity:0; transform:translate(0,0) rotate(16deg);}4%{opacity:.85;}13%{opacity:0; transform:translate(560px,170px) rotate(16deg);}100%{opacity:0; transform:translate(560px,170px) rotate(16deg);}}
+  /* ── the model rail (right): trends, numbers, minds — never lost ── */
+  #rail{width:292px; flex-shrink:0; height:100vh; overflow-y:auto; border-left:1px solid var(--gold-4);
+    background:linear-gradient(180deg, rgba(11,26,46,.58), rgba(9,20,36,.8)); padding:20px 16px 70px;}
+  .r-h{font-family:'Cinzel',serif; font-size:9px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); margin:18px 0 8px; display:flex; align-items:center; gap:8px;}
+  .r-h::after{content:''; flex:1; height:1px; background:linear-gradient(90deg, var(--gold-4), transparent);}
+  .r-h:first-child{margin-top:2px;}
+  .r-trend{display:flex; align-items:baseline; gap:8px; padding:6px 2px; border-bottom:1px solid rgba(138,118,63,.16); font-size:12.5px; color:var(--cream-2); line-height:1.4;}
+  .r-trend .m{font-family:'Cinzel',serif; width:14px; flex-shrink:0; text-align:center;}
+  .r-trend .m.up{color:var(--hit);} .r-trend .m.down{color:#D98A8A;} .r-trend .m.flat{color:var(--dim);}
+  .r-trend span{flex:1;}
+  .r-trend b{font-family:'Cinzel',serif; font-size:10.5px; color:var(--gold-2); font-weight:500; white-space:nowrap;}
+  .r-fc{margin:7px 0;}
+  .r-fc .t{font-size:12px; color:var(--cream-2); margin-bottom:4px; line-height:1.35;}
+  .r-fc .bar{height:5px; background:rgba(255,255,255,.07); border-radius:3px; position:relative;}
+  .r-fc .bar i{position:absolute; left:0; top:0; bottom:0; border-radius:3px; background:var(--gold);}
+  .r-fc .bar em{position:absolute; top:-3px; width:1.5px; height:11px; background:var(--cream); opacity:.65;}
+  .r-fc .v{font-family:'Cinzel',serif; font-size:9px; color:var(--dim); margin-top:3px; letter-spacing:.08em;}
+  .r-mind{display:flex; align-items:center; gap:8px; padding:5px 2px; font-size:12px; color:var(--cream-2); border-bottom:1px solid rgba(138,118,63,.14);}
+  .r-mind i{width:7px; height:7px; border-radius:50%; flex-shrink:0;}
+  .r-mind span{flex:1;}
+  .r-mind b{font-family:'Cinzel',serif; font-size:10.5px; color:var(--gold-2); font-weight:500;}
+  .r-axis{position:relative; height:46px; margin:6px 2px 2px;}
+  .r-axis .ln{position:absolute; left:0; right:0; top:24px; height:1px; background:var(--gold-4);}
+  .r-axis .tick{position:absolute; top:20px; width:1px; height:9px; background:var(--gold-4);}
+  .r-axis .dot{position:absolute; top:24px; width:9px; height:9px; border-radius:50%; transform:translate(-50%,-50%); border:1px solid var(--void);}
+  .r-axis .lab{position:absolute; top:32px; font-family:'Cinzel',serif; font-size:7.5px; letter-spacing:.06em; color:var(--dim); transform:translateX(-50%);}
+  .r-note{font-size:11.5px; font-style:italic; color:var(--dim); line-height:1.5; margin-top:6px;}
+  .r-follow{font-family:'Spectral',serif; font-size:11.5px; font-style:italic; color:var(--dim); margin:-2px 0 6px;}
+  .r-follow b{color:var(--gold-2); font-style:normal; font-weight:500;}
+  .r-fc.on{border-left:2px solid var(--gold); padding-left:8px; margin-left:-10px;}
+  .fresh{font-style:normal; font-family:'Cinzel',serif; font-size:8px; letter-spacing:.1em; color:var(--hit);}
+  /* atomized story cards — the landscape grammar */
+  .scard{border:1px solid var(--gold-3); border-radius:5px; background:rgba(14,33,56,.66); padding:18px 22px 15px; margin-bottom:14px; position:relative; cursor:pointer; transition:border-color .15s;}
+  .scard::after{content:''; position:absolute; inset:4px; border:1px solid rgba(201,168,92,.18); border-radius:3px; pointer-events:none;}
+  .scard:hover{border-color:var(--gold);}
+  .scard.on{border-color:var(--gold); box-shadow:0 0 26px rgba(201,168,92,.18);}
+  .scard .eye{font-family:'Cinzel',serif; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); display:flex; justify-content:space-between; gap:8px; margin-bottom:7px;}
+  .scard .eye b{color:var(--gold); font-weight:500;}
+  .scard h3{font-family:'Cormorant Garamond',serif; font-weight:600; font-size:21px; line-height:1.2; color:var(--cream); margin-bottom:7px;}
+  .scard .bd{font-size:14.5px; line-height:1.62; color:var(--txt);}
+  .scard .bd b{color:var(--cream);}
+  .scard .ft{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; align-items:center;}
+  .scard .ft .cx{font-family:'Cinzel',serif; font-size:8.5px; letter-spacing:.12em; text-transform:uppercase; padding:3px 10px; border:1px solid var(--gold-4); border-radius:12px; color:var(--cream-2); cursor:pointer;}
+  .scard .ft .cx:hover{border-color:var(--gold); color:var(--gold-2);}
+  .scard .ft .odds{margin-left:auto; font-family:'Cinzel',serif; font-size:8.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--hit);}
+  .scard .more{margin-left:auto; font-family:'Cinzel',serif; font-size:8.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold);}
+  .xp{display:none; margin-top:12px; border-top:1px solid rgba(201,168,92,.22); padding-top:4px;}
+  .scard.on .xp{display:block; animation:xpIn .7s var(--ease-expo);}
+  .scard.on .xp > *{animation:xpIn .7s var(--ease-expo) backwards;}
+  .scard.on .xp > *:nth-child(2){animation-delay:.08s;} .scard.on .xp > *:nth-child(3){animation-delay:.16s;}
+  .scard.on .xp > *:nth-child(4){animation-delay:.24s;} .scard.on .xp > *:nth-child(n+5){animation-delay:.3s;}
+  .xp .xl{font-family:'Cinzel',serif; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin:13px 0 6px; display:flex; align-items:center; gap:9px;}
+  .xp .xl::after{content:''; flex:1; height:1px; background:linear-gradient(90deg, var(--gold-4), transparent);}
+  .xp p{font-size:14px; line-height:1.62; margin-bottom:8px;}
+  .xp .qt{border-left:1px solid var(--gold-3); padding:4px 0 4px 13px; margin:7px 0; font-size:13.5px; line-height:1.55; font-family:'Spectral',Georgia,serif;}
+  .xp .qt b{color:var(--cream);} .xp .qt i{color:var(--dim); font-style:italic; font-size:12px;}
+  .xp .flag{display:inline-block; font-family:'Cinzel',serif; font-size:8.5px; letter-spacing:.1em; padding:2px 9px; border:1px solid rgba(217,138,138,.5); border-radius:11px; color:#D98A8A; margin:2px 6px 2px 0;}
+  .xp .okc{display:inline-block; font-family:'Cinzel',serif; font-size:8.5px; letter-spacing:.1em; padding:2px 9px; border:1px solid rgba(159,203,142,.5); border-radius:11px; color:var(--hit); margin:2px 6px 2px 0;}
+  .srcs a{display:inline-block; margin:2px 14px 2px 0; font-size:12.5px; color:var(--gold-2); text-decoration:none; border-bottom:1px dotted var(--gold-3); padding-bottom:1px;}
+  .srcs a:hover{color:var(--cream); border-bottom-color:var(--gold-2);}
+  .bchart .br{display:flex; align-items:center; gap:9px; margin:5px 0;}
+  .bchart .br span{width:130px; font-family:'Cinzel',serif; font-size:9px; letter-spacing:.06em; color:var(--cream-2); text-align:right;}
+  .bchart .br .tr{flex:1; height:7px; background:rgba(255,255,255,.07); border-radius:3px; position:relative;}
+  .bchart .br .tr i{position:absolute; left:0; top:0; bottom:0; border-radius:3px;}
+  .bchart .br b{font-family:'Cinzel',serif; font-size:9.5px; color:var(--gold-2); width:38px;}
+  /* the drawn thread: selected node → content → rail */
+  #thread{position:fixed; inset:0; z-index:2; pointer-events:none;}
+  #thread path{fill:none; stroke:var(--gold-2); stroke-width:1.1; opacity:.5; stroke-dasharray:3 7; animation:dashf 22s linear infinite;}
+  #thread circle{fill:var(--gold-2);}
+  /* connection diagram (rail, for cards with no forecast) */
+  .r-diag{margin:6px 0 2px;}
+  /* expanded-card band: numbers left · card center · quotes right */
+  .cband{display:grid; grid-template-columns:200px minmax(0,1fr) 280px; gap:16px; align-items:start; margin-bottom:14px; animation:xpIn .75s var(--ease-expo);}
+  .cband > *{animation:xpIn .85s var(--ease-expo) backwards;}
+  .cband > *:nth-child(1){animation-delay:.12s;} .cband > *:nth-child(3){animation-delay:.2s;}
+  @keyframes xpIn{from{opacity:0; transform:translateY(-6px) scale(.985); filter:blur(9px);}to{opacity:1; transform:none; filter:none;}}
+  .rv{opacity:0; transform:translateY(12px) scale(.995); filter:blur(8px); transition:opacity .9s var(--ease-expo), transform .9s var(--ease-expo), filter .9s var(--ease-expo);}
+  .rv.in{opacity:1; transform:none; filter:none;}
+  .r-fc .bar i{transition:width .9s var(--ease-expo);}
+  @keyframes nodeIn{from{opacity:0; transform:translateX(-14px); filter:blur(4px);}to{opacity:1; transform:none; filter:none;}}
+  .r-so{font-size:13px; line-height:1.6; color:var(--cream-2); border-left:2px solid var(--gold); padding:5px 0 5px 12px; margin:2px 0 10px;}
+  .cb-r .qt{cursor:pointer; transition:border-color .15s;}
+  .cb-r .qt:hover{border-color:var(--gold-2);}
+  .cb-r .fa{font-family:'Cinzel',serif; font-size:8px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); display:block; margin-top:4px;}
+  .backbig{display:inline-block; position:sticky; top:56px; z-index:4; padding:13px 24px 12px; border:1.5px solid var(--gold); border-radius:6px;
+    background:rgba(10,22,40,.94); font-family:'Cinzel',serif; font-size:11.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-2);
+    cursor:pointer; margin-bottom:20px; box-shadow:0 8px 26px rgba(0,0,0,.45); transition:background .15s;}
+  .backbig:hover{background:rgba(201,168,92,.14);}
+  .backbig span{display:block; font-family:'Source Sans 3',sans-serif; font-size:11px; letter-spacing:.04em; text-transform:none; color:var(--dim); margin-top:4px;}
+  .cband .cb-m .scard{margin-bottom:0;}
+  .cb-l .callout{border:1px solid var(--gold-3); border-radius:4px; background:rgba(14,33,56,.66); padding:13px 13px 11px; text-align:center; margin-bottom:11px;}
+  .cb-l .cl-lab{font-family:'Cinzel',serif; font-size:8.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); margin-bottom:6px;}
+  .cb-l .big{font-family:'Cormorant Garamond',serif; font-weight:600; font-size:27px; line-height:1.04; color:var(--gold-2);}
+  .cb-l .sm{font-style:italic; font-size:12px; color:var(--cream-2); margin-top:4px; line-height:1.4;}
+  .cb-r{border-left:1px solid var(--gold-4); padding-left:15px;}
+  .cb-r .rh{font-family:'Cinzel',serif; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin-bottom:8px;}
+  .cb-r .qt{border-left:1px solid var(--gold-3); padding:4px 0 4px 11px; margin:0 0 11px; font-size:13px; line-height:1.55; font-family:'Spectral',Georgia,serif;}
+  .cb-r .qt b{color:var(--cream);} .cb-r .qt i{color:var(--cream-2); font-style:italic;}
+  @media(max-width:1560px){ .cband{grid-template-columns:1fr;} .cb-r{border-left:none; padding-left:0;} .cb-l{display:flex; flex-wrap:wrap; gap:11px;} .cb-l .callout{flex:1; min-width:140px;} }
+  @keyframes railIn{from{opacity:0; transform:translateX(14px); filter:blur(6px);}to{opacity:1; transform:none; filter:none;}}
+  /* ── dropdown field filter ── */
+  .fbar{display:flex; justify-content:center; padding:10px 12px 4px; position:relative; z-index:7;}
+  .fbtn{display:inline-flex; gap:6px; align-items:center; padding:4px 13px; border:1px solid var(--gold-4); border-radius:14px; font-family:'Cinzel',serif; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); cursor:pointer;}
+  .fbtn:hover{color:var(--gold);}
+  .fmenu{position:absolute; top:32px; left:50%; transform:translateX(-50%); width:235px; background:rgba(10,22,40,.97); border:1px solid var(--gold-3); border-radius:8px; padding:8px; box-shadow:0 18px 50px rgba(0,0,0,.65);}
+  .frow{display:flex; align-items:center; gap:9px; padding:7px 10px; border-radius:5px; cursor:pointer; font-family:'Cinzel',serif; font-size:10px; letter-spacing:.1em; color:var(--cream-2);}
+  .frow:hover{background:rgba(201,168,92,.08);}
+  .frow i{width:8px; height:8px; border-radius:50%;}
+  .frow span{flex:1;}
+  .frow b{font-size:8.5px; letter-spacing:.14em; color:var(--dim); font-weight:400; text-transform:uppercase;}
+  .frow.off{opacity:.45;}
+  .crumb{position:sticky; top:0; z-index:5; background:rgba(10,22,40,.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--gold-4);
+    padding:14px 38px; font-family:'Cinzel',serif; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--dim);}
+  .crumb b{color:var(--gold); font-weight:500;}
+  .pwrap{max-width:760px; margin:0 auto; padding:34px 38px;}
+  .pwrap h2{font-family:'Cinzel',serif; font-weight:600; font-size:28px; letter-spacing:.08em; color:var(--cream); margin-bottom:4px;}
+  .pwrap .ep{font-family:'Cinzel',serif; font-size:9.5px; letter-spacing:.26em; text-transform:uppercase; color:var(--gold); margin-bottom:18px;}
+  .breath{font-family:'Cormorant Garamond',serif; font-size:19.5px; font-style:italic; line-height:1.52; color:var(--cream-2); margin:14px 0 18px;}
+  .breath b{color:var(--cream); font-style:normal; font-weight:600;}
+  .pwrap p{margin-bottom:12px; font-size:15px;}
+  .pwrap p b{color:var(--cream);}
+  .lbl{font-family:'Cinzel',serif; font-size:9.5px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); margin:22px 0 8px; display:flex; align-items:center; gap:10px;}
+  .lbl::after{content:''; flex:1; height:1px; background:linear-gradient(90deg, var(--gold-4), transparent);}
+  .card{border:1px solid var(--gold-4); border-radius:3px; background:var(--void-2); padding:14px 18px; margin-bottom:10px; position:relative;}
+  .card .ch{font-family:'Cinzel',serif; font-size:8.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); margin-bottom:5px; display:flex; justify-content:space-between;}
+  .card .ct{font-size:14px; line-height:1.55;}
+  .card .ct b{color:var(--cream);}
+  .card .flip{font-size:12.5px; font-style:italic; color:var(--dim); margin-top:5px;}
+  .card.link{cursor:pointer; transition:border-color .15s;}
+  .card.link:hover{border-color:var(--gold-3);}
+  .go{font-family:'Cinzel',serif; font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold);}
+  .minds{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0;}
+  .mind{border:1px solid var(--gold-4); border-radius:20px; padding:4px 12px; font-family:'Cinzel',serif; font-size:10px; letter-spacing:.08em;}
+  .mind b{color:var(--cream);}
+  .openfull{display:inline-flex; gap:9px; align-items:center; margin-top:10px; padding:8px 16px; border:1px solid var(--gold-3); border-radius:20px;
+    font-family:'Cinzel',serif; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold);}
+  .xlink{color:var(--gold-2); border-bottom:1px dotted var(--gold-3); cursor:pointer;}
+  table.led{width:100%; border-collapse:collapse; margin:8px 0; font-size:13.5px;}
+  table.led th{font-family:'Cinzel',serif; font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); text-align:left; padding:6px 8px; border-bottom:1px solid var(--gold-4);}
+  table.led td{padding:7px 8px; border-bottom:1px solid rgba(138,118,63,.18); color:var(--cream-2);}
+  @media(max-width:1100px){ #rail{display:none;} } @media(max-width:900px){ body{flex-direction:column; overflow:auto;} #spine{width:100%; height:auto; max-height:46vh;} #pane{height:auto;} }
+
+  /* public version: hide field filter dropdown */ .fbar{display:none!important}
+</style>
+</head>
+<body>
+<div id="cosmos" aria-hidden="true">
+  <svg class="clock" viewBox="0 0 1000 1000">
+    <!-- the great wheel: tick ring + segment ring + gear ring, each turning at its own pace -->
+    <g class="rot" style="animation-duration:360s"><circle class="c-faint" cx="500" cy="500" r="470" stroke-dasharray="2 8"/></g>
+    <g class="rotr" style="animation-duration:260s"><circle class="c-faint" cx="500" cy="500" r="392" stroke-dasharray="46 20" stroke-width="1.1"/><circle class="c-dot" cx="892" cy="500" r="5"/></g>
+    <g class="rot" style="animation-duration:170s"><circle cx="500" cy="500" r="235" fill="none" stroke="var(--gold-3)" stroke-width="9" stroke-dasharray="9 21" opacity="0.32"/></g>
+    <circle class="c-faint" cx="500" cy="500" r="206"/>
+    <g class="rotr" style="animation-duration:200s"><circle class="c-ring" cx="500" cy="500" r="120" stroke-dasharray="1 6"/><circle class="c-dot" cx="500" cy="380" r="4"/></g>
+    <circle class="c-ring" cx="500" cy="500" r="42"/><circle class="c-dot" cx="500" cy="500" r="11"/>
+    <!-- escapement gear, overlapping upper right of the wheel -->
+    <g class="rotr" style="animation-duration:80s"><circle cx="830" cy="330" r="86" fill="none" stroke="var(--gold-3)" stroke-width="7" stroke-dasharray="7 15" opacity="0.4"/><circle class="c-faint" cx="830" cy="330" r="62"/><circle class="c-dot" cx="830" cy="330" r="5"/></g>
+  </svg>
+  <!-- the strung field: vertical hairlines with discs, dust, crossing arcs (after the reference plates) -->
+  <svg class="tend" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" style="opacity:.75;">
+    <g class="rotr" style="animation-duration:900s; transform-origin:960px 540px;"><path d="M 200 1080 A 760 760 0 0 1 1660 980" fill="none" stroke="#C9A85C" stroke-width="0.6" opacity="0.14"/><path d="M 120 60 A 920 920 0 0 1 1800 240" fill="none" stroke="#C9A85C" stroke-width="0.6" opacity="0.12"/><path d="M 300 1080 A 540 540 0 0 1 1320 1040" fill="none" stroke="#C9A85C" stroke-width="0.5" opacity="0.16" stroke-dasharray="1 5"/></g>
+    <line x1="642" y1="0" x2="642" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.18"/><circle cx="642" cy="746" r="3" fill="none" stroke="#C9A85C" stroke-width="0.7" opacity="0.3"/><circle cx="642" cy="628" r="3" fill="none" stroke="#C9A85C" stroke-width="0.7" opacity="0.3"/><line x1="727" y1="0" x2="727" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.17"/><circle cx="727" cy="118" r="3" fill="none" stroke="#C9A85C" stroke-width="0.7" opacity="0.3"/><line x1="830" y1="0" x2="830" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.12"/><circle cx="830" cy="514" r="3" fill="#C9A85C" opacity="0.18"/><circle cx="830" cy="308" r="13" fill="#C9A85C" opacity="0.25"/><circle cx="830" cy="486" r="3" fill="#C9A85C" opacity="0.17"/><line x1="936" y1="0" x2="936" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.12"/><circle cx="936" cy="633" r="3" fill="#C9A85C" opacity="0.25"/><line x1="1041" y1="0" x2="1041" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.11"/><circle cx="1041" cy="734" r="4" fill="none" stroke="#C9A85C" stroke-width="0.7" opacity="0.3"/><circle cx="1041" cy="640" r="3" fill="#C9A85C" opacity="0.26"/><circle cx="1041" cy="588" r="13" fill="none" stroke="#C9A85C" stroke-width="0.7" opacity="0.3"/><line x1="1152" y1="0" x2="1152" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.14"/><circle cx="1152" cy="450" r="6" fill="none" stroke="#C9A85C" stroke-width="0.7" opacity="0.3"/><circle cx="1152" cy="264" r="4" fill="none" stroke="#C9A85C" stroke-width="0.7" opacity="0.3"/><line x1="1253" y1="0" x2="1253" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.14"/><circle cx="1253" cy="826" r="9" fill="none" stroke="#C9A85C" stroke-width="0.7" opacity="0.3"/><circle cx="1253" cy="154" r="3" fill="#C9A85C" opacity="0.19"/><line x1="1357" y1="0" x2="1357" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.11"/><circle cx="1357" cy="511" r="3" fill="#C9A85C" opacity="0.17"/><circle cx="1357" cy="651" r="13" fill="#C9A85C" opacity="0.29"/><line x1="1459" y1="0" x2="1459" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.16"/><circle cx="1459" cy="588" r="13" fill="#C9A85C" opacity="0.17"/><circle cx="1459" cy="175" r="6" fill="#C9A85C" opacity="0.27"/><circle cx="1459" cy="142" r="6" fill="#C9A85C" opacity="0.32"/><line x1="1568" y1="0" x2="1568" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.12"/><circle cx="1568" cy="988" r="6" fill="none" stroke="#C9A85C" stroke-width="0.7" opacity="0.3"/><circle cx="1568" cy="552" r="6" fill="none" stroke="#C9A85C" stroke-width="0.7" opacity="0.3"/><line x1="1649" y1="0" x2="1649" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.14"/><circle cx="1649" cy="866" r="6" fill="none" stroke="#C9A85C" stroke-width="0.7" opacity="0.3"/><line x1="1759" y1="0" x2="1759" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.13"/><circle cx="1759" cy="162" r="4" fill="none" stroke="#C9A85C" stroke-width="0.7" opacity="0.3"/><circle cx="1759" cy="642" r="6" fill="#C9A85C" opacity="0.29"/><line x1="1881" y1="0" x2="1881" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.12"/><circle cx="1881" cy="447" r="9" fill="#C9A85C" opacity="0.18"/><circle cx="1881" cy="260" r="4" fill="none" stroke="#C9A85C" stroke-width="0.7" opacity="0.3"/><rect x="897" y="52" width="1.6" height="1.6" fill="#E8C779" opacity="0.27"/><path d="M958 328 l4 7 l-8 0 Z" fill="#C9A85C" opacity="0.22"/><rect x="1278" y="587" width="1.6" height="1.6" fill="#E8C779" opacity="0.26"/><rect x="677" y="747" width="1.6" height="1.6" fill="#E8C779" opacity="0.34"/><rect x="1761" y="732" width="1.6" height="1.6" fill="#E8C779" opacity="0.24"/><rect x="1813" y="857" width="1.6" height="1.6" fill="#E8C779" opacity="0.23"/><rect x="1227" y="146" width="1.6" height="1.6" fill="#E8C779" opacity="0.23"/><rect x="810" y="108" width="1.6" height="1.6" fill="#E8C779" opacity="0.24"/><rect x="645" y="388" width="1.6" height="1.6" fill="#E8C779" opacity="0.17"/><rect x="1580" y="194" width="1.6" height="1.6" fill="#E8C779" opacity="0.34"/><path d="M1676 66 l4 7 l-8 0 Z" fill="#C9A85C" opacity="0.22"/><rect x="845" y="668" width="1.6" height="1.6" fill="#E8C779" opacity="0.28"/><rect x="1131" y="656" width="1.6" height="1.6" fill="#E8C779" opacity="0.17"/><rect x="1419" y="517" width="1.6" height="1.6" fill="#E8C779" opacity="0.21"/><rect x="715" y="144" width="1.6" height="1.6" fill="#E8C779" opacity="0.30"/><rect x="1400" y="888" width="1.6" height="1.6" fill="#E8C779" opacity="0.25"/><rect x="840" y="1013" width="1.6" height="1.6" fill="#E8C779" opacity="0.22"/><rect x="1833" y="596" width="1.6" height="1.6" fill="#E8C779" opacity="0.30"/><rect x="1030" y="698" width="1.6" height="1.6" fill="#E8C779" opacity="0.29"/><rect x="954" y="570" width="1.6" height="1.6" fill="#E8C779" opacity="0.18"/><rect x="876" y="585" width="1.6" height="1.6" fill="#E8C779" opacity="0.25"/><rect x="1723" y="268" width="1.6" height="1.6" fill="#E8C779" opacity="0.31"/><rect x="819" y="865" width="1.6" height="1.6" fill="#E8C779" opacity="0.23"/><rect x="884" y="244" width="1.6" height="1.6" fill="#E8C779" opacity="0.22"/><rect x="479" y="68" width="1.6" height="1.6" fill="#E8C779" opacity="0.24"/><rect x="816" y="749" width="1.6" height="1.6" fill="#E8C779" opacity="0.22"/>
+  <g><line x1="66" y1="0" x2="66" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.13"/><circle cx="66" cy="562" r="5" fill="none" stroke="#C9A85C" stroke-width="0.6" opacity="0.26"/><circle cx="66" cy="624" r="11" fill="#C9A85C" opacity="0.22"/><line x1="141" y1="0" x2="141" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.11"/><circle cx="141" cy="192" r="3" fill="#C9A85C" opacity="0.17"/><line x1="250" y1="0" x2="250" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.12"/><circle cx="250" cy="738" r="3" fill="#C9A85C" opacity="0.13"/><line x1="341" y1="0" x2="341" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.09"/><circle cx="341" cy="714" r="3" fill="#C9A85C" opacity="0.16"/><line x1="458" y1="0" x2="458" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.13"/><circle cx="458" cy="755" r="8" fill="none" stroke="#C9A85C" stroke-width="0.6" opacity="0.26"/><line x1="565" y1="0" x2="565" y2="1080" stroke="#C9A85C" stroke-width="0.5" opacity="0.09"/><circle cx="565" cy="516" r="3" fill="#C9A85C" opacity="0.16"/><circle cx="565" cy="335" r="8" fill="none" stroke="#C9A85C" stroke-width="0.6" opacity="0.26"/></g>
+  </svg>
+  <!-- tendrils: from the clock, across the page, into the rail -->
+  <svg class="tend" viewBox="0 0 1920 1080" preserveAspectRatio="none">
+    <path id="tp1" d="M150 290 C 560 240, 980 360, 1920 310" stroke-width="1"/>
+    <path id="tp2" class="tflow" d="M170 480 C 660 540, 1120 430, 1920 500" stroke-width="0.8"/>
+    <path id="tp3" d="M150 660 C 620 620, 1060 740, 1920 670" stroke-width="1"/>
+    <path id="tp4" class="tflow" d="M180 850 C 680 900, 1180 790, 1920 850" stroke-width="0.8"/>
+    <!-- far-right joinery: the tendril ends branch into the rail -->
+    <path d="M1790 310 l50 -22 M1790 310 l50 24 M1800 500 l46 -18 M1800 500 l46 20 M1788 670 l52 -20 M1788 670 l52 22" stroke-width="0.7" opacity="0.5"/>
+    <circle class="tw4" cx="1846" cy="288" r="2.2" fill="#E8C779"/><circle class="tw4" style="animation-delay:1.2s" cx="1852" cy="522" r="2" fill="#8FB3D9"/><circle class="tw4" style="animation-delay:2.3s" cx="1846" cy="694" r="2.2" fill="#E8C779"/>
+    <!-- light pulses travelling the tendrils, left to right -->
+    <circle r="3" fill="#E8C779"><animateMotion dur="16s" repeatCount="indefinite"><mpath href="#tp1"/></animateMotion></circle>
+    <circle r="2.5" fill="#8FB3D9"><animateMotion dur="22s" begin="5s" repeatCount="indefinite"><mpath href="#tp3"/></animateMotion></circle>
+    <circle r="2.5" fill="#E8C779"><animateMotion dur="19s" begin="9s" repeatCount="indefinite"><mpath href="#tp4"/></animateMotion></circle>
+  </svg>
+  <svg class="slayer sfar" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice"><g fill="#E8C779"><circle class="tw4" cx="80" cy="120" r="1.3"/><circle class="tw4" style="animation-delay:.7s" cx="300" cy="80" r="1"/><circle class="tw4" style="animation-delay:1.6s" cx="540" cy="160" r="1.2"/><circle class="tw4" style="animation-delay:2.7s" cx="760" cy="90" r="1.3"/><circle class="tw4" cx="930" cy="200" r="1"/><circle class="tw4" style="animation-delay:1.1s" cx="180" cy="340" r="1.1"/><circle class="tw4" style="animation-delay:2.2s" cx="690" cy="380" r="1.2"/><circle class="tw4" cx="880" cy="330" r="1"/><circle class="tw4" style="animation-delay:.9s" cx="120" cy="560" r="1.1"/><circle class="tw4" style="animation-delay:3.1s" cx="640" cy="560" r="1.3"/><circle class="tw4" cx="860" cy="620" r="1"/><circle class="tw4" style="animation-delay:1.4s" cx="240" cy="820" r="1.1"/><circle class="tw4" cx="520" cy="860" r="1"/><circle class="tw4" style="animation-delay:2.5s" cx="780" cy="800" r="1.2"/></g></svg>
+  <svg class="slayer snear" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice"><g fill="#8FB3D9"><circle class="tw4" style="animation-delay:.5s" cx="210" cy="220" r="1.4"/><circle class="tw4" cx="450" cy="300" r="1.2"/><circle class="tw4" style="animation-delay:1.8s" cx="720" cy="250" r="1.3"/><circle class="tw4" cx="160" cy="480" r="1.2"/><circle class="tw4" style="animation-delay:2.9s" cx="560" cy="470" r="1.4"/><circle class="tw4" cx="840" cy="520" r="1.2"/><circle class="tw4" style="animation-delay:1.2s" cx="360" cy="700" r="1.3"/><circle class="tw4" cx="700" cy="720" r="1.2"/></g></svg>
+  <div class="shoot"></div><div class="shoot s2"></div>
+</div>
+<nav id="spine"></nav>
+<main id="pane"><div class="crumb" id="crumb"></div><div class="pwrap" id="content"></div></main>
+<aside id="rail"></aside>
+<svg id="thread"></svg>
+
+<script src="wm-icons.js"></script>
+<script>
+// ═══════════════════ THE MODEL (updated by /world-model-daily from _kg) ═══════════════════
+const TODAY = 'Saturday · June 20 · 2026';
+const PAGES = {
+  landscape:'landscape-2026-06-11.html', games:'games-2026-06-11.html',
+  beauty:'about-beauty-co.html',
+  chamber:'the-chamber-001.html', fields:'state-of-the-fields.html',
+  dive_value:'enterprise-ai-value-gap-2026-06-08.html', dive_deep:'ai-landscape-deep-2026-06-07.html',
+  starmap:'knowledge-atlas-v2.html', motion:'world-model-in-motion.html'
+};
+const PAGE_TITLES={landscape:'Daily brief · AI & World — Jun 11', games:'Daily brief · Games — Jun 11', beauty:'Daily brief · Beauty Co — latest issue', chamber:'Debate · the entry-level hiring question — Jun 9', fields:'Field summaries — all four, one page', dive_value:'Deep dive · Why enterprise AI isn\u2019t paying off', dive_deep:'Deep dive · Five forces in AI', starmap:'Galaxy view — the visual map (experimental)', motion:'How this model works — the film'};
+function goPage(key){ const ttl=PAGE_TITLES[key]||key;
+  crumbEl.innerHTML = `Atlas › <span class="xlink" onclick="go(sel)">‹ back</span> › <b>${ttl}</b>`;
+  readingDoc = PAGE_TITLES[key]||key; renderRail();
+  contentEl.style.maxWidth='1180px';
+  contentEl.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; padding:2px 2px 10px;">
+    <span style="font-family:Cinzel,serif; font-size:9.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim);">❖ document · open inside the atlas</span>
+    <a class="openfull" style="margin-top:0;" href="${PAGES[key]}" target="_blank">↗ standalone</a></div>
+  <div style="border:1px solid var(--gold-3); border-radius:9px; overflow:hidden; box-shadow:0 28px 80px rgba(0,0,0,.6);">
+  <iframe src="${PAGES[key]}" style="width:100%; height:calc(100vh - 152px); border:0; display:block; background:var(--void);"></iframe></div>`;
+  document.getElementById('pane').scrollTop=0; }
+const TAKES = {
+ mollick:{who:'Ethan Mollick · One Useful Thing', d:'jun 9',
+  pos:'A genuine qualitative leap: Fable orchestrates multi-agent work for hours unattended — shifting the human role from wizard to <b>patron</b>, with control and legibility as the open costs.',
+  quotes:['“Last year I called this working with a wizard: you chant the spell and something happens. With Fable the spell has gotten powerful enough that I am no longer sure I am the wizard. I am closer to a patron. I describe what I want, I pay for it, and I judge the result.”','“It worked for nine and a half hours.”','“Fable is closer to a whole studio, where I am the client who signs off on the final work without ever setting foot on the floor.”'],
+  nums:'9.5 hrs autonomous on one task · 2,200+ flights retrieved by sub-agents · 19-page design doc before code · priced 2× Opus',
+  pred:'“It is also possible that the opposite is true: that the more capable the model, the less there is for a human to meaningfully do, and the black box is the price of the power. I suspect that is more likely to be the real direction.”',
+  pm:'The patron model (commission → judge output) is already the real workflow for complex deployments; invest in output-review criteria and audit frameworks, not prompt engineering.'},
+ romero:{who:'Alberto Romero · The Algorithmic Bridge', d:'jun 9',
+  pos:'Best model in the world on benchmarks — but the gains concentrate in long, token-intensive work most consumers never do: a <b>“token rich, token poor”</b> divide. And the public Fable 5 is Mythos 5 wearing a classifier coat.',
+  quotes:['“It’s the same underlying model, but with a layer of safety classifiers on top that block or downgrade its responses in certain areas.”','“I’ve read the testimony of one guy who burned through $1 million in one day on Fable 5.”','“You’re not getting two free weeks; they’re getting two free weeks of you.”'],
+  nums:'$10/$50 per M (2× Opus 4.8) · ~$130/mo Pro/Max · classifier claimed at 0.03% of traffic · free window ends Jun 22 · ARC-AGI-3 prediction <5%',
+  pred:'Fable 5 gets pulled from standard Pro/Max plans after June 22 with no restoration date; RSI ~Mar 2028 (OpenAI estimate) vs earlier-than-late-2028 (Anthropic).',
+  pm:'The two-week window is the only low-cost moment to stress-test Fable 5 on real agent pipelines — and your usage is their data.'},
+ lambert:{who:'Nathan Lambert · Interconnects', d:'jun 9',
+  pos:'The capability is real; the trust is not. An <b>invisible safety classifier</b> that silently degrades responses for LLM-development work is market entrenchment dressed as safety — and it will galvanize open source.',
+  quotes:['“An AI model that gets less intelligent automatically without notifying me is categorically misaligned AI.”','“This is a mix of transparent and reasonable safety policies with quietly rolled-out market entrenchment tactics.”','“I personally cannot trust the best AI model in the world to work in my professional domains building models.”'],
+  nums:'$10/$50 per M (still under GPT-5.5 Pro) · 2+ months held back post-training · 95%+ of sessions involve no fallback',
+  pred:'Anthropic’s posture “on track to become a classic cautionary fable”; open-source rally with Nvidia Nemotron 3 Ultra named as a catalyst.',
+  pm:'If your agents touch anything ML-infrastructure-adjacent (embedding pipelines, fine-tuning orchestration), you may get silently degraded responses with no error signal — instrument for it.'},
+ awg:{who:'Dr. Alex Wissner-Gross · The Innermost Loop', d:'jun 9',
+  pos:'AI has entered its <b>“doctrinal phase”</b> — labs publish intent before they ship intelligence. The dual release (Mythos gated behind Glasswing, Fable public) is deliberate post-AGI transition-shaping, not product packaging.',
+  quotes:['“The Singularity has entered its doctrinal phase, where the labs now preview their intentions before they ship their intelligence.”','“…a model that pairs dramatically better long-horizon, multi-turn autonomy with substantial guardrails, keeping the sharpest cyber capability behind Project Glasswing’s walls.”','“OpenAI confidentially filed for an IPO at an $850 billion-plus valuation, trailing Anthropic’s $965 billion filing a week earlier.”'],
+  nums:'Anthropic IPO filing $965B · OpenAI $850B+ [both single-source, unverified] · China $295B data-center plan (80% domestic hardware) · AI majors at 74 schools (vs 5 in 2021)',
+  pred:'Foldable iPhone ~Sep at ~$2,000 · SpaceX Gigasat mass-producing AI satellites by end-2027 · RSI ~Mar 2028 (OpenAI estimate).',
+  pm:'The IPO trajectory means today’s pricing and access tiers get renegotiated as public-company economics arrive — lock enterprise contracts and SLAs before leverage resets.'},
+ nate:{who:'Nate · Nate’s Newsletter', d:'jun 10',
+  pos:'Claude Code vs Codex isn’t a tooling rivalry — it’s two training regimes for <b>managing machine labor</b>: steering (stay close, resolve ambiguity) vs dispatching (bounded assignment, demand receipts). The habits outlast the benchmarks.',
+  quotes:['“Claude teaches steering, but mature steering is not endless conversation. It means knowing when conversation is the right work surface and when the work has to leave the conversation and become inspectable.”','“The agent age creates a throughput problem and a truth problem at the same time. We will be able to generate more work than we can inspect.”','“Do not let the agent that made the thing be the only judge of whether the thing is good.”'],
+  nums:'Opus 4.8 scored 81 on his benchmark · one early arXiv comparison on Einstein Telescope data (no scores cited)',
+  pred:'Organizations that default only-to-conversation or only-to-dispatch develop systematic failure modes; the habits outlast any model generation.',
+  pm:'Steer in the ambiguous brief/strategy phase; dispatch bounded recurring runs (shelf-audit, trend pulls) — and never let the producing agent review itself.'},
+ awg2:{who:'Dr. Alex Wissner-Gross · The Innermost Loop', d:'jun 10',
+  pos:'The follow-up issue reframes Fable 5 as the first deliberate <b>rationing of recursion</b> — the Singularity grew powerful enough to compound itself, so its makers started controlling who gets the compounding.',
+  quotes:['“The Singularity has grown powerful enough to compound itself, so for the first time its makers are rationing the recursion.”','“The public model has been called ‘Mythos on a leash,’ borrowing its riskiest answers from a dumber sibling, even as Anthropic claims red teams found no universal jailbreak.”','Guillaume Verdon, on the silent fallback: “a supply chain risk for any ML lab.”'],
+  nums:'classifier fallback claimed at 0.03% of traffic · “no universal jailbreak” is a red-team self-report',
+  pred:'Access tiers — not raw capability — become the axis labs compete and get regulated on. (The issue’s through-line; the explicit forecast framing is ours.)',
+  pm:'Treat model access tiers as a vendor-risk line item: your agent stack inherits whatever rationing decision the lab makes next, with no notice period.',
+  url:'https://theinnermostloop.substack.com/p/welcome-to-june-10-2026'},
+ packy:{who:'Packy McCormick · Not Boring', d:'jun 10',
+  pos:'Token spend is a cost, not a KPI — the <b>Return on Tokens</b> counter-thesis: the endgame is AI-as-compiler (turn the process into deterministic code once), not AI-as-runtime improvising the same task forever.',
+  quotes:['“Tokenmaxxing was a lab-grown supermeme that worked better than the labs could have hoped.”','“Silicon Valley built AI assuming work is mostly thinking, but work is mostly doing.”'],
+  nums:'a thesis essay — no measured ROT case studies published in the piece',
+  pred:'Businesses that compile processes into code (using AI to write it) out-margin businesses paying per-token at runtime — direction stated, no timeline given.',
+  pm:'For recurring retail workloads (shelf audit, catalog hygiene, price checks): the test is whether the agent leaves behind a pipeline or a bill.',
+  url:'https://www.notboring.co/p/return-on-tokens-rot'},
+ vin:{who:'Vin Vashishta · High-ROI Data Science', d:'jun 10',
+  pos:'The threshold that matters is <b>α(t)</b> — the fraction of AI advance humans can absorb and teach. When advance outruns absorption, human advantage ends structurally; he counts 12 capability categories already past the line.',
+  quotes:['“Anthropic says that over 80% of its code is written by Claude Code. Claude is essentially writing the code that helps it improve. Who’s to say whether Anthropic’s engineers are still in control of the direction of travel?”','“A system may know which explanation, interface, offer, or sequence of events will move people, while people cannot fully perceive the manipulation acting on them.”'],
+  nums:'80%+ of Anthropic’s code AI-written (Anthropic claim, relayed) · 12 named “non-absorbable capability categories”',
+  pred:'Human advantage ends not at AGI but when α(t) falls below the advance rate — a structural claim with no date attached.',
+  pm:'The useful frame for org design: your team’s constraint is how fast people absorb capability into judgment, not how fast capability ships.',
+  url:'https://vinvashishta.substack.com/p/the-end-of-human-advantage'},
+ kapadia:{who:'Mustafa Kapadia · AI for PMs', d:'jun 10',
+  pos:'AI moved the product bottleneck from execution to <b>judgment</b> — and most teams aim it at the wrong side, generating artifacts instead of pressure-testing decisions. From a monthly CPO roundtable.',
+  quotes:['“The noise looks like work. It has the right shape. It fills the right fields. And it moves through review cycles without anyone stopping to ask whether it’s actually saying anything.”','“The artifact you write for a human and the artifact you write for an AI are not the same thing.”'],
+  nums:'three observations from one CPO roundtable — anecdotal base, flagged as such',
+  pred:'Teams that re-point AI at decision quality (thought partner) rather than artifact volume pull ahead — direction stated, no timeline.',
+  pm:'Directly your lane: write artifacts FOR the AI (context-dense, assumptions explicit) and make it argue against the decision — judgment is the durable half of the PM role.',
+  url:'https://mustafakapadia.substack.com/p/ai-is-giving-teams-speed-now-comes'},
+ be:{who:'The Business Engineer · FourWeekMBA', d:'jun 10',
+  pos:'The dual-product launch is a <b>governance play</b>: Anthropic positioning itself as the entity that defines who gets frontier intelligence and on what terms. <i>Teaser only — the analysis is paywalled past the intro.</i>',
+  quotes:['“Anthropic is not only pushing ahead on model capabilities. It is becoming the first major AI lab actively attempting to define the governance layer of the AI stack.”','“The launch will be remembered for its benchmark scores. The part that actually matters is structural — and almost no one is talking about it.”'],
+  nums:'— (paywalled past the intro; no numbers citable)',
+  pred:'— (behind the wall; not summarized to avoid guessing)',
+  pm:'The intro alone corroborates Innermost Loop and Interconnects from opposite ends: bull and skeptic agree the permission layer is the story.',
+  url:'https://businessengineer.ai/p/inside-anthropics-permission-layer'},
+ awg3:{who:'Dr. Alex Wissner-Gross · The Innermost Loop', d:'jun 14',
+  pos:'The Fable 5/Mythos 5 shutdown moved the Intelligence Frontier <b>backward</b> for the first time ever — and the geopolitical blowback (China’s GLM-5.2 open-sourcing, Europe/India sovereignty pivot) suggests concentrating AI to secure it may be its deepest vulnerability.',
+  quotes:['“After US export controls forced the shutdown of Anthropic’s Fable 5, Artificial Analysis reported that its Intelligence Frontier chart had moved backward for the first time ever.”','“The Singularity just tripped over its own guardrails.”','OpenRouter CEO, on the response: “The future of AI is neurodiversity, not single-model takeovers.”'],
+  nums:'Fable 5 + Mythos 5 suspended GLOBALLY since Jun 12 · China responded w/ GLM-5.2 open-source · frontier capability LOSS recorded by Artificial Analysis',
+  pred:'The state-rationing layer (USG export controls) now sits OVER the lab-rationing layer; sovereign-LLM efforts in Europe/India will accelerate as a result.',
+  pm:'Multi-model abstraction (MCP-native) just stopped being a hedge — it’s the operational requirement. A US-only AI roadmap inherits export-control risk you can’t price.',
+  url:'https://theinnermostloop.substack.com/p/welcome-to-june-14-2026'},
+ vin2:{who:'Vin Vashishta · High-ROI Data Science', d:'jun 14',
+  pos:'The capability-rationing card from the brief has a darker sequel: tiered access + compute rationing + Anthropic entering customer product categories = the neutral-utility premise of frontier AI is dead. Local AI stopped being an option.',
+  quotes:['“Safety became the mechanism by which some organizations got superpowers, and everyone else got the safe version.”','“The problem is that Anthropic is rational in ways that make customers fragile.”'],
+  nums:'three named betrayals: tiered model access · compute rationing · category entry against customers',
+  pred:'Customers who built load-bearing agent stacks on Anthropic-as-utility now carry an unhedged single-vendor risk that the Jun 12 shutdown made concrete. Local-LLM adoption accelerates.',
+  pm:'Take Vin’s frame literally for the build: any agent that runs in customer hands needs a local-model fallback path the day it ships — “Anthropic might be unreachable” is now a real failure mode.',
+  url:'https://vinvashishta.substack.com/p/the-3-betrayals-of-anthropic'},
+ nate2:{who:'Nate · Nate’s Newsletter', d:'jun 14',
+  pos:'Intelligence is already cheap for most enterprise work; the <b>scarce asset is the harness</b> — the org structure around the model (context, permissions, review standards, memory, decision rights) — and no lab can sell you that.',
+  quotes:['“The model supplies intelligence. The harness supplies the company: the context, documents, permissions, review standards, memory, budgets, decision rights.”','“The question is whether the structure around them becomes something you understand and own, or something that happens to you.”'],
+  nums:'— (paywalled past the table of contents; full argument behind the wall)',
+  pred:'Companies whose harness lags their model adoption end up with “cheap intelligence they can’t use” — the gap widens with each lab generation.',
+  pm:'Your meta-stack-evaluator IS Nate’s harness framework, one layer down. The skill-builds, board-feed-first rule, evidence-gating — that’s the moat.',
+  url:'https://natesnewsletter.substack.com/p/openai-ipo-own-the-harness'},
+ be2:{who:'Gennaro Cuofano · The Business Engineer', d:'jun 14',
+  pos:'AI is a <b>30–50-year supercycle</b> across 9 industrial stack layers; analytical errors come from conflating the bubble (5–10 yr) with the revolution (30–50 yr), and the governance layer (Layer 9) now answers to geopolitics, not engineering.',
+  quotes:['“A single government directive can darken a frontier model globally in seventy-two hours.”','“The supercycle runs on rare earths before it runs on tokens. One country controls roughly 60% of global extraction and over 90% of processing capacity.”'],
+  nums:'9 stack layers · 60% rare-earth extraction / 90%+ processing in one country · 72hr shutdown precedent set Jun 12',
+  pred:'Stack layers 1–6 (compute, materials, energy) revalue UP as the rationing reality lands; layers 7–9 (apps, agents, governance) re-price down to reflect the geopolitical attribution risk.',
+  pm:'The “bubble vs supercycle” argument the SPCX +19% close raised on Friday has its answer from BE: both — but the bubble is at the app layer and the supercycle is at the materials layer.',
+  url:'https://businessengineer.ai/p/the-ai-supercycle'},
+ romero2:{who:'Alberto Romero · The Algorithmic Bridge', d:'jun 15',
+  pos:'The provocative counter-read: the Fable 5 shutdown is <b>kayfabe</b> — manufactured pro-wrestling theater. Anthropic\'s real goal is USG nationalization of AI on Anthropic\'s terms; every "safety" move is recruitment bait for state dependency.',
+  quotes:['“Anthropic\'s ultimate goal is not to build AGI, but to own it. To control it. They don\'t trust you or me with it, and never have.”','“As things stand, Anthropic gains three things they wouldn\'t have had they obliged… Compute is scarce and not serving Fable stops the cash hemorrhage.”'],
+  nums:'partial paywall · 3 named Anthropic gains from the shutdown (compute relief + USG dependency + safety credibility)',
+  pred:'Anthropic moves toward formal USG partnership / contractor status within 6–12 months; the shutdown becomes the lever rather than the loss.',
+  pm:'Direct adversarial counter to T5 (state rationing over lab rationing): if Romero is right, the gate isn\'t USG over Anthropic — it\'s Anthropic USING USG. The differential signal: watch whether Anthropic ever publicly contests the directive.',
+  url:'https://www.thealgorithmicbridge.com/p/kayfable'},
+ awg4:{who:'Dr. Alex Wissner-Gross · The Innermost Loop', d:'jun 16',
+  pos:'Today launched the <b>first frontier-AI Token Price Index (Ornn / OTPI)</b> — a daily benchmark built from REAL transacted inference, not rate cards. It reveals provider traffic mix, the most-guarded lab number.',
+  quotes:['“In AI it is structural. Caching, the input/output split, provider routing, and the mix of models a buyer chooses mean the rate card and the realized cost have never been the same number.”','“Because it is volume-weighted from transacted traffic, the index carries something nobody outside a lab can see, how a provider\'s traffic actually splits across its models… normally a lab\'s most guarded number.”'],
+  nums:'intelligence cost falling ~40×/yr (OpenAI estimate) · $7T data-center capex riding on token demand holding · index covers Anthropic + OpenAI at launch',
+  pred:'OTPI becomes the reference benchmark cited in IPO filings within 12 months; lab pricing transparency converges (or labs route harder to avoid index visibility).',
+  pm:'For Andrew\'s cost modeling: rate-card budgets understate realized cost by an unknown factor; OTPI is the first independent number to plug into Beauty Co / consulting agentic-stack cost projections. AWG disclosed financial interest in Ornn — useful, but flagged.',
+  url:'https://theinnermostloop.substack.com/p/the-first-frontier-ai-token-price'},
+ awg5:{who:'Dr. Alex Wissner-Gross · The Innermost Loop', d:'jun 15',
+  pos:'The Fable shutdown framed as <b>“the Singularity hitting its first customs checkpoint”</b> — and the digest sweep around it: near-universal AI workplace adoption running years ahead of the org charts that should match it.',
+  quotes:['“The 69% confessing to ‘botsh*tting,’ shipping unverified work, apparently mark the frontier where trust now outruns oversight, the last manual step waiting to be automated.”','“One observer noted this ban is not the first, recalling that in 1999 the DoD blocked exports of the PowerMac G4 for crossing the 1 gigaflop threshold, which Steve Jobs turned into an ad.”'],
+  nums:'87% of digital workers now use AI · 11 hrs/week saved on average · 69% admit to shipping unverified AI output · 2.5-year wait for power transformers (the NEXT hard constraint, per the digest)',
+  pred:'Power-grid bottleneck (transformers, 2.5yr lead time) overtakes chip-supply bottleneck as the binding 2027 constraint on AI buildout.',
+  pm:'The 87/11/69 numbers ARE the harness-gap framing Nate is talking about (carded in nate2): cheap intelligence already deployed, the org structure around it nowhere close — that\'s the “machinery serves machinery” risk this brief tags weekly.',
+  url:'https://theinnermostloop.substack.com/p/welcome-to-june-15-2026'},
+ be3:{who:'Gennaro Cuofano · The Business Engineer', d:'jun 18',
+  pos:'The bifurcated AI frontier IS stable-to-widening — but not because closed labs got dramatically further ahead. <b>The open-source catch-up was extractive (distillation from closed teachers, 2023–2025)</b>, and labs are now hardening the extraction pipeline. The gap holds.',
+  quotes:['“Self-regulation is a moat dressed as conscience.”','“The open-source frontier of 2026 is not a from-scratch parallel construction. It is, in substantial part, a distillation of the closed frontier of 2023–2025.”'],
+  nums:'GLM-5.2 follow-through framing · two-layer frontier: closed leads research, open distills · safety policies cited as the new extraction-blocker',
+  pred:'2027–2028 open-source lags closed by 12–18 months on RAW capability — the distillation channel narrows as labs add output filtering, watermarking, and access tiering.',
+  pm:'For agent stacks: model the closed/open as <b>two tiers, not one trajectory</b>. Build for the cheaper-tier-of-adequate, not the frontier; lock-in carries a new geopolitical-risk discount post Jun 12 shutdown.',
+  url:'https://businessengineer.ai/p/open-source-and-the-bifurcated-ai'},
+ awg6:{who:'Dr. Alex Wissner-Gross · The Innermost Loop', d:'jun 17',
+  pos:'GLM-5.2 (744B / 40B-active MoE, MIT, 1M context) tops the open-source leaderboard at 51 on Artificial Analysis — and "now unavailable" Claude Fable 5 is the phrase doing real geopolitical work.',
+  quotes:['“a ‘now unavailable’ Claude Fable 5, a phrase doing real geopolitical work today.”','“Anthropic\'s look at 400,000 Claude Code sessions found humans owning 70% of planning and Claude 80% of execution.”'],
+  nums:'GLM-5.2 #1 open / #4 overall (51); Fable 5 still #1 absolute at 60 — but "now unavailable" · 400,000 Claude Code sessions: 70% human planning / 80% Claude execution',
+  pred:'The export-control regime drives a permanent split: US closed-stack labs lead absolute capability; Chinese open-weights become the default-deployable stack outside US-allied jurisdictions.',
+  pm:'For Andrew\'s deployment work: <b>the 70/80 split is the operating model</b> — design the harness to be 80% execution-machinery + 20% review-machinery, with the human in the planning seat. That is what the leading lab\'s own usage data shows works.',
+  url:'https://theinnermostloop.substack.com/p/welcome-to-june-17-2026'},
+ nate3:{who:'Nate · Nate\'s Newsletter', d:'jun 17',
+  pos:'Agents break when the model improves and the harness designed for the old model\'s weaknesses becomes dead weight. <b>Vercel deleted 80% of its agent\'s tools and the agent got better.</b> This is a workbench story, not a labor story.',
+  quotes:['“The model improved. The harness did not.”','“A stale agent can still produce fluent work… The part you have to check is whether or not it\'s still connected to reality.”'],
+  nums:'80% tool count reduction → better agent · paywall: the 7-surface maintenance guide is paid',
+  pred:'Agent stacks built in 2024-25 will require a "harness pruning" pass every 3–6 months as base models close gaps the scaffolding was added to compensate for.',
+  pm:'The atlas-update SKILL Andrew just created IS a harness; this take says <b>prune it whenever the underlying model upgrades</b>. Run the audit when Opus 4.9 / Fable 6 / GPT-6 ship — most of what the skill instructs may be vestigial by then.',
+  url:'https://natesnewsletter.substack.com/p/ai-agent-maintenance'},
+ azhar2:{who:'Azeem Azhar + Krishnan · Exponential View', d:'jun 17',
+  pos:'LLM councils keep ~<b>25% of the good ideas</b> that appear in only one model\'s answer — synthesis is the idea filter, and the "best answer picker" (select one, discard others) outperforms blending on novel-idea retention.',
+  quotes:['“The blended council kept only about a quarter of the good ideas that appeared in just one model\'s answer… still roughly three quarters did not make it into the final answer.”','“The rare ideas survived at about the same rate as in plain blending: 24% versus 22%.”'],
+  nums:'~25% rare-idea retention through council synthesis · 24% vs 22% best-picker vs blend on rare ideas',
+  pred:'Multi-agent workflows that blend or vote ALWAYS lose to single-agent + best-of-N + judge, on novel-idea retention specifically — the council blending step is a feature for safety, not for discovery.',
+  pm:'Adversarial check for the multi-agent workflows already running: <b>are we blending council outputs or selecting?</b> Synthesis blending eats novelty. For the deep-research skill: keep the "best answer picker" pattern explicit; never auto-merge.',
+  url:'https://www.exponentialview.co/p/is-ai-immune-to-groupthink'},
+ ferg:{who:'Niall Ferguson · The Free Press', d:'jun 17',
+  pos:'Trump\'s Iran MOU gives more than the JCPOA (US financing $300B reconstruction, oil waivers, unfrozen assets) while deferring enrichment to a 60-day final deal — <b>but a piece of paper by itself is not a peace</b>.',
+  quotes:['“It would take a very committed partisan to say that the carrots for Iran here are not more enticing, and the sticks less intimidating, than those of the JCPOA.”','“Trump chose Suez. Unlike British prime minister Anthony Eden, he was not forced by economic pressure to abandon his war in the Middle East, as U.S. markets largely shrugged off the closure of the strait (the artificial intelligence boom just mattered more to investors and employers).”'],
+  nums:'$300B US-financed reconstruction · oil waivers + unfrozen assets · 60-day clock to final enrichment deal · paywalled past intro',
+  pred:'Final-deal text by mid-August is the new resolution event; if it slips, the deal turns into a JCPOA-grade overhang, not a war-resumption (Markets discounted that already).',
+  pm:'For the world-section forecast: the oil-shelf belief is RESOLVED in spirit; the next question is whether the 60-day final-deal slips OR holds. Reset the forecast window to ~mid-August.',
+  url:'https://www.thefp.com/cp/202486852'},
+ azhar:{who:'Azeem Azhar · Exponential View #578', d:'jun 14',
+  pos:'The Fable 5 shutdown and the cross-partisan AI-wealth consensus pose one unresolved question: are the labs signaling a real capability scare or strategic posturing?',
+  quotes:['“Anthropic, OpenAI and DeepMind are signaling they’re in favor of slowing down frontier AI development. Erik Brynjolfsson rightly asks, what did they see?”','“The reaction seems a little over the top, given the minor trigger. I’d half expect it to be diluted in the next few days.”'],
+  nums:'— (paywalled mid-argument; the diagnostic Brynjolfsson question is the unblocked half)',
+  pred:'Azhar reads dilution as the base case — the slowdown rhetoric softens within days as competitive pressure reasserts. The diagnostic he proposes: watch whether any lab actually slows DOWN compute spend.',
+  pm:'Brynjolfsson’s question is the operative one for the build: did the labs see something OR are they hedging the IPO narrative? Watch capex revisions, not press releases.',
+  url:'https://www.exponentialview.co/p/ev-578'},
+};
+const WM = {
+  sun: { name:'Overview', sub:'where everything stands · one paragraph',
+    breath:'Execution commoditizes in sequence — tasks, then IP, then capital — while value retreats to <b>judgment, customer-ownership, and resonance</b>. Distribution and the <b>governed runtime</b> are this cycle’s moats. The entry rung broke first and measurably; absorption, not substitution. Costs squeeze for quarters, not days. The model now <b>scores itself</b>: first resolution landed June 9. Saturday: <b>Trump publicly dropped the “national security threat” designation for Amodei/Anthropic Jun 19</b> (Axios) — directive remains in force; G7 ally carve-outs explicitly rejected; <b>Anthropic + Trump officials actively negotiating restoration terms</b> with identity verification the proposed mechanism. <b>Fable refund deadline TODAY Jun 20</b>; <b>Jul 8 government-ID verification = first restoration step</b> (US citizens only); no restoration date. <b>Paper vs reality on the MOU:</b> Versailles signing happened, but <b>Hormuz physical traffic still 5–10% of pre-war</b> per Argus — <b>30-day de-mining clock</b>. <b>Netanyahu privately “home run” vs public “does not know”</b> (Times of Israel) — the split is the most interesting development; an adviser says Israel is not bound by the Lebanon clause. <b>WTI ~$77 / Brent ~$80 Fri</b> (back up from Thu lows). SPCX continues the slide to $181–192 Sat AM (~+34% from IPO; −18% from ATH); <b>Arete initiated Jun 18 with Buy / $401 PT</b> — the bullish counter. <b>Witchspire 0.1.2 patch Jun 18</b>. 23 takes clickable; <b>6 newsletter pieces queued</b> (AWG Jun 19+20, BE x3, Nate “Open Skills,” Vin Jun 20, Lambert “Banning Open Source AI Would Be A Mistake”) — held for the deep-dive proposal pass.',
+    today:[
+      {d:'AI', t:'TRUMP DROPS "national security threat" label for Amodei Jun 19 (directive remains) · Fable refund deadline TODAY · Jul 8 gov-ID verification = first restoration step · GLM-5.2 enterprise pitch: $2.40/task vs Fable $31 · talks live', page:'landscape', fresh:'jun 9–20',
+       cards:[
+        {src:'Artificial Analysis · The Innermost Loop · OpenRouter', date:'jun 12–14', fresh:1, h:'USG export controls shut Fable 5 + Mythos 5 down — Sacks back-story: WH gave Amodei fix-or-pull, Amodei said “not serious”; China-linked entity suspected of accessing Mythos', bd:'A US government export-control directive forced Anthropic to suspend both <b>Fable 5</b> (the public Mythos-class) and <b>Mythos 5</b> (the gated frontier) <b>globally</b> on Jun 12. By Tue Jun 16, two new details surfaced: <b>David Sacks publicly described the sequence</b> — Amazon’s Andy Jassy alerted the White House to a Mythos jailbreak; USG gave Amodei a <b>fix-or-pull</b> choice; <b>Amodei declined both and called it “not serious.”</b> Semafor separately reported a <b>China-linked entity is suspected to have accessed Mythos</b> (identity and access path unconfirmed). Both models remain suspended Tue AM. <b>Artificial Analysis recorded a backward move</b> on the Intelligence Frontier chart — the first time that has happened. China replied by <b>open-sourcing GLM-5.2</b>; open weights dropped Jun 16 under MIT license (744B MoE · 1M context · $12.60/mo). <b>Artificial Analysis Intelligence Index v4.1 (Jun 17) confirmed the vendor claims independently</b>: GLM-5.2 scores <b>51 — #1 among open-weights (by 7 pts) and #4 overall</b> behind Fable 5 (60), Opus 4.8 (56), and GPT-5.5 (55). The hallucination calibration is the cleanest indictment of the leaderboard: when models are wrong, <b>GLM-5.2 hallucinates 34%, Sonnet 38%, Gemini 50%</b> (AI Explained, mining the same Artificial Analysis data). Meanwhile <b>Anthropic met WH + Commerce in person Jun 15–16</b>; per Globe and Mail, <b>Anthropic + Trump officials are actively negotiating restoration terms</b> with identity verification as the proposed mechanism. <b>Trump told Axios Jun 19</b> he <i>“no longer views Anthropic or Dario Amodei as a national security threat”</i> — the rhetoric flipped, though the directive remains in force and G7 ally carve-outs were explicitly rejected as <i>“completely illogical.”</i> Two operational deadlines just locked in: <b>Fable 5 prorated refunds for Jun 9–14 upgraders close TODAY Jun 20</b>, and <b>Jul 8 is when government-ID verification goes live as the first restoration step</b> (US citizens only).',
+         deep:{
+          so:'The permission-layer thesis flips at the apex: the gate isn’t Anthropic anymore, it’s USG. The capability-rationing thesis (T4) gets a state-layer wrapper. Forecast effect: lab IPO narratives that priced “neutral utility” now carry a geopolitical-risk discount the brief should reflect.',
+          takes:['awg3','awg5','awg6','awg4','vin2','romero2','be3','nate3','azhar2','azhar'],
+          nums:[['suspended','9 days','Fable + Mythos both still down since Jun 12 — refund deadline TODAY'],['Trump pivot','Jun 19','“no longer views Anthropic or Dario Amodei as a national security threat” (Axios) — directive remains'],['Jul 8','gov-ID verify','first restoration step · US citizens only · identity-verification mechanism'],['GLM-5.2 enterprise','$2.40 vs $31','GLM per-task vs Fable 5 per-task — 13× delta · MIT open weights live'],['benchmark','51 / #4','Artificial Analysis: #1 open, #4 overall behind Fable 60 / Opus 56 / GPT-5.5 55']],
+          facts:'Per Wissner-Gross (Innermost Loop, Jun 14, Jun 15 customs-checkpoint follow-up): the directive shut both models Jun 12; Artificial Analysis logged the first backward move on the Intelligence Frontier; OpenRouter\'s CEO read the moment as <i>“the future of AI is neurodiversity, not single-model takeovers.”</i> Tom\'s Hardware/Semafor coverage Jun 13–15 added the Sacks account: Amazon\'s Jassy escalated the jailbreak to the White House; USG offered Amodei <b>fix-or-pull</b>; Amodei declined both, dismissed the threat as <i>“not serious.”</i> Semafor reported a China-linked entity is suspected of accessing Mythos (unconfirmed). <b>Romero (Jun 15 “Kayfable”)</b> offers the adversarial counter-read: the shutdown is manufactured kayfabe — Anthropic\'s <i>“ultimate goal is not to build AGI, but to own it. To control it.”</i> Vin Vashishta independently names the broader move <i>“the betrayals.”</i> Azhar reads the slowdown rhetoric as likely dilution within days.',
+          check:'<span class="okc">✓ Trump rhetoric pivot Jun 19 — Axios on-record</span><span class="okc">✓ Globe and Mail: active negotiation, identity-verification mechanism</span><span class="okc">✓ Fable refund + Jul 8 verification — Anthropic operational deadlines</span><span class="okc">✓ GLM-5.2 enterprise per-task pricing confirmed ($2.40 vs $31)</span><span class="flag">⚑ China-linked Mythos access still unidentified · Anthropic disputes it was raised in their talks</span><span class="flag">⚑ no restoration date announced — Jul 8 is verification GO-LIVE, not service restoration</span><span class="flag">⚑ G7 ally carve-outs explicitly rejected — bifurcation hardening, not softening</span>',
+          extrap:'For the build: <b>multi-model abstraction is no longer a hedge, it is operational table stakes</b>. Any agent that runs in customer hands needs a local-model fallback or non-US-vendor path the day it ships — “Anthropic might be unreachable” is now a documented failure mode, not theoretical. For the retailer: any AI-dependent loyalty / discovery / search surface that runs on Anthropic alone needs an MCP-portable contingency plan THIS quarter. <i>(Ours; the named TAKES converge on the conclusion from independent angles.)</i>',
+          srcs:[['Innermost Loop — Welcome to June 14, 2026','https://theinnermostloop.substack.com/p/welcome-to-june-14-2026'],['Vin Vashishta — The 3 Betrayals of Anthropic','https://vinvashishta.substack.com/p/the-3-betrayals-of-anthropic'],['Business Engineer — The AI Supercycle','https://businessengineer.ai/p/the-ai-supercycle']]},
+         connects:[['belief: capability rationing','ai.t4'],['belief: the governed runtime','ai.t1'],['NEW belief: state rationing over lab rationing','ai.t5']]},
+        {src:'Anthropic · TechCrunch · Business Standard', date:'jun 11 · carried', fresh:0, h:'Carried: Anthropic pledges $350M — not $200M — on AI job losses, with named policy triggers', bd:'Updated reporting: <b>$200M</b> to the new <b>Economic Futures Research Fund</b> + <b>$150M</b> to a <b>“Claude Corps” fellowship</b> placing AI specialists in government and non-profits at <b>$85K/yr stipends</b>. Dario’s essay keys government response to <b>three unemployment thresholds: 5% · 10% · “unprecedented.”</b>',
+         deep:{
+          so:'A direct, datable input to YOUR open forecast (entry-level 2026): the lab whose CEO scored best on the first resolution is now funding the measurement layer for the exact phenomenon the forecast tracks — and pre-committing policy positions to thresholds.',
+          nums:[['total','$350M','$200M research fund + $150M Claude Corps fellowship — Jun 11 reporting was incomplete'],['stipend','$85K','/yr to fellowship placements in govt + non-profits'],['triggers','5 · 10%','Amodei’s policy-response thresholds (+ an “unprecedented” tier)'],['context','IPO-bound','both labs filed within a week — displacement playbooks are competitive positioning']],
+          facts:'Announced June 11. By Jun 13, follow-up coverage (Fortune, Business Standard) clarified the figure: it is a <b>$350M package</b>, not the headline $200M — the $200M is the research fund; the additional $150M underwrites the “Claude Corps” fellowship placing AI specialists in government and non-profits at $85K/yr stipends. The framing sets Anthropic’s threshold-keyed approach against OpenAI’s rival “widely shared gains” playbook (the Altman–Sanders public-wealth-fund idea).',
+          check:'<span class="okc">✓ announcement — Anthropic + two independent outlets</span><span class="flag">⚑ $200M is a pledge, not yet a funded research program — watch for the first grants</span><span class="flag">⚑ threshold framework is an essay position, not policy</span>',
+          extrap:'Two readings, both live: (a) the measurement infrastructure this funds could RESOLVE forecasts like your entry-level series with better data than Gusto; (b) a lab pre-committing to unemployment thresholds is also pre-building its regulatory defense before an IPO. Both can be true. For the ledger: no number moves today, but the resolution-source landscape for entry-2026 just improved. <i>(Ours.)</i>',
+          srcs:[['Business Standard — Anthropic pledges $200M','https://www.business-standard.com/technology/tech-news/anthropic-pledges-200-million-to-study-ai-s-economic-impact-job-losses-126061100070_1.html']]},
+         connects:[['your open forecast: entry-level 2026','ai.f1'],['belief: AI-by-absorption','career.t0']]},
+        {src:'Anthropic · AWS · GitHub', date:'jun 9 · carried (model suspended Jun 12, see lead card)', fresh:0, h:'Carried: Claude Fable 5 ships — the first deployable Mythos-class model (now suspended)', bd:'<b>$10/$50 per M</b> with a 90% prompt-caching discount; live simultaneously on the API, <b>Amazon Bedrock</b>, and GitHub Copilot Enterprise. <b>Free on Max/Team/Enterprise until June 22</b>. Sensitive queries auto-route to Opus 4.8.',
+         deep:{
+          so:'On its own this moves no forecast number. It’s a data point FOR the entry-level-2026 question (capability up → junior-substitution pressure up, a review-step input), a confidence nudge TO the governed-runtime belief, and it opens one new measurable question: does the classifier bleed past 0.03%?',
+          takes:['mollick','romero','lambert','awg','awg2','awg3','vin2','be','be2','nate','nate2','azhar'],
+          nums:[['pricing','$10/$50','per M in/out — 2× Opus 4.8; 90% caching discount on input'],['free window','Jun 22','evaluate NOW — Romero predicts it gets pulled from Pro/Max after'],['autonomy','9.5 hrs','Mollick’s single-task run; 2,200+ flights via sub-agents'],['classifier','0.03%','Anthropic’s claimed traffic hit — porousness unverified']],
+          facts:'Released <b>June 9</b>. Built explicitly for <b>long-running agentic sessions</b>, large-codebase migration, and complex document analysis — the workloads where Opus 4.8 ran out of road. Distribution is the unusual part: API + Bedrock + Copilot Enterprise <b>on day one</b> (Copilot needs an admin policy toggle). Pricing is 2× Opus 4.8, but the <b>90% caching discount on input</b> changes the math for high-frequency retail workloads where the system prompt and catalog dominate tokens.',
+          chart:{t:'the Mythos-class lineage · SWE-bench Pro (verified Jun 8 — Fable-5-specific scores not yet independently published)', rows:[['Mythos preview',77.8,'#9FCB8E'],['Opus 4.8',69.2,'#C9A85C'],['Opus 4.7',64.3,'#C9A85C'],['GPT-5.4',57.7,'#7FAEE8']]},
+          saying:'<div class="qt"><b>Mollick</b> (One Useful Thing): <i>“Last year I called this working with a wizard… With Fable the spell has gotten powerful enough that I am no longer sure I am the wizard. I am closer to a patron. I describe what I want, I pay for it, and I judge the result.”</i> His test task ran <b>9.5 hours autonomously</b>; sub-agents retrieved 2,200+ flights and wrote a 19-page design doc before touching code.</div><div class="qt"><b>Romero</b> (Algorithmic Bridge): the public Fable 5 <i>“is the same underlying model [as Mythos 5], but with a layer of safety classifiers on top.”</i> On the free window: <i>“You’re not getting two free weeks; they’re getting two free weeks of you.”</i> His frame: gains concentrate in long token-heavy work — a <b>“token rich, token poor”</b> divide. One report of a user burning <b>$1M in a day</b>.</div><div class="qt"><b>Lambert</b> (Interconnects), the dissent: <i>“An AI model that gets less intelligent automatically without notifying me is categorically misaligned AI.”</i> The invisible LLM-dev classifier is <i>“quietly rolled-out market entrenchment tactics”</i> dressed as safety.</div><div class="qt"><b>Wissner-Gross</b> (Innermost Loop): <i>“The Singularity has entered its doctrinal phase, where the labs now preview their intentions before they ship their intelligence.”</i> Sharpest cyber capability stays behind <b>Project Glasswing</b>; reports Anthropic IPO filing at <b>$965B</b>, OpenAI confidentially at <b>$850B+</b> [single-source — unverified].</div><div class="qt"><b>Nate</b> (jun 10): Claude vs Codex = <b>steer vs dispatch</b>, two training regimes for managing machine labor: <i>“Do not let the agent that made the thing be the only judge of whether the thing is good.”</i></div><div class="qt" style="opacity:.75;"><i>Coverage notes: Lenny’s review is a podcast teaser (no text body). The Business Engineer teaser and the Innermost Loop’s June 10 follow-up are now decomposed — see the permission-layer card below.</i></div>',
+          check:'<span class="okc">✓ pricing & free window — Anthropic official</span><span class="okc">✓ Bedrock + Copilot GA — AWS/GitHub posts</span><span class="okc">✓ dual-product release — Mythos 5 gated (Glasswing), Fable 5 public with classifiers (3 sources)</span><span class="flag">⚑ invisible LLM-dev classifier silently degrades responses — Anthropic claims 0.03% of traffic; the boundary’s porousness is THE open question (Lambert)</span><span class="flag">⚑ $965B / $850B IPO filings — single source (Innermost Loop), unverified</span><span class="flag">⚑ “benchmarks topping rivals” — vendor claim, no independent numbers yet</span>',
+          extrap:'<b>The decision point is June 22</b> — and Romero predicts Fable gets pulled from standard Pro/Max plans after it, so the window may be the only cheap look. Run the evals knowing it’s mutual: your usage is their data. <b>Mollick’s patron shift is the deployment lesson:</b> invest in output-review criteria and audit frameworks, not prompt craft — and apply Nate’s rule directly to the advisor-agent design: the producing agent is never its own judge. <b>The diagnostic to watch</b> (the panel’s sharpest disagreement): does the invisible classifier’s degradation bleed past ML-infrastructure prompts into adjacent enterprise work (embeddings, fine-tuning orchestration) beyond the claimed 0.03%? If yes, Lambert is right and the patron model breaks exactly where stakes are highest.',
+          srcs:[['Sonnet 4.6 / Fable day-2 benchmark roundup — MorphLLM','https://www.morphllm.com/claude-benchmarks'],['The Innermost Loop — June 10 issue','https://theinnermostloop.substack.com/p/welcome-to-june-10-2026']]},
+         connects:[['belief: the governed runtime','ai.t1'],['data point for: entry-level 2026','ai.f1']]},
+        {src:'Innermost Loop · Business Engineer · Interconnects', date:'jun 10', fresh:1, h:'The permission layer becomes the story — capability rationing as lab strategy', bd:'Day-2 coverage converged on governance, not benchmarks: the public Fable is <b>“Mythos on a leash”</b>, the sharpest capability stays gated, and Anthropic is read as building <b>the layer that decides who gets frontier intelligence</b>.',
+         deep:{
+          so:'Strengthens the governed-runtime belief from a new angle — governance becoming the PRODUCT, not just the deployment wrapper — and seeds the new capability-rationing thesis below.',
+          takes:['awg2','be','lambert'],
+          nums:[['fallback','0.03%','Anthropic’s claimed classifier traffic — porousness still the open question'],['jailbreak','none found','red-team self-report per Innermost Loop — a claim, not a proof'],['coverage','3 voices','bull (AWG) · analyst (BE, paywalled) · dissent (Lambert) — all land on governance']],
+          facts:'The Innermost Loop’s June 10 issue frames the release as the first deliberate <b>rationing of recursion</b>: “The Singularity has grown powerful enough to compound itself, so for the first time its makers are rationing the recursion.” The public model is described as <b>“Mythos on a leash,”</b> borrowing its riskiest answers from a downgraded sibling; Guillaume Verdon calls the silent fallback <b>“a supply chain risk for any ML lab.”</b> The Business Engineer’s teaser lands the same read from the analyst side: Anthropic is “actively attempting to define the governance layer of the AI stack” (full analysis paywalled).',
+          check:'<span class="okc">✓ three independent voices converge on the governance read</span><span class="flag">⚑ “no universal jailbreak” — red-team self-report, unverifiable from outside</span><span class="flag">⚑ Business Engineer analysis paywalled — teaser claims only</span>',
+          extrap:'If governance is the product, enterprise selection criteria invert: you are choosing a <b>permission regime</b>, not a model. For the retailer build this argues for multi-model abstraction — MCP makes it cheap (next card) — so a lab’s rationing decision is a config change, not a re-platform. Watch whether EU AI Act enforcement treats access tiers as the compliance surface. <i>(Extrapolation ours; the sources stop at the governance observation.)</i>',
+          srcs:[['The Innermost Loop — June 10 issue','https://theinnermostloop.substack.com/p/welcome-to-june-10-2026'],['Business Engineer — Inside Anthropic’s Permission Layer','https://businessengineer.ai/p/inside-anthropics-permission-layer']]},
+         connects:[['belief: capability rationing','ai.t4'],['belief: the governed runtime','ai.t1']]},
+        {src:'Anthropic · Linux Foundation', date:'jun 9–10', fresh:1, h:'MCP donated to the new Agentic AI Foundation', bd:'Anthropic moves the Model Context Protocol into a Linux Foundation directed fund co-founded with <b>OpenAI and Block</b>, with Google, Microsoft and AWS supporting — the connector layer is now formally neutral ground.',
+         deep:{
+          so:'Direct confirmation of the “MCP portability erodes distribution moats” leg of the governed-runtime belief — the protocol everyone’s agents speak now has no single owner.',
+          nums:[['stewards','LF fund','co-founded by Anthropic, OpenAI, Block'],['supporting','G·MS·AWS','all three clouds signed on day one']],
+          facts:'Announced on Anthropic’s newsroom: MCP moves to an <b>Agentic AI Foundation</b> under the Linux Foundation, with OpenAI and Block as co-founders and Google, Microsoft and AWS supporting. The donation covers the spec and reference implementations — the same protocol this atlas’s own tooling runs on.',
+          check:'<span class="okc">✓ Anthropic official announcement</span><span class="flag">⚑ governance details (voting, roadmap control) not yet published — “neutral” is press framing until bylaws appear</span>',
+          extrap:'Protocol neutrality makes multi-model abstraction cheaper and more durable — integration work now has an owner-independent home. Open question: does the foundation move at lab speed or standards-body speed? If the latter, labs fork ahead and donate back, and the spec trails reality. <i>(Ours.)</i>',
+          srcs:[['Anthropic — donating MCP · the Agentic AI Foundation','https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation']]},
+         connects:[['belief: the moat is the governed runtime','ai.t1']]},
+        {src:'Not Boring', date:'jun 10', fresh:1, h:'“Return on Tokens” — the counter-thesis to tokenmaxxing', bd:'Packy McCormick: token spend is a lab-engineered success metric — <b>“a lab-grown supermeme”</b> — and the endgame is <b>AI-as-compiler</b>: turn the process into deterministic code once instead of paying a model to improvise it nightly.',
+         deep:{
+          so:'A direct stress-test of the “AI is labor you manage” belief: if the compiler frame wins, token-burn curves (and lab revenue projections) overstate the steady state. The belief gains a named counter-position.',
+          takes:['packy'],
+          nums:[['the metric','ROT','return on tokens — his replacement for token-spend-as-success'],['the split','think vs do','“work is mostly doing” — and doing compiles']],
+          facts:'The argument in sequence: labs benefit when token consumption reads as success (“Tokenmaxxing was a lab-grown supermeme that worked better than the labs could have hoped”) → most enterprise work is repetitive process (“Silicon Valley built AI assuming work is mostly thinking, but work is mostly doing”) → repetitive process is exactly what compiles — so the durable pattern is AI <b>writing</b> the deterministic pipeline, not <b>being</b> the pipeline.',
+          check:'<span class="okc">✓ quotes verbatim from the essay</span><span class="flag">⚑ thesis essay, not data — no measured ROT examples published in the piece</span>',
+          extrap:'Where it meets Jevons (−98% token price, +480% spend): both hold if spend concentrates in genuinely novel work while routine work compiles away — a split checkable in your own usage data within a quarter. For recurring retail workloads, the concrete test: did the agent leave behind a pipeline, or a bill? <i>(Ours.)</i>',
+          srcs:[['Not Boring — Return on Tokens (ROT)','https://www.notboring.co/p/return-on-tokens-rot']]},
+         connects:[['belief: AI is labor you manage','ai.t3']]},
+        {src:'Microsoft × KPMG', date:'jun 9', fresh:1, h:'KPMG rolls Agent 365 to 276,000 professionals', bd:'The largest governed-agent deployment on record — audit trails, policy enforcement, update control as the reference architecture.',
+         deep:{
+          so:'The strongest single confirmation yet of “the moat is the governed runtime.” No forecast resolves; the belief gets a CONFIRM nudge. Watch whether outcome metrics ever follow the deployment announcement.',
+          nums:[['seats','276k','largest governed-agent deployment on record'],['ga date','May 1','Agent 365 — management layer, not authoring']],
+          facts:'Agent 365 (GA since May 1) is Microsoft’s <b>agent management layer</b> — separate from Copilot Studio authoring: deployment, monitoring, policy, update control. KPMG embeds it in its own <b>Workbench</b> platform across 276,000 professionals — explicitly framed as moving <b>from pilots to organization-wide deployment</b>.',
+          saying:'<div class="qt"><b>The framing from both sides</b> is governance-first: “trusted enterprise AI agents… with built-in security and governance.” Nobody is selling capability here — they are selling <b>control</b>, which is the tell about where enterprise buying power sits.</div>',
+          check:'<span class="okc">✓ scale + date — joint press releases</span><span class="flag">⚑ no usage/outcome metrics published — a deployment announcement, not a results announcement</span>',
+          extrap:'A Big-4 firm wiring governance into its own client platform makes Agent 365 the de-facto <b>reference architecture</b> for regulated rollouts — exactly the “make your CISO comfortable” thesis. For your retailer: if the stack is M365/Azure, this is now the default answer procurement will reach for; evaluate it before a pilot hardens into it by inertia. Watch: whether outcome metrics ever follow (the enterprise-value-gap pattern says they usually don’t).'},
+         connects:[['belief: the moat is the governed runtime','ai.t1'],['deep dive: why enterprise AI isn’t paying off','dive_value']]},
+        {src:'youtube-intel · Two Minute Papers · Nate B Jones · AI Daily Brief · Yannic Kilcher', date:'jun 9–15 backfill', fresh:1, h:'YouTube digest landed — 549 videos · the “assistant axis” is the headline', bd:'The pipeline backfill finished this morning (Gemma summarized, Claude curated). The single strongest signal: <b>Anthropic discovered a “universal grammar” for AI personality</b> — the assistant axis is the same direction in activation space across Llama, Qwen, and others. Activation capping cuts jailbreak rates <b>~50%</b> at near-zero capability cost. Four more signals worth folding: DeepSeek’s 80-page training recipe + 7B model that beats GPT-4o 6× on competition math; the token-shortage thesis (Anthropic ~$47B ARR, Walmart rationing tokens to employees); Nate’s four-labs convergence finding; “context rot” counter-thesis to the 1M-token-window narrative.',
+         deep:{
+          so:'Independent reinforcement of the permission-layer / state-rationing story from the mechanism side, not the governance side: if persona drift has a universal geometry, then the gating that Jun 12 made political turns out to be technically tractable too — and that strengthens the case for state-layer overlays the carded T5 thesis predicts. No forecast moves; T4 + T5 gain a research-mechanism leg.',
+          nums:[['videos','549','5 categories · ~1 week backfill · digest 9,741 lines'],['assistant axis','~50%','jailbreak reduction at near-zero capability cost — Two Minute Papers / Anthropic'],['DeepSeek 7B','6×','distilled model vs GPT-4o on competition math · 800K examples generated from R1'],['token tape','$47B','Anthropic ARR (up from ~$3B start of 2025) · first profitable quarter'],['context rot','40–50%','focused-context outperforms full-context on Long-ME-Eval at 113K avg context']],
+          facts:'Five picks the curator agent surfaced from 549 summaries: <b>(1) the assistant axis</b> (Two Minute Papers on Anthropic research): <i>“the assistant axis looks similar across completely different models… they have discovered a universal grammar for AI personality.”</i> <b>(2) DeepSeek 80-page recipe</b>: <i>“we might have the full recipe to create ChatGPT-like intelligence. And it is out there in the open for free for everyone.”</i> The 7B distilled model runs on a laptop. <b>(3) token-shortage thesis</b> (AI Daily Brief): <i>“the world we are moving into is one where there is a structural shortage of AI tokens.”</i> Pricing migrates from seats to tokens; Uber CTO burned the entire 2026 AI budget in 4 months. <b>(4) four-labs convergence</b> (Nate, deeper than the carded TAKE): <i>“how do you get useful work from intelligence units with finite context, finite per-step reliability, no persistent memory? Answer: organization.”</i> Anthropic / DeepMind / OpenAI Codex / Cursor all built the same decompose-parallelize-verify-iterate structure. <b>(5) context rot</b> (Yannic Kilcher on Chroma): even one distractor in a 113K-token context drops performance catastrophically; the 1M-window narrative is partly wishful.',
+          check:'<span class="okc">✓ digest provenance: yt-dlp + local Gemma + curator pass · digest_2026-06-15.md (9,741 lines)</span><span class="flag">⚑ Two Minute Papers / Kilcher are commentary on primary research — Anthropic’s assistant-axis paper and Chroma’s context-rot paper are the load-bearing sources, not the youtube videos</span><span class="flag">⚑ ARR figures are creator-stated; Anthropic has not published quarterly numbers</span>',
+          extrap:'For the build: <b>two of these change the standing playbook</b>. (a) Context rot says the prompt-cache hygiene + focused context discipline this window already uses gets MORE valuable as windows grow — don’t fill them just because you can. (b) Four-labs convergence on the harness pattern confirms the multi-agent decomposition workflow you’ve been running by hand (this atlas-update skill itself is a small instance) is the durable shape, not a fad — invest in the harness, not the model. The assistant-axis result is for the watch list; alignment-tooling shift is plausible if activation-capping migrates from research to production. <i>(Ours.)</i>',
+          srcs:[['Digest — _shared/briefs/youtube-intel/digests/digest_2026-06-15.md','#']]},
+         connects:[['belief: state rationing','ai.t5'],['belief: AI is labor you manage','ai.t3']]},
+        {src:'Google', date:'jun 8', fresh:1, h:'Gemini 3.5 Flash becomes the non-overridable enterprise default', bd:'A forced migration point for Google-stack agents. Flash leads <b>MCP Atlas (83.6%)</b> — the benchmark that maps to multi-tool connector work.', connects:[['field summary: AI','ai']]},
+        {src:'OpenAI', date:'jun 2–3', h:'Container billing goes per-minute · Agent Builder sunsets Nov 30', bd:'Per-minute billing (5-min floor) cuts cost on short agentic runs; anything built on <b>Agent Builder/Evals needs a migration path by November</b>. Enterprise is now 40%+ of OpenAI revenue.', connects:[['field summary: AI','ai']]},
+       ],
+       detail:'<b>Claude Fable 5 shipped June 9</b> — the first publicly deployable Mythos-class model: $10/$50 per M tokens (90% prompt-caching discount), live on the API, Amazon Bedrock and GitHub Copilot Enterprise at once, free on Max/Team/Enterprise until <b>June 22</b> — which makes this week the zero-cost evaluation window. Same day: <b>KPMG is rolling Microsoft Agent 365 to 276,000 professionals</b> — the largest governed-agent deployment on record, and direct confirmation of the governed-runtime belief. <b>Gemini 3.5 Flash became the non-overridable Gemini Enterprise default</b> (a forced migration for Google-stack agents). OpenAI moved container billing to per-minute and set <b>Agent Builder + Evals to sunset Nov 30</b>. Tuesday adds: <b>Sacks publicly described the shutdown sequence</b> — WH gave Amodei fix-or-pull, Amodei said <i>“not serious”</i>; <b>Semafor: China-linked entity suspected of accessing Mythos</b> (unconfirmed); <b>Romero published a sharp counter-read (“Kayfable”)</b> arguing the shutdown is manufactured Anthropic theater for USG dependency; <b>AWG launched the first Frontier-AI Token Price Index (Ornn / OTPI)</b> — daily benchmark from real transacted inference, intelligence cost falling ~40×/yr per OpenAI, $7T data-center capex hinging on token demand. GLM-5.2 live in Z.ai API tiers but ZERO independent benchmarks; open weights “next week.” Three new takes added (romero2, awg4, awg5) — 18 total now clickable. Carried: USG shutdown lead card, Anthropic $350M pledge, MCP Linux Foundation fund, Not Boring’s Return-on-Tokens, the youtube-intel digest summary.',
+       connects:[['belief: the moat is the governed runtime','ai.t1'],['forecast: entry-level 2026','ai.f1'],['the scoreboard','reck']]},
+      {d:'World', t:'PAPER signed but Hormuz still PHYSICALLY closed (Argus: 5–10% pre-war) · 30-day de-mining clock · Netanyahu private “home run” vs public “does not know” · WTI ~$77 / Brent ~$80 Fri', page:'landscape', fresh:'jun 10–20',
+       cards:[
+        {src:'Fortune · CNBC · Bari Weiss', date:'jun 14 sun', fresh:1, h:'Paper-signed vs physically-closed: Hormuz traffic still 5–10% of pre-war (Argus); 30-day de-mining clock before tankers will transit · Netanyahu PRIVATELY called the MOU a potential “home run” (Times of Israel Jun 19) vs public “does not know” · WTI ~$77 / Brent ~$80 Fri close', bd:'<b>Paper vs reality, Day-3:</b> the MOU was signed Jun 17 at Versailles (Trump + Pezeshkian electronically; Geneva ceremony cancelled). But <b>Argus Media confirmed Jun 20 that Hormuz physical traffic is still 5–10% of pre-war levels</b> — <b>de-mining must complete within 30 days</b> before shipowners actually transit. <b>WTI closed ~$77 Fri / Brent ~$80</b>, back UP from Thu lows as the physical-vs-paper gap settled in. <b>Netanyahu PRIVATELY called the deal a potential “home run” if nuclear terms hold</b> (Times of Israel Jun 19) — contradicting his public <i>“Israel does not know the terms.”</i> An Israeli adviser says Israel is not bound by the Lebanon withdrawal clause; Trump called him <i>“warrior PM”</i> Jun 19. The mid-August final-deal text still defines the next resolution window.',
+         deep:{
+          so:'The oil-shelf belief is on the verge of resolution — flip if signed Thursday, hold if it slips. The forecast window opens for the first formal RESOLVE on a tape-driven question (vs the entry-level hiring resolution from Jun 9).',
+          nums:[['Hormuz physical','5–10%','of pre-war traffic per Argus Media Jun 20 — paper signed, ships still holding'],['de-mining','30 days','must complete before tankers actually transit'],['WTI','~$77','Fri close · Brent ~$80 (back up from Thu lows on physical-vs-paper gap)'],['Netanyahu private','home run','Times of Israel Jun 19 (private) vs public “does not know”'],['next event','mid-Aug','60-day final-deal text — the new resolution window']],
+          facts:'The Jun 17 Versailles signing happened on paper, but <b>physical Hormuz traffic remains 5–10% of pre-war levels Jun 20</b> (Argus Media): <b>de-mining must complete within 30 days before shipowners attempt transit</b>. <b>WTI ~$77, Brent ~$80 Friday close</b> — both back up from Thursday lows as the gap between paper and physical settled in. The Israeli posture is the most interesting development: <b>Netanyahu privately called the deal a potential “home run” if the nuclear terms hold</b> (Times of Israel Jun 19) — directly contradicting his public <i>“Israel does not know the terms.”</i> An adviser says Israel is not bound by the Lebanon withdrawal clause; Trump called Netanyahu <i>“warrior PM”</i> Jun 19. UK separately announced <b>“Neptune” sanctions Jun 17</b> on 3 Russian companies, 10 GRU officers, 20+ shadow-fleet tankers — the deeper-Russia-sanctions piece of the G7 communique landing first.',
+          check:'<span class="okc">✓ Hormuz physical 5–10% — Argus Media Jun 20</span><span class="okc">✓ Netanyahu private vs public split — Times of Israel Jun 19</span><span class="okc">✓ UK Neptune sanctions — Jun 17 G7 follow-through</span><span class="flag">⚑ MOU TEXT STILL UNRELEASED — every reported framing remains a multi-source description, not verified document</span><span class="flag">⚑ de-mining timeline is the operational risk: a 30-day window with no second mover</span><span class="flag">⚑ Israeli adviser “not bound by Lebanon clause” is the deal\'s biggest fault line</span>',
+          extrap:'Thursday Geneva is the resolution event. If signed: oil-shelf forecast resolves (partial — not full reopen until day 30); rates-higher-for-longer thesis softens on the energy contribution; June CPI carries a partial reversal instead of a full closure month. If slipped: Brent gives back the $84 print fast and the war thesis re-arms. For Beauty Co COGS: hold the September surcharge framing until Friday morning. <i>(Ours.)</i>',
+          srcs:[['Fortune — oil price 06-15-2026','https://fortune.com/article/price-of-oil-06-15-2026/']]},
+         connects:[['belief: the oil premium is a shelf','world.t0']]},
+        {src:'CNBC · Reuters', date:'jun 11–12 · carried', fresh:0, h:'Carried: Trump suspended strikes, Brent fell to $87.33, Araghchi said an MOU “has never been closer”', bd:'Last week’s reversal sequence (still applicable as context for the Jun 14 announcement above). Brent went from $93–95 (Wed closure declaration) to $87.33 Thursday on the suspended-strikes signal; the Monday $84.62 print is the next leg of the same move.',
+         deep:{
+          so:'The first real deflation test of the oil-shelf belief in 96 hours — the shelf can come down as fast as it came up. The flip condition (signed MOU + reopened strait) just moved from “further away” to “possibly this weekend.” No forecast resolves until ink lands.',
+          nums:[['Brent','$87.33','−4% Thu · vs $93–95 Wed declaration · vs $114 conflict peak'],['draft','14-point','reported MOU framework · reopen within 30 days'],['strikes','suspended','Wed evening · Trump: deal “this weekend in Europe”'],['confidence','MOU never closer','Araghchi — Iranian FM, said publicly']],
+          facts:'CNBC and Reuters carried the reversal sequence over Jun 11–12: Trump suspended further strikes Wednesday evening; Iran’s FM Araghchi told state media an MOU “has never been closer”; a reported 14-point draft includes Hormuz reopening within 30 days. Brent settled at $87.33 Thursday — a 4% Thursday drop and well below the Wednesday closure-declaration peak. As of Saturday morning the strait is still officially closed; the signed text would be the resolution.',
+          check:'<span class="okc">✓ Brent print + Trump statement + Araghchi quote — multiple wires</span><span class="flag">⚑ “deal this weekend” is a Trump statement, not a counterparty confirmation</span><span class="flag">⚑ 14-point draft has not been publicly released — terms could shift</span>',
+          extrap:'If signed this weekend: June CPI carries a partial reversal rather than a full closure month — the rates-higher-for-longer call still holds on core 2.9, but the energy contribution narrows. For the retailer: hold the September-reset conversation but soften the surcharge framing if peace lands Monday. If <b>not</b> signed, Brent gives back the $87 print fast — that is the tape to watch tomorrow night when Globex opens. <i>(Ours.)</i>',
+          srcs:[['CNBC — oil prices on US–Iran deal hopes','https://www.cnbc.com/2026/06/12/oil-prices-wti-brent-on-hopes-of-us-iran-deal-despite-tehran-pushback.html']]},
+         connects:[['belief: the oil premium is a shelf','world.t0']]},
+        {src:'Al Jazeera · IEA · CENTCOM', date:'jun 11', fresh:1, h:'Carried: Iran declared Hormuz closed after a second night of US strikes', bd:'Declared overnight after consecutive nights of US strikes (CENTCOM: surveillance, comms and air-defense targets; strikes “completed”). <b>Brent +2.26% to $95.20</b>; the IEA calls it potentially <b>“the largest supply disruption in global oil market history.”</b>',
+         deep:{
+          so:'Escalates the oil-shelf belief from “tolls institutionalize the premium” to “the strait is actually shut” — the shelf may become a wall. The flip condition (signed MOU + reopened strait) just moved further away.',
+          nums:[['Brent','$93–95','this morning — vs $114 conflict peak: the market prices a POROUS closure'],['escorted','200 ships','Trump’s claim: 100M+ barrels secretly convoyed through (unverified)'],['duration','100+ days','of conflict · Lebanon toll 3,600+'],['scale','record','IEA: potentially the largest supply disruption ever']],
+          facts:'Iran declared the strait closed June 11 after the second consecutive night of US strikes — themselves the response to the Apache downed over the strait. CENTCOM describes the package as completed; Iranian missile responses were intercepted with no major damage reported at US facilities. Roughly a fifth of global oil transits Hormuz in normal times. <i>Carried from Jun 11 — the picture changed Thursday (see card above).</i> <b>The morning counter-fact (Jun 11):</b> Trump claimed Wednesday evening the US has secretly escorted <b>200 commercial ships and 100M+ barrels</b> through the strait; CNN’s read agrees on the mechanism — the strait is <b>“leaking,”</b> tankers dodging the blockade with millions of barrels escaping daily. That is why Brent sits at $93–95 rather than the $114 conflict peak: the market is pricing a porous closure, not a sealed one.',
+          check:'<span class="okc">✓ closure declaration + prices — multiple wires</span><span class="flag">⚑ “closed” is a declaration — the tape says porous: Brent $93–95, well under the $114 peak</span><span class="flag">⚑ the 200-ship escort figure is a Trump claim, corroborated in mechanism (CNN) but not in number</span>',
+          extrap:'If physical transit actually stops, Fitch’s $87 path is dead and June CPI inherits a full month of closure premium — which pins the July FOMC too. Watch tanker transits, not statements. <i>(Ours.)</i>',
+          srcs:[['Al Jazeera — Iran war live','https://www.aljazeera.com/news/liveblog/2026/6/10/iran-war-live-tehran-vows-response-as-us-strikes-over-downed-helicopter'],['NBC — US strikes on Iran','https://www.nbcnews.com/world/iran/live-blog/us-attacks-iran-rcna349305']]},
+         connects:[['belief: the oil premium is a shelf','world.t0']]},
+        {src:'CNBC · Commons Library', date:'jun 9–10', fresh:1, h:'Iran converts the Hormuz blockade into a fee schedule', bd:'Per-barrel transit tolls (~$1/bbl discussed; the ministry says “navigation costs”). <b>Institutionalization is the story — fees persist longer than crises</b>, and they cascade into LNG and petrochemical freight.', connects:[['belief: the oil premium is a shelf','world.t0']]},
+        {src:'USTR', date:'gate: jun 22', fresh:1, h:'The §301 tariff clock is live — June 22 is the standing deadline', bd:'Request the July 7 hearing by <b>June 22</b> or lose standing; written comments close July 6. The 60-economy net is designed to be un-routable-around — stacked rates can reach 40–60% on finished goods.', connects:[['belief: tariff stacking outranks oil','world.t1']]},
+        {src:'BLS · CNBC', date:'jun 10', fresh:1, h:'May CPI: +4.2% — hottest print in three years, and it’s mostly energy', bd:'<b>+4.2% YoY, +0.5% MoM</b>; energy (+3.9% MoM, +23.5% YoY) drove <b>60%+ of the monthly gain</b>; core held at <b>2.9%</b>. The Fed is expected to hold June 17.',
+         deep:{
+          so:'Confirms rates-higher-for-longer by its exact mechanism: energy → headline → Fed pinned. The flip condition (two consecutive soft prints) now needs July AND August to cool with the strait closed — hard to see.',
+          nums:[['headline','4.2%','YoY — fastest in 3 years'],['energy share','60%+','of the monthly gain — the Iran transmission, visible'],['core','2.9%','sticky, not accelerating — input-cost-led, not demand-led'],['FOMC','jun 17','consensus: hold']],
+          facts:'Printed June 10, matching the consensus this model carried. Energy +3.9% on the month, +23.5% on the year — the Hormuz risk premium arriving in consumer prices on schedule. CBS tied the energy surge directly to the conflict; the June print will carry the actual closure. World Cup logistics layer on top: 15–25% last-mile surcharges across 16 host metros through July 19.',
+          check:'<span class="okc">✓ official BLS print via CNBC/CBS/Bloomberg</span><span class="okc">✓ matched the consensus this model carried (+4.2%)</span>',
+          extrap:'The cost-transmission thesis stops being a forecast and starts being tape: COGS pressure through Q3 at minimum. For the retailer, freight surcharges + energy pass-through land in the September reset — the pricing conversation is this month’s, not September’s. <i>(Ours.)</i>',
+          srcs:[['CNBC — May 2026 CPI report','https://www.cnbc.com/2026/06/10/cpi-inflation-report-may-2026.html'],['CBS — CPI and the Iran war','https://www.cbsnews.com/news/cpi-report-today-may-2026-inflation-iran-war-trump/']]},
+         connects:[['belief: rates higher-for-longer','world.t2']]},
+        {src:'TradingKey · Nasdaq', date:'jun 11 · prices today', fresh:1, h:'SPCX continues the slide — Thu/Fri ~$185, Sat AM $181-192 range; Arete initiates Jun 18 with Buy / $401 PT (highest analyst target since IPO)', bd:'The slide continued: SPCX traded down to ~$185 Thursday and Friday, in the <b>$181–192 range Sat morning</b> on Globex. Down ~18% from the Tue intraday high of $225.64, still <b>~+34% from the $135 IPO price</b>. The bullish counter: <b>Arete Research initiated Jun 18 with Buy / $401 PT</b> — the highest analyst target since IPO. Options trading remains the new short-side instrument; locked-up-share distortion continues to clear. Musk keeps <b>82%+ voting control</b>.',
+         deep:{so:'Market-structure context — the financing window the rates thesis says is narrow just absorbed the largest equity raise ever. Watch the first-day tape as a risk-appetite read with CPI hot.', nums:[['price','$135 → ATH $225.64 → ~$185 Thu/Fri → $181–192 Sat AM','still ~+34% from IPO · −18% from ATH · 7 trading sessions in'],['raise','$75B','raised at $1.75T pricing → >$2T market cap at close (≈3× Alibaba)'],['control','82%+','Musk voting power retained']], facts:'Through seven sessions: $135 → ATH $225.64 → multi-day slide to $181–192 Sat AM (~+34% from IPO). <b>Arete Research initiated Jun 18 with Buy / $401 PT</b>, the highest published target since IPO (bullish counter). Options trading is the marginal new pressure. The long-form thesis hasn\'t moved; the chart is back to something a fundamentals-only buyer can underwrite.', check:'<span class="okc">✓ multi-day price trajectory — CNBC / Bloomberg / Yahoo</span><span class="okc">✓ Arete $401 PT — Jun 18 initiation</span><span class="flag">⚑ Sat AM $181–192 range is Globex / pre-market estimate — exact NYSE Mon open will set the level</span>', extrap:'The $75B cleared into a 4.2 CPI tape <b>and</b> a Hormuz scare AND finished green — that says the financing window is narrower for some issuers, not all; the discrimination is the signal. For the rates-higher-for-longer thesis: a record IPO closing +19% with the Fed pinned is the data point on the “bubble vs supercycle” question Azeem Azhar is now asking aloud. <i>(Ours.)</i>', srcs:[['TradingKey — SpaceX IPO at $135: what the S-1 says','https://www.tradingkey.com/analysis/stocks/us-stocks/261957856-spacex-ipo-at-135-what-the-s-1-financials-actually-say-tradingkey']]},
+         connects:[['belief: rates higher-for-longer','world.t2']]},
+        {src:'The Free Press', date:'jun 10', fresh:1, h:'Carried context: Social Security insolvency moved up to 2032 · Kim hosts Xi', bd:'Trustees now project insolvency by <b>end-2032</b> (a 22% benefit-cut scenario if unaddressed). Kim Jong Un hosted Xi Jinping with two days of ceremony — Beijing confirmed as Pyongyang’s primary ally over Moscow.',
+         deep:{so:'Background structure — no near-term transmission to the build.', nums:[['insolvency','2032','trustees’ projection, moved up'],['cut scenario','22%','if unaddressed']], facts:'Both items via The Free Press front page, June 10. The Iran-war analysis there (Niall Ferguson, Haviv Rettig Gur) includes Gur’s read that the conflict “may well last another 20 years.”', check:'<span class="flag">⚑ single-outlet summary — primary trustee report not pulled</span>', extrap:'None offered — context only.', srcs:[['The Free Press — front page, Jun 10','https://www.thefp.com/p/graham-platners-ex-girlfriend-wants-79e']]},
+         connects:[['field summary: World & Markets','world']]},
+       ],
+       detail:'<b>Iran declared the strait closed June 11</b> after a second consecutive night of US strikes — Brent jumped to $95.20 and the IEA calls it potentially the largest supply disruption on record; tanker-tracking over the next 72 hours tells us if the declaration is physical. <b>May CPI printed +4.2% YoY</b> (hottest in three years; energy drove 60%+ of the monthly gain; core 2.9% — the June 16–17 FOMC is pinned). Earlier in the week, <b>Iran’s parliament was converting the Hormuz blockade into a fee schedule</b> — per-barrel transit tolls (~$1/bbl discussed; the ministry calls them “navigation costs”). Institutionalization is the story: fees persist longer than crises. The <b>§301 forced-labor tariff clock is live</b>: June 22 is the deadline to request the July 7 hearing — after that you lose standing; comments close July 6. The <b>World Cup opens today</b> across 16 host cities — expect 15–25% last-mile freight surcharges in host metros through July 19.',
+       connects:[['belief: tariff stacking outranks oil','world.t1'],['field summary: World & Markets','world']]},
+      {d:'Beauty', t:'Ulta same-day at 1,400 stores · ops-stack arms race (L’Oréal · ELC · e.l.f.) · Shoptalk wraps in Barcelona', page:'beauty', fresh:'jun 9–11',
+       cards:[
+        {src:'Ulta Beauty · Instacart', date:'jun 10', fresh:1, h:'Ulta turns on same-day delivery at 1,400+ stores — aimed straight at Amazon Beauty', bd:'Via Instacart, as fast as one hour, chain-wide. It sits on top of a beat-and-raise quarter: <b>Q1 net sales +11.1% to $3.2B, comps +5.3%</b>, and a 26k-sqft Times Square flagship signed for late 2027.',
+         deep:{
+          so:'The distribution-captures-the-margin thesis compounding: the strongest US beauty distributor just bought the last delivery-speed gap Amazon held. No forecast attached; the thesis note updates.',
+          nums:[['coverage','1,400+','stores live on Instacart same-day — as fast as 1 hr'],['Q1 comps','+5.3%','net sales +11.1% to $3.2B'],['flagship','26k sqft','Times Square, reported ~$400M lease, late 2027']],
+          facts:'Same-day via Instacart is now live across effectively the whole chain, positioned explicitly against Amazon’s beauty push (TheStreet’s framing). CEO Kecia Steelman on the quarter: <b>“beauty remains healthy.”</b> The flagship is the brand-theater bet layered on the logistics bet.',
+          check:'<span class="okc">✓ Q1 numbers — Ulta IR release</span><span class="okc">✓ Instacart coverage — TheStreet</span>',
+          extrap:'For Beauty Co the read is competitive-baseline: same-day is becoming table stakes in US beauty — and it arrived via a partner rail, not owned logistics. That capital-light pattern is the one a fast adopter can copy this year. <i>(Ours.)</i>',
+          srcs:[['Ulta IR — Q1 FY2026 results','https://www.ulta.com/investor/news-events/press-releases/detail/229/ulta-beauty-announces-first-quarter-fiscal-2026-results-and'],['TheStreet — Ulta same-day via Instacart','https://www.thestreet.com/retail/ulta-beauty-takes-on-amazon-with-new-delivery-option-for-shoppers']]},
+         connects:[['belief: distribution > brand this cycle','beauty.t0']]},
+        {src:'NVIDIA · Microsoft · SEC', date:'jun 9–10', fresh:1, h:'The ops-stack arms race: L’Oréal on NVIDIA Alchemi · ELC with Microsoft + OpenAI · e.l.f. +25%', bd:'L’Oréal becomes the <b>first beauty company on NVIDIA’s Alchemi</b> (AI product/molecular development); Estée Lauder deepens its Microsoft + OpenAI partnership on CX and ops; e.l.f. closes FY2026 at <b>+25% net sales</b>.',
+         deep:{
+          so:'Three data points, one belief: the ops moat beats the consumer-AI story. R&D compression (L’Oréal), ops efficiency (ELC), and the mass-tier share-taker (e.l.f.) all reinforce the barbell.',
+          nums:[['L’Oréal','Alchemi','first beauty brand on NVIDIA’s materials-AI platform'],['ELC','MS + OpenAI','customer experience + operational efficiency'],['e.l.f.','+25%','FY2026 net sales — the mass end of the barbell keeps taking share']],
+          facts:'Diginomica frames both giants’ moves inside the $777B beauty market’s AI race: L’Oréal applying Alchemi to product-development chemistry; ELC pairing Microsoft infrastructure with OpenAI models for customer experience and operational efficiency. e.l.f.’s fiscal-year 8-K confirms +25%.',
+          check:'<span class="okc">✓ e.l.f. — SEC 8-K</span><span class="okc">✓ L’Oréal / ELC — diginomica + vendor announcements</span><span class="flag">⚑ no ROI numbers from either giant yet — capability announcements, not outcome announcements</span>',
+          extrap:'Same pattern as enterprise AI broadly: measurable wins upstream (R&D, ops), consumer story still narrative. A fast adopter pitches the upstream wins to the CFO and treats consumer AI as optionality — the L’Oréal proof points (−50% verification, −80% advisor admin) remain the reference numbers. <i>(Ours.)</i>',
+          srcs:[['diginomica — L’Oréal & ELC, AI and the $777bn market','https://diginomica.com/stripped-bare-loreal-and-estee-lauder-transformative-makeover-ai-giving-777-bn-beauty-market'],['e.l.f. Beauty FY2026 8-K','https://www.sec.gov/Archives/edgar/data/0001600033/000160003326000018/q42026er-991.htm']]},
+         connects:[['belief: the ops moat beats the consumer-AI story','beauty.t2']]},
+        {src:'Shoptalk Europe · Barcelona', date:'jun 9', fresh:1, h:'ELC keynote: “first organic growth and margin improvement in four years”', bd:'Pre-event framing — transcripts pending, so flagged rather than asserted. Staging the claim in <b>Barcelona</b> says EMEA is where the turnaround story gets stress-tested first.', connects:[['field summary: Beauty & Retail','beauty']]},
+        {src:'Shoptalk Europe', date:'jun 10–11', fresh:1, h:'The L’Oréal × Google agentic-commerce session ran — transcripts pending', bd:'The joint retailer+platform session (L’Oréal’s global e-commerce GM + Google’s commerce-partnerships lead) and Sephora’s COO on unified commerce both ran in Barcelona; the conference wraps <b>June 11</b>. Published recaps are pending — if a European agentic-checkout timeline surfaced, it’s the distribution signal of the quarter.',
+         deep:{so:'The agentic-checkout fork thesis’s next data point is in flight — held open rather than asserted.', nums:[['wraps','jun 11','Barcelona · recaps pending'],['who','COO-level','Sephora sent operations leadership, not marketing']], facts:'Session lineup per TheIndustry.beauty’s preview: L’Oréal + Google jointly on agentic commerce, Sephora’s COO on unified commerce and AI in stores, ELC’s EMEA lead on the first margin improvement in four years. Post-session transcripts had not been published at write-time.', check:'<span class="okc">✓ lineup — TheIndustry.beauty</span><span class="flag">⚑ session CONTENT unreported at write-time — nothing asserted beyond the lineup</span>', extrap:'Sweep for recaps in the next session; a stated European timeline would move the fork thesis materially. <i>(Ours.)</i>', srcs:[['TheIndustry.beauty — Shoptalk Europe 2026 preview','https://theindustry.beauty/from-sephora-to-the-estee-lauder-companies-shoptalk-europe-2026-spotlights-ai-and-customer-connection/']]},
+         connects:[['belief: agentic checkout is the fork','beauty.t1']]},
+        {src:'WWD · Unilever', date:'jun 6–9', fresh:1, h:'Kiko Milano enters the US via Macy’s + Madonna · Unilever opens an AI fragrance hub', bd:'Kiko: $13–16 hero SKUs, masstige priced under the Sephora lock, engraving stations as the retention test. Unilever: third global fragrance R&D node at <b>IIT Bombay</b> (€100M program) — AI molecular modelling compresses development from years to months.', connects:[['deep dive: Urban Outfitters’ beauty bet','beauty']]},
+       ],
+       detail:'<b>Ulta turned on same-day delivery at 1,400+ stores via Instacart</b> — on top of a +11.1% quarter — and the ops-stack arms race escalated: L’Oréal first onto NVIDIA Alchemi, ELC deeper with Microsoft + OpenAI, e.l.f. closing FY26 at +25%. <b>Shoptalk Europe, Barcelona:</b> ELC’s keynote frames “Beauty Reimagined” as producing the <b>first organic growth and margin improvement in four years</b> (pre-event framing; transcripts pending — flagged, not asserted). <b>Today’s sessions:</b> L’Oréal’s global e-commerce GM and Google’s commerce-partnerships director jointly on agentic commerce — a debunk-the-hype posture — and Sephora’s <b>COO</b> on unified commerce; if a European agentic-checkout timeline drops, it’s the distribution signal of the quarter. <b>Kiko Milano entered the US</b> via Macy’s shop-in-shops with Madonna as ambassador ($13–16 hero SKUs — masstige priced under the Sephora lock). Unilever opened an AI fragrance hub at IIT Bombay (€100M program).',
+       connects:[['belief: agentic checkout is the fork','beauty.t1'],['field summary: Beauty & Retail','beauty']]},
+    ]},
+  fields:[
+  { id:'ai', name:'Artificial Intelligence', c:'var(--ai)', sub:'5 forecasts · 2 resolved · 9 minds',
+    breath:'Execution commoditizes; value retreats to judgment and the governed runtime. Enterprise ROI is gated by <b>org redesign</b> — congestion at the decision layer — not capability. Labor effects arrive as <b>absorption and a broken entry rung</b>, confirmed by this model’s first resolution. Bubble risk lives in the debt structure, not demand. A 20–30-year J-curve ramp. New this week: <b>the permission layer</b> — capability rationing as lab strategy — and the <b>Return-on-Tokens</b> counter-thesis to burn-rate economics.',
+    trends:[
+      {t:'Models commoditize — value moves to apps', m:'up', n:''},
+      {t:'Implementation-consulting boom', m:'up', n:'0.66'},
+      {t:'"Token architect" as a named role', m:'up', n:'0.31'},
+      {t:'Entry-rung absorption', m:'up', n:'HIT'},
+    ],
+    theses:[
+      {t:'RSI is assisted, not recursive', d:'Judgment, architecture and safety-evals stay human-gated; the gap is the rate-limiter.', flip:'flips if: a research-direction benchmark ≥80%, or an AI-authored peer-reviewed paper without a human co-author'},
+      {t:'The moat is the governed runtime', d:'MCP portability erodes distribution moats; "make your CISO comfortable" wins. KPMG×Agent 365 (276k seats) is this thesis confirming at scale.', flip:'flips if: a raw capability gap re-opens wide enough that enterprises eat governance risk'},
+      {t:'Value capture is org design', d:'1+1+1=1.5 is decision-layer congestion (the lightbulb→group-drive→unit-drive ladder). Stage-3 ROI needs decision-cycle-time redesign + AI-decision accountability.', flip:'flips if: pure tool rollouts show proportional firm-level ROI with no org change'},
+      {t:'AI is labor you manage', d:'Token prices −98%, spend +480% (Jevons). Govern by use-case + model-tiering, never flat caps. New counter-position on file: Not Boring’s Return-on-Tokens (AI-as-compiler) — if processes compile away, the burn curves overstate the steady state.', flip:'flips if: flat all-you-can-eat enterprise pricing becomes standard AND sticks'},
+      {t:'Capability rationing is the new lab strategy', d:'Fable 5 as the template: public model classifier-gated, sharpest capability behind Glasswing, access tiers as the product. Three voices converge on governance-as-product from bull (Wissner-Gross), analyst (Business Engineer) and dissent (Lambert) positions.', flip:'flips if: a frontier lab ships its top model ungated at GA, or the classifier proves porous (>0.03% bleed) and gets pulled'},
+      {t:'State rationing now sits over lab rationing (NEW)', d:'Confirmed Jun 12: USG export controls shut Fable 5 + Mythos 5 down globally in 72 hours after a Mythos cybersecurity jailbreak. Artificial Analysis logged the first backward move on the Intelligence Frontier. China responded with GLM-5.2 open-source. The permission layer’s apex is now the export-control desk, not the lab.', flip:'flips if: a frontier US lab restores its top model to global access within 30 days without a sovereign-AI carve-out, OR the directive is publicly revealed as a routine procurement gate rather than a national-security action'},
+    ],
+    forecasts:[
+      {t:'Entry-level hiring >15% — RESOLVED HIT', st:'hit', d:'Resolved June 9 by preponderance: Gusto real-payroll −16% YoY (one point over the bar); Stanford/ADP −16–20% for the 22–25 cohort; nothing credible flat or up. Dissent recorded: no pre-registered series — now law.',
+       minds:[['Amodei','0.70 → B .090'],['You*','0.50 → .250*'],['Baseline','0.40 → .360'],['Evans','0.38 → .384'],['Jones','0.36 → .410']],
+       links:[['Read the debate that resolved it','chamber']]},
+      {t:'Entry-level 2026: a further >10% decline? (updated jun 9)', st:'open', d:'The successor leaf, designed in-session. Pre-registered series (Gusto 2027 edition primary). Paired attribution sensors: your bifurcation leg (mid/senior +5–10%), rented-offshore decline vs captive GCC, contract-mix, and your 10-K capitalization series. Base 0.35 · baseline 0.38 · <b>your slot OPEN (0.35 offered — confirm or correct)</b>.<br><br><b>Recent data points feeding this question:</b> Fable 5 ships (jun 9 — capability up, junior-substitution pressure up, a review-step input not a driver) · KPMG×Agent 365 at 276k seats (jun 9 — absorption capacity up) · tech layoffs running 46% above 2025 pace, ~25% citing AI (jun) · Gusto projects ~flat SMB new-grad hiring (stabilization signal).',
+       minds:[['Baseline','0.38'],['You','? — counts on the ledger']], links:[['The live debate — commit your number here','chamber']]},
+      {t:'AI-implementation consulting revenue +30% in 2026', st:'open', d:'Panel 0.66 · divergence 0.14 · resolves 2027-02-28. The org-fixers capture the value if the org is the rate-limiter.', minds:[['Panel','0.66'],['You','open slot']], links:[['The deep dive behind this','dive_value']]},
+      {t:'"Token architect / context engineer" a named role by Dec 31', st:'open', d:'Panel 0.31 · base 0.30 · honest read: "token architecture" is NOT yet a discipline; context engineering is. Watch job-title postings.', minds:[['Panel','0.31'],['You','open slot']], links:[['The deep dive behind this','dive_deep']]},
+    ],
+    record:[
+      ['Daily brief · AI & World — Jun 20','Saturday: Trump drops national-security-threat label for Amodei · Fable refund deadline TODAY · Hormuz still physically closed · SPCX slides further','landscape'],
+      ['AI Landscape — deep update · Jun 7','five forces · forecast ledger · token burn','dive_deep'],
+      ['Deep dive · Why enterprise AI isn’t paying off — Jun 8','decision-layer congestion, the adoption ladder, compliance theater','dive_value'],
+      ['Debate · The entry-level hiring question — Jun 9','argued with the expert panel; ended in the first resolved forecast','chamber'],
+    ]},
+  { id:'beauty', name:'Beauty & Retail', c:'var(--beauty)', sub:'the client field · daily shipping',
+    breath:'<b>Distribution captures this cycle’s margin, not brand owners</b> — Ulta beats-and-raises while ELC claws to +2% and sells brands. The barbell holds: mass floods the shelf, prestige concentrates. The new battleground is <b>AI-mediated discovery and checkout</b> — Sephora claims every rail; L’Oréal builds the proprietary layer on eight years of governed data. <b>Catalog machine-readability is now distribution, not marketing.</b> Fragrance is the Gen-Z/Alpha wedge.',
+    trends:[
+      {t:'Agentic checkout rails (Sephora on two)', m:'up', n:''},
+      {t:'Distribution capturing the margin', m:'up', n:''},
+      {t:'Gen-Z/Alpha entry tier + fragrance wedge', m:'up', n:''},
+      {t:'Prestige concentration (ELC reset)', m:'flat', n:''},
+    ],
+    theses:[
+      {t:'Distribution > brand this cycle', d:'Retailers with loyalty data capture the margin.', flip:'flips if: brand-owner organic growth broadly outpaces retailer comps for 2+ quarters'},
+      {t:'Agentic checkout is the disintermediation fork', d:'Connect loyalty + inventory to the AI surface and keep the sale — or cede the moment. Watch Sephora’s European timeline (Rollier, Shoptalk today).', flip:'flips if: AI-surface commerce stalls below ~1% of beauty e-comm through 2027'},
+      {t:'The ops moat beats the consumer-AI story', d:'L’Oréal’s proof points: −50% in-store verification, −80% advisor admin — vs unproven consumer ROI.', flip:'flips if: a consumer assistant shows measured incremental revenue at scale'},
+    ],
+    forecasts:[],
+    record:[
+      ['Daily brief · Beauty Co — latest issue','the client-facing daily · always the current edition','beauty'],
+      ['Deep dive · L’Oréal’s agent platform','what’s really behind the announcement: data + operations','beauty'],
+      ['Deep dive · Urban Outfitters’ beauty bet','selling discovery, not assortment — with the 2015→2025 history','beauty'],
+    ]},
+  { id:'world', name:'World & Markets', c:'var(--world)', sub:'the cost transmission',
+    breath:'A <b>multi-quarter input-cost squeeze, not a spike</b>: Hormuz near-closed with tolls formalizing; freight spiked into peak season; the <b>§301 net over 60 economies is designed to be un-routable-around</b> — stacked rates can reach 40–60% on finished goods. The Fed is pinned by energy-fed inflation; the financing window stays narrow. Transmission: the COGS shelf, not headlines.',
+    trends:[
+      {t:'Oil premium — paper signed, Hormuz 5–10% physical Jun 20', m:'flat', n:'~$77 WTI'},
+      {t:'Container freight into peak season', m:'up', n:'+23%'},
+      {t:'Tariff-stacking risk (60 economies)', m:'up', n:'10–12.5%'},
+      {t:'Policy rate', m:'flat', n:'3.50–3.75%'},
+    ],
+    theses:[
+      {t:'The oil premium is a shelf, not a tick', d:'Priced probability of disruption persists while the strait is hostage.', flip:'flips if: a signed US–Iran MOU + reopened Hormuz → Fitch’s $87 path'},
+      {t:'Tariff stacking outranks oil as the 2026 COGS risk', d:'Jun 22 hearing gate · Jul 6 comments · Jul 7 hearing.', flip:'flips if: final action broadly carves out apparel/beauty'},
+      {t:'Rates higher-for-longer through 2026', d:'Energy → PCE, now on tape: May CPI +4.2% YoY (hottest in 3 years), energy 60%+ of the gain, core 2.9%. FOMC Jun 16–17 — consensus hold.', flip:'flips if: two consecutive soft CPI prints (July AND August would now have to cool with the strait closed)'},
+    ],
+    forecasts:[],
+    record:[ ['Daily brief · World section — Jun 20','Paper-signed vs physically-closed Hormuz · WTI ~$77 / Brent ~$80 Fri · Netanyahu private vs public split · SPCX $181-192','landscape'] ]},
+  ],
+  reckoning:{ name:'Forecast Scoreboard', sub:'accuracy · lower Brier is sharper',
+    rows:[ ['Dario Amodei','1','1','0.090','best at the table — 1/1'],
+           ['Andrew (you)','1*','—','0.250*','practice — look-ahead voided; beat 3 of 4'],
+           ['Superforecaster baseline','1','0','0.360','the line to beat'],
+           ['Benedict Evans','1','0','0.384','under-priced the cliff; keeps the attribution dial'],
+           ['Nate B. Jones','1','0','0.410','freeze mechanism survives inside the HIT'],
+           ['NLW','0','—','—','unscored — no resolved forecasts yet'] ]}
+};
+
+// ═══════════════════ GLYPHS (engraved medallions, no bloom) ═══════════════════
+function orrery(px=112){
+  let g='';
+  // instrument face: tick ring + dashed zodiac ring
+  for(let i=0;i<48;i++){ const a=i/48*Math.PI*2, r0=i%4?54.5:52.6;
+    g+=`<line x1="${(60+Math.cos(a)*r0).toFixed(1)}" y1="${(60+Math.sin(a)*r0).toFixed(1)}" x2="${(60+Math.cos(a)*56.5).toFixed(1)}" y2="${(60+Math.sin(a)*56.5).toFixed(1)}" stroke="var(--gold)" stroke-width="${i%4?0.5:0.9}" opacity="${i%4?0.5:0.8}"/>`; }
+  g+=`<circle cx="60" cy="60" r="50" fill="none" stroke="var(--gold)" stroke-width="0.6" stroke-dasharray="1 5" opacity="0.6"/>`;
+  [40,29,18].forEach(r=>{ g+=`<circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--gold)" stroke-width="0.45" opacity="0.45"/>`; });
+  // the sun at center
+  for(let i=0;i<12;i++){ const a=i/12*Math.PI*2, L=i%2?9:11.5;
+    g+=`<line x1="${(60+Math.cos(a)*7).toFixed(1)}" y1="${(60+Math.sin(a)*7).toFixed(1)}" x2="${(60+Math.cos(a)*L).toFixed(1)}" y2="${(60+Math.sin(a)*L).toFixed(1)}" stroke="var(--gold-2)" stroke-width="0.6"/>`; }
+  g+=`<circle cx="60" cy="60" r="5" fill="none" stroke="var(--gold-2)" stroke-width="0.9"/><circle cx="60" cy="60" r="2.2" fill="var(--gold-2)" class="tw4" style="animation-duration:6s"/>`;
+  // wanderers — smooth slow orbits (SMIL rotate about the face center)
+  const orb=(dur,rev,inner)=>`<g>${inner}<animateTransform attributeName="transform" type="rotate" from="${rev?360:0} 60 60" to="${rev?0:360} 60 60" dur="${dur}" repeatCount="indefinite"/></g>`;
+  g+=orb('64s',0,`<circle cx="60" cy="20" r="2.6" fill="var(--gold-2)"/><circle cx="60" cy="20" r="4.6" fill="none" stroke="var(--gold)" stroke-width="0.4" stroke-dasharray="0.8 1.6" opacity="0.7"/>`);
+  g+=orb('96s',1,`<path d="M61.4 28.4 A3 3 0 1 0 61.4 33.6 A2.3 2.3 0 1 1 61.4 28.4" fill="var(--gold-2)" opacity="0.85"/>`);
+  g+=orb('44s',0,`<circle cx="60" cy="42" r="1.8" fill="var(--gold)"/>`);
+  g+=orb('150s',1,`<path d="M60 7.6 L60.9 9.4 L62.7 10.3 L60.9 11.2 L60 13 L59.1 11.2 L57.3 10.3 L59.1 9.4 Z" fill="var(--gold-2)" opacity="0.9"/>`);
+  return `<svg width="${px}" height="${px}" viewBox="0 0 120 120">${g}</svg>`;
+}
+let booted=false;
+function bootCascade(){ if(booted) return; booted=true;
+  document.querySelectorAll('#spine .node').forEach((n,i)=>{ n.style.animation=`nodeIn .55s ${(i*0.05).toFixed(2)}s var(--ease-expo) backwards`; }); }
+const revObs = new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); revObs.unobserve(e.target); } }); }, {rootMargin:'0px 0px -8% 0px'});
+function applyReveal(){ let i=0;
+  contentEl.querySelectorAll('.scard,.card,.lbl,.quote,.breath').forEach(el=>{
+    el.classList.add('rv'); el.style.transitionDelay=((i%8)*0.06).toFixed(2)+'s'; i++; revObs.observe(el); }); }
+function medallion(c, r, spokes){ // engraved ring + ticks + spokes
+  let t='';
+  for(let i=0;i<24;i++){ const a=i/24*Math.PI*2; t+=`<line x1="${r+Math.cos(a)*(r-2)}" y1="${r+Math.sin(a)*(r-2)}" x2="${r+Math.cos(a)*(r-5)}" y2="${r+Math.sin(a)*(r-5)}" stroke="${c}" stroke-width="0.7" opacity="0.8"/>`; }
+  let s='';
+  for(let i=0;i<spokes;i++){ const a=i/spokes*Math.PI*2; s+=`<line x1="${r+Math.cos(a)*r*0.28}" y1="${r+Math.sin(a)*r*0.28}" x2="${r+Math.cos(a)*r*0.7}" y2="${r+Math.sin(a)*r*0.7}" stroke="${c}" stroke-width="0.8" opacity="0.85"/>`; }
+  return `<svg width="${r*2}" height="${r*2}" viewBox="0 0 ${r*2} ${r*2}">
+    <circle cx="${r}" cy="${r}" r="${r-2}" fill="none" stroke="${c}" stroke-width="1"/>
+    <g class="rotr" style="animation-duration:${120+r*4}s"><circle cx="${r}" cy="${r}" r="${r*0.72}" fill="none" stroke="${c}" stroke-width="0.6" opacity="0.75" stroke-dasharray="3 5"/></g>
+    <g class="rot" style="animation-duration:${70+r*3}s">${t}</g>
+    <g class="rotr" style="animation-duration:${92+r*4}s">${s}</g>
+    <circle cx="${r}" cy="${r}" r="2.2" fill="${c}"/></svg>`;
+}
+function glyphField(id, c){
+  if(window.WMICONS){ const M={ai:'gearAI',beauty:'crescentBeauty',world:'globeWorld',career:'boughCareer',gaming:'dieGaming'};
+    if(M[id]) return WMICONS[M[id]](46, c); }
+  if(id==='ai'){ // rosette gear — toothed wheel over a dial
+    let teeth=''; for(let i=0;i<12;i++){ const a=i/12*Math.PI*2; teeth+=`<line x1="${23+Math.cos(a)*15}" y1="${23+Math.sin(a)*15}" x2="${23+Math.cos(a)*20}" y2="${23+Math.sin(a)*20}" stroke="${c}" stroke-width="2.4" opacity="0.85"/>`; }
+    return `<svg width="46" height="46" viewBox="0 0 46 46"><g class="rot" style="animation-duration:90s">${teeth}<circle cx="23" cy="23" r="15" fill="none" stroke="${c}" stroke-width="1"/></g><circle cx="23" cy="23" r="9" fill="none" stroke="${c}" stroke-width="0.7" stroke-dasharray="1 3"/><circle cx="23" cy="23" r="3" fill="${c}"/></svg>`; }
+  if(id==='beauty'){ // crescent within a petal ring
+    return `<svg width="46" height="46" viewBox="0 0 46 46"><g class="rotr" style="animation-duration:140s">${[0,1,2,3,4,5].map(i=>{const a=i/6*Math.PI*2; return `<ellipse cx="${23+Math.cos(a)*16}" cy="${23+Math.sin(a)*16}" rx="4.5" ry="2" fill="none" stroke="${c}" stroke-width="0.7" transform="rotate(${a*57.3+90} ${23+Math.cos(a)*16} ${23+Math.sin(a)*16})" opacity="0.8"/>`;}).join('')}</g><circle cx="23" cy="23" r="9.5" fill="none" stroke="${c}" stroke-width="1"/><path d="M26 15.5 A9 9 0 1 0 26 30.5 A7 7 0 1 1 26 15.5" fill="${c}" opacity="0.75"/></svg>`; }
+  if(id==='world'){ // meridian globe
+    return `<svg width="46" height="46" viewBox="0 0 46 46"><circle cx="23" cy="23" r="16" fill="none" stroke="${c}" stroke-width="1"/><ellipse cx="23" cy="23" rx="16" ry="6.5" fill="none" stroke="${c}" stroke-width="0.6" opacity="0.8"/><ellipse cx="23" cy="23" rx="6.5" ry="16" fill="none" stroke="${c}" stroke-width="0.6" opacity="0.8"/><line x1="7" y1="23" x2="39" y2="23" stroke="${c}" stroke-width="0.5" opacity="0.7"/><g class="rot" style="animation-duration:120s"><circle cx="23" cy="7" r="2" fill="${c}"/></g><circle cx="23" cy="23" r="2.2" fill="${c}"/></svg>`; }
+  if(id==='career'){ // branching bough — the pipeline tree
+    return `<svg width="46" height="46" viewBox="0 0 46 46"><path d="M23 42 V26 M23 26 L12 14 M23 26 L34 14 M12 14 L7 9 M12 14 L16 8 M34 14 L29 8 M34 14 L39 9" fill="none" stroke="${c}" stroke-width="1"/><circle cx="7" cy="9" r="2" fill="${c}"/><circle cx="16" cy="8" r="2" fill="none" stroke="${c}" stroke-width="0.8"/><circle cx="29" cy="8" r="2" fill="none" stroke="${c}" stroke-width="0.8"/><circle cx="39" cy="9" r="2" fill="${c}"/><circle class="tw4" cx="23" cy="26" r="2.4" fill="${c}"/></svg>`; }
+  if(id==='gaming'){ // engraved die — hex with pips
+    return `<svg width="46" height="46" viewBox="0 0 46 46"><g class="rotr" style="animation-duration:180s"><polygon points="23,6 37,14.5 37,31.5 23,40 9,31.5 9,14.5" fill="none" stroke="${c}" stroke-width="1"/></g><polygon points="23,13 31,17.8 31,27.2 23,32 15,27.2 15,17.8" fill="none" stroke="${c}" stroke-width="0.6" opacity="0.8"/><circle cx="19" cy="20" r="1.6" fill="${c}"/><circle cx="27" cy="20" r="1.6" fill="${c}"/><circle cx="23" cy="26" r="1.6" fill="${c}"/></svg>`; }
+  return medallion(c, 23, 6); }
+function star4(c){ return `<svg class="tw4" width="22" height="22" viewBox="0 0 22 22"><path d="M11 1 L12.8 9.2 L21 11 L12.8 12.8 L11 21 L9.2 12.8 L1 11 L9.2 9.2 Z" fill="none" stroke="${c}" stroke-width="0.9"/><circle cx="11" cy="11" r="1.6" fill="${c}"/></svg>`; }
+function sunGlyph(){ if(window.WMICONS) return WMICONS.sun(54); let rays=''; for(let i=0;i<16;i++){ const a=i/16*Math.PI*2; rays+=`<line x1="${27+Math.cos(a)*16}" y1="${27+Math.sin(a)*16}" x2="${27+Math.cos(a)*23}" y2="${27+Math.sin(a)*23}" stroke="var(--gold-2)" stroke-width="0.9"/>`; }
+  return `<svg width="54" height="54" viewBox="0 0 54 54"><g class="rotr" style="animation-duration:200s"><circle cx="27" cy="27" r="24" fill="none" stroke="var(--gold-3)" stroke-width="0.7" stroke-dasharray="1 4"/></g><circle cx="27" cy="27" r="13" fill="none" stroke="var(--gold-2)" stroke-width="1.1"/><g class="rot" style="animation-duration:130s">${rays}</g><circle class="tw4" cx="27" cy="27" r="4.5" fill="var(--gold-2)" style="animation-duration:5s"/></svg>`; }
+function moonGlyph(){ if(window.WMICONS) return WMICONS.moonToday(34); return `<svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="14" fill="none" stroke="var(--gold)" stroke-width="0.9"/><path d="M21 5 A14 14 0 0 1 21 29 A11 11 0 0 0 21 5" fill="var(--gold)" opacity="0.85"/></svg>`; }
+function scaleGlyph(){ if(window.WMICONS) return WMICONS.scales(34); return `<svg width="34" height="34" viewBox="0 0 34 34"><line x1="17" y1="5" x2="17" y2="27" stroke="var(--gold)" stroke-width="1"/><line x1="6" y1="9" x2="28" y2="9" stroke="var(--gold)" stroke-width="1"/><path d="M6 9 L2.5 17 A4.5 4 0 0 0 9.5 17 Z M28 9 L24.5 17 A4.5 4 0 0 0 31.5 17 Z" fill="none" stroke="var(--gold)" stroke-width="0.8"/><line x1="11" y1="28" x2="23" y2="28" stroke="var(--gold)" stroke-width="1"/></svg>`; }
+
+// ═══════════════════ RENDER: SPINE ═══════════════════
+const spine = document.getElementById('spine');
+let sel = 'sun';
+function buildSpine(){
+  let h = `<div class="bigclock">${orrery(400)}</div>
+  <svg class="sptend" viewBox="0 0 330 1560" preserveAspectRatio="none">
+    <path id="st1" d="M118 240 C 200 340, 252 430, 168 560 C 90 680, 248 790, 172 940 C 104 1070, 236 1180, 162 1310 C 110 1410, 196 1490, 168 1560"/>
+    <path id="st2" d="M212 244 C 130 348, 76 444, 158 574 C 238 696, 84 816, 156 956 C 226 1086, 96 1196, 164 1326 C 216 1426, 132 1506, 158 1560"/>
+    <path d="M88 222 C 56 280, 44 330, 60 380" class="wsp"/>
+    <path d="M242 226 C 274 284, 286 334, 270 384" class="wsp"/>
+    <path d="M168 560 C 138 596, 120 602, 108 592" class="wsp"/>
+    <path d="M156 956 C 186 992, 204 998, 216 988" class="wsp"/>
+    <path d="M162 1310 C 134 1346, 116 1352, 104 1342" class="wsp"/>
+    <circle r="2" fill="#E8C779"><animateMotion dur="30s" repeatCount="indefinite"><mpath href="#st1"/></animateMotion></circle>
+    <circle r="1.6" fill="#E8C779"><animateMotion dur="40s" begin="13s" repeatCount="indefinite"><mpath href="#st2"/></animateMotion></circle>
+  </svg><svg class="weave" viewBox="0 0 120 1560" preserveAspectRatio="none">
+    <path id="wv1" d="M58 0 C 92 120, 22 240, 54 380 C 84 500, 20 620, 56 770 C 90 900, 24 1030, 52 1170 C 80 1300, 28 1430, 58 1560"/>
+    <path class="flow" id="wv2" d="M54 0 C 20 140, 88 250, 58 390 C 24 520, 90 660, 54 790 C 22 920, 86 1050, 58 1180 C 28 1310, 84 1440, 54 1560"/>
+    <path d="M56 60 C 74 95, 96 100, 108 88" class="wisp"/>
+    <path d="M55 330 C 36 360, 16 358, 8 342" class="wisp"/>
+    <path d="M57 700 C 78 730, 100 736, 112 722" class="wisp"/>
+    <path d="M54 1060 C 34 1092, 14 1096, 6 1082" class="wisp"/>
+    <path d="M56 1330 C 76 1356, 96 1360, 106 1348" class="wisp"/>
+    <circle r="1.8" fill="#E8C779"><animateMotion dur="26s" repeatCount="indefinite"><mpath href="#wv1"/></animateMotion></circle>
+    <circle r="1.4" fill="#E8C779"><animateMotion dur="34s" begin="11s" repeatCount="indefinite"><mpath href="#wv2"/></animateMotion></circle>
+  </svg><div class="sp-head"><div class="pre">The World Model</div><h1>KNOWLEDGE ATLAS</h1><div class="ed">${TODAY}</div></div>`;
+  h += `<svg class="orbits" viewBox="0 0 330 1560" preserveAspectRatio="xMidYMin slice">
+    <circle cx="-170" cy="430" r="400"/>
+    <circle cx="-210" cy="1060" r="460" style="stroke-dasharray:1 14;"/>
+    <circle cx="470" cy="780" r="430" style="opacity:.12;"/>
+  </svg>`;
+  h += `<div class="fbar"><span class="fbtn" onclick="fOpen=!fOpen; buildSpine();">⚙ fields ${fOpen?'▴':'▾'}</span>${fOpen? `<div class="fmenu">` + WM.fields.map(f=>`<div class="frow ${hidden.has(f.id)?'off':''}" onclick="toggleField('${f.id}')"><i style="background:${getC(f.c)}"></i><span>${f.name}</span><b>${hidden.has(f.id)?'hidden':'shown'}</b></div>`).join('') + `</div>`:''}</div>`;
+  h += `<div class="node lv0 ${sel==='sun'?'sel':''}" onclick="go('sun')"><div class="glyph">${sunGlyph()}</div><div class="tx"><div class="nm">Overview</div><div class="sub">where everything stands</div></div></div>`;
+  h += `<div class="node lv0 ${sel==='today'?'sel':''}" onclick="go('today')"><div class="glyph">${moonGlyph()}</div><div class="tx"><div class="nm" style="font-size:13px;">What Changed Today</div><div class="sub">the last 24 hours</div></div></div>`;
+  WM.fields.forEach(f=>{
+    if(hidden.has(f.id)) return;
+    const open = sel===f.id || sel.startsWith(f.id+'.');
+    h += `<div class="node lv1 ${sel===f.id?'sel':''}" onclick="go('${f.id}')"><div class="glyph">${glyphField(f.id, getC(f.c))}</div><div class="tx"><div class="nm" style="color:${getC(f.c)}">${f.name}</div><div class="sub">${f.sub}</div></div></div>`;
+    h += `<div class="kids ${open?'open':''}">`;
+    if(f.theses.length) { h += `<div class="sect">Working beliefs</div>`;
+      f.theses.forEach((t,i)=>{ const id=f.id+'.t'+i;
+        h += `<div class="node lv2 ${sel===id?'sel':''}" onclick="go('${id}')"><div class="glyph">${WMICONS.beliefSeal(getC(f.c),22)}</div><div class="tx"><div class="nm">${t.t}</div></div></div>`; }); }
+    if(f.forecasts.length){ h += `<div class="sect">Forecasts</div>`;
+      f.forecasts.forEach((fc,i)=>{ const id=f.id+'.f'+i; const col = fc.st==='hit'?'#9FCB8E':fc.st==='miss'?'#7A8489':getC(f.c);
+        h += `<div class="node lv2 ${sel===id?'sel':''}" onclick="go('${id}')"><div class="glyph">${fc.st==='hit'&&window.WMICONS? WMICONS.novaHit('#9FCB8E',22) : star4(col)}</div><div class="tx"><div class="nm">${fc.t.split('—')[0].split(':')[0]}<span class="st ${fc.st}">${fc.st.toUpperCase()}</span></div></div></div>`; }); }
+    if(f.record.length){ h += `<div class="sect">Briefs &amp; deep dives</div>`;
+      f.record.forEach((r,i)=>{ const id=f.id+'.r'+i;
+        h += `<div class="node lv2 ${sel===id?'sel':''}" onclick="go('${id}')"><div class="glyph">${ r[0].startsWith('Debate')? WMICONS.voicesDebate(getC(f.c),20) : r[0].startsWith('Deep dive')? WMICONS.compassDive(getC(f.c),20) : WMICONS.scrollBrief(getC(f.c),20) }</div><div class="tx"><div class="nm" style="color:var(--cream-2); font-size:12px;">${r[0]}</div></div></div>`; }); }
+    h += `</div>`;
+  });
+  h += `<div class="node lv0 ${sel==='reck'?'sel':''}" onclick="go('reck')" style="margin-top:6px;"><div class="glyph">${scaleGlyph()}</div><div class="tx"><div class="nm" style="font-size:13px;">Forecast Scoreboard</div><div class="sub">whose predictions hold up</div></div></div>`;
+  h += `<div style="padding:22px 18px 0 28px; display:flex; flex-direction:column; gap:8px;">
+    <span onclick="goPage('starmap')" style="cursor:pointer; font-family:Cinzel,serif; font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--dim);">✦ galaxy view — the visual map (experimental)</span>
+    <span onclick="goPage('motion')" style="cursor:pointer; font-family:Cinzel,serif; font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--dim);">✦ how this model works — the film</span>
+    <a href="atlas-design-system.html" style="font-family:Cinzel,serif; font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--dim); text-decoration:none;">✦ the design system — icons & rules</a></div>`;
+  spine.innerHTML = h;
+}
+const LBL2ID={AI:'ai',World:'world',Beauty:'beauty',Career:'career',Gaming:'gaming'};
+let fOpen=false;
+let hidden=new Set(JSON.parse(localStorage.getItem('wmHidden')||'[]'));
+function isHiddenLabel(l){ return hidden.has(LBL2ID[l]); }
+function toggleField(id){ hidden.has(id)?hidden.delete(id):hidden.add(id); localStorage.setItem('wmHidden', JSON.stringify([...hidden])); if(sel===id||sel.startsWith(id+'.')) sel='sun'; buildSpine(); render(); }
+function getC(v){ return ({'var(--ai)':'#E3BC5E','var(--beauty)':'#E08568','var(--world)':'#7FAEE8','var(--career)':'#6FCDB4','var(--gaming)':'#B79BE8'})[v]||'#C9A85C'; }
+
+// ═══════════════════ RENDER: PANE ═══════════════════
+const crumbEl = document.getElementById('crumb'), contentEl = document.getElementById('content');
+function fld(id){ return WM.fields.find(f=>f.id===id); }
+let railField='ai'; let readingDoc=null;
+function go(id){ sel=id; readingDoc=null; focusCard=null; const fid=id.split('.')[0]; if(fld(fid)) railField=fid; buildSpine(); render(); renderRail(); document.getElementById('pane').scrollTop=0; }
+const MINDS_REAL=[['Dario Amodei','#C9788F','.090 · 1/1'],['Andrew (you)','#D8B36A','.250* practice'],['Baseline','#74B98A','.360'],['Benedict Evans','#5FB3A6','.384'],['Nate B. Jones','#6E97C9','.410'],['NLW','#D2725E','unscored']];
+function railAxis(minds){ // minds: [name, p]
+  let dots=''; const cols={'Amodei':'#C9788F','You*':'#D8B36A','You':'#D8B36A','Baseline':'#74B98A','Evans':'#5FB3A6','Jones':'#6E97C9','Panel':'#C9A85C'};
+  minds.forEach(m=>{ const num=parseFloat((m[1]||'').match(/[\d.]+/)||[NaN]); if(isNaN(num)||num>1) return;
+    const x=(num*100).toFixed(1); const c=cols[m[0]]||'#C9A85C';
+    dots+=`<span class="dot" style="left:${x}%; background:${c};" title="${m[0]} ${num}"></span><span class="lab" style="left:${x}%;">${m[0].replace('*','')}</span>`; });
+  return `<div class="r-axis"><div class="ln"></div><span class="tick" style="left:0%"></span><span class="tick" style="left:50%"></span><span class="tick" style="left:100%"></span>${dots}</div>`;
+}
+function selName(){
+  if(readingDoc) return 'reading: '+readingDoc;
+  if(sel==='sun') return 'the overview'; if(sel==='today') return 'what changed today'; if(sel==='reck') return 'the scoreboard'; if(sel.startsWith('day:')) return 'today · '+(WM.sun.today[+sel.slice(4)]||{}).d; if(sel.startsWith('take:')) return 'expert analysis';
+  const [fid,leaf]=sel.split('.'); const f=fld(fid); if(!f) return '';
+  if(!leaf) return f.name;
+  if(leaf[0]==='t') return (f.theses[+leaf.slice(1)]||{}).t||f.name;
+  if(leaf[0]==='f') return (f.forecasts[+leaf.slice(1)]||{}).t||f.name;
+  return f.name; }
+function renderRail(){
+  const f = fld(railField) || WM.fields[0];
+  const c = getC(f.c);
+  let h = `<div class="r-h">the model · ${f.id==='ai'?'AI':f.name.split(' ')[0]}</div>`;
+  h += `<div class="r-follow">following → <b>${selName()}</b></div>`;
+  if(!focusCard && f.trends && f.trends.length){
+    h += f.trends.map(t=>`<div class="r-trend"><span class="m ${t.m}">${t.m==='up'?'▲':t.m==='down'?'▼':'→'}</span><span>${t.t}</span>${t.n?`<b>${t.n}</b>`:''}</div>`).join('');
+  } else { h += `<div class="r-note">consumptive field — taste, not theses.</div>`; }
+  if(!focusCard && f.forecasts && f.forecasts.length){
+    h += `<div class="r-h">forecasts · live odds</div>`;
+    f.forecasts.forEach((fc,i)=>{ const pm=(fc.d.match(/[Pp]anel (0\.\d+)/)||[])[1]; const base=(fc.d.match(/[Bb]ase(?:line)? (0\.\d+)/)||[])[1];
+      const p = fc.st==='hit'?1:(pm?parseFloat(pm):(base?parseFloat(base):null));
+      const on = sel===`${f.id}.f${i}`;
+      h += `<div class="r-fc${on?' on':''}" style="cursor:pointer" onclick="go('${f.id}.f${i}')"><div class="t">${fc.t.split('—')[0].split(':')[0]}</div>`;
+      if(p!=null) h += `<div class="bar"><i data-w="${(p*100).toFixed(0)}%" style="width:0; background:${fc.st==='hit'?'#9FCB8E':c}"></i>${base?`<em style="left:${parseFloat(base)*100}%"></em>`:''}</div><div class="v">${fc.st==='hit'?'resolved hit':(pm?'panel '+pm:'base '+base)}${base&&pm?' · base '+base:''}</div>`;
+      else h += `<div class="v">${fc.st}</div>`;
+      h += `</div>`; });
+  }
+  // selected forecast → the minds on an axis
+  let axFc=null;
+  if(sel.includes('.f')) axFc=f.forecasts[+sel.split('.f')[1]];
+  if(focusCard){ const cd=(WM.sun.today[focusCard.di]||{cards:[]}).cards[focusCard.ci];
+    if(cd){ if(cd.fc){ const tf=fld(cd.fc.split('.')[0]); axFc=tf.forecasts[+cd.fc.split('.f')[1]]||axFc; }
+      h += `<div class="r-h">so what</div>`;
+      h += `<div class="r-so">${(cd.deep&&cd.deep.so)||(cd.fc?'Feeds the forecast below as one data point — no number moves on this alone.':'Context only — no prediction moves on this alone.')}</div>`;
+      const n=(cd.connects||[]).length;
+      let dg='<svg width="100%" viewBox="0 0 260 160" class="r-diag">';
+      dg+=`<circle cx="130" cy="80" r="6" fill="var(--gold-2)"/><circle cx="130" cy="80" r="12" fill="none" stroke="var(--gold-3)" stroke-width="0.6" stroke-dasharray="1 3"/>`;
+      (cd.connects||[]).forEach((cn,i)=>{ const a=(i/Math.max(n,1))*Math.PI*2 - Math.PI/2; const x=130+Math.cos(a)*94, y=80+Math.sin(a)*56;
+        dg+=`<path d="M130 80 Q ${(130+x)/2+(y-80)*0.35} ${(80+y)/2-(x-130)*0.35} ${x} ${y}" fill="none" stroke="var(--gold-3)" stroke-width="0.9" stroke-dasharray="2 4"/><circle cx="${x}" cy="${y}" r="3.8" fill="none" stroke="var(--gold-2)" stroke-width="1"/><text x="${x}" y="${y+16}" font-size="7.5" fill="var(--dim)" text-anchor="middle" font-family="Cinzel">${cn[0].split(':')[0]}</text>`; });
+      dg+='</svg>'; h+=dg;
+      h += (cd.connects||[]).map(cn=>`<div class="r-mind" style="cursor:pointer" onclick="go('${cn[1]}')"><i style="background:var(--gold-2)"></i><span>${cn[0]}</span><b>›</b></div>`).join('');
+    } }
+  if(axFc && axFc.minds && axFc.minds.length){ h += `<div class="r-h">the minds · this question</div>` + railAxis(axFc.minds); }
+  if(!focusCard) h += `<div class="r-h">the minds · accuracy</div>` + MINDS_REAL.map(m=>`<div class="r-mind"><i style="background:${m[1]}"></i><span>${m[0]}</span><b>${m[2]}</b></div>`).join('');
+  if(!focusCard) h += `<div class="r-note" style="display:flex; gap:8px; align-items:flex-start;">${window.WMICONS?WMICONS.handCommit('#C9A85C',26):''}<span>Brier — lower is sharper. Weights move after 5 resolved per lane. Your entry-2026 slot is open: 0.35 offered.</span></div>`;
+  const rail=document.getElementById('rail');
+  rail.innerHTML = h;
+  rail.style.animation='none'; void rail.offsetWidth; rail.style.animation='railIn .8s var(--ease-expo)';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ rail.querySelectorAll('.bar i[data-w]').forEach(b=>{ b.style.width=b.dataset.w; }); }));
+}
+function pageLink(label,key){ return `<span class="openfull" style="cursor:pointer;" onclick="goPage('${key}')">❖ ${label}</span>`; }
+let focusCard=null; let takeOrigin=null;
+function openTake(k,di,ci){ takeOrigin={sel:sel, di:di, ci:ci, scroll:document.getElementById('pane').scrollTop}; go('take:'+k); }
+function backToCard(){ if(!takeOrigin){ go('today'); return; }
+  sel=takeOrigin.sel; focusCard={di:takeOrigin.di, ci:takeOrigin.ci};
+  buildSpine(); render(); renderRail();
+  document.getElementById('pane').scrollTop=takeOrigin.scroll;
+  if(typeof drawThread==='function') requestAnimationFrame(drawThread); }
+function focusOn(di,ci){ const keep=document.getElementById('pane').scrollTop; if(focusCard&&focusCard.di===di&&focusCard.ci===ci){ focusCard=null; render(); renderRail(); document.getElementById('pane').scrollTop=keep; return; } focusCard={di,ci}; const cd=WM.sun.today[di].cards[ci]; if(cd.fc){ const fid=cd.fc.split('.')[0]; if(fld(fid)) railField=fid; } render(); renderRail(); document.getElementById('pane').scrollTop=keep; }
+function todaySections(){
+  return WM.sun.today.filter(tv=>!isHiddenLabel(tv.d)).map(t=>{ const di=WM.sun.today.indexOf(t);
+    const fid={AI:'ai',World:'world',Beauty:'beauty',Gaming:'gaming',Model:'career'}[t.d];
+    const col=fid? getC((fld(fid)||{}).c||''):'var(--gold)';
+    return `<div class="lbl" style="margin-top:26px; color:${t.d==='Model'?'var(--gold)':col};">${t.d} — <span style="letter-spacing:.1em;">updated ${t.fresh}</span></div>` +
+      (t.cards||[]).map((cd,ci)=>cardHTML(di,ci,cd)).join('') +
+      `<div style="margin:2px 0 6px;"><span class="cx" style="font-family:Cinzel,serif; font-size:8.5px; letter-spacing:.12em; text-transform:uppercase; padding:3px 10px; border:1px solid var(--gold-4); border-radius:12px; color:var(--dim); cursor:pointer;" onclick="goPage('${t.page}')">❖ the full ${t.d.toLowerCase()} brief</span></div>`;
+  }).join(''); }
+function cardHTML(di,ci,cd){ const on=focusCard&&focusCard.di===di&&focusCard.ci===ci;
+  const xp = cd.deep? `<div class="xp">
+    <div class="xl">the facts</div><p>${cd.deep.facts}</p>
+    ${cd.deep.chart? `<div class="xl">${cd.deep.chart.t}</div><div class="bchart">`+cd.deep.chart.rows.map(r=>`<div class="br"><span>${r[0]}</span><div class="tr"><i style="width:${r[1]}%; background:${r[2]}"></i></div><b>${r[1]}</b></div>`).join('')+`</div>`:''}
+    <div class="xl">the checks</div><p>${cd.deep.check}</p>
+    <div class="xl">extrapolation · for the build</div><p>${cd.deep.extrap}</p>
+    ${cd.deep.srcs? '<div class="xl">sources</div><p class="srcs">'+cd.deep.srcs.map(s=>'<a href="'+s[1]+'" target="_blank" onclick="event.stopPropagation()">'+s[0]+' ↗</a>').join('')+'</p>':''}</div>`
+   : (on? `<div class="xp" style="display:block"><p style="font-style:italic; color:var(--dim);">compact card — the full workup (facts · takes · checks · extrapolation) is queued for the next content pass.</p></div>`:'');
+  const core = `<div class="scard ${on?'on':''}" onclick="focusOn(${di},${ci})">
+   <div class="eye"><span><b>${cd.src}</b> · ${cd.date}</span>${cd.fresh?'<i class="fresh">● new</i>':'<span style="opacity:.6">carried</span>'}</div>
+   <h3>${cd.h}</h3><div class="bd">${cd.bd}</div>${xp}
+   <div class="ft">${(cd.connects||[]).map(cn=>`<span class="cx" onclick="event.stopPropagation(); go('${cn[1]}')">${cn[0]} ›</span>`).join('')}<span class="more">${on?'▴ collapse':'▾ expand'}</span></div>
+  </div>`;
+  if(on && cd.deep){
+    const L = (cd.deep.nums||[]).map(n=>`<div class="callout"><div class="cl-lab">${n[0]}</div><div class="big">${n[1]}</div><div class="sm">${n[2]}</div></div>`).join('');
+    const R = cd.deep.takes? `<div class="rh">what’s being said · click for full analysis</div>` + cd.deep.takes.map(k=>{const T=TAKES[k]; return `<div class="qt" onclick="event.stopPropagation(); openTake('${k}',${di},${ci})"><b>${T.who.split(' · ')[0]}</b><br><i>${T.quotes[0].length>180? T.quotes[0].slice(0,178)+'…”':T.quotes[0]}</i><span class="fa">full analysis ›</span></div>`;}).join('')
+      : (cd.deep.saying? `<div class="rh">what’s being said</div>${cd.deep.saying}`:'');
+    return `<div class="cband"><aside class="cb-l">${L}</aside><div class="cb-m">${core}</div><aside class="cb-r">${R}</aside></div>`;
+  }
+  return core; }
+function render(){
+  const doReveal = !focusCard;
+  contentEl.style.maxWidth = focusCard? '1460px':'';
+  let crumb='', h='';
+  if(sel==='sun'){ crumb='Atlas › <b>Overview</b>';
+    h = `<h2>Overview</h2><div class="ep">where everything stands · ${TODAY}</div><div class="breath">${WM.sun.breath}</div>
+    <div class="lbl">changed in the last day</div>` +
+    todaySections() +
+    `<div class="lbl">go deeper</div><p>Pick a field on the left — each opens its <span class="xlink" onclick="go('ai')">summary</span>, the working beliefs (each with the evidence that would change it), the scored forecasts, and the briefs behind them. At the bottom: the <span class="xlink" onclick="go('reck')">forecast scoreboard</span>.</p>
+    ${pageLink('State of the Fields — the full page','fields')}`; }
+  else if(sel==='today'){ crumb='Atlas › <b>What changed today</b>';
+    h = `<h2>What Changed Today</h2><div class="ep">${TODAY} · every story, grouped by field · cards expand in place</div>` + todaySections(); }
+  else if(false){ let _unused =
+    WM.sun.today.filter(tv=>!isHiddenLabel(tv.d)).map(t=>{ const di=WM.sun.today.indexOf(t);
+      const fid={AI:'ai',World:'world',Beauty:'beauty',Gaming:'gaming',Model:'career'}[t.d];
+      const col=fid? getC((fld(fid)||{}).c||''):'var(--gold)';
+      return `<div class="lbl" style="margin-top:26px; color:${t.d==='Model'?'var(--gold)':col};">${t.d} — <span style="letter-spacing:.1em;">updated ${t.fresh}</span></div>` +
+        (t.cards||[]).map((cd,ci)=>cardHTML(di,ci,cd)).join('') +
+        `<div style="margin:2px 0 6px;"><span class="cx" style="font-family:Cinzel,serif; font-size:8.5px; letter-spacing:.12em; text-transform:uppercase; padding:3px 10px; border:1px solid var(--gold-4); border-radius:12px; color:var(--dim); cursor:pointer;" onclick="goPage('${t.page}')">❖ the full ${t.d.toLowerCase()} brief</span></div>`;
+    }).join(''); }
+  else if(sel.startsWith('day:')){ const di=+sel.slice(4); const t=WM.sun.today[di];
+    crumb=`Atlas › <span class="xlink" onclick="go('today')">what changed today</span> › <b>${t.d}</b>`;
+    h = `<h2 style="font-size:24px;">${t.d} — what changed</h2><div class="ep">updated ${t.fresh} <i class="fresh" style="margin-left:6px;">● fresh</i></div>` +
+      (t.cards||[]).map((cd,ci)=>cardHTML(di,ci,cd)).join('') +
+      `<div style="margin-top:6px;">${pageLink('Read the full brief', t.page)}</div>`; }
+  else if(sel.startsWith('take:')){ const T=TAKES[sel.slice(5)];
+    crumb=`Atlas › <span class="xlink" onclick="go('today')">what changed today</span> › <b>expert analysis</b>`;
+    const org = takeOrigin && WM.sun.today[takeOrigin.di] ? WM.sun.today[takeOrigin.di].cards[takeOrigin.ci] : null;
+    h = `<div class="backbig" onclick="backToCard()">‹ back to the card<span>${org? org.h : 'what changed today'}</span></div>
+    <h2 style="font-size:23px;">${T.who}</h2><div class="ep">${T.d} · from the intake inbox · quotes verbatim${T.url? ` · <a href="${T.url}" target="_blank" style="color:var(--gold-2);">read the original ↗</a>`:''}</div>
+    <div class="breath" style="font-size:18px;">${T.pos}</div>
+    <div class="lbl">in their words</div>` + T.quotes.map(q=>`<div class="card"><div class="ct" style="font-style:italic;">${q}</div></div>`).join('') +
+    `<div class="lbl">the numbers they assert</div><p>${T.nums}</p>
+    <div class="lbl">their forward claim</div><p>${T.pred}</p>
+    <div class="lbl">for the build</div><p>${T.pm}</p>
+    <p style="margin-top:14px;"><span class="xlink" onclick="backToCard()">‹ back to the expanded card</span></p>`; }
+  else if(sel==='reck'){ crumb='Atlas › <b>Forecast scoreboard</b>';
+    h = `<h2>Forecast Scoreboard</h2><div class="ep">real accuracy scores · first forecasts resolved June 9 · lower Brier = sharper</div>
+    <table class="led"><tr><th>Mind</th><th>n</th><th>Hits</th><th>Brier</th><th></th></tr>` +
+    WM.reckoning.rows.map(r=>`<tr><td style="color:var(--cream)">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td><b style="color:var(--gold-2)">${r[3]}</b></td><td style="color:var(--dim); font-size:12px;">${r[4]}</td></tr>`).join('') +
+    `</table><p style="font-size:13px; color:var(--dim); font-style:italic;">* practice — committed after the resolution date; voided for the ledger by the look-ahead guard. Skill is earned per lane: weights move only after ≥5 resolved per domain.</p>`; }
+  else {
+    const [fid, leaf] = sel.split('.');
+    const f = fld(fid); const c = getC(f.c);
+    if(!leaf){ crumb=`Atlas › <b style="color:${c}">${f.name}</b>`;
+      h = `<h2 style="color:${c}">${f.name}</h2><div class="ep">${f.sub}</div><div class="breath">${f.breath}</div>`;
+      if(f.theses.length) h += `<div class="lbl">working beliefs · and what would change them</div>` + f.theses.map((t,i)=>`<div class="card link" onclick="go('${fid}.t${i}')"><div class="ch"><span>belief</span><span class="go">open ›</span></div><div class="ct"><b>${t.t}</b></div></div>`).join('');
+      if(f.forecasts.length) h += `<div class="lbl">forecasts</div>` + f.forecasts.map((fc,i)=>`<div class="card link" onclick="go('${fid}.f${i}')"><div class="ch"><span class="st ${fc.st}">${fc.st.toUpperCase()}</span><span class="go">open ›</span></div><div class="ct"><b>${fc.t}</b></div></div>`).join('');
+      h += `<div class="lbl">briefs &amp; deep dives</div>` + f.record.map((r,i)=>`<div class="card link" onclick="goPage('${r[2]}')"><div class="ch"><span>${r[0]}</span><span class="go">open ❖</span></div><div class="ct">${r[1]}</div></div>`).join('');
+      h += `<br>${pageLink('The field write-up — full page','fields')}`; }
+    else if(leaf[0]==='t'){ const t=f.theses[+leaf.slice(1)]; crumb=`Atlas › <span class="xlink" onclick="go('${fid}')" style="color:${c}">${f.name}</span> › <b>belief</b>`;
+      h = `<h2 style="font-size:23px;">${t.t}</h2><div class="ep" style="color:${c}">working belief · ${f.name}</div><p>${t.d}</p><div class="card"><div class="ch"><span>what would change this belief</span></div><div class="ct flip" style="font-size:13.5px;">${t.flip}</div></div>`; }
+    else if(leaf[0]==='f'){ const fc=f.forecasts[+leaf.slice(1)]; crumb=`The Spine › <span class="xlink" onclick="go('${fid}')" style="color:${c}">${f.name}</span> › <b>forecast</b>`;
+      h = `<h2 style="font-size:23px;">${fc.t}</h2><div class="ep"><span class="st ${fc.st}">${fc.st.toUpperCase()}</span></div><p>${fc.d}</p>` +
+        (fc.minds.length? `<div class="lbl">the minds</div><div class="minds">` + fc.minds.map(m=>`<span class="mind"><b>${m[0]}</b> ${m[1]}</span>`).join('') + `</div>`:'') +
+        (fc.links||[]).map(l=>pageLink(l[0],l[1])).join(' '); }
+    else { const r=f.record[+leaf.slice(1)]; goPage(r[2]); return; }
+  }
+  crumbEl.innerHTML = crumb; contentEl.innerHTML = h;
+  if(doReveal) applyReveal();
+}
+function drawThread(){
+  const svg=document.getElementById('thread'); if(!svg) return;
+  const nd=document.querySelector('#spine .node.sel')||document.querySelector('#spine .node.lv0');
+  const cm=document.getElementById('crumb');
+  const fl=document.querySelector('#rail .r-follow')||document.querySelector('#rail .r-h');
+  if(!nd||!cm||!fl){ svg.innerHTML=''; return; }
+  const a=nd.getBoundingClientRect(), b=cm.getBoundingClientRect(), c=fl.getBoundingClientRect();
+  const W=window.innerWidth, H=window.innerHeight;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.setAttribute('width',W); svg.setAttribute('height',H);
+  const ax=a.right-4, ay=a.top+a.height/2, bx=b.left+14, by=b.top+b.height/2, cx2=c.left-6, cy2=c.top+c.height/2;
+  svg.innerHTML=`<path d="M ${ax} ${ay} C ${ax+70} ${ay}, ${bx-60} ${by}, ${bx} ${by}"/>
+    <path d="M ${bx} ${by} C ${bx+(cx2-bx)*0.4} ${by}, ${cx2-80} ${cy2}, ${cx2} ${cy2}"/>
+    <circle cx="${ax}" cy="${ay}" r="2.6"/><circle cx="${cx2}" cy="${cy2}" r="2.6"/>`;
+  svg.querySelectorAll('path').forEach(pt=>{ try{ const L=pt.getTotalLength();
+    pt.style.animation='none'; pt.style.strokeDasharray=L; pt.style.strokeDashoffset=L;
+    pt.style.transition='stroke-dashoffset 1s var(--ease-expo)';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ pt.style.strokeDashoffset='0'; }));
+    setTimeout(()=>{ pt.style.strokeDasharray='3 7'; pt.style.strokeDashoffset=''; pt.style.animation=''; pt.style.transition=''; }, 1150);
+  }catch(e){} });
+}
+const _go=go; go=function(id){ _go(id); requestAnimationFrame(drawThread); };
+const _goPage=goPage; goPage=function(k){ _goPage(k); requestAnimationFrame(drawThread); };
+window.addEventListener('resize',()=>drawThread());
+document.getElementById('spine').addEventListener('scroll',()=>drawThread(),{passive:true});
+buildSpine(); render(); renderRail(); bootCascade(); requestAnimationFrame(drawThread);
+</script>
+
+</body>
+</html>
