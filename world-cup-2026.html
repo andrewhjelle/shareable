@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2026 FIFA World Cup — Bracket</title>
+<style>
+  :root {
+    --ink: #1a2236;
+    --ink2: #4a5568;
+    --muted: #94a3b8;
+    --line: #e2e8f0;
+    --line2: #cbd5e1;
+    --card: #ffffff;
+    --card-shadow: 0 1px 3px rgba(15, 23, 42, .04), 0 4px 14px rgba(15, 23, 42, .04);
+    --card-shadow-hover: 0 4px 14px rgba(15, 23, 42, .08), 0 12px 28px rgba(15, 23, 42, .08);
+    --gold: #a17017;
+    --gold2: #d4a23a;
+    --gold-bg: #fdf6e3;
+    --gold-glow: rgba(212, 162, 58, 0.28);
+    --accent: #1f4ea8;
+    --accent2: #3565c4;
+    --win: #16794d;
+    --win2: #1e9a63;
+    --winbg: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
+    --winbg-flat: #ecfdf5;
+    --connector: #cbd5e1;
+    --connector2: #94a3b8;
+    --conn-w: 16px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin:0; padding:0;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #eef2f8 0%, transparent 65%),
+      radial-gradient(900px 500px at 90% 100%, #f5e9d3 0%, transparent 60%),
+      linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font: 13px/1.45 "Inter", -apple-system, "Segoe UI", "Segoe UI Emoji", system-ui, Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header.top {
+    padding: 14px 24px 12px;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+    border-bottom: 1px solid var(--line);
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px;
+    position: relative;
+  }
+  header.top::before {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+    background: linear-gradient(90deg, #16794d 0%, #d4a23a 33%, #1f4ea8 66%, #c0392b 100%);
+  }
+  header.top h1 {
+    font: 800 22px/1.05 "Inter", "Segoe UI", system-ui;
+    margin: 0;
+    background: linear-gradient(180deg, #1a2236 0%, #3a4965 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.3px;
+  }
+  header.top h1::before { content: "🏆 "; -webkit-text-fill-color: initial; font-size: 18px; vertical-align: 1px; }
+  header.top .sub { color: var(--ink2); font-size: 12px; }
+  header.top .stamp { margin-left: auto; color: var(--muted); font-size: 11px; font-style: italic; }
+
+  .stripe {
+    background: linear-gradient(180deg, #fdf6e3 0%, #faedc8 100%);
+    border-bottom: 1px solid #ecd385;
+    padding: 8px 24px;
+    font-size: 12.5px; color: #6b4f0e;
+    display: flex; gap: 16px; flex-wrap: wrap; align-items: baseline;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.02);
+  }
+  .stripe b { color: var(--gold); font-weight: 800; letter-spacing: 0.3px; }
+  .stripe .next-list { color: var(--ink); font-weight: 500; }
+
+  main { padding: 10px 18px 30px; }
+
+  section { margin: 10px 0; }
+  section > h2 {
+    font: 800 12px/1.2 "Inter", "Segoe UI"; color: var(--ink2);
+    margin: 0; text-transform: uppercase; letter-spacing: 1.3px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  section > h2::after {
+    content: ""; display: inline-block; width: 50px; height: 2px;
+    background: linear-gradient(90deg, var(--gold2) 0%, transparent 100%);
+    border-radius: 2px;
+  }
+  section > .sub2 { color: var(--muted); font-size: 11px; margin: 2px 0 8px; }
+
+  .legend { display: flex; gap: 14px; align-items: center; font-size: 11px; color: var(--ink2); margin: 0 0 8px; }
+  .legend .chip { display: inline-flex; align-items: center; gap: 5px; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; border: 1px solid var(--line); }
+  .swatch.win { background: var(--winbg); border-color: var(--win); }
+  .swatch.next { background: var(--card); border: 1px solid var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+  .swatch.played { background: #eef1f6; }
+
+  /* === BRACKET === */
+  .bracket-wrap { overflow-x: auto; padding: 6px 0 16px; -webkit-overflow-scrolling: touch; }
+
+  /* Fixed row heights so the CSS connector lines line up.
+     R32 row = 100px. R16 spans 2 = 200px. QF spans 4 = 400px. SF spans 8 = 800px. */
+  .bracket {
+    display: grid;
+    grid-template-columns:
+      [r32L] 175px [r16L] 170px [qfL] 160px [sfL] 160px
+      [final] 195px
+      [sfR] 160px [qfR] 160px [r16R] 170px [r32R] 175px;
+    grid-template-rows: 28px repeat(8, 100px);
+    column-gap: 0;
+    row-gap: 0;
+    min-width: 1525px;
+    position: relative;
+  }
+
+  .rh {
+    grid-row: 1;
+    text-align: center;
+    font: 800 10px/1 "Inter", "Segoe UI"; color: var(--ink2);
+    text-transform: uppercase; letter-spacing: 1.3px;
+    padding: 8px 0 8px;
+    position: relative;
+  }
+  .rh::after {
+    content: ""; position: absolute; left: 20%; right: 20%; bottom: 2px; height: 1.5px;
+    background: linear-gradient(90deg, transparent 0%, var(--gold2) 50%, transparent 100%);
+    border-radius: 2px; opacity: 0.6;
+  }
+  .rh.final { color: var(--gold); }
+  .rh.final::after { background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 1; height: 2.5px; }
+  .rh.r32L { grid-column: r32L; } .rh.r16L { grid-column: r16L; }
+  .rh.qfL  { grid-column: qfL;  } .rh.sfL  { grid-column: sfL;  }
+  .rh.final{ grid-column: final;}
+  .rh.sfR  { grid-column: sfR;  } .rh.qfR  { grid-column: qfR;  }
+  .rh.r16R { grid-column: r16R; } .rh.r32R { grid-column: r32R; }
+
+  /* Match card */
+  .m {
+    background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+    padding: 5px 7px; margin: 4px 10px;
+    box-shadow: var(--card-shadow);
+    display: flex; flex-direction: column; gap: 1px;
+    align-self: center; position: relative; min-width: 0;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .m:hover { transform: translateY(-1px); box-shadow: var(--card-shadow-hover); z-index: 5; }
+  .m.played {
+    background: #eaecf1;
+    border-color: #c8cdd6;
+    opacity: 0.72;
+  }
+  .m.played:hover { opacity: 1; }
+  .m.played .nm { color: var(--ink2); }
+  .m.played .sc { color: var(--ink2); }
+  .m.played .pk-row { color: #8b97ad; }
+  .m.played .row.win {
+    background: #d8e7df;
+    opacity: 0.95;
+  }
+  .m.played .row.win .rk {
+    background: linear-gradient(180deg, #7fa896 0%, #5d8a76 100%);
+    border-color: #5d8a76;
+    box-shadow: none;
+  }
+  .m.played .row.win .nm,
+  .m.played .row.win .sc { color: #3d6855; }
+
+  .m.today {
+    border-color: var(--gold2);
+    box-shadow: 0 0 0 1.5px var(--gold2), 0 4px 16px var(--gold-glow);
+    background: linear-gradient(180deg, #fffefa 0%, #fdf6e3 100%);
+  }
+  .m.today::before {
+    content: "TODAY";
+    position: absolute; top: -10px; right: 8px;
+    background: linear-gradient(180deg, var(--gold2) 0%, var(--gold) 100%);
+    color: #fff;
+    font: 800 9px/1 "Inter", "Segoe UI"; padding: 4px 8px; border-radius: 99px;
+    letter-spacing: 0.8px;
+    box-shadow: 0 1px 3px rgba(184,134,43,0.4);
+    text-transform: uppercase;
+    z-index: 2;
+  }
+  .m.final-match {
+    background: linear-gradient(180deg, #fff8df 0%, #ffffff 70%);
+    border: 2px solid var(--gold2);
+    box-shadow: 0 0 0 1px var(--gold-glow), 0 6px 20px rgba(184,134,43,0.28), 0 2px 6px rgba(184,134,43,0.18);
+    padding: 10px 12px; border-radius: 10px;
+  }
+  .m.third-match { background: #fafbfd; border-style: dashed; opacity: 0.95; }
+
+  .when {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 9.5px; color: var(--muted); font-weight: 600; letter-spacing: 0.2px;
+    margin-bottom: 1px;
+  }
+  .when .ft { color: var(--ink2); text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px; }
+  .when .vn { color: var(--muted); font-weight: 400; font-style: italic; font-size: 9.5px; }
+
+  .row {
+    display: grid; grid-template-columns: 26px 1fr auto;
+    align-items: center; gap: 6px;
+    padding: 2px 3px; border-radius: 4px;
+  }
+  .row + .row { border-top: 1px solid #f1f5f9; }
+  .row.win { background: var(--winbg); border-radius: 4px; }
+  .row.win + .row, .row + .row.win { border-top: none; }
+  .row.empty { min-height: 20px; color: var(--muted); }
+  .row.empty .nm { color: var(--muted); font-weight: 500; font-style: italic; font-size: 10px; letter-spacing: 0.5px; }
+
+  .rk {
+    display: inline-block; min-width: 22px; text-align: center;
+    background: #f1f5f9; color: var(--ink2);
+    border: 1px solid var(--line);
+    font: 800 8.5px/1 "Inter", "Segoe UI"; padding: 3px 4px; border-radius: 3px;
+    letter-spacing: 0.2px;
+  }
+  .row.win .rk {
+    background: linear-gradient(180deg, var(--win2) 0%, var(--win) 100%);
+    color: #fff; border-color: var(--win);
+    box-shadow: 0 1px 2px rgba(22, 121, 77, 0.3);
+  }
+  .nm { font-weight: 600; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row.win .nm { color: var(--win); font-weight: 700; }
+  .row.out { opacity: 0.65; }
+  .row.out .nm { color: var(--ink2); text-decoration: line-through; text-decoration-color: rgba(0,0,0,.25); }
+  .sc { font-weight: 800; color: var(--ink); font-size: 13px; min-width: 12px; text-align: right; font-variant-numeric: tabular-nums; }
+  .row.win .sc { color: var(--win); }
+  .row.out .sc, .row.out .rk { color: var(--ink2); }
+
+  .pk-row { font-size: 9.5px; color: var(--gold); text-align: center; font-style: italic; margin-top: 1px; font-weight: 700; letter-spacing: 0.2px; }
+
+  .mlbl { display: none; }
+  .m.final-match .mlbl, .m.third-match .mlbl {
+    display: block;
+    position: absolute; top: -10px; left: 8px;
+    font: 800 10px/1 "Inter", "Segoe UI"; color: var(--gold); font-weight: 900; letter-spacing: 1.2px;
+    text-transform: uppercase;
+    background: #f4f7fb;
+    padding: 2px 8px; border-radius: 99px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border: 1px solid var(--line);
+  }
+  .m.third-match .mlbl { color: var(--ink2); border-color: var(--line2); }
+  .next-badge {
+    display: inline-block;
+    background: linear-gradient(180deg, var(--gold2) 0%, var(--gold) 100%);
+    color: #fff;
+    font: 800 9px/1 "Inter", "Segoe UI"; padding: 3px 6px; border-radius: 99px;
+    letter-spacing: 0.8px; vertical-align: middle; margin-left: 5px;
+    box-shadow: 0 1px 2px rgba(184,134,43,0.4);
+    text-transform: uppercase;
+  }
+
+  /* ===================== GRID PLACEMENT ===================== */
+  .r32-1 { grid-column: r32L; grid-row: 2; }
+  .r32-2 { grid-column: r32L; grid-row: 3; }
+  .r32-3 { grid-column: r32L; grid-row: 4; }
+  .r32-4 { grid-column: r32L; grid-row: 5; }
+  .r32-5 { grid-column: r32L; grid-row: 6; }
+  .r32-6 { grid-column: r32L; grid-row: 7; }
+  .r32-7 { grid-column: r32L; grid-row: 8; }
+  .r32-8 { grid-column: r32L; grid-row: 9; }
+
+  .r32-9  { grid-column: r32R; grid-row: 2; }
+  .r32-10 { grid-column: r32R; grid-row: 3; }
+  .r32-11 { grid-column: r32R; grid-row: 4; }
+  .r32-12 { grid-column: r32R; grid-row: 5; }
+  .r32-13 { grid-column: r32R; grid-row: 6; }
+  .r32-14 { grid-column: r32R; grid-row: 7; }
+  .r32-15 { grid-column: r32R; grid-row: 8; }
+  .r32-16 { grid-column: r32R; grid-row: 9; }
+
+  .r16-1 { grid-column: r16L; grid-row: 2 / span 2; }
+  .r16-2 { grid-column: r16L; grid-row: 4 / span 2; }
+  .r16-3 { grid-column: r16L; grid-row: 6 / span 2; }
+  .r16-4 { grid-column: r16L; grid-row: 8 / span 2; }
+  .r16-5 { grid-column: r16R; grid-row: 2 / span 2; }
+  .r16-6 { grid-column: r16R; grid-row: 4 / span 2; }
+  .r16-7 { grid-column: r16R; grid-row: 6 / span 2; }
+  .r16-8 { grid-column: r16R; grid-row: 8 / span 2; }
+
+  .qf-1 { grid-column: qfL; grid-row: 2 / span 4; }
+  .qf-2 { grid-column: qfL; grid-row: 6 / span 4; }
+  .qf-3 { grid-column: qfR; grid-row: 2 / span 4; }
+  .qf-4 { grid-column: qfR; grid-row: 6 / span 4; }
+
+  .sf-1 { grid-column: sfL; grid-row: 2 / span 8; }
+  .sf-2 { grid-column: sfR; grid-row: 2 / span 8; }
+
+  .final-match { grid-column: final; grid-row: 4 / span 4; }
+  .third-match { grid-column: final; grid-row: 8 / span 2; }
+  .trophy {
+    grid-column: final; grid-row: 2 / span 2;
+    align-self: center; text-align: center;
+    font-size: 48px;
+    filter: drop-shadow(0 4px 12px rgba(212, 162, 58, 0.5)) drop-shadow(0 1px 2px rgba(0,0,0,0.15));
+    animation: trophy-glow 3s ease-in-out infinite;
+  }
+  @keyframes trophy-glow {
+    0%, 100% { filter: drop-shadow(0 4px 12px rgba(212, 162, 58, 0.5)) drop-shadow(0 1px 2px rgba(0,0,0,0.15)); }
+    50% { filter: drop-shadow(0 4px 18px rgba(212, 162, 58, 0.8)) drop-shadow(0 1px 2px rgba(0,0,0,0.15)); }
+  }
+
+  /* ===================== CONNECTOR LINES ===================== */
+  /* All sized off card-row height: R32 row = 130px. R16 = 260. QF = 520. SF = 1040 (no QF→SF gap on each side because Final connects). */
+
+  /* --- LEFT side: card's ::after goes to the right into the gap --- */
+  /* Top of pair: L-bracket going down */
+  .r32-1::after, .r32-3::after, .r32-5::after, .r32-7::after,
+  .r16-1::after, .r16-3::after,
+  .qf-1::after {
+    content: ""; position: absolute;
+    left: 100%; top: 50%; width: var(--conn-w);
+    border-top: 1.5px solid var(--connector);
+    border-right: 1.5px solid var(--connector);
+  }
+  /* Bottom of pair: L-bracket going up */
+  .r32-2::after, .r32-4::after, .r32-6::after, .r32-8::after,
+  .r16-2::after, .r16-4::after,
+  .qf-2::after {
+    content: ""; position: absolute;
+    left: 100%; bottom: 50%; width: var(--conn-w);
+    border-bottom: 1.5px solid var(--connector);
+    border-right: 1.5px solid var(--connector);
+  }
+  /* Heights: distance from this card's mid to the partner card's mid */
+  .r32-1::after, .r32-2::after, .r32-3::after, .r32-4::after,
+  .r32-5::after, .r32-6::after, .r32-7::after, .r32-8::after { height: 100px; }
+  .r16-1::after, .r16-2::after, .r16-3::after, .r16-4::after { height: 200px; }
+  .qf-1::after,  .qf-2::after  { height: 400px; }
+
+  /* --- LEFT side: receiving card's ::before is a horizontal stub coming from the left --- */
+  .r16-1::before, .r16-2::before, .r16-3::before, .r16-4::before,
+  .qf-1::before,  .qf-2::before,
+  .sf-1::before {
+    content: ""; position: absolute;
+    right: 100%; top: 50%; width: var(--conn-w); height: 1.5px;
+    background: var(--connector);
+  }
+  /* SF → Final: horizontal line from SF right edge to Final left edge */
+  .sf-1::after {
+    content: ""; position: absolute;
+    left: 100%; top: 50%; width: calc(100% + 14px); height: 1.5px;
+    background: var(--connector);
+  }
+
+  /* --- RIGHT side: mirror everything --- */
+  .r32-9::before,  .r32-11::before, .r32-13::before, .r32-15::before,
+  .r16-5::before,  .r16-7::before,
+  .qf-3::before {
+    content: ""; position: absolute;
+    right: 100%; top: 50%; width: var(--conn-w);
+    border-top: 1.5px solid var(--connector);
+    border-left: 1.5px solid var(--connector);
+  }
+  .r32-10::before, .r32-12::before, .r32-14::before, .r32-16::before,
+  .r16-6::before,  .r16-8::before,
+  .qf-4::before {
+    content: ""; position: absolute;
+    right: 100%; bottom: 50%; width: var(--conn-w);
+    border-bottom: 1.5px solid var(--connector);
+    border-left: 1.5px solid var(--connector);
+  }
+  .r32-9::before, .r32-10::before, .r32-11::before, .r32-12::before,
+  .r32-13::before, .r32-14::before, .r32-15::before, .r32-16::before { height: 100px; }
+  .r16-5::before, .r16-6::before, .r16-7::before, .r16-8::before { height: 200px; }
+  .qf-3::before, .qf-4::before { height: 400px; }
+
+  .r16-5::after, .r16-6::after, .r16-7::after, .r16-8::after,
+  .qf-3::after,  .qf-4::after,
+  .sf-2::after {
+    content: ""; position: absolute;
+    left: 100%; top: 50%; width: var(--conn-w); height: 1.5px;
+    background: var(--connector);
+  }
+  /* Hmm — right-side R16/QF should have ::after on the OPPOSITE side */
+  /* Override: right-side cards' "out-line" goes LEFT (toward next column to the left) */
+  .r16-5::after, .r16-6::after, .r16-7::after, .r16-8::after,
+  .qf-3::after,  .qf-4::after {
+    left: auto; right: 100%;
+  }
+  /* Right SF → Final: from SF's left edge backward to Final's right edge */
+  .sf-2::before {
+    content: ""; position: absolute;
+    right: 100%; top: 50%; width: calc(100% + 14px); height: 1.5px;
+    background: var(--connector);
+  }
+  /* clear sf-2's ::after that we don't actually want */
+  .sf-2::after { display: none; }
+
+  /* ===================== UPSETS / FOOTER ===================== */
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 12px; }
+  .fact {
+    background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 14px; font-size: 12.5px; line-height: 1.55;
+    box-shadow: var(--card-shadow);
+    transition: transform .15s ease, box-shadow .15s ease;
+    border-left: 3px solid var(--gold2);
+  }
+  .fact:hover { transform: translateY(-1px); box-shadow: var(--card-shadow-hover); }
+  .fact b { color: var(--gold); font-weight: 800; }
+
+  footer {
+    margin-top: 28px; padding: 16px 32px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px; color: var(--muted); line-height: 1.7;
+    background: linear-gradient(180deg, #fbfcfe 0%, #f4f7fb 100%);
+  }
+  footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  footer a:hover { text-decoration: underline; color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>2026 FIFA World Cup</h1>
+  <div class="sub">USA · Canada · Mexico &nbsp;·&nbsp; June 11 – July 19, 2026 &nbsp;·&nbsp; Final: MetLife Stadium, NJ</div>
+  <div class="stamp">Data as of Tue Jun 30, 2026 · all times local to the venue</div>
+</header>
+
+<div class="stripe">
+  <span><b>UP NEXT TODAY:</b></span>
+  <span class="next-list">Ivory Coast v Norway <b>12:00 PM</b> (Dallas) · France v Sweden <b>4:00 PM</b> (MetLife) · Mexico v Ecuador <b>8:00 PM</b> (Azteca)</span>
+</div>
+
+<main>
+
+<section>
+  <h2>Knockout Bracket · Round of 32 → Final</h2>
+  <p class="sub2">Mirrored single-elimination bracket. Numbers in chips = current FIFA world ranking.</p>
+  <div class="legend">
+    <span class="chip"><span class="swatch played"></span> Played</span>
+    <span class="chip"><span class="swatch win"></span> Advanced</span>
+    <span class="chip"><span class="swatch next"></span> Up next</span>
+  </div>
+
+  <div class="bracket-wrap">
+    <div class="bracket">
+
+      <div class="rh r32L">Round of 32</div>
+      <div class="rh r16L">Round of 16</div>
+      <div class="rh qfL">Quarterfinal</div>
+      <div class="rh sfL">Semifinal</div>
+      <div class="rh final">Final · 7/19</div>
+      <div class="rh sfR">Semifinal</div>
+      <div class="rh qfR">Quarterfinal</div>
+      <div class="rh r16R">Round of 16</div>
+      <div class="rh r32R">Round of 32</div>
+
+      <!-- ============ LEFT R32 ============ -->
+
+      <div class="m r32-1 played">
+        <span class="mlbl">M74</span>
+        <div class="when"><span class="ft">Full Time · Mon 6/29</span><span class="vn">Boston</span></div>
+        <div class="row out"><span class="rk">10</span><span class="nm">Germany</span><span class="sc">1</span></div>
+        <div class="row win"><span class="rk">41</span><span class="nm">Paraguay</span><span class="sc">1</span></div>
+        <div class="pk-row">Paraguay won 4–3 on penalties</div>
+      </div>
+
+      <div class="m r32-2 today">
+        <span class="mlbl">M77</span>
+        <div class="when"><span>Tue 6/30 · 4:00 PM</span><span class="vn">MetLife NJ</span></div>
+        <div class="row"><span class="rk">3</span><span class="nm">France</span><span class="sc"></span></div>
+        <div class="row"><span class="rk">38</span><span class="nm">Sweden</span><span class="sc"></span></div>
+      </div>
+
+      <div class="m r32-3 played">
+        <span class="mlbl">M73</span>
+        <div class="when"><span class="ft">Full Time · Sun 6/28</span><span class="vn">SoFi LA</span></div>
+        <div class="row out"><span class="rk">60</span><span class="nm">South Africa</span><span class="sc">0</span></div>
+        <div class="row win"><span class="rk">30</span><span class="nm">Canada</span><span class="sc">1</span></div>
+        <div class="pk-row">Eustáquio 90+2'</div>
+      </div>
+
+      <div class="m r32-4 played">
+        <span class="mlbl">M75</span>
+        <div class="when"><span class="ft">Full Time · Mon 6/29</span><span class="vn">Monterrey</span></div>
+        <div class="row out"><span class="rk">8</span><span class="nm">Netherlands</span><span class="sc">1</span></div>
+        <div class="row win"><span class="rk">7</span><span class="nm">Morocco</span><span class="sc">1</span></div>
+        <div class="pk-row">Morocco won 3–2 on penalties</div>
+      </div>
+
+      <div class="m r32-5">
+        <span class="mlbl">M83</span>
+        <div class="when"><span>Thu 7/2 · 6:00 PM</span><span class="vn">Toronto</span></div>
+        <div class="row"><span class="rk">5</span><span class="nm">Portugal</span><span class="sc"></span></div>
+        <div class="row"><span class="rk">11</span><span class="nm">Croatia</span><span class="sc"></span></div>
+      </div>
+
+      <div class="m r32-6">
+        <span class="mlbl">M84</span>
+        <div class="when"><span>Thu 7/2 · 2:00 PM</span><span class="vn">SoFi LA</span></div>
+        <div class="row"><span class="rk">2</span><span class="nm">Spain</span><span class="sc"></span></div>
+        <div class="row"><span class="rk">24</span><span class="nm">Austria</span><span class="sc"></span></div>
+      </div>
+
+      <div class="m r32-7">
+        <span class="mlbl">M81</span>
+        <div class="when"><span>Wed 7/1 · 7:00 PM</span><span class="vn">Levi's SF</span></div>
+        <div class="row"><span class="rk">17</span><span class="nm">United States</span><span class="sc"></span></div>
+        <div class="row"><span class="rk">64</span><span class="nm">Bosnia &amp; Herz.</span><span class="sc"></span></div>
+      </div>
+
+      <div class="m r32-8">
+        <span class="mlbl">M82</span>
+        <div class="when"><span>Wed 7/1 · 3:00 PM</span><span class="vn">Seattle</span></div>
+        <div class="row"><span class="rk">9</span><span class="nm">Belgium</span><span class="sc"></span></div>
+        <div class="row"><span class="rk">15</span><span class="nm">Senegal</span><span class="sc"></span></div>
+      </div>
+
+      <!-- ============ LEFT R16 ============ -->
+
+      <div class="m r16-1">
+        <span class="mlbl">M89</span>
+        <div class="when"><span>Sat 7/4 · 4:00 PM</span><span class="vn">Houston</span></div>
+        <div class="row"><span class="rk">41</span><span class="nm">Paraguay</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <div class="m r16-2">
+        <span class="mlbl">M90</span>
+        <div class="when"><span>Sat 7/4 · 12:00 PM</span><span class="vn">Houston</span></div>
+        <div class="row"><span class="rk">30</span><span class="nm">Canada</span></div>
+        <div class="row"><span class="rk">7</span><span class="nm">Morocco</span></div>
+      </div>
+
+      <div class="m r16-3">
+        <span class="mlbl">M93</span>
+        <div class="when"><span>Mon 7/6 · 2:00 PM</span><span class="vn">Arlington</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <div class="m r16-4">
+        <span class="mlbl">M94</span>
+        <div class="when"><span>Mon 7/6 · 7:00 PM</span><span class="vn">Toronto</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <!-- ============ LEFT QF ============ -->
+
+      <div class="m qf-1">
+        <span class="mlbl">M97</span>
+        <div class="when"><span>Thu 7/9 · 3:00 PM</span><span class="vn">Foxborough</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <div class="m qf-2">
+        <span class="mlbl">M98</span>
+        <div class="when"><span>Fri 7/10 · 2:00 PM</span><span class="vn">SoFi LA</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <!-- ============ LEFT SF ============ -->
+
+      <div class="m sf-1">
+        <span class="mlbl">M101</span>
+        <div class="when"><span>Tue 7/14 · 2:00 PM</span><span class="vn">Arlington</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <!-- ============ CENTER ============ -->
+
+      <div class="trophy">🏆</div>
+
+      <div class="m final-match">
+        <span class="mlbl">WORLD CUP FINAL</span>
+        <div class="when"><span style="color:var(--gold);">Sun 7/19 · 2:00 PM</span><span class="vn">MetLife NJ</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <div class="m third-match">
+        <span class="mlbl">3rd PLACE</span>
+        <div class="when"><span>Sat 7/18 · 4:00 PM</span><span class="vn">Hard Rock Miami</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <!-- ============ RIGHT SF ============ -->
+
+      <div class="m sf-2">
+        <span class="mlbl">M102</span>
+        <div class="when"><span>Wed 7/15 · 2:00 PM</span><span class="vn">Atlanta</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <!-- ============ RIGHT QF ============ -->
+
+      <div class="m qf-3">
+        <span class="mlbl">M99</span>
+        <div class="when"><span>Sat 7/11 · 4:00 PM</span><span class="vn">Hard Rock Miami</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <div class="m qf-4">
+        <span class="mlbl">M100</span>
+        <div class="when"><span>Sat 7/11 · 8:00 PM</span><span class="vn">Arrowhead KC</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <!-- ============ RIGHT R16 ============ -->
+
+      <div class="m r16-5">
+        <span class="mlbl">M91</span>
+        <div class="when"><span>Sun 7/5 · 3:00 PM</span><span class="vn">Mexico City</span></div>
+        <div class="row"><span class="rk">6</span><span class="nm">Brazil</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <div class="m r16-6">
+        <span class="mlbl">M92</span>
+        <div class="when"><span>Sun 7/5 · 7:00 PM</span><span class="vn">Mexico City</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <div class="m r16-7">
+        <span class="mlbl">M95</span>
+        <div class="when"><span>Tue 7/7 · 11:00 AM</span><span class="vn">Vancouver</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <div class="m r16-8">
+        <span class="mlbl">M96</span>
+        <div class="when"><span>Tue 7/7 · 1:00 PM</span><span class="vn">Vancouver</span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+        <div class="row empty"><span></span><span class="nm">—</span><span></span></div>
+      </div>
+
+      <!-- ============ RIGHT R32 ============ -->
+
+      <div class="m r32-9 played">
+        <span class="mlbl">M76</span>
+        <div class="when"><span class="ft">Full Time · Mon 6/29</span><span class="vn">Houston</span></div>
+        <div class="row win"><span class="rk">6</span><span class="nm">Brazil</span><span class="sc">2</span></div>
+        <div class="row out"><span class="rk">18</span><span class="nm">Japan</span><span class="sc">1</span></div>
+        <div class="pk-row">Casemiro 56', Martinelli 90+5'</div>
+      </div>
+
+      <div class="m r32-10 today">
+        <span class="mlbl">M78</span>
+        <div class="when"><span>Tue 6/30 · 12:00 PM</span><span class="vn">Dallas</span></div>
+        <div class="row"><span class="rk">33</span><span class="nm">Ivory Coast</span><span class="sc"></span></div>
+        <div class="row"><span class="rk">31</span><span class="nm">Norway</span><span class="sc"></span></div>
+      </div>
+
+      <div class="m r32-11 today">
+        <span class="mlbl">M79</span>
+        <div class="when"><span>Tue 6/30 · 8:00 PM</span><span class="vn">Estadio Azteca</span></div>
+        <div class="row"><span class="rk">14</span><span class="nm">Mexico</span><span class="sc"></span></div>
+        <div class="row"><span class="rk">23</span><span class="nm">Ecuador</span><span class="sc"></span></div>
+      </div>
+
+      <div class="m r32-12">
+        <span class="mlbl">M80</span>
+        <div class="when"><span>Wed 7/1 · 11:00 AM</span><span class="vn">Atlanta</span></div>
+        <div class="row"><span class="rk">4</span><span class="nm">England</span><span class="sc"></span></div>
+        <div class="row"><span class="rk">46</span><span class="nm">DR Congo</span><span class="sc"></span></div>
+      </div>
+
+      <div class="m r32-13">
+        <span class="mlbl">M86</span>
+        <div class="when"><span>Fri 7/3 · 5:00 PM</span><span class="vn">Hard Rock Miami</span></div>
+        <div class="row"><span class="rk">1</span><span class="nm">Argentina</span><span class="sc"></span></div>
+        <div class="row"><span class="rk">67</span><span class="nm">Cape Verde</span><span class="sc"></span></div>
+      </div>
+
+      <div class="m r32-14">
+        <span class="mlbl">M88</span>
+        <div class="when"><span>Fri 7/3 · 1:00 PM</span><span class="vn">Dallas</span></div>
+        <div class="row"><span class="rk">27</span><span class="nm">Australia</span><span class="sc"></span></div>
+        <div class="row"><span class="rk">29</span><span class="nm">Egypt</span><span class="sc"></span></div>
+      </div>
+
+      <div class="m r32-15">
+        <span class="mlbl">M85</span>
+        <div class="when"><span>Thu 7/2 · 10:00 PM</span><span class="vn">Vancouver</span></div>
+        <div class="row"><span class="rk">19</span><span class="nm">Switzerland</span><span class="sc"></span></div>
+        <div class="row"><span class="rk">28</span><span class="nm">Algeria</span><span class="sc"></span></div>
+      </div>
+
+      <div class="m r32-16">
+        <span class="mlbl">M87</span>
+        <div class="when"><span>Fri 7/3 · 8:30 PM</span><span class="vn">Arrowhead KC</span></div>
+        <div class="row"><span class="rk">13</span><span class="nm">Colombia</span><span class="sc"></span></div>
+        <div class="row"><span class="rk">73</span><span class="nm">Ghana</span><span class="sc"></span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Big upsets so far</h2>
+  <p class="sub2">Through 4 of 16 R32 matches.</p>
+  <div class="facts">
+    <div class="fact"><b>Paraguay (41) over Germany (10)</b> on penalties — biggest ranking upset of R32 so far.</div>
+    <div class="fact"><b>Morocco (7) over Netherlands (8)</b> on penalties — the 2022 semifinalist's deep-run vibe is back.</div>
+    <div class="fact"><b>Canada (30) over South Africa (60)</b> — first ever WC knockout-stage win for Canada; Eustáquio scored in stoppage time.</div>
+    <div class="fact"><b>Brazil (6) past Japan (18) 2–1</b> — Japan led 1–0 at halftime; Casemiro equalized, Martinelli won it in 90+5'.</div>
+  </div>
+</section>
+
+<footer>
+  Sources:
+  <a href="https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_knockout_stage">Wikipedia · 2026 FIFA WC knockout stage</a> ·
+  <a href="https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/knockout-stage-match-schedule-bracket">FIFA · official bracket</a> ·
+  <a href="https://www.cbssports.com/soccer/news/world-cup-2026-schedule-times-dates/">CBS · knockout schedule</a> ·
+  <a href="https://www.espn.com/soccer/story/_/id/46664763/fifa-mens-top-50-world-rankings">ESPN · FIFA Top 50 (Jun 2026)</a>
+  <br>
+  All kickoff times shown as LOCAL VENUE TIME (matches the official FIFA bracket). For Chicago: Houston/Dallas/Arlington/KC = same as Chicago; Mexico City = +1hr; Eastern venues (Atlanta/Boston/Foxborough/Toronto/MetLife/Miami) = -1hr; Pacific venues (SoFi LA/Vancouver/Seattle) = +2hr. Rankings: FIFA/Coca-Cola Men's World Ranking, 11 June 2026 update. Say "update the World Cup bracket" any time to refresh.
+</footer>
+
+</main>
+</body>
+</html>
