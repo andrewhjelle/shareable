@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Roof / Ceiling Leak — Investigation Guide</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f0;
+    color: #2d2d2d;
+    line-height: 1.55;
+    padding: 20px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 1.9rem;
+    border-bottom: 3px solid #1a5276;
+    padding-bottom: 10px;
+    margin-bottom: 6px;
+    color: #1a5276;
+  }
+  .subtitle {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 22px;
+    font-style: italic;
+  }
+  h2 {
+    color: #1a5276;
+    font-size: 1.35rem;
+    margin: 28px 0 12px;
+    border-bottom: 2px solid #d0d7de;
+    padding-bottom: 6px;
+  }
+  h3 { color: #1a5276; font-size: 1.05rem; margin: 18px 0 8px; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin: 12px 0 20px;
+    border-bottom: 2px solid #d0d7de;
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    padding: 12px 22px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4a5568;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s ease;
+  }
+  .tab-btn:hover { background: #eef1f6; color: #1a5276; }
+  .tab-btn.active {
+    color: #1a5276;
+    border-bottom-color: #1a5276;
+    background: #fff;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .now-box, .info-box, .warn-box {
+    padding: 14px 20px;
+    margin-bottom: 24px;
+    border-radius: 0 8px 8px 0;
+    border-left: 5px solid #f0ad4e;
+    background: #fff3cd;
+  }
+  .info-box { border-left-color: #4a90c2; background: #e7f0f8; }
+  .warn-box { border-left-color: #dc3545; background: #f8d7da; }
+  .now-box h3, .info-box h3, .warn-box h3 { margin-bottom: 8px; }
+  .now-box h3 { color: #856404; }
+  .info-box h3 { color: #1a5276; }
+  .warn-box h3 { color: #721c24; }
+  .now-box ol, .info-box ol, .warn-box ul { margin-left: 22px; }
+  .now-box li, .info-box li, .warn-box li { margin-bottom: 4px; }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border-left: 5px solid #1a5276;
+  }
+  .card.problem-a { border-left-color: #8e6d1f; }
+  .card.problem-b { border-left-color: #b45309; }
+  .card.problem-c { border-left-color: #146c43; }
+  .card h3 { font-size: 1.15rem; color: #1a2236; margin-bottom: 10px; }
+  .card .meta {
+    display: inline-block;
+    background: #eef1f6;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    color: #4a5568;
+    margin-left: 10px;
+    font-weight: 600;
+  }
+  .card ul, .card ol { margin: 8px 0 12px 22px; }
+  .card li { margin-bottom: 4px; }
+  .card .label {
+    font-weight: 700;
+    color: #1a5276;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    margin-top: 12px;
+    margin-bottom: 4px;
+  }
+
+  .step-list {
+    background: #fff;
+    border: 1px solid #d0d7de;
+    border-radius: 10px;
+    padding: 0;
+    margin: 16px 0 22px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    counter-reset: stp;
+  }
+  .step-item {
+    padding: 16px 22px 16px 68px;
+    border-bottom: 1px solid #eef1f6;
+    position: relative;
+    counter-increment: stp;
+  }
+  .step-item:last-child { border-bottom: none; }
+  .step-item::before {
+    content: counter(stp);
+    position: absolute;
+    left: 20px;
+    top: 16px;
+    background: #1a5276;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+  .step-item .step-title {
+    font-weight: 700;
+    color: #1a2236;
+    font-size: 1.02rem;
+    margin-bottom: 4px;
+  }
+  .step-item .step-time {
+    color: #7a706a;
+    font-size: 0.82rem;
+    font-style: italic;
+    margin-left: 6px;
+  }
+  .step-item .step-body {
+    color: #4a5568;
+    font-size: 0.92rem;
+    margin-top: 4px;
+  }
+  .step-item .step-body ul { margin: 4px 0 4px 20px; }
+  .step-item .step-body li { margin-bottom: 3px; }
+  .step-item .step-body strong { color: #1a2236; }
+
+  .table-wrap {
+    overflow-x: auto;
+    margin-top: 14px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #d0d7de;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th, td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #eef1f6;
+    text-align: left;
+    font-size: 0.9rem;
+    vertical-align: top;
+  }
+  th {
+    background: #eef1f6;
+    color: #1a2236;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .hyp-block {
+    background: #fff;
+    border: 1px solid #d0d7de;
+    border-radius: 10px;
+    margin: 14px 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  .hyp-header {
+    background: #eef1f6;
+    padding: 10px 16px;
+    font-weight: 700;
+    color: #1a5276;
+    border-bottom: 1px solid #d0d7de;
+    font-size: 0.98rem;
+  }
+  .hyp-body { padding: 12px 16px; }
+  .hyp-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px dashed #eef1f6;
+    font-size: 0.9rem;
+  }
+  .hyp-row:last-child { border-bottom: none; }
+  .hyp-tag {
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-align: center;
+    height: fit-content;
+  }
+  .tag-for { background: #d4edda; color: #155724; }
+  .tag-against { background: #f8d7da; color: #721c24; }
+  .tag-test { background: #fff3cd; color: #856404; }
+  .tag-falsify { background: #d0e6f7; color: #1a5276; }
+
+  .photo-note {
+    background: #fff;
+    border-left: 4px solid #b45309;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 0.9rem;
+    border-radius: 0 6px 6px 0;
+  }
+  .photo-note strong { color: #b45309; }
+
+  .callout {
+    background: #eef1f6;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    margin: 12px 0;
+    color: #4a5568;
+  }
+  .callout strong { color: #1a2236; }
+
+  .neighbor-form {
+    background: #fff;
+    border: 1px dashed #d0d7de;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.9rem;
+    color: #7a706a;
+    font-style: italic;
+  }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid #d0d7de;
+    color: #7a706a;
+    font-size: 0.85rem;
+    text-align: center;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<h1>Roof / Ceiling Leak — Investigation Guide</h1>
+<p class="subtitle">Investigator mode: don't jump to conclusions. Form specific hypotheses. Test one at a time. Watch what the next rain actually does.</p>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab(1)">Today's Plan</button>
+  <button class="tab-btn" onclick="showTab(2)">Investigation Notes</button>
+</div>
+
+<!-- ============ TAB 1: TODAY'S PLAN ============ -->
+<div class="tab-content active" id="tab1-content">
+
+  <div class="now-box">
+    <h3>Setup — do these before starting</h3>
+    <ol>
+      <li><strong>Kill the breaker</strong> to the 2nd-floor bathroom fan/light circuit. Confirm with the wall switch.</li>
+      <li><strong>Set up the Solar Seal cure test in parallel</strong> — bead onto a scrap of cardboard, sit somewhere safe, check tomorrow morning. Fresh cures clear + firm in 24 hrs; dead product stays hazy or tacky.</li>
+      <li><strong>Review the Materials & Tools list below</strong> and place any orders you don't already have covered.</li>
+    </ol>
+  </div>
+
+  <h2>Materials & Tools — order in this sequence</h2>
+
+  <h3>1. Order today · arrives with borescope Mon (~$26)</h3>
+  <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 8px;">Priority: HIGH. These unblock Phase 2 fixes.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Item</th><th>~$</th><th>Used in</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Deflect-o Supurr-Vent 4" wall vent cap</strong></td><td>$20</td><td>Vent-cap swap (Phase 2)</td></tr>
+        <tr><td><strong>Fiberglass mesh tape, 2" × 1 roll</strong></td><td>$6</td><td>Corner-crack fill (only if Phase 2 confirms crack is water path)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2. Order if Phase 2 fixes don't stop the leaks (~$150)</h3>
+  <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 8px;">Priority: MEDIUM, contingent. These enable hose-test + exploratory drywall cuts. Delay if you want to see whether Phase 2 solves it first.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Item</th><th>~$</th><th>Used in</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Stud finder w/ live-wire detection</strong> — Franklin ProSensor 710 or Zircon MT6</td><td>$30-50</td><td>Drywall cut: locate studs</td></tr>
+        <tr><td><strong>6-mil plastic sheeting, 10'×25' roll</strong></td><td>$18</td><td>Drywall cut: dust containment</td></tr>
+        <tr><td><strong>Paper drop cloths, 3-pack</strong></td><td>$12</td><td>Drywall cut: floor protection</td></tr>
+        <tr><td><strong>3M 6200 P100 respirator + P100 filter cartridges</strong></td><td>$40</td><td>Drywall cut + mold: PPE</td></tr>
+        <tr><td><strong>Shop vac HEPA filter bag</strong> — verify your shop vac model</td><td>$15</td><td>Drywall cut: fine-dust capture</td></tr>
+        <tr><td><strong>Drywall patch supplies</strong> — joint compound, drywall tape, putty knife, 220-grit sanding sponge</td><td>$25</td><td>Patch after inspection</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>3. Only if you actually find mold (~$36-43)</h3>
+  <p style="font-size: 0.9rem; color: #4a5568; margin-bottom: 8px;">Priority: contingent on inspection finding. Don't order these speculatively.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Item</th><th>~$</th><th>Used in</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Disposable Tyvek coveralls, 2-pack</strong></td><td>$18</td><td>Mold cleanup</td></tr>
+        <tr><td><strong>RMR-86 or Concrobium Mold Control</strong></td><td>$18-25</td><td>Mold cleanup</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details style="margin-top: 20px; font-size: 0.88rem;">
+    <summary style="cursor: pointer; color: #4a5568; font-weight: 600;">Reference: already have / small stuff you'll grab from around the house</summary>
+    <div style="margin-top: 10px; padding: 10px 14px; background: #eef1f6; border-radius: 6px; color: #4a5568;">
+      <strong>Already own:</strong> Caulk gun · Solar Seal (test first) · wire brush · nitrile gloves · painter's tape · safety glasses · alcohol · moisture meter · headlamp · Ryobi ONE+ multi-tool w/ cutting blade · borescope (arriving Mon)<br><br>
+      <strong>Grab from around the house:</strong> Screwdriver (Phillips + flathead) · tape measure · utility knife · shop vac · pencil · garden hose w/ spray nozzle · camera/phone · notepad · bucket + towels · ladder
+    </div>
+  </details>
+
+  <h2>Sequential activities (~2-3 hours total, dry morning is optimal)</h2>
+
+  <div class="step-list">
+    <div class="step-item">
+      <div class="step-title">Ladder up to the flat top roof — investigation pass<span class="step-time">30-45 min</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> ladder · camera/phone · painter's tape · notepad</p>
+        You can walk the roof. Take a lot of photos. Do NOT patch or apply sealant on this pass — you're diagnosing, not fixing.
+        <ul>
+          <li><strong>Parapet coping</strong> — walk the perimeter. Photograph every seam where two sections of metal cap meet, and every corner. Look for gaps, lifted metal, cracked or missing sealant.</li>
+          <li><strong>Directly above the corner-crack</strong> — locate where you are on the roof relative to the wall crack below. Photograph the coping and roof surface in a ~3ft radius.</li>
+          <li><strong>Field membrane</strong> — walk the whole surface. Look for tears, bubbles, seams pulling apart, blisters, or worn spots. Especially at any penetration (pipes, HVAC, drains).</li>
+          <li><strong>Drains / scuppers</strong> — clear or clogged? Any debris trails?</li>
+          <li><strong>Ponding evidence</strong> — dark rings, discoloration, sediment lines, or debris where standing water evaporated. These are where water sits after every rain.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-title">Balcony walk-through<span class="step-time">15 min</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> camera/phone · painter's tape · notepad</p>
+        <ul>
+          <li>Photograph the whole balcony surface. Look for membrane damage, blisters, cracks.</li>
+          <li>Where the balcony surface meets any wall: is flashing running up under the siding/stucco? Any gaps or lifted flashing?</li>
+          <li>Find the drain/scupper. Blocked?</li>
+          <li>Any ponding spots — mark with painter's tape or landmark-photograph so you can check them after the next rain.</li>
+          <li>If the corner crack is reachable from the balcony, photograph it from above — see if it opens wider higher up and whether it connects to a coping seam.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-title">Attic pass with headlamp<span class="step-time">15-20 min</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> headlamp · camera/phone · moisture meter · notepad</p>
+        Dry conditions let you see old vs fresh damage.
+        <ul>
+          <li>Above the 2nd-floor bathroom + window area: look for wet insulation, drip trails on rafters or sheathing, staining.</li>
+          <li>Fresh (dark, damp) vs old (dry, chalky, stained) — matters a lot.</li>
+          <li>Trace the wall cavity down from the corner crack area — can you see where the crack lines up inside?</li>
+          <li>Bathroom fan duct: connected at both ends? Sagging? Insulated?</li>
+          <li>Photograph anything suspicious.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-title">Interior fan — disassemble + clean<span class="step-time">30-45 min</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> screwdriver (Phillips) · shop vac w/ crevice tool · dish soap + old toothbrush · rags · nitrile gloves · camera/phone</p>
+        Breaker is off. Fan is functional; the "black" from photos was probably dust/lint, not mold. Clean it up while you're in there.
+        <ul>
+          <li><strong>Remove the grille</strong> — usually pinch-clips inside: squeeze the two wire clips together and the grille drops.</li>
+          <li><strong>Vacuum</strong> the housing and blade with crevice tool.</li>
+          <li>If the fan blade unscrews from the motor shaft: pull it, wash in warm soapy water, dry thoroughly.</li>
+          <li>Wipe housing interior with a damp (not wet) cloth.</li>
+          <li>Wash grille in the sink with dish soap + old toothbrush for the louvers.</li>
+          <li><strong>Photograph the model # / sticker</strong> on the motor housing or top plate — useful even if not replacing.</li>
+          <li><strong>Investigate the black tape on the bulb socket</strong> — photograph close-up. If comfortable, unwrap. Look for cracked socket, damaged wiring. If socket is cracked, replace ($5 part). If underneath is fine, retape neatly.</li>
+          <li>Air-dry everything 30+ min before reassembly.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-title">Exterior wall vent cap — remove, measure, photograph<span class="step-time">15 min</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> screwdriver (Phillips) · utility knife · tape measure · camera/phone · ladder</p>
+        Vent #1 (the bathroom fan cap). 4 screws. Pry gently — if stuck with old caulk, score the perimeter with a utility knife.
+        <ul>
+          <li><strong>Measure the inside diameter</strong> of the round pipe running into the wall. Confirm 4" (or 3"/6"). This is the number you need to lock in the replacement cap order.</li>
+          <li>Photograph the vent chamber, damper flap, and duct interior.</li>
+          <li>Clear any debris (nesting material, lint, broken damper parts).</li>
+          <li>Note the damper flap state: intact, warped, missing, stuck open?</li>
+          <li>Look at the perimeter behind the cap: is there flashing / tar paper / house wrap wrapped into the opening? Any visible gaps in the sheathing?</li>
+          <li>Reinstall the old cap loosely for now — you'll swap when new cap arrives Mon.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-title">Interior moisture-meter pass<span class="step-time">10-15 min</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> moisture meter · painter's tape · notepad · camera/phone</p>
+        <ul>
+          <li>Map the wet zone around the fan opening ceiling — mark high readings with painter's tape or note distance from fixture.</li>
+          <li>Map the wet zone around the window frame and the wall below the corner crack.</li>
+          <li>Compare readings. Big wet zones vs pinpoint = different failure modes.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-title">Talk to neighbors<span class="step-time">15 min opportunistic</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> notepad · phone (for photos of their damage if they'll share)</p>
+        Same construction, same problems. Highest-signal intel available.
+        <ul>
+          <li>Ask: Where do YOU leak? When did it start? What time of year / storm type?</li>
+          <li>What did you try? What worked, even partially? What made it worse?</li>
+          <li>Anyone gotten a definitive diagnosis? From whom?</li>
+          <li>Does the HOA own the exterior envelope? Any collective-action history?</li>
+        </ul>
+        Log answers in the Neighbor Intel section (Tab 2).
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <h3>After materials arrive (Mon) — repair phase</h3>
+    <p style="margin-top: 6px;">One fix at a time so you can observe what actually stops each leak.</p>
+    <ol>
+      <li><strong>Fix 1: Swap the wall vent cap + reseal perimeter.</strong> Solar Seal (if cure test passed), full bead around top + sides, leave bottom edge open (weep gap). Also reseal wall vent #2 while you're up there.</li>
+      <li><strong>Observe next rain.</strong> Does the fan-exhaust drip stop? If yes → vent was the problem, isolated. If no → water is coming from higher up in the wall cavity → shared upstream cause with the ceiling and window leaks.</li>
+      <li><strong>Fix 2 (if fan still leaks): parapet coping seam directly above the corner crack.</strong> Clean the seam, apply Solar Seal bead. Only after you've identified a specific seam in Step 1 of today's plan.</li>
+      <li><strong>Observe next rain.</strong></li>
+      <li><strong>Fix 3: Window perimeter caulk</strong> (independent of the ceiling/fan issue). All 4 sides, replace failed sections only.</li>
+      <li><strong>Corner crack fill</strong> — hold on this until upstream (parapet) fixes are confirmed. Filling the crack without stopping the upstream water source can trap moisture inside the wall.</li>
+    </ol>
+  </div>
+
+  <div class="info-box">
+    <h3>Phase 3: Escalated diagnosis — hose test + exploratory drywall cuts</h3>
+    <p style="margin-top: 6px;">If the observation phase doesn't confirm the leak source (fan cap fix doesn't stop it, or window caulk fix doesn't stop it, or the ceiling drip continues after coping seal), it's time for controlled invasive investigation. Do these in order — least invasive first.</p>
+  </div>
+
+  <h2>Hose test — controlled water isolation</h2>
+  <p style="margin-bottom: 12px;">The goal: wet ONE section of exterior at a time, watch inside, isolate the leak path.</p>
+
+  <div class="step-list">
+    <div class="step-item">
+      <div class="step-title">Setup — before you turn the water on<span class="step-time">10 min</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> garden hose w/ spray nozzle · paper + pencil (zone sketch) · painter's tape · camera/phone · bucket + towels (inside stations) · 2 people w/ phones or radios</p>
+        <ul>
+          <li><strong>Two people:</strong> one outside with the hose, one inside watching + photographing. Phones or radios to coordinate.</li>
+          <li><strong>Sketch the exterior on paper</strong> — divide into test zones (5-10 zones total). Label them A, B, C. Each zone is one test.</li>
+          <li><strong>Bucket, towels, camera at every observation point inside</strong> (bathroom, window, ceiling drip zone).</li>
+          <li><strong>Painter's tape</strong> to mark exact water lines inside if anything appears — helps map water travel time.</li>
+          <li><strong>Dry weather for at least 24 hrs before the test</strong> so any leak is definitively from the hose water, not lingering.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-title">Test order — bottom to top, one zone at a time<span class="step-time">1-2 hours total</span></div>
+      <div class="step-body">
+        <ul>
+          <li><strong>Start LOW, work UP.</strong> If you wet the roof first and see a leak, you don't know if the water came in at the roof or at some wall failure between the roof and the interior. Testing bottom-up isolates each layer.</li>
+          <li><strong>Suggested zone order:</strong>
+            <ul>
+              <li>Zone 1: Below the window (sill area, wall below window)</li>
+              <li>Zone 2: Window frame perimeter (all 4 sides, spray each side separately)</li>
+              <li>Zone 3: Above the window (head flashing area)</li>
+              <li>Zone 4: Wall vent #1 (bathroom fan cap area)</li>
+              <li>Zone 5: Wall vent #2 (perimeter caulk failure area)</li>
+              <li>Zone 6: The corner crack itself</li>
+              <li>Zone 7: Wall above the corner crack (up toward parapet)</li>
+              <li>Zone 8: Parapet coping — from below, spraying up onto it</li>
+              <li>Zone 9: Balcony surface</li>
+              <li>Zone 10: Flat top roof and specific coping seams</li>
+            </ul>
+          </li>
+          <li><strong>Wet each zone for 5-10 minutes</strong> at moderate pressure (garden hose spray nozzle on "shower" or "flat" setting, NOT high pressure — you're simulating rain, not pressure-washing).</li>
+          <li><strong>Wait 5-10 minutes AFTER stopping</strong> before moving to the next zone. Water can take time to travel through wall cavities.</li>
+          <li><strong>If any leak appears:</strong> STOP. Note the zone, time, exact interior location. That's a positive identification for that zone.</li>
+          <li><strong>If no leak appears in a zone:</strong> log it as ruled out, move up to the next zone.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-title">Log results<span class="step-time">ongoing</span></div>
+      <div class="step-body">
+        <ul>
+          <li>Zone letter · start time · duration · interior observation (dry / drip started at X min / streaming at Y min).</li>
+          <li>Photograph any positive result immediately.</li>
+          <li>You want to know which zone triggered which specific interior symptom — the goal is a 1-to-1 map.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h2>Exploratory drywall cuts — only if hose test locates but doesn't fully explain</h2>
+
+  <div class="info-box">
+    <h3>Why cut drywall</h3>
+    <p style="margin-top: 6px;">Two reasons: (1) see the wall cavity to visually trace the water path (rafters, sheathing, framing wet or dry?); (2) check for hidden mold. A small clean inspection cut can be patched in an afternoon.</p>
+  </div>
+
+  <div class="step-list">
+    <div class="step-item">
+      <div class="step-title">Locate studs + wires + pipes before cutting<span class="step-time">10 min</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> stud finder (Franklin ProSensor 710 or similar) · pencil · headlamp</p>
+        <ul>
+          <li><strong>Stud finder</strong> — mark studs with pencil on the drywall. Most modern stud finders also detect live wires (helpful).</li>
+          <li><strong>Cut BETWEEN studs, not through them.</strong> Standard framing is 16" on center — plenty of room for a 6"×6" inspection cut.</li>
+          <li><strong>Kill nearby circuits</strong> at the panel if there's any doubt about wiring locations. Doubly safe.</li>
+          <li><strong>Look up:</strong> if there's plumbing above the area (bathroom floor above), be extra careful.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-title">Contain the dust BEFORE cutting<span class="step-time">15 min</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> 6-mil plastic sheeting · painter's tape · paper drop cloths · P100 respirator + filters · nitrile gloves · safety glasses · shop vac w/ HEPA filter bag · Tyvek coveralls (if mold-suspect)</p>
+        <ul>
+          <li><strong>6-mil plastic sheeting</strong> — hang around the work area, tape to ceiling and floor. If cutting in a small room (bathroom), seal the doorway with a plastic sheet + zipper strip or just tape.</li>
+          <li><strong>Cover floors with paper drop cloths</strong> — drywall dust ruins hardwood finishes over time.</li>
+          <li><strong>Close HVAC vents in the room</strong> — you don't want fine dust going through the ducts to the rest of the house.</li>
+          <li><strong>Put on PPE</strong> — N95 or KN95 minimum. If you suspect mold, upgrade to P100 respirator + safety glasses + nitrile gloves. Disposable Tyvek coveralls if you're going to be in there a while.</li>
+          <li><strong>Have a shop vac with a fine dust bag/HEPA filter running</strong> near the cut to catch dust as you go.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-title">Make the cut<span class="step-time">10 min</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> Ryobi ONE+ multi-tool w/ wood/drywall blade + charged battery · utility knife · pencil · straight edge/ruler</p>
+        <ul>
+          <li><strong>Draw the rectangle in pencil</strong> — 6"×6" to 10"×10" for a good look, edges parallel to studs.</li>
+          <li><strong>Score the surface with a utility knife</strong> along the pencil lines first — cleaner cut, less crumbly edge.</li>
+          <li><strong>Cut with the Ryobi multi-tool</strong> — set to a medium speed, hold at ~30° angle so the blade grabs, follow the scored lines. Cleaner and much less dust than a saw. If the blade catches or vibrates hard, slow down and let it work.</li>
+          <li><strong>Cut only shallow initially</strong> (½" is standard drywall depth) — you don't know what's behind. If you feel unusual resistance mid-cut, STOP and check with a headlamp before pushing through.</li>
+          <li><strong>Save the cutout piece</strong> — it's your patch material later.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-title">Inspect the cavity<span class="step-time">15-30 min</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> headlamp · camera/phone · moisture meter · borescope · notepad · tape measure</p>
+        <ul>
+          <li><strong>Headlamp + camera + moisture meter.</strong> Photograph everything.</li>
+          <li><strong>Sheathing (back wall of cavity)</strong> — wet? Dark staining? Delaminated? Fresh dark = fresh water; old dark rings = historical wet/dry cycles.</li>
+          <li><strong>Framing (studs, top plate)</strong> — same check. Wet framing near a wall crack CONFIRMS the crack is a real water path.</li>
+          <li><strong>Insulation</strong> — wet insulation = water is/was passing through here. Fresh vs old.</li>
+          <li><strong>Mold check</strong> — visible black, green, or white fuzzy growth on wood or drywall paper (back side). Small area (&lt;10 sq ft) can be homeowner-cleaned. Larger area needs a decision on remediation.</li>
+          <li><strong>Borescope</strong> — for cavities you can't reach through the hole (up into the wall bay above, or across to the next stud bay).</li>
+          <li><strong>Take measurements + notes</strong> — where the wet spot is inside the cavity tells you where the water is entering from above.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-title">If mold is present — decide: DIY cleanup or professional<span class="step-time">varies</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> P100 respirator · nitrile gloves · safety glasses · Tyvek coveralls · shop vac w/ HEPA filter bag · RMR-86 or Concrobium · disposable rags · double contractor bags</p>
+        <ul>
+          <li><strong>Under 10 sq ft (approx. 3'×3'):</strong> homeowner-doable with proper PPE (P100 respirator, nitrile gloves, safety glasses, disposable coveralls). Method: HEPA vacuum → wet-wipe with detergent (dish soap + water is fine) → wet-wipe with an EPA-registered mold biocide (RMR-86 or Concrobium) → let dry → HEPA vacuum again.</li>
+          <li><strong>10+ sq ft or suspected wet insulation covering more than a stud bay:</strong> remediation pro. Not because you can't do it, but because containment and disposal at that scale is fussy.</li>
+          <li><strong>Never use bleach on porous materials</strong> (wood, drywall paper) — it kills surface mold but leaves roots. Also lightens the color, so you think it's gone when it isn't.</li>
+          <li><strong>Bag debris in double contractor bags</strong>, seal, dispose.</li>
+          <li><strong>Address the water source before repairing the drywall.</strong> Otherwise it grows back.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-title">Patch the cut<span class="step-time">1-2 hrs spread over 2-3 days</span></div>
+      <div class="step-body">
+        <p style="margin-bottom: 8px;"><strong style="color: #1a5276;">Bring:</strong> saved cutout piece · drywall tape (paper or mesh) · joint compound · putty knife · 220-grit sanding sponge · primer + matching paint</p>
+        <ul>
+          <li>Small (6"×6"): patch with the cutout piece + drywall tape + joint compound. 2-3 thin coats, sand between.</li>
+          <li>Larger: cut back to studs, use fresh drywall piece + backer boards.</li>
+          <li>Prime + paint to match. If wall is EIFS-textured or has specific finish, may need matching texture spray.</li>
+          <li>Don't patch until you're confident the water source is fixed and the cavity is dry.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <h3>What NOT to do</h3>
+    <ul>
+      <li><strong>Don't caulk on this pass.</strong> Today is investigation. Applying sealant before you know where water is entering just hides evidence.</li>
+      <li><strong>Don't fill the corner crack yet.</strong> If the water source is above (parapet coping), sealing the crack traps moisture behind the wall finish and rots the sheathing.</li>
+      <li><strong>Don't run the fan/light</strong> until the housing is cleaned + the taped socket is investigated.</li>
+      <li><strong>Don't try three fixes at once.</strong> You lose the ability to know which one worked. One fix → one rain → observe.</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ============ TAB 2: INVESTIGATION NOTES ============ -->
+<div class="tab-content" id="tab2-content">
+
+  <div class="info-box">
+    <h3>Investigator's stance — read this before the hypotheses</h3>
+    <p style="margin-top: 6px;">I've already been wrong twice on this case:</p>
+    <ul>
+      <li><strong>First error:</strong> called the wall vent louvers "broken and bent open" — they were bent by hand for the photo, normally sit flat.</li>
+      <li><strong>Second error:</strong> called the fan housing "moldy" from photo staining — it's dust + lint, not mold.</li>
+    </ul>
+    <p style="margin-top: 6px;">Both errors were the same failure mode: <strong>over-interpreting a single photo without ground-truth</strong>. Applying that lesson going forward: no hypothesis gets promoted from "possible" to "smoking gun" without a direct observation that only that mechanism explains. The visible corner crack is a strong candidate but is NOT confirmed as the cause.</p>
+  </div>
+
+  <h2>The master question</h2>
+  <div class="card">
+    <h3>One upstream cause, or three separate leaks?</h3>
+    <div class="label">FOR one shared cause</div>
+    <ul>
+      <li>All three symptoms are on the same side of the house (2nd floor, near the corner-crack side).</li>
+      <li>Fan-exhaust and window leaks BOTH became visible in the same 7/2 storm — that storm was severe enough to unmask an existing but latent path.</li>
+      <li>Water in a wall cavity finds the weakest exit points, which would naturally be: (a) a ceiling fixture opening, (b) a window frame joint, (c) a ceiling drywall soft spot.</li>
+      <li>Neighbors in the same construction have the same problem — suggests systemic (roof, coping, EIFS design), not point failures.</li>
+    </ul>
+    <div class="label">AGAINST one shared cause</div>
+    <ul>
+      <li>The original ceiling drip predates the other two by ~3 weeks (started 6/10). If it's the same cause, why did the fan and window not show until 7/2? Answer could be "the 7/2 storm was much more severe" — but that's an assumption.</li>
+      <li>The three symptoms are in different rooms (3 separate exit points). If it's one shared source, the water has to fan out through the wall cavity in ways that reach all three.</li>
+    </ul>
+    <div class="label">Why this matters</div>
+    <p>If it's one shared upstream cause, point-fixing the fan cap and window caulk won't stop the ceiling drip. If it's three separate causes, each fix helps only that symptom. The test in the plan (fix the fan cap first, observe) is designed to distinguish these two possibilities in a single rain cycle.</p>
+  </div>
+
+  <h2>Photo observations from 7/3 walk-around</h2>
+
+  <div class="photo-note">
+    <strong>Interior fan housing (Photo 3).</strong> Dust/lint accumulation on grille louvers reading as dark staining in the photo. Black electrical tape wrapped around the bulb socket — unclear what problem it was addressing (chipped socket? loose connection? cosmetic?). Not mold. Fan is operational.
+  </div>
+
+  <div class="photo-note">
+    <strong>Wall vent #1 — the bathroom fan cap (Photo 4).</strong> Louvers work correctly (bent by hand for the photo). Something dark visible inside the vent chamber — could be debris, could be shadow. Perimeter caulk not clearly visible in the shot — worth checking during the removal step.
+  </div>
+
+  <div class="photo-note">
+    <strong>Wall vent #2 — nearby vent (Photo 5).</strong> Louvers intact. <strong>Perimeter caulking is degraded and patched.</strong> Old sloppy caulk with visible gaps around all four sides. This is a clear finding — water CAN bypass the vent and enter through the frame-to-wall seam. Whether it's contributing to today's leak is a separate question.
+  </div>
+
+  <div class="photo-note">
+    <strong>Wall vent #3 (Photo 6).</strong> Louvers closed, appears well-sealed. No action.
+  </div>
+
+  <div class="photo-note">
+    <strong>Vertical crack at wall corner below eave/gutter (Photo 8).</strong> Distinct vertical crack running down from the roofline right at a corner joint. Wall material appears to be EIFS or coated stucco. <strong>This LOOKS like a strong candidate for water entry, but:</strong>
+    <ul style="margin-top: 6px;">
+      <li>A visible surface crack doesn't automatically mean water reaches the wall cavity — it depends on how deep the crack goes and whether the water barrier behind the finish is compromised.</li>
+      <li>The crack could be an EFFECT (settling, thermal expansion) rather than the CAUSE. Water might be entering elsewhere and this crack is just cosmetic.</li>
+      <li>Correlation ≠ causation: the crack is visible, but there could also be a coping seam issue 2 feet away that's the real culprit.</li>
+    </ul>
+    <strong>Test:</strong> during the next rain, watch this specific crack. Is water visibly running INTO it or just past it? Does the moisture pattern inside line up with the crack's exact location, or with a spot 2 ft to either side?
+  </div>
+
+  <div class="photo-note">
+    <strong>Roof edge (Photo 9).</strong> Flat roof confirmed. Metal parapet coping along the top. Multiple visible previous exterior repairs on the wall below — this house has water-intrusion history.
+  </div>
+
+  <h2>Hypotheses per leak point (with reasons for and against)</h2>
+
+  <h3>Leak 1 — Original ceiling drip (since 6/10, on/off with weather)</h3>
+
+  <div class="hyp-block">
+    <div class="hyp-header">H1a: Failed parapet coping seam above the drip zone</div>
+    <div class="hyp-body">
+      <div class="hyp-row"><span class="hyp-tag tag-for">For</span><span>Coping seams are #1 leak source on flat-roof buildings with parapets. On-off drip pattern matches storm intensity, consistent with wind-driven rain finding a gap.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-against">Against</span><span>Haven't yet located a specific coping seam directly above the drip zone. Assumption right now, not observation.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-test">Test</span><span>Roof walk (Step 1 today). Photograph every coping seam. Correlate positions with the ceiling drip location below. Look for gapped, lifted, or sealant-failed seams.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-falsify">Falsifier</span><span>If all coping seams are visually intact + no failed sealant, this hypothesis weakens. If you find one obviously bad seam above the drip zone, it strengthens (but still isn't confirmed until sealing it stops the leak).</span></div>
+    </div>
+  </div>
+
+  <div class="hyp-block">
+    <div class="hyp-header">H1b: Flat-roof field membrane tear or penetration failure</div>
+    <div class="hyp-body">
+      <div class="hyp-row"><span class="hyp-tag tag-for">For</span><span>Flat-roof membranes crack at penetrations (pipes, HVAC, drains) and at any spot with foot traffic. On-off drip pattern is consistent with rain intensity.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-against">Against</span><span>Field membrane failures usually cause chronic leaks, not on-off. Also: you don't spend much time walking on the roof (I assume), so foot-traffic damage is unlikely.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-test">Test</span><span>Roof walk (Step 1). Look at every penetration + walk the whole membrane looking for tears, bubbles, seams pulling apart.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-falsify">Falsifier</span><span>Clean field = eliminates this. Visible damage at a specific spot = investigate whether it lines up with the drip below.</span></div>
+    </div>
+  </div>
+
+  <div class="hyp-block">
+    <div class="hyp-header">H1c: Corner crack in wall itself (water bypasses roof, enters directly through EIFS/stucco)</div>
+    <div class="hyp-body">
+      <div class="hyp-row"><span class="hyp-tag tag-for">For</span><span>Visible crack in a place where thermal expansion concentrates. If crack is deep enough to breach the moisture barrier behind the finish, wind-driven rain can drive water in.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-against">Against</span><span>Surface cracks don't automatically breach the moisture barrier. The 6/10 leak also happened during less severe rain than 7/2, which is when the crack would be MOST likely to leak. If the crack were the primary cause, you'd expect the ceiling to worsen dramatically on 7/2 (did it?). This hypothesis puts the crack as CAUSE; it might be an effect of something else (settling, or an interior wet spot pushing outward).</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-test">Test</span><span>During the next moderate rain, watch this specific crack. Is water visibly entering it, or running past it? Also: probe depth from outside with a thin metal pin (careful) — is it hairline surface, or does it feel like it goes through?</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-falsify">Falsifier</span><span>Rain runs past without entering = eliminates this. Or: if the ceiling drip started well before the crack was there (check old photos of the exterior).</span></div>
+    </div>
+  </div>
+
+  <div class="hyp-block">
+    <div class="hyp-header">H1d: Gutter/scupper overflow directing water where it shouldn't go</div>
+    <div class="hyp-body">
+      <div class="hyp-row"><span class="hyp-tag tag-for">For</span><span>Blocked drainage = water sheets over the edge, finds gaps in fascia, siding, or window trim.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-against">Against</span><span>Would explain leaks during heavy rain but not moderate. Would probably show as staining on the outside wall below the overflow point.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-test">Test</span><span>Check gutters + scuppers for debris (Step 1). Watch during next rain.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-falsify">Falsifier</span><span>Clean gutters + observed proper drainage during rain = eliminates.</span></div>
+    </div>
+  </div>
+
+  <div class="hyp-block">
+    <div class="hyp-header">H1e: Design/construction defect shared with the townhouse community</div>
+    <div class="hyp-body">
+      <div class="hyp-row"><span class="hyp-tag tag-for">For</span><span>Multiple neighbors have the same problem. Contractors haven't been able to help anyone. This is a strong signal that the failure mode is designed-in, not a specific unit's damage.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-against">Against</span><span>"Shared problem" doesn't tell you the specific mechanism — could still be one of H1a-H1d, just shared across units.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-test">Test</span><span>Neighbor conversations (Step 7). What did they find? What patterns match your experience?</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-falsify">Falsifier</span><span>Not really falsifiable as stated — but neighbor info might POINT to which specific mechanism is the shared one.</span></div>
+    </div>
+  </div>
+
+  <h3>Leak 2 — Bathroom fan exhaust dripping (new 7/2)</h3>
+
+  <div class="hyp-block">
+    <div class="hyp-header">H2a: Failed backdraft damper inside the wall vent</div>
+    <div class="hyp-body">
+      <div class="hyp-row"><span class="hyp-tag tag-for">For</span><span>Louver caps rely on the damper flap for wind-driven rain protection. Invisible from outside. Would explain why a storm-severe event triggered a new leak.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-against">Against</span><span>Haven't confirmed damper state yet.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-test">Test</span><span>Remove cap in Step 5. Photograph damper. Test manually — does it swing freely, seal on the closed side, spring back?</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-falsify">Falsifier</span><span>Damper works correctly = eliminates. Also: replacing the cap and rain-testing directly.</span></div>
+    </div>
+  </div>
+
+  <div class="hyp-block">
+    <div class="hyp-header">H2b: Failed perimeter caulking around the wall vent frame</div>
+    <div class="hyp-body">
+      <div class="hyp-row"><span class="hyp-tag tag-for">For</span><span>Vent #2 photo clearly shows this failure mode nearby. Reasonable prior that #1 has some version of the same.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-against">Against</span><span>Didn't clearly see it in the vent #1 photo. Different vent, could be different condition.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-test">Test</span><span>Visual inspection during Step 5 removal.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-falsify">Falsifier</span><span>Perimeter seal intact = eliminates.</span></div>
+    </div>
+  </div>
+
+  <div class="hyp-block">
+    <div class="hyp-header">H2c: Duct disconnected or improperly sloped inside the wall</div>
+    <div class="hyp-body">
+      <div class="hyp-row"><span class="hyp-tag tag-for">For</span><span>Common in older installs. If disconnected at the cap side, any rain entering the cap dumps into the wall cavity.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-against">Against</span><span>Would probably cause smaller chronic leaks over time, not a big new leak from one storm.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-test">Test</span><span>Borescope up the duct on Monday, both from wall side and from fan side. See if the duct is continuous and sloped correctly.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-falsify">Falsifier</span><span>Duct visibly continuous + sloped correctly = eliminates.</span></div>
+    </div>
+  </div>
+
+  <div class="hyp-block">
+    <div class="hyp-header">H2d: Water enters higher up (parapet, corner crack, roof) and drops out fan opening as weakest interior exit</div>
+    <div class="hyp-body">
+      <div class="hyp-row"><span class="hyp-tag tag-for">For</span><span>Would explain why a NEW leak appeared during a severe storm — the fan opening is a soft spot in the interior finish, and wall-cavity water finds it. Consistent with the "one upstream cause" master hypothesis.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-against">Against</span><span>The fan is directly above a wall vent to the outside. Simpler explanations (vent failure) are more likely by Occam's razor. But simpler ≠ correct.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-test">Test</span><span>Fix the wall vent cap perfectly. Observe next rain. If fan STILL leaks, water is not coming from the vent — it's coming from higher up, and this hypothesis strengthens.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-falsify">Falsifier</span><span>Cap fix stops the leak = eliminates. Cap fix doesn't stop the leak = strengthens (but doesn't confirm, other H2 causes could also survive the fix).</span></div>
+    </div>
+  </div>
+
+  <h3>Leak 3 — 2nd-floor window (new 7/2)</h3>
+
+  <div class="hyp-block">
+    <div class="hyp-header">H3a: Failed exterior caulk around window frame</div>
+    <div class="hyp-body">
+      <div class="hyp-row"><span class="hyp-tag tag-for">For</span><span>Caulk has 5-10 year life, easy to check. Most common window-leak cause.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-against">Against</span><span>Haven't visually checked yet.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-test">Test</span><span>Visual inspection of all 4 sides of the frame from outside (ladder). Look for cracked, gapped, or missing caulk beads. Note where the water enters (top/side/bottom) after the next rain.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-falsify">Falsifier</span><span>Caulk intact + water still enters = not this. Failed caulk found + repaired + leak stops = confirmed.</span></div>
+    </div>
+  </div>
+
+  <div class="hyp-block">
+    <div class="hyp-header">H3b: Missing or failed head flashing / drip cap above window</div>
+    <div class="hyp-body">
+      <div class="hyp-row"><span class="hyp-tag tag-for">For</span><span>Especially if this is EIFS — head flashing failures are a well-known EIFS problem.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-against">Against</span><span>Haven't checked yet.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-test">Test</span><span>Look above the window from ladder height. Is there a metal drip cap extending out over the top of the frame?</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-falsify">Falsifier</span><span>Present + intact = eliminates. Missing/failed + water enters at top of frame during next rain = strong signal.</span></div>
+    </div>
+  </div>
+
+  <div class="hyp-block">
+    <div class="hyp-header">H3c: Water tracking from corner crack / parapet (shared with H1 + H2d)</div>
+    <div class="hyp-body">
+      <div class="hyp-row"><span class="hyp-tag tag-for">For</span><span>Same argument as H2d. Wall cavity water finds the window frame as an exit.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-against">Against</span><span>Same as H2d. Simpler window-frame causes should be checked first.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-test">Test</span><span>Fix window perimeter caulk (H3a). Observe. If still leaks → upstream.</span></div>
+      <div class="hyp-row"><span class="hyp-tag tag-falsify">Falsifier</span><span>Perimeter fix stops the leak = eliminates.</span></div>
+    </div>
+  </div>
+
+  <h2>Skeptical notes to self</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Don't over-weight what's visible.</strong> The corner crack is the most photogenic thing in these photos. That doesn't mean it's the primary problem. Look for less-photogenic failure modes too.</li>
+      <li><strong>Don't confuse correlation with causation.</strong> If sealing the vent perimeter stops the fan leak, it's more likely to be caulk failure than damper failure — but you don't know for sure because both got "fixed" simultaneously. Isolate variables when possible.</li>
+      <li><strong>Storm severity as a confounder.</strong> The 7/2 storm was severe. New leaks in a severe storm might not mean "new failures" — they might mean "existing latent failures unmasked at higher water volume." Compare vs known storm intensity: was 7/2 the worst since 6/10?</li>
+      <li><strong>Neighbor pattern is the strongest signal.</strong> Multiple units with the same problem strongly suggests the failure is designed-in. Ask specifically: are the leaks in the same rooms as yours? Same walls?</li>
+      <li><strong>Fixes that work by accident tell you nothing.</strong> If you fix three things at once and the leak stops, you haven't diagnosed anything. One-fix-one-rain-one-observation discipline.</li>
+    </ul>
+  </div>
+
+  <h2>Neighbor intel (to fill in)</h2>
+  <div class="neighbor-form">
+    <p>Log answers here after conversations. Use this to look for patterns across units.</p>
+    <table style="width: 100%; margin-top: 8px;">
+      <tr><th>Unit / Name</th><th>Where leaks</th><th>When started</th><th>What tried</th><th>What worked</th></tr>
+      <tr><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+    </table>
+  </div>
+
+  <h2>Incident log</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Location</th><th>Weather</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>2026-06-10</td><td>Ceiling (original)</td><td>Rain</td><td>First flagged. On-off since.</td></tr>
+        <tr><td>2026-07-02 overnight</td><td>2nd-floor bathroom fan exhaust</td><td>Heavy storm</td><td>NEW. Bucket needed. First observation.</td></tr>
+        <tr><td>2026-07-02 overnight</td><td>2nd-floor window</td><td>Heavy storm</td><td>NEW. First observation.</td></tr>
+        <tr><td>2026-07-03 evening</td><td>Exterior walk-around · photo doc</td><td>Dry</td><td>3 wall vents + interior fan + roof edge + corner crack photographed.</td></tr>
+        <tr><td colspan="4" style="color:#7a706a; font-style:italic;">Add rows as things happen or as investigation reveals new evidence.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Research links</h2>
+  <ul style="margin-left: 22px;">
+    <li><a href="https://buildingscience.com/documents/insights/bsi-052-window-flashing" target="_blank" style="color: #1a5276; font-weight: 600;">Building Science Corp — window flashing</a> — technical read on how windows should be flashed and why they leak.</li>
+    <li><a href="https://buildingscience.com/documents/digests/bsd-146-eifs-problems-and-solutions" target="_blank" style="color: #1a5276; font-weight: 600;">Building Science Corp — EIFS problems and solutions</a> — critical read if the wall is confirmed EIFS.</li>
+    <li><a href="https://www.energyvanguard.com/blog/bathroom-exhaust-fan-vents-into-attic-a-leak-waiting-to-happen" target="_blank" style="color: #1a5276; font-weight: 600;">Energy Vanguard — bathroom exhaust fan venting</a> — how bath fans should be installed and how they leak.</li>
+    <li><a href="https://www.jlconline.com/how-to/exteriors/parapet-walls_o" target="_blank" style="color: #1a5276; font-weight: 600;">JLC — parapet walls and coping</a> — trade-level detail on how parapet coping fails and how it should be built.</li>
+    <li><a href="https://www.familyhandyman.com/list/how-to-find-and-fix-a-roof-leak/" target="_blank" style="color: #1a5276; font-weight: 600;">Family Handyman — how to find and fix a roof leak</a> — homeowner-friendly diagnostic method.</li>
+  </ul>
+
+</div>
+
+<footer>
+Investigation started 2026-07-03. Updated as evidence changes. Working principle: hypothesis, test, observe, revise.
+</footer>
+
+<script>
+function showTab(n) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab' + n + '-content').classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn')[n - 1].classList.add('active');
+}
+</script>
+
+</body>
+</html>
