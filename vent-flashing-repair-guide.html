@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Vent Stack Flashing Rebuild — Step-by-Step</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f0;
+    color: #2d2d2d;
+    line-height: 1.55;
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 1.8rem; border-bottom: 3px solid #1a5276; padding-bottom: 10px; margin-bottom: 6px; color: #1a5276; }
+  .subtitle { color: #666; font-size: 0.95rem; margin-bottom: 22px; font-style: italic; }
+  h2 { color: #1a5276; font-size: 1.3rem; margin: 30px 0 12px; border-bottom: 2px solid #d0d7de; padding-bottom: 6px; }
+
+  .verdict-box {
+    padding: 16px 20px; margin-bottom: 22px;
+    border-radius: 0 8px 8px 0;
+    border-left: 5px solid #146c43; background: #d4edda;
+  }
+  .verdict-box h3 { color: #155724; margin-bottom: 8px; }
+  .verdict-box ul { margin-left: 22px; }
+  .verdict-box li { margin-bottom: 5px; }
+
+  .warn-box {
+    padding: 14px 20px; margin: 18px 0;
+    border-radius: 0 8px 8px 0;
+    border-left: 5px solid #dc3545; background: #f8d7da;
+  }
+  .warn-box h3 { color: #721c24; margin-bottom: 8px; }
+  .warn-box ul { margin-left: 22px; }
+  .warn-box li { margin-bottom: 4px; }
+
+  .info-box {
+    padding: 14px 20px; margin: 18px 0;
+    border-radius: 0 8px 8px 0;
+    border-left: 5px solid #4a90c2; background: #e7f0f8;
+  }
+  .info-box h3 { color: #1a5276; margin-bottom: 8px; }
+
+  .diagram-card {
+    background: #fff; border: 1px solid #d0d7de; border-radius: 10px;
+    padding: 18px 20px; margin: 16px 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .diagram-card .cap {
+    font-size: 0.88rem; color: #4a5568; margin-top: 10px;
+    padding-top: 10px; border-top: 1px dashed #d0d7de;
+  }
+  .diagram-card .cap strong { color: #1a2236; }
+  svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+
+  .step-list {
+    background: #fff; border: 1px solid #d0d7de; border-radius: 10px;
+    padding: 0; margin: 16px 0 22px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    counter-reset: stp;
+  }
+  .step-item {
+    padding: 16px 22px 16px 68px;
+    border-bottom: 1px solid #eef1f6;
+    position: relative; counter-increment: stp;
+  }
+  .step-item:last-child { border-bottom: none; }
+  .step-item::before {
+    content: counter(stp);
+    position: absolute; left: 20px; top: 16px;
+    background: #1a5276; color: #fff;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+  }
+  .step-title { font-weight: 700; color: #1a2236; font-size: 1.02rem; margin-bottom: 4px; }
+  .step-time { color: #7a706a; font-size: 0.82rem; font-style: italic; margin-left: 6px; font-weight: 400; }
+  .step-body { color: #4a5568; font-size: 0.93rem; margin-top: 4px; }
+  .step-body ul { margin: 6px 0 4px 20px; }
+  .step-body li { margin-bottom: 4px; }
+  .step-body strong { color: #1a2236; }
+
+  .spec-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; margin: 12px 0; }
+  .spec-table th, .spec-table td { padding: 9px 14px; border-bottom: 1px solid #eef1f6; text-align: left; font-size: 0.9rem; }
+  .spec-table th { background: #eef1f6; color: #1a2236; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #d0d7de; color: #7a706a; font-size: 0.85rem; text-align: center; font-style: italic; }
+  a { color: #1a5276; }
+</style>
+</head>
+<body>
+
+<h1>Vent Stack Flashing Rebuild</h1>
+<p class="subtitle">The confirmed 4th-floor leak source (hose test, wk of 7/6). One repair, ~45 min on the roof, then prove it in the next rain. Companion to the <a href="roof-leak-diagnostic-guide.html">investigation guide</a>.</p>
+
+<div class="verdict-box">
+  <h3>The materials verdict (updated 7/12 after the mastic question)</h3>
+  <p style="margin-bottom: 8px;">The method is the industry-standard <strong>"three-course" flashing repair</strong>: mastic course → reinforcing fabric embedded → mastic top course. The refinement: <strong>gun-grade sealant and brush-grade mastic are different tools, and this repair wants both.</strong></p>
+  <ul>
+    <li><strong>Solar Seal #900 (caulk gun) = the gap filler.</strong> Injecting deep into the open seam where the flashing pulled off the pipe is exactly what gun sealant is for — precision joint filling. It is NOT the right consistency for saturating fabric over a 5-6" radius; that's fussy, slow, and eats tubes.</li>
+    <li><strong>Henry 289 White Roofing Sealant (quart, brush/trowel grade) = the fabric embedder.</strong> This is the mastic in the videos you're watching — and it's literally the designed companion to your fabric: the 296 ElastoTape label and Henry's own instructions specify embedding it <em>"between 2 heavy coats of Henry #289."</em> Elastomeric acrylic, made to wet out fabric, ~$12-20 at the same Home Depot shelf.</li>
+    <li><strong>Skip the BLACK mastic</strong> (Henry 208 Wet Patch / asphalt cement) even though videos show it working — asphalt bleeds brown through white acrylic topcoats. Your Phase-4 plan is a white acrylic recoat (Ames Blue Max / Tropi-Cool); the white 289 is formulated to be recoated with acrylic. The black stuff would ghost through your new roof.</li>
+    <li><strong>Your reinforcement is right:</strong> Henry 296 ElastoTape (4" × 150 ft spunbonded polyester, in hand). Leave the drywall FibaTape in the drywall stash.</li>
+    <li><strong>Shed water:</strong> shape the finished patch as a slight mound so nothing ponds against the pipe.</li>
+  </ul>
+</div>
+
+<h2>The failure and the fix — what's happening</h2>
+
+<div class="diagram-card">
+  <svg viewBox="0 0 840 340" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, Segoe UI, sans-serif">
+    <!-- ==== LEFT: FAILURE ==== -->
+    <text x="185" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="#721c24">NOW — delaminated flashing</text>
+
+    <!-- sky -->
+    <!-- roof deck -->
+    <rect x="30" y="220" width="320" height="34" fill="#c9b18c"/>
+    <rect x="30" y="254" width="320" height="10" fill="#a08663"/>
+    <text x="60" y="242" font-size="11" fill="#6b5b43">roof deck / membrane</text>
+
+    <!-- coating layer left of pipe -->
+    <path d="M30 220 L150 220 L150 214 L30 214 Z" fill="#e8e4da" stroke="#b9b3a4" stroke-width="1"/>
+    <!-- coating layer right of pipe, curled away -->
+    <path d="M350 214 L232 214 L232 220 L350 220 Z" fill="#e8e4da" stroke="#b9b3a4" stroke-width="1"/>
+
+    <!-- curled/peeled coating at pipe base (left side) -->
+    <path d="M150 214 Q160 200 172 206 Q166 214 158 216 Z" fill="#e8e4da" stroke="#b9b3a4" stroke-width="1.2"/>
+    <!-- curled/peeled coating right -->
+    <path d="M232 214 Q222 198 208 205 Q216 213 224 216 Z" fill="#e8e4da" stroke="#b9b3a4" stroke-width="1.2"/>
+    <text x="268" y="196" font-size="11" fill="#721c24" font-weight="600">coating peeled + curled</text>
+    <line x1="240" y1="200" x2="224" y2="206" stroke="#721c24" stroke-width="1.2"/>
+
+    <!-- pipe -->
+    <rect x="176" y="80" width="28" height="150" fill="#9aa5ad" stroke="#6d7880" stroke-width="1.5"/>
+    <rect x="172" y="76" width="36" height="8" fill="#8a959d" stroke="#6d7880" stroke-width="1.5" rx="2"/>
+    <text x="190" y="66" text-anchor="middle" font-size="11" fill="#4a5568">vent pipe (open top = normal)</text>
+    <!-- rust -->
+    <rect x="176" y="188" width="28" height="34" fill="#b06a3f" opacity="0.55"/>
+    <text x="120" y="182" font-size="11" fill="#b45309" font-weight="600">exposed raw metal</text>
+    <line x1="152" y1="186" x2="174" y2="196" stroke="#b45309" stroke-width="1.2"/>
+
+    <!-- GAP annotations -->
+    <path d="M168 214 L176 214 L176 226 L168 226 Z" fill="#1a5276" opacity="0.15"/>
+    <path d="M204 214 L212 214 L212 226 L204 226 Z" fill="#1a5276" opacity="0.15"/>
+
+    <!-- rain arrows -->
+    <g stroke="#2471a3" stroke-width="2.2" fill="none" marker-end="none">
+      <path d="M120 120 L150 165"/>
+      <path d="M100 150 L133 190"/>
+      <path d="M258 125 L230 168"/>
+    </g>
+    <g fill="#2471a3">
+      <path d="M150 165 l-9 -3 5 8 z"/>
+      <path d="M133 190 l-9 -3 5 8 z"/>
+      <path d="M230 168 l3 -9 -8 5 z"/>
+    </g>
+    <text x="88" y="112" font-size="11" fill="#2471a3" font-weight="600">rain</text>
+
+    <!-- water entering gap and going down -->
+    <path d="M170 212 Q172 220 174 230 L174 290" stroke="#2471a3" stroke-width="2.5" fill="none" stroke-dasharray="4 3"/>
+    <path d="M174 290 l-5 -8 10 0 z" fill="#2471a3"/>
+    <text x="186" y="292" font-size="11.5" fill="#2471a3" font-weight="700">water follows pipe down</text>
+    <text x="186" y="306" font-size="11.5" fill="#2471a3" font-weight="700">→ 4th-floor ceiling drip</text>
+
+    <!-- ==== RIGHT: REPAIRED ==== -->
+    <text x="640" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="#155724">AFTER — three-course rebuild</text>
+
+    <!-- roof deck -->
+    <rect x="480" y="220" width="330" height="34" fill="#c9b18c"/>
+    <rect x="480" y="254" width="330" height="10" fill="#a08663"/>
+
+    <!-- coating -->
+    <rect x="480" y="214" width="330" height="6" fill="#e8e4da" stroke="#b9b3a4" stroke-width="1"/>
+
+    <!-- pipe -->
+    <rect x="626" y="80" width="28" height="150" fill="#9aa5ad" stroke="#6d7880" stroke-width="1.5"/>
+    <rect x="622" y="76" width="36" height="8" fill="#8a959d" stroke="#6d7880" stroke-width="1.5" rx="2"/>
+
+    <!-- Sealant fillet: course 1+2+3 mound, up pipe 2", out 3-4" -->
+    <!-- base course -->
+    <path d="M560 216 Q590 214 610 204 L626 168 L654 168 L670 204 Q690 214 720 216 L720 220 L560 220 Z" fill="#f0f0ee" stroke="#8a8a86" stroke-width="1"/>
+    <!-- fabric layer (dashed line inside the mound) -->
+    <path d="M572 215 Q600 211 616 200 L630 172 L650 172 L664 200 Q680 211 708 215" stroke="#1a5276" stroke-width="2" stroke-dasharray="5 3" fill="none"/>
+    <!-- top course outline emphasized -->
+    <path d="M560 216 Q590 214 610 204 L626 168 L654 168 L670 204 Q690 214 720 216" stroke="#5a5a56" stroke-width="2.5" fill="none"/>
+
+    <text x="640" y="152" text-anchor="middle" font-size="11" fill="#4a5568">sealant runs 2" UP the pipe</text>
+
+    <!-- labels -->
+    <line x1="556" y1="188" x2="600" y2="207" stroke="#1a5276" stroke-width="1.2"/>
+    <text x="484" y="184" font-size="11.5" fill="#1a5276" font-weight="700">fabric collar buried</text>
+    <text x="484" y="197" font-size="11" fill="#1a5276">between two courses</text>
+
+    <line x1="742" y1="196" x2="700" y2="212" stroke="#5a5a56" stroke-width="1.2"/>
+    <text x="726" y="188" font-size="11.5" fill="#5a5a56" font-weight="700">feathered</text>
+    <text x="726" y="201" font-size="11" fill="#5a5a56">edge</text>
+
+    <!-- extent arrows -->
+    <line x1="670" y1="238" x2="720" y2="238" stroke="#146c43" stroke-width="1.5"/>
+    <path d="M720 238 l-7 -3.5 0 7 z" fill="#146c43"/>
+    <path d="M670 238 l7 -3.5 0 7 z" fill="#146c43"/>
+    <text x="695" y="252" text-anchor="middle" font-size="10.5" fill="#146c43" font-weight="600">3-4" onto roof</text>
+
+    <!-- water shedding arrow -->
+    <path d="M600 120 Q612 150 616 172 Q600 200 570 212" stroke="#2471a3" stroke-width="2.2" fill="none" stroke-dasharray="4 3"/>
+    <path d="M570 212 l9 -1 -5 -8 z" fill="#2471a3"/>
+    <text x="560" y="116" font-size="11" fill="#2471a3" font-weight="600">water sheds off the mound</text>
+  </svg>
+  <div class="cap"><strong>Cross-section, before and after.</strong> The old coating-flashing pulled away from the pipe, leaving an open seam straight into the plumbing chase. The rebuild is a flexible sealant mound reinforced with buried fabric: 2" up the pipe, 3-4" out onto the roof, edges feathered so water sheds. The fabric (dashed blue) is the skeleton that keeps the sealant from splitting when the pipe expands/contracts.</div>
+</div>
+
+<div class="diagram-card">
+  <svg viewBox="0 0 840 360" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, Segoe UI, sans-serif">
+    <text x="420" y="24" text-anchor="middle" font-size="15" font-weight="700" fill="#1a5276">The three-course sandwich (zoomed in)</text>
+
+    <!-- deck -->
+    <rect x="120" y="270" width="600" height="30" fill="#c9b18c"/>
+    <text x="420" y="290" text-anchor="middle" font-size="11" fill="#6b5b43">roof surface (wire-brushed + alcohol-wiped)</text>
+
+    <!-- pipe wall on the left -->
+    <rect x="120" y="60" width="26" height="210" fill="#9aa5ad" stroke="#6d7880" stroke-width="1.5"/>
+    <text x="133" y="50" text-anchor="middle" font-size="11" fill="#4a5568">pipe</text>
+
+    <!-- course 1 -->
+    <path d="M146 130 L146 270 L520 270 L520 252 Q400 246 280 214 Q190 186 146 130 Z" fill="#e9e6de" stroke="#b5b0a2" stroke-width="1"/>
+    <text x="330" y="246" font-size="12.5" fill="#6b6455" font-weight="700">COURSE 1 — Henry 289 heavy coat (Solar Seal bead in the gap first)</text>
+
+    <!-- fabric -->
+    <path d="M150 140 Q196 192 284 220 Q398 252 514 258" stroke="#1a5276" stroke-width="5" fill="none" stroke-dasharray="10 5"/>
+    <text x="330" y="212" font-size="12.5" fill="#1a5276" font-weight="700">FABRIC — pressed into wet course 1, no bubbles, no bridging</text>
+
+    <!-- course 2 -->
+    <path d="M146 118 L146 130 Q190 186 280 214 Q400 246 520 252 L560 252 L560 240 Q420 234 292 200 Q196 172 146 118 Z" fill="#dcd8cc" stroke="#a29d8e" stroke-width="1"/>
+    <text x="330" y="176" font-size="12.5" fill="#847d6b" font-weight="700">COURSE 2 — Henry 289 top coat, wet-on-wet, until fabric disappears</text>
+
+    <!-- feather label -->
+    <line x1="590" y1="230" x2="556" y2="248" stroke="#4a5568" stroke-width="1.2"/>
+    <text x="594" y="228" font-size="11.5" fill="#4a5568" font-weight="600">feather to nothing —</text>
+    <text x="594" y="242" font-size="11.5" fill="#4a5568" font-weight="600">no abrupt edge for water</text>
+    <text x="594" y="256" font-size="11.5" fill="#4a5568" font-weight="600">to catch on</text>
+
+    <!-- rules of thumb box -->
+    <rect x="590" y="70" width="222" height="120" rx="8" fill="#e7f0f8" stroke="#4a90c2" stroke-width="1"/>
+    <text x="602" y="92" font-size="12" font-weight="700" fill="#1a5276">Rules of the sandwich</text>
+    <text x="602" y="112" font-size="11" fill="#2d3d4d">• Fabric NEVER visible when done</text>
+    <text x="602" y="130" font-size="11" fill="#2d3d4d">• Fabric follows the contour —</text>
+    <text x="612" y="145" font-size="11" fill="#2d3d4d">press into the corner, don't tent</text>
+    <text x="602" y="163" font-size="11" fill="#2d3d4d">• Each course thin (~1/8"),</text>
+    <text x="612" y="178" font-size="11" fill="#2d3d4d">not one thick glob</text>
+  </svg>
+  <div class="cap"><strong>Why the fabric matters:</strong> sealant alone at a pipe base splits within a season or two — the pipe moves with temperature and the sealant takes all the strain. Fabric spreads that strain across the whole patch. Exposed mesh, on the other hand, wicks water and dies in UV — which is why course 2 must fully bury it.</div>
+</div>
+
+<div class="diagram-card">
+  <svg viewBox="0 0 840 330" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, Segoe UI, sans-serif">
+    <text x="420" y="24" text-anchor="middle" font-size="15" font-weight="700" fill="#1a5276">Cutting the fabric — two pieces make a collar</text>
+
+    <!-- ==== PIECE 1: wrap with fingers ==== -->
+    <text x="200" y="54" text-anchor="middle" font-size="13" font-weight="700" fill="#4a5568">Piece 1 — pipe wrap with "fingers"</text>
+    <!-- fabric strip -->
+    <rect x="60" y="70" width="280" height="70" fill="#dce9f5" stroke="#1a5276" stroke-width="1.5"/>
+    <!-- finger cuts -->
+    <g stroke="#1a5276" stroke-width="1.5">
+      <line x1="95"  y1="105" x2="95"  y2="140"/>
+      <line x1="130" y1="105" x2="130" y2="140"/>
+      <line x1="165" y1="105" x2="165" y2="140"/>
+      <line x1="200" y1="105" x2="200" y2="140"/>
+      <line x1="235" y1="105" x2="235" y2="140"/>
+      <line x1="270" y1="105" x2="270" y2="140"/>
+      <line x1="305" y1="105" x2="305" y2="140"/>
+    </g>
+    <line x1="60" y1="105" x2="340" y2="105" stroke="#1a5276" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="352" y="92" font-size="11" fill="#4a5568">top half stays solid —</text>
+    <text x="352" y="105" font-size="11" fill="#4a5568">wraps around the pipe</text>
+    <text x="352" y="126" font-size="11" fill="#4a5568">bottom half cut into 1-1.5"</text>
+    <text x="352" y="139" font-size="11" fill="#4a5568">tabs — fan out onto roof</text>
+    <text x="200" y="160" text-anchor="middle" font-size="10.5" fill="#7a706a" font-style="italic">strip length = pipe circumference + 1" overlap (a 3" pipe ≈ 10.5")</text>
+
+    <!-- ==== PIECE 2: petal strips (4" roll) ==== -->
+    <text x="640" y="54" text-anchor="middle" font-size="13" font-weight="700" fill="#4a5568">Piece 2 — petal strips (from the 4" roll)</text>
+    <g fill="#dce9f5" stroke="#1a5276" stroke-width="1.5">
+      <rect x="560" y="70" width="90" height="26" rx="3"/>
+      <rect x="560" y="104" width="90" height="26" rx="3"/>
+      <rect x="560" y="138" width="90" height="26" rx="3"/>
+    </g>
+    <text x="605" y="87" text-anchor="middle" font-size="10" fill="#4a5568">~8" long</text>
+    <text x="605" y="121" text-anchor="middle" font-size="10" fill="#4a5568">~8" long</text>
+    <text x="605" y="155" text-anchor="middle" font-size="10" fill="#4a5568">×4-6 total</text>
+    <text x="668" y="92" font-size="11" fill="#4a5568">cut 4-6 strips ~8" long</text>
+    <text x="668" y="105" font-size="11" fill="#4a5568">from the 4"-wide roll —</text>
+    <text x="668" y="118" font-size="11" fill="#4a5568">lay them radiating around</text>
+    <text x="668" y="131" font-size="11" fill="#4a5568">the pipe like petals, each</text>
+    <text x="668" y="144" font-size="11" fill="#4a5568">overlapping its neighbor</text>
+    <text x="668" y="157" font-size="11" fill="#4a5568">~50% — no roof gaps</text>
+
+    <!-- ==== ASSEMBLED TOP VIEW ==== -->
+    <text x="420" y="216" text-anchor="middle" font-size="13" font-weight="700" fill="#4a5568">Assembled — top view</text>
+    <!-- petal strips radiating -->
+    <g fill="#dce9f5" stroke="#1a5276" stroke-width="1.2" opacity="0.9">
+      <rect x="400" y="222" width="40" height="52" rx="3"/>
+      <rect x="400" y="272" width="40" height="52" rx="3"/>
+      <g transform="rotate(60 420 273)"><rect x="400" y="222" width="40" height="52" rx="3"/><rect x="400" y="272" width="40" height="52" rx="3"/></g>
+      <g transform="rotate(120 420 273)"><rect x="400" y="222" width="40" height="52" rx="3"/><rect x="400" y="272" width="40" height="52" rx="3"/></g>
+    </g>
+    <!-- fingers radiating on top -->
+    <g fill="#bcd4ea" stroke="#1a5276" stroke-width="1">
+      <path d="M420 273 L392 240 L404 234 Z"/>
+      <path d="M420 273 L436 234 L448 240 Z"/>
+      <path d="M420 273 L462 258 L464 271 Z"/>
+      <path d="M420 273 L460 292 L452 302 Z"/>
+      <path d="M420 273 L424 310 L410 309 Z"/>
+      <path d="M420 273 L384 300 L378 289 Z"/>
+      <path d="M420 273 L376 262 L379 250 Z"/>
+    </g>
+    <!-- pipe circle -->
+    <circle cx="420" cy="273" r="15" fill="#9aa5ad" stroke="#6d7880" stroke-width="2"/>
+    <circle cx="420" cy="273" r="9" fill="#5d6870"/>
+    <text x="512" y="252" font-size="11" fill="#4a5568">petal strips ring the pipe;</text>
+    <text x="512" y="265" font-size="11" fill="#4a5568">fingers from Piece 1 fan out</text>
+    <text x="512" y="278" font-size="11" fill="#4a5568">on top — every layer pressed</text>
+    <text x="512" y="291" font-size="11" fill="#4a5568">flat into wet sealant</text>
+  </svg>
+  <div class="cap"><strong>Your material: Henry 296 ElastoTape repair fabric, 4" × 150 ft roll (confirmed 7/12).</strong> 100% spunbonded polyester — the right stuff, and 150 ft means you can be generous. Piece 1 (pipe wrap with fingers) cuts straight from the roll: solid top ~2", fingers ~2". Piece 2 is the petal layout shown above since the roll is 4" wide. Ignore the drywall FibaTape — you don't need it anymore.</div>
+</div>
+
+<h2>Step-by-step</h2>
+
+<div class="step-list">
+  <div class="step-item">
+    <div class="step-title">Pick the weather window<span class="step-time">before anything</span></div>
+    <div class="step-body">
+      <ul>
+        <li><strong>Roof bone-dry</strong> — no rain in the last 12-24 hrs. Neither product bonds to damp coating.</li>
+        <li><strong>Because of the 4-hour hold, plan a 3-day dry stretch, not 2 — dry from the Solar Seal bead through 24-48 hrs after the mastic. No rain forecast for 24-48 hrs after</strong> — Henry 289 is water-based acrylic; rain before it cures washes it out. 48 hrs of dry is the comfortable window.</li>
+        <li><strong>Morning is best in July</strong> — Solar Seal's cutoff is 125°F substrate temp and a sun-soaked roof gets close by afternoon. Cooler surface = less slump, easier spreading.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-item">
+    <div class="step-title">Gather<span class="step-time">5 min</span></div>
+    <div class="step-body">
+      Solar Seal tube + caulk gun (gap bead) · <strong>Henry 289 White Roofing Sealant, 1 qt</strong> (the fabric courses — one Home Depot run) · Henry 296 ElastoTape roll · cheap chip brush or plastic spreader for the 289 · scissors · wire brush · putty knife · rubbing alcohol + rags · nitrile gloves · phone (before/after photos) · small trash bag for the peeled coating flakes.
+    </div>
+  </div>
+
+  <div class="step-item">
+    <div class="step-title">Strip the failed flashing<span class="step-time">10 min</span></div>
+    <div class="step-body">
+      <ul>
+        <li>Pull off every <strong>loose, curled flake</strong> of old coating around the pipe base by hand — if it lifts with light finger pressure, it goes. Bag it.</li>
+        <li><strong>Stop where the coating is still stuck down hard.</strong> Don't peel healthy coating — you're finding the sound edge, not excavating.</li>
+        <li>Wire-brush the exposed pipe metal to knock off surface rust — shiny-ish is good enough, you're not restoring it, just giving sealant something clean to grip.</li>
+        <li>Wire-brush the roof surface in a 4-6" ring around the pipe, including over the sound coating edge you'll overlap onto.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-item">
+    <div class="step-title">Clean<span class="step-time">5 min + dry time</span></div>
+    <div class="step-body">
+      <ul>
+        <li>Brush/blow away all dust and crumbs — debris under the patch = a channel for water.</li>
+        <li>Wipe the pipe and the roof ring with alcohol on a rag. Let it flash off completely (a few minutes). Surface must be <strong>clean, dry, dust-free</strong>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-item">
+    <div class="step-title">Cut the fabric BEFORE opening the sealant<span class="step-time">5 min</span></div>
+    <div class="step-body">
+      <ul>
+        <li>Cut Piece 1 (pipe wrap with fingers) + 4-6 petal strips (~8" each) from the Henry ElastoTape roll, per the diagram above. Dry-fit around the pipe now — adjusting fabric with gloves full of sealant is miserable.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-item">
+    <div class="step-title">Fill the gap (Solar Seal) — then wait 4 hrs / overnight<span class="step-time">10-15 min</span></div>
+    <div class="step-body">
+      <ul>
+        <li><strong>Solar Seal first:</strong> run a heavy bead directly into the open seam where the flashing pulled away from the pipe — all the way around. Push it INTO the gap with the putty knife; this is the actual hole, fill it. Tool it smooth so no ridge sticks up.</li>
+        <li><strong>Then STOP for 4 hours.</strong> Solar Seal is a terpolymer: manufacturer tack-free time is 4 hours (ASTM-C-679) and the label says <em>&ldquo;paintable after skin forms.&rdquo;</em> Burying an uncured bead under water-based acrylic risks the bond and seals off its cure. <strong>Best practice: run the Solar Seal bead the evening before, then do the whole three-course sandwich the next morning</strong> — you get the skin overnight for free and you brush the 289 on a cool roof instead of a hot one.<br><br><strong>Then Course 1 in Henry 289:</strong> brush/trowel a heavy coat <strong>2" up the pipe and 3-4" out onto the roof</strong>, right over the fresh Solar Seal bead, all the way around. Work in one continuous pass — the fabric goes in while this is wet.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-item">
+    <div class="step-title">Embed the fabric<span class="step-time">5-10 min</span></div>
+    <div class="step-body">
+      <ul>
+        <li>Lay the <strong>petal strips</strong> first: radiating out from the pipe into the wet sealant, each overlapping its neighbor ~50%, inner ends butted right against the pipe.</li>
+        <li>Then wrap <strong>Piece 1</strong> around the pipe: solid half up the pipe, fingers fanned down over the petals. Press every finger flat.</li>
+        <li><strong>Press everything into the corner</strong> where pipe meets roof — the fabric must follow the contour. A tented/bridged spot becomes a void that flexes and splits.</li>
+        <li>No bubbles: smooth outward from the pipe like wallpaper.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-item">
+    <div class="step-title">Course 2 — bury it (Henry 289, immediately)<span class="step-time">10 min</span></div>
+    <div class="step-body">
+      <ul>
+        <li>Henry's instructions: apply the top coat of 289 <strong>immediately after embedding the fabric</strong> — don't let course 1 skin first. Wet-on-wet is how the fabric saturates through.</li>
+        <li>Cover until <strong>no fabric pattern is visible anywhere</strong>. Exposed fabric wicks water and degrades in UV — this one detail decides whether the repair lasts 2 years or 10.</li>
+        <li><strong>Feather the outer edge to nothing</strong> so water sheds over it instead of catching, and shape a slight mound so water runs <em>away</em> from the pipe — no moat.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-item">
+    <div class="step-title">Same session: wrap the jagged-top stack<span class="step-time">15 min</span></div>
+    <div class="step-body">
+      Repeat steps 3-8 on the second vent stack (the jagged-rim one from photos 172537/172549) — its lead base flashing looked compromised too. <strong>Do NOT cap or seal the pipe opening on either stack</strong> — plumbing vents must stay open to the sky; that's their job.
+    </div>
+  </div>
+
+  <div class="step-item">
+    <div class="step-title">Photograph + cure + prove<span class="step-time">passive</span></div>
+    <div class="step-body">
+      <ul>
+        <li>After-photos of both stacks from the same angles as the 7/5 photos.</li>
+        <li>Hands off 24-48 hrs. The 289 top course IS the finished weather surface — <strong>no additional coating is needed on the repair.</strong> It's UV-stable and designed to sit exposed.</li>
+        <li><strong>Next real rain: check the 4th-floor ceiling.</strong> Dry = confirmed fix; log it in the <a href="roof-leak-diagnostic-guide.html">incident table</a>. If you're impatient, a hose test after 48+ hrs of cure is fair game — same test that found it.</li>
+        <li>Whenever the Phase-4 full recoat happens, it rolls straight over this patch — 289 is formulated to take acrylic coating on top. Give the patch a week+ of cure first.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="warn-box">
+  <h3>Don't</h3>
+  <ul>
+    <li><strong>Don't apply to a damp roof</strong> — the bond fails invisibly and you find out next storm.</li>
+    <li><strong>Don't leave any mesh/fabric exposed</strong> — it wicks water into the patch and UV eats it.</li>
+    <li><strong>Don't glob one thick coat instead of two courses</strong> — thick sealant skins on top and stays soft underneath for weeks; it also slumps off the pipe.</li>
+    <li><strong>Don't cap the pipe opening</strong> — open is correct for a plumbing vent.</li>
+    <li><strong>Don't peel well-adhered coating</strong> looking for a "clean start" — you'll turn a 45-minute patch into a half-roof excavation.</li>
+  </ul>
+</div>
+
+<div class="info-box">
+  <h3>Product quick reference</h3>
+  <table class="spec-table">
+    <tr><th>Product</th><th>Role</th><th>Key facts</th></tr>
+    <tr><td><strong>Solar Seal #900</strong> (have)</td><td>Gap bead — inject the open seam at the pipe</td><td>Terpolymer, 300-400% elongation, 0-125°F substrate, tack-free ~4 hrs, paintable after skin, NOT for constant submersion</td></tr>
+    <tr><td><strong>Henry 289 White Roofing Sealant</strong> (buy 1 qt)</td><td>Both fabric courses — brush/trowel on</td><td>Elastomeric acrylic, the designed companion to 296 ElastoTape, formulated for acrylic recoat on top, water-based → 24-48 hr dry window</td></tr>
+    <tr><td><strong>Henry 296 ElastoTape</strong> (have)</td><td>Reinforcement — collar + petals</td><td>Spunbonded polyester, must end up 100% buried</td></tr>
+    <tr><td><strong>Black asphalt mastic</strong> (videos)</td><td>DON'T buy</td><td>Works, but bleeds brown through white acrylic recoats — wrong for your Phase-4 plan</td></tr>
+  </table>
+</div>
+
+<footer>
+Repair guide built 2026-07-12 · source confirmed by hose test wk of 7/6 · companion to roof-leak-diagnostic-guide.html
+</footer>
+
+</body>
+</html>
