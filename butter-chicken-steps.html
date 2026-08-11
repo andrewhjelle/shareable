@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Butter Chicken — Step by Step</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #faf7f2;
+    --card: #ffffff;
+    --ink: #2b2620;
+    --muted: #8a8072;
+    --accent: #b3541e;
+    --accent-soft: #f6e3d4;
+    --green: #3d7a4f;
+    --green-soft: #e3efe6;
+    --line: #e8e1d5;
+  }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 20px 16px 90px; }
+
+  /* Header */
+  .top { text-align: center; padding: 8px 0 18px; }
+  .top .kicker { font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent); font-family: Arial, sans-serif; }
+  .top h1 { font-size: 26px; font-weight: 600; margin-top: 6px; }
+  .top .sub { color: var(--muted); font-size: 14px; margin-top: 4px; font-style: italic; }
+
+  /* Progress */
+  .progress-row { display: flex; align-items: center; gap: 12px; margin: 10px 0 16px; }
+  .progress-label { font-family: Arial, sans-serif; font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .bar { flex: 1; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 3px; width: 0%; transition: width .3s ease; }
+
+  /* Step card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 26px 22px;
+    box-shadow: 0 2px 10px rgba(60,45,20,.05);
+  }
+  .phase-tag {
+    display: inline-block; font-family: Arial, sans-serif; font-size: 11px;
+    letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px;
+    border-radius: 20px; margin-bottom: 12px;
+  }
+  .phase-tag.measure { background: var(--green-soft); color: var(--green); }
+  .phase-tag.cook { background: var(--accent-soft); color: var(--accent); }
+  .card h2 { font-size: 23px; font-weight: 600; margin-bottom: 6px; }
+  .card .time { font-family: Arial, sans-serif; font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+  .card .body-text { font-size: 17px; line-height: 1.65; }
+  .card .body-text p { margin-bottom: 12px; }
+  .card .body-text em { color: var(--accent); font-style: normal; font-weight: bold; }
+
+  /* Checklists (mise en place) */
+  .check-list { list-style: none; margin: 6px 0 4px; }
+  .check-list li { margin-bottom: 4px; }
+  .check-list label {
+    display: flex; align-items: baseline; gap: 12px; font-size: 17px;
+    line-height: 1.5; cursor: pointer; padding: 9px 12px; border-radius: 9px;
+  }
+  .check-list label:hover { background: #f7f3ea; }
+  .check-list input[type=checkbox] {
+    width: 21px; height: 21px; accent-color: var(--green);
+    flex-shrink: 0; position: relative; top: 3px; cursor: pointer;
+  }
+  .check-list input:checked + span { color: var(--muted); text-decoration: line-through; }
+  .amt { font-family: Arial, sans-serif; font-weight: bold; font-size: 15px; color: var(--accent); }
+  .again {
+    font-family: Arial, sans-serif; font-size: 10px; letter-spacing: 1px;
+    background: #fdf0e5; color: var(--accent); border: 1px solid #eed3ba;
+    padding: 1px 7px; border-radius: 10px; text-transform: uppercase;
+    white-space: nowrap; margin-left: 6px;
+  }
+
+  .note {
+    margin-top: 14px; padding: 13px 15px; border-radius: 10px; font-size: 15px;
+    line-height: 1.55; background: #fbf6ec; border-left: 3px solid var(--accent);
+  }
+  .note.good { background: var(--green-soft); border-left-color: var(--green); }
+
+  /* Nav buttons */
+  .nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(250,247,242,.96); border-top: 1px solid var(--line);
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  }
+  .nav-inner { max-width: 680px; margin: 0 auto; display: flex; gap: 10px; }
+  .btn {
+    font-family: Arial, sans-serif; font-size: 17px; font-weight: bold;
+    border: none; border-radius: 12px; padding: 15px 10px; cursor: pointer;
+  }
+  .btn-back { flex: 1; background: #efe9dd; color: var(--ink); }
+  .btn-next { flex: 2.2; background: var(--accent); color: #fff; }
+  .btn-next:active { background: #96431a; }
+  .btn:disabled { opacity: .35; cursor: default; }
+
+  /* Overview list */
+  .overview { margin-top: 18px; }
+  .overview h3 {
+    font-family: Arial, sans-serif; font-size: 12px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  }
+  .step-links { list-style: none; }
+  .step-links li button {
+    width: 100%; text-align: left; background: none; border: none;
+    border-bottom: 1px solid var(--line); font-family: Georgia, serif;
+    font-size: 15px; color: var(--ink); padding: 11px 6px; cursor: pointer;
+    display: flex; gap: 12px; align-items: baseline;
+  }
+  .step-links li button:hover { background: #f5f0e6; }
+  .step-links .n { font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; color: var(--accent); min-width: 20px; }
+  .step-links li button.done .t { color: var(--muted); }
+  .step-links li button.current { background: var(--accent-soft); border-radius: 8px; }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="kicker">Cook Mode</div>
+    <h1>Pakistani Butter Chicken</h1>
+    <div class="sub">Instant Pot &middot; serves 4 + leftovers &middot; the Cloud Naan one</div>
+  </div>
+
+  <div class="progress-row">
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+    <div class="progress-label" id="progLabel">Step 1 of 12</div>
+  </div>
+
+  <div id="stepHost"></div>
+
+  <div class="overview">
+    <h3>All steps — tap to jump</h3>
+    <ul class="step-links" id="stepLinks"></ul>
+  </div>
+
+</div>
+
+<div class="nav">
+  <div class="nav-inner">
+    <button class="btn btn-back" id="btnBack">&larr; Back</button>
+    <button class="btn btn-next" id="btnNext">Next &rarr;</button>
+  </div>
+</div>
+
+<script>
+const STEPS = [
+  {
+    phase: "measure", short: "Cut the chicken",
+    title: "Cut the chicken", time: "~5 min",
+    html: `
+      <p>Cut <span class="amt">2 lb</span> boneless skinless chicken thighs into bite-size pieces. Straight into your large marinade bowl.</p>
+      <div class="note good">Everything gets measured up front in the next few steps. Several spices get measured <strong>twice</strong> — once for the marinade, once for the sauce. The separate bowls keep them straight, so measure each one when its step asks.</div>`
+  },
+  {
+    phase: "measure", short: "Marinade bowl",
+    title: "Marinade bowl", time: "~5 min · everything goes on the chicken",
+    checks: [
+      ["1 cup", "whole-milk yogurt (Fage)"],
+      ["1 tbsp", "lemon juice (≈ juice of ½ lemon)"],
+      ["2 tsp", "pre-minced garlic", "again"],
+      ["1 tbsp", "grated ginger", "again"],
+      ["1 tsp", "garam masala", "again"],
+      ["1 tsp", "cumin", "again"],
+      ["1 tsp", "kashmiri chili", "again"],
+      ["½ tsp", "turmeric"],
+      ["1 tsp", "salt"]
+    ],
+    html: `<div class="note">Items marked <span class="again">measured again later</span> come back at their sauce amounts in the next steps — don't double up here.</div>`
+  },
+  {
+    phase: "measure", short: "Sauce spice bowl",
+    title: "Sauce spice bowl", time: "~2 min · small bowl, set near the Instant Pot",
+    checks: [
+      ["1 tsp", "garam masala"],
+      ["1 tsp", "cumin"],
+      ["½ tsp", "coriander"],
+      ["1 tsp", "kashmiri chili"]
+    ],
+    html: `<div class="note">Yes — garam masala, cumin, and kashmiri chili a <strong>second time</strong>. This whole bowl gets dumped in at once during the sauté, so you never measure with wet hands over a hot pot.</div>`
+  },
+  {
+    phase: "measure", short: "Cutting board: aromatics",
+    title: "Cutting board: aromatics", time: "~8 min",
+    checks: [
+      ["1", "yellow onion, finely diced"],
+      ["1½ tsp", "pre-minced garlic (second amount)"],
+      ["1 tbsp", "grated ginger (second amount)"],
+      ["2 tbsp", "tomato paste, spooned out and ready"],
+      ["28 oz", "can of crushed tomatoes, opened"],
+      ["2 tbsp", "butter, cut and set by the pot"]
+    ],
+    html: ``
+  },
+  {
+    phase: "measure", short: "Finish tray",
+    title: "Finish tray", time: "~2 min · set aside, used only at the very end",
+    checks: [
+      ["½ cup", "heavy cream"],
+      ["1 tbsp", "butter (second amount)"],
+      ["1 tbsp", "kasuri methi (dried fenugreek leaves)"],
+      ["—", "cilantro, roughly chopped, to garnish"]
+    ],
+    html: `<div class="note">These go in <strong>after</strong> pressure cooking, never before — dairy curdles under pressure. Kasuri methi is the "tastes like Cloud Naan" ingredient. Do not skip it.</div>`
+  },
+  {
+    phase: "cook", short: "Marinate",
+    title: "Marinate the chicken", time: "30 min minimum · 1–24 hrs is better",
+    html: `
+      <p>Pour the marinade over the chicken and mix until every piece is coated. Cover and refrigerate.</p>
+      <p>Making it tonight? Even <em>30–60 minutes</em> in the fridge while you clean up and start the rice makes a real difference. Full-day marinade is the June 10 version Debbie loved, so plan for that when you can.</p>`
+  },
+  {
+    phase: "cook", short: "Sauté",
+    title: "Sauté", time: "~12 min · Instant Pot on Sauté",
+    html: `
+      <p><strong>1.</strong> Melt the <span class="amt">2 tbsp</span> butter.</p>
+      <p><strong>2.</strong> Add the diced onion. Soften <span class="amt">8–10 min</span>, stirring now and then — low and slow makes it sweeter, which the kids like.</p>
+      <p><strong>3.</strong> Add the garlic + ginger from the cutting board. <span class="amt">1 min</span>.</p>
+      <p><strong>4.</strong> Stir in the <span class="amt">2 tbsp</span> tomato paste, then dump in the <em>whole sauce spice bowl</em>. <span class="amt">1 min</span>, stirring so nothing scorches.</p>
+      <p>This is also a good moment to start the jasmine rice separately — rinse till clear, go slightly light on the water.</p>`
+  },
+  {
+    phase: "cook", short: "Assemble",
+    title: "Assemble", time: "~2 min",
+    html: `
+      <p><strong>1.</strong> Add the raw marinated chicken with all its marinade.</p>
+      <p><strong>2.</strong> Pour the <span class="amt">28 oz</span> crushed tomatoes <em>on top — do not stir them in</em>, and don't scrape the fond. This layering avoids the burn warning.</p>
+      <p><strong>3.</strong> If it looks dry, add a splash (~¼ cup) of water around the edge.</p>
+      <p><strong>4.</strong> <em>No cream yet.</em> Lid on, valve to Sealing.</p>`
+  },
+  {
+    phase: "cook", short: "Pressure cook",
+    title: "Pressure cook", time: "~25 min mostly hands-off",
+    html: `
+      <p>HIGH pressure, <span class="amt">8 minutes</span>.</p>
+      <p>The pot takes about 10 minutes to come up to pressure first — that's normal.</p>
+      <p>When it beeps: <em>natural release 5 minutes</em>, then quick-release the rest.</p>`
+  },
+  {
+    phase: "cook", short: "Blend (optional)",
+    title: "Blend the sauce (optional)", time: "~5 min",
+    html: `
+      <p>For the smooth restaurant texture: pull the chicken pieces out with a slotted spoon, immersion-blend the sauce right in the pot, then return the chicken.</p>
+      <p>Adding cashews? Blend a small handful in now for extra richness.</p>
+      <p>Skipping this is fine — it's just a chunkier sauce.</p>`
+  },
+  {
+    phase: "cook", short: "Finish",
+    title: "Finish — grab the finish tray", time: "~5 min",
+    html: `
+      <p><strong>1.</strong> Pot on Sauté-low or off. Stir in the <span class="amt">½ cup</span> heavy cream and <span class="amt">1 tbsp</span> butter.</p>
+      <p><strong>2.</strong> <em>Off the heat:</em> crush the <span class="amt">1 tbsp</span> kasuri methi between your palms and stir it in. This is the Cloud Naan move.</p>
+      <p><strong>3.</strong> Simmer gently <span class="amt">~2 min</span>. Taste for salt.</p>`
+  },
+  {
+    phase: "cook", short: "Serve",
+    title: "Serve", time: "",
+    html: `
+      <p>Over jasmine rice, naan on the side, cilantro on top.</p>
+      <p>Kid plates as-is; adults can add a pinch of kashmiri chili at the table if they want more heat.</p>
+      <div class="note good">Cook log — Jun 10, 2026: first Instant Pot run. Debbie called it her favorite dish Andrew has made; kids liked it too. Chili was doubled after that run to the amounts on this page.</div>`
+  }
+];
+
+const host = document.getElementById('stepHost');
+const links = document.getElementById('stepLinks');
+const barFill = document.getElementById('barFill');
+const progLabel = document.getElementById('progLabel');
+const btnBack = document.getElementById('btnBack');
+const btnNext = document.getElementById('btnNext');
+
+let cur = parseInt(localStorage.getItem('bc-step') || '0', 10);
+if (isNaN(cur) || cur < 0 || cur >= STEPS.length) cur = 0;
+
+function checkKey(si, ci) { return 'bc-chk-' + si + '-' + ci; }
+
+function render() {
+  const s = STEPS[cur];
+  let checksHtml = '';
+  if (s.checks) {
+    checksHtml = '<ul class="check-list">' + s.checks.map((c, i) => {
+      const saved = localStorage.getItem(checkKey(cur, i)) === '1';
+      const badge = c[2] ? ' <span class="again">measured again later</span>' : '';
+      return `<li><label><input type="checkbox" data-ci="${i}" ${saved ? 'checked' : ''}><span><span class="amt">${c[0]}</span> ${c[1]}${badge}</span></label></li>`;
+    }).join('') + '</ul>';
+  }
+  host.innerHTML = `
+    <div class="card">
+      <span class="phase-tag ${s.phase}">${s.phase === 'measure' ? 'Measure everything first' : 'Cooking'}</span>
+      <h2>${s.title}</h2>
+      ${s.time ? `<div class="time">${s.time}</div>` : ''}
+      <div class="body-text">${checksHtml}${s.html || ''}</div>
+    </div>`;
+  host.querySelectorAll('input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      localStorage.setItem(checkKey(cur, cb.dataset.ci), cb.checked ? '1' : '0');
+    });
+  });
+  barFill.style.width = ((cur + 1) / STEPS.length * 100) + '%';
+  progLabel.textContent = 'Step ' + (cur + 1) + ' of ' + STEPS.length;
+  btnBack.disabled = cur === 0;
+  btnNext.textContent = cur === STEPS.length - 1 ? 'Done ✓' : 'Next →';
+  renderLinks();
+  localStorage.setItem('bc-step', String(cur));
+}
+
+function renderLinks() {
+  links.innerHTML = STEPS.map((s, i) =>
+    `<li><button class="${i < cur ? 'done' : ''} ${i === cur ? 'current' : ''}" data-i="${i}">
+      <span class="n">${i + 1}</span><span class="t">${s.short}</span>
+    </button></li>`).join('');
+  links.querySelectorAll('button').forEach(b => {
+    b.addEventListener('click', () => { cur = parseInt(b.dataset.i, 10); render(); window.scrollTo({top: 0, behavior: 'smooth'}); });
+  });
+}
+
+btnBack.addEventListener('click', () => { if (cur > 0) { cur--; render(); window.scrollTo({top: 0, behavior: 'smooth'}); } });
+btnNext.addEventListener('click', () => {
+  if (cur < STEPS.length - 1) { cur++; render(); window.scrollTo({top: 0, behavior: 'smooth'}); }
+  else {
+    localStorage.setItem('bc-step', '0');
+    for (let si = 0; si < STEPS.length; si++) {
+      const st = STEPS[si];
+      if (st.checks) for (let ci = 0; ci < st.checks.length; ci++) localStorage.removeItem(checkKey(si, ci));
+    }
+    cur = 0; render(); window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+});
+
+render();
+</script>
+</body>
+</html>
