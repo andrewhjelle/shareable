@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Taking Reinforcement Learning Cross Datacenter — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/maRzp4kImJ4" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 19 min</span><span class="ln"></span></div>
+<h1 class="lede">Taking Reinforcement Learning Cross Datacenter</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Nan Jiang &middot; Modal</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/maRzp4kImJ4" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/maRzp4kImJ4</a></span>
+</div>
+<div class="chips"><span class="chip hot">Infra & serving</span><span class="chip hot">Post-training</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>The default RL post-training loop forces rollout workers into the same tightly-coupled, RDMA-connected cluster as the trainer even though rollout has no global all-reduce dependency, which caps capacity to whatever fits in one region (c1, c2).</li><li>Because Adam&#x27;s per-parameter update is small relative to BF16&#x27;s rounding resolution, well under 1% of a rollout engine&#x27;s served weights actually change per training step -- about 99% bit-identical -- even though gradients themselves are dense (c3, c5, c6, c7).</li><li>This lets Modal ship a bitwise-reconstructable diff instead of a full checkpoint, shrinking the sync payload from hundreds of gigabytes to hundreds of megabytes and letting rollout engines run across regions and providers via the Stitch protocol (c4, c8).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The mismatch: RL wants one cluster, capacity is scattered</span><span class="ln"></span></div>
+<div class="prose"><p>Jiang contrasts the &#x27;cathedral&#x27; shape of a trainer cluster -- one region, fast interconnect, many GPUs -- with the &#x27;bro&#x27; shape of actually available compute, which is scattered across different providers, regions, prices, and availability. The default RL loop forces rollout into the same tightly coupled, RDMA-connected cluster as the trainer, so rollout inherits the hardest-to-get capacity constraint even though it doesn&#x27;t need to.</p></div>
+<div class="quote"><p>&ldquo;Available computer is distributed, but the default IO loop ask one tightly coupled cluster&rdquo;</p><a href="https://youtu.be/maRzp4kImJ4?t=126" target="_blank">&#9654; watch at 02:06</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>The key insight: rollout doesn&#x27;t need all-reduce, only the trainer does</span><span class="ln"></span></div>
+<div class="prose"><p>Training is a tightly coupled job requiring collective all-reduce and model-parallel communication on fast fabric, but rollout is a fleet of independent serving jobs generating trajectories with no cross-job collective communication. That means the trainer must stay in a single cluster, but the rollout serving fleet -- the &#x27;movable unit&#x27; -- can be spread across regions as long as it can receive policy weight versions and send back trajectories.</p></div>
+<div class="quote"><p>&ldquo;cross rollout jobs there&#x27;s no global or reduce&rdquo;</p><a href="https://youtu.be/maRzp4kImJ4?t=220" target="_blank">&#9654; watch at 03:40</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Why weight changes are sparse: Adam&#x27;s push vs BF16&#x27;s floor</span><span class="ln"></span></div>
+<div class="prose"><p>Shipping a full checkpoint (hundreds of gigabytes for a Kimi-scale MoE) every time rollout needs a new policy version is too slow for near-real-time weight updates. Jiang&#x27;s team found that Adam&#x27;s per-parameter update is typically far smaller than the rounding resolution of the BF16 format the rollout engine actually serves, so from the rollout engine&#x27;s point of view, the served weight value doesn&#x27;t change most of the time, even though the underlying dense gradients and master-weight updates are non-zero. Measured across model families, about 99% of served weights are bit-identical from one step to the next, and an internal run on a model served in FP8 showed only about 0.15% of weights changing in an early high-learning-rate step, dropping further as training stabilized.</p></div>
+<div class="quote"><p>&ldquo;What if less than 1% of rollout visible weights got changed from one version to another one by rollout&rdquo;</p><a href="https://youtu.be/maRzp4kImJ4?t=344" target="_blank">&#9654; watch at 05:44</a></div><div class="quote"><p>&ldquo;the result around 99% of the time is bit identical per step&rdquo;</p><a href="https://youtu.be/maRzp4kImJ4?t=748" target="_blank">&#9654; watch at 12:28</a></div><div class="quote"><p>&ldquo;the work it works because all our gradients are sparse. They are not. The paper reports the gradients are dense.&rdquo;</p><a href="https://youtu.be/maRzp4kImJ4?t=780" target="_blank">&#9654; watch at 13:00</a></div><div class="quote"><p>&ldquo;here&#x27;s the model we serve like GM 4.7 air in FP8 and we can see in the beginning there are only like 0.15% of weights got changed in the first step&rdquo;</p><a href="https://youtu.be/maRzp4kImJ4?t=842" target="_blank">&#9654; watch at 14:02</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Result: the Stitch protocol and payload size</span><span class="ln"></span></div>
+<div class="prose"><p>Because the change is sparse and bit-level reconstructable, Modal ships a lossless diff (changed positions plus replacement bits) instead of a full checkpoint, shrinking the sync payload from hundreds of gigabytes to hundreds of megabytes. In the resulting Stitch protocol, the trainer publishes each immutable policy version to a shared bulletin board after its optimizer step, and rollout engines outside the training cluster pull the version they need independently, without requiring RDMA connectivity to the trainer.</p></div>
+<div class="quote"><p>&ldquo;the link shrinks from hundreds of gigabytes to maybe hundreds of megabytes&rdquo;</p><a href="https://youtu.be/maRzp4kImJ4?t=376" target="_blank">&#9654; watch at 06:16</a></div><div class="quote"><p>&ldquo;the trainer saying a cluster after it got updated it publish immutable rollout based version to a shared bulletboard&rdquo;</p><a href="https://youtu.be/maRzp4kImJ4?t=904" target="_blank">&#9654; watch at 15:04</a></div>
+
+</section>
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Usable compute capacity is scattered across regions and providers, but the default RL post-training loop demands one tightly coupled, fast-fabric cluster, which is the hardest shape of capacity to get.</td><td class="tt"><a href="https://youtu.be/maRzp4kImJ4?t=126" target="_blank">02:06</a></td></tr><tr><td class="st">asserts</td><td>Unlike the trainer, which needs collective all-reduce, rollout jobs have no cross-job collective communication dependency, which is why the rollout fleet -- not the trainer -- is the part of the loop that can move off the tightly coupled cluster.</td><td class="tt"><a href="https://youtu.be/maRzp4kImJ4?t=220" target="_blank">03:40</a></td></tr><tr><td class="st">asserts</td><td>The core bet behind the approach is that less than 1% of the weights actually visible to the rollout serving engine change from one policy version to the next.</td><td class="tt"><a href="https://youtu.be/maRzp4kImJ4?t=344" target="_blank">05:44</a></td></tr><tr><td class="st">asserts</td><td>Because only a small fraction of served weights change per step, the object that needs to be shipped shrinks from a full checkpoint of hundreds of gigabytes to a diff of hundreds of megabytes.</td><td class="tt"><a href="https://youtu.be/maRzp4kImJ4?t=376" target="_blank">06:16</a></td></tr><tr><td class="st">asserts</td><td>Measured across model families by casting weights to BF16 and comparing consecutive versions bitwise, about 99% of served weight values are bit-identical from one training step to the next.</td><td class="tt"><a href="https://youtu.be/maRzp4kImJ4?t=748" target="_blank">12:28</a></td></tr><tr><td class="st">warns</td><td>The reason so few served weights change is not that gradients are sparse -- the paper reports gradients are dense, with about 99% of parameters getting non-zero gradients -- it&#x27;s that the updates are small relative to BF16&#x27;s representable resolution.</td><td class="tt"><a href="https://youtu.be/maRzp4kImJ4?t=780" target="_blank">13:00</a></td></tr><tr><td class="st">asserts</td><td>In an internal run serving a model in FP8, only about 0.15% of weights changed in the first training step when the learning rate/update size was high, with the fraction stabilizing lower as training progressed.</td><td class="tt"><a href="https://youtu.be/maRzp4kImJ4?t=842" target="_blank">14:02</a></td></tr><tr><td class="st">asserts</td><td>In the Stitch protocol, after each optimizer step the trainer publishes an immutable rollout-based weight version to a shared bulletin board, and rollout engines living outside the training cluster pull versions from that board independently.</td><td class="tt"><a href="https://youtu.be/maRzp4kImJ4?t=904" target="_blank">15:04</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "maRzp4kImJ4", "slug": "rl-cross-datacenter", "title": "Taking Reinforcement Learning Cross Datacenter", "speaker": "Nan Jiang", "company": "Modal", "themes": ["infra-serving", "post-training"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "compute shape mismatch", "text": "Usable compute capacity is scattered across regions and providers, but the default RL post-training loop demands one tightly coupled, fast-fabric cluster, which is the hardest shape of capacity to get.", "quote": "Available computer is distributed, but the default IO loop ask one tightly coupled cluster", "t": 126}, {"id": "c2", "stance": "asserts", "topic": "rollout has no all-reduce dependency", "text": "Unlike the trainer, which needs collective all-reduce, rollout jobs have no cross-job collective communication dependency, which is why the rollout fleet -- not the trainer -- is the part of the loop that can move off the tightly coupled cluster.", "quote": "cross rollout jobs there's no global or reduce", "t": 220}, {"id": "c3", "stance": "asserts", "topic": "the under-1% weight-change bet", "text": "The core bet behind the approach is that less than 1% of the weights actually visible to the rollout serving engine change from one policy version to the next.", "quote": "What if less than 1% of rollout visible weights got changed from one version to another one by rollout", "t": 344}, {"id": "c4", "stance": "asserts", "topic": "payload size reduction", "text": "Because only a small fraction of served weights change per step, the object that needs to be shipped shrinks from a full checkpoint of hundreds of gigabytes to a diff of hundreds of megabytes.", "quote": "the link shrinks from hundreds of gigabytes to maybe hundreds of megabytes", "t": 376}, {"id": "c5", "stance": "asserts", "topic": "measured 99% bit-identical", "text": "Measured across model families by casting weights to BF16 and comparing consecutive versions bitwise, about 99% of served weight values are bit-identical from one training step to the next.", "quote": "the result around 99% of the time is bit identical per step", "t": 748}, {"id": "c6", "stance": "warns", "topic": "gradients are dense, not sparse", "text": "The reason so few served weights change is not that gradients are sparse -- the paper reports gradients are dense, with about 99% of parameters getting non-zero gradients -- it's that the updates are small relative to BF16's representable resolution.", "quote": "the work it works because all our gradients are sparse. They are not. The paper reports the gradients are dense.", "t": 780}, {"id": "c7", "stance": "asserts", "topic": "internal run measurement", "text": "In an internal run serving a model in FP8, only about 0.15% of weights changed in the first training step when the learning rate/update size was high, with the fraction stabilizing lower as training progressed.", "quote": "here's the model we serve like GM 4.7 air in FP8 and we can see in the beginning there are only like 0.15% of weights got changed in the first step", "t": 842}, {"id": "c8", "stance": "asserts", "topic": "the Stitch protocol", "text": "In the Stitch protocol, after each optimizer step the trainer publishes an immutable rollout-based weight version to a shared bulletin board, and rollout engines living outside the training cluster pull versions from that board independently.", "quote": "the trainer saying a cluster after it got updated it publish immutable rollout based version to a shared bulletboard", "t": 904}]}</script>
+</body></html>

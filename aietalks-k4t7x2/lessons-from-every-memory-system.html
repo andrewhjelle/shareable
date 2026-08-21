@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Lessons from Studying Every Memory System — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/5ZGyKWjQDr0" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 19 min</span><span class="ln"></span></div>
+<h1 class="lede">Lessons from Studying Every Memory System</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Shlok Khemani &middot; Independent</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/5ZGyKWjQDr0" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/5ZGyKWjQDr0</a></span>
+</div>
+<div class="chips"><span class="chip hot">Memory</span><span class="chip hot">Product & UX</span><span class="chip hot">Context engineering</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>ChatGPT memory v1 (Feb 2024) put the burden of memory management on the user and suffered from staleness; the general lesson is that memory cannot be outsourced — every top consumer AI product builds it in-house (c1, c4).</li><li>Claude&#x27;s profile is about 1,000 tokens updated every 24 hours versus ChatGPT&#x27;s roughly 4,000 tokens updated every few days — a direct tradeoff between update cost and serving cost that the speaker frames as &#x27;memory is a function of compute&#x27; (c2, c3, c5).</li><li>Even a well-resourced running-profile system has a &#x27;massive context problem&#x27;: it can&#x27;t reason over rich existing context like email or in-person conversations, so it can hold factually wrong beliefs (e.g. a still-listed trip to a place the user never went) and isn&#x27;t even curious about the contradiction (c6).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>How memory evolved: ChatGPT v1 to v2</span><span class="ln"></span></div>
+<div class="prose"><p>ChatGPT&#x27;s first serious memory implementation (Feb 2024) let users tell it to remember facts, which were stored in a visible, deletable list and added to every conversation&#x27;s context. Khemani says the core flaw was that because every memory creation was visible, users felt responsible for managing memory themselves, and facts went stale (a since-past trip to Bengaluru stayed in his context indefinitely). ChatGPT&#x27;s v2 (April 2025) replaced this with an asynchronously updated &#x27;running profile&#x27; — a dense, roughly 4,000-token summary refreshed every few days — which fixed the user-burden problem but not staleness (a still-listed Thailand/Turkey travel conflict persisted).</p></div>
+<div class="quote"><p>&ldquo;The biggest one was that as a user, because you could see every time a memory was created, it felt like you were responsible for both creating memories while you were just trying to have a conversation&rdquo;</p><a href="https://youtu.be/5ZGyKWjQDr0?t=187" target="_blank">&#9654; watch at 03:07</a></div>
+<figure class="slide"><a href="https://youtu.be/5ZGyKWjQDr0?t=130" target="_blank"><img loading="lazy" src="img/lessons-from-every-memory-system/s01_130.jpg" alt="How memory evolved: ChatGPT v1 to v2"></a><figcaption>Slide at 02:10 &middot; How memory evolved: ChatGPT v1 to v2 &middot; <a href="https://youtu.be/5ZGyKWjQDr0?t=130" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Claude took the opposite approach, then converged</span><span class="ln"></span></div>
+<div class="prose"><p>Claude&#x27;s first memory version (August 2025) had no stored profile at all — just tools to search past conversations by keyword or time period, with every conversation starting fresh. After Khemani&#x27;s public comparison of the two architectures, Claude released v2 with its own running profile: visible to users (unlike ChatGPT&#x27;s), about 1,000 tokens versus ChatGPT&#x27;s 4,000, written as full sentences rather than dense keywords, updated every 24 hours, and editable. ChatGPT later added its own conversation-search tool and made a version of its profile visible, converging toward the same general shape while keeping different implementation details.</p></div>
+<div class="quote"><p>&ldquo;this profile was a,000 tokens. So it was much smaller than chat GPT&#x27;s 4,000 tokens&rdquo;</p><a href="https://youtu.be/5ZGyKWjQDr0?t=496" target="_blank">&#9654; watch at 08:16</a></div><div class="quote"><p>&ldquo;Claude&#x27;s profile updates every 24 hours. For chat GPT, it&#x27;s every few days. And Claude also let you let the user make explicit edits to this profile&rdquo;</p><a href="https://youtu.be/5ZGyKWjQDr0?t=529" target="_blank">&#9654; watch at 08:49</a></div>
+<figure class="slide"><a href="https://youtu.be/5ZGyKWjQDr0?t=490" target="_blank"><img loading="lazy" src="img/lessons-from-every-memory-system/s03_490.jpg" alt="Claude took the opposite approach, then converged"></a><figcaption>Slide at 08:10 &middot; Claude took the opposite approach, then converged &middot; <a href="https://youtu.be/5ZGyKWjQDr0?t=490" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Lesson: memory cannot be outsourced</span><span class="ln"></span></div>
+<div class="prose"><p>Because every major product (ChatGPT, Claude, Gemini, coding agents like Claude Code) independently arrived at a different concrete memory architecture despite converging on the general shape of a running profile, Khemani concludes there is no single correct way to do memory, and no serious team should treat it as an outsourced, bolted-on component — it has to be built and evolved alongside the product.</p></div>
+<div class="quote"><p>&ldquo;The implications of this is that memory cannot be outsourced. If you&#x27;re a serious team, you do not outsource memory. It is something that you build alongside your product&rdquo;</p><a href="https://youtu.be/5ZGyKWjQDr0?t=685" target="_blank">&#9654; watch at 11:25</a></div>
+<figure class="slide"><a href="https://youtu.be/5ZGyKWjQDr0?t=550" target="_blank"><img loading="lazy" src="img/lessons-from-every-memory-system/s04_550.jpg" alt="Lesson: memory cannot be outsourced"></a><figcaption>Slide at 09:10 &middot; Lesson: memory cannot be outsourced &middot; <a href="https://youtu.be/5ZGyKWjQDr0?t=550" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Lesson: memory is a function of compute</span><span class="ln"></span></div>
+<div class="prose"><p>A running profile has two costs: an update cost (how often and how much compute is spent regenerating it) and a serving cost (how many tokens it adds to every conversation). Khemani reads ChatGPT&#x27;s and Claude&#x27;s designs as opposite points on this tradeoff curve — larger profile, less frequent updates versus smaller profile, more frequent updates — driven by real GPU constraints rather than by an ideal design.</p></div>
+<div class="quote"><p>&ldquo;memory is a function of compute. What does that mean? Let&#x27;s look at the costs associated with a running profile&rdquo;</p><a href="https://youtu.be/5ZGyKWjQDr0?t=716" target="_blank">&#9654; watch at 11:56</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>The unsolved problem: context, not architecture</span><span class="ln"></span></div>
+<div class="prose"><p>Khemani&#x27;s closing argument is that even a perfect memory architecture is capped by how much context it can gather about the user. His own example: ChatGPT&#x27;s profile still lists him as having traveled to Turkey in 2025 (from a conversation weighing Thailand vs. Turkey) despite him actually going to Thailand, a fact recorded in his email but never reasoned over. He calls this a product problem, not a technology problem — these systems aren&#x27;t built to notice or resolve such contradictions.</p></div>
+<div class="quote"><p>&ldquo;So for me, none of this feels like 2026. And what I keep asking myself every day is when will personal AI feel like personal AI&rdquo;</p><a href="https://youtu.be/5ZGyKWjQDr0?t=1094" target="_blank">&#9654; watch at 18:14</a></div><div class="quote"><p>&ldquo;I still think we&#x27;re very early. Memory for AI is just a three-year-old field&rdquo;</p><a href="https://youtu.be/5ZGyKWjQDr0?t=1094" target="_blank">&#9654; watch at 18:14</a></div>
+<figure class="slide"><a href="https://youtu.be/5ZGyKWjQDr0?t=1000" target="_blank"><img loading="lazy" src="img/lessons-from-every-memory-system/s06_1000.jpg" alt="The unsolved problem: context, not architecture"></a><figcaption>Slide at 16:40 &middot; The unsolved problem: context, not architecture &middot; <a href="https://youtu.be/5ZGyKWjQDr0?t=1000" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The &#x27;memory is a function of compute&#x27; framing is a useful lens for scoping a memory feature: the real design choice is where on the update-frequency/profile-size curve to sit, not whether to build a profile at all. (ours)</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/5ZGyKWjQDr0?t=10" target="_blank"><img loading="lazy" src="img/lessons-from-every-memory-system/s00_10.jpg" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="https://youtu.be/5ZGyKWjQDr0?t=130" target="_blank"><img loading="lazy" src="img/lessons-from-every-memory-system/s01_130.jpg" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="https://youtu.be/5ZGyKWjQDr0?t=430" target="_blank"><img loading="lazy" src="img/lessons-from-every-memory-system/s02_430.jpg" alt="slide at 07:10"><div class="ts">07:10</div></a><a href="https://youtu.be/5ZGyKWjQDr0?t=490" target="_blank"><img loading="lazy" src="img/lessons-from-every-memory-system/s03_490.jpg" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="https://youtu.be/5ZGyKWjQDr0?t=550" target="_blank"><img loading="lazy" src="img/lessons-from-every-memory-system/s04_550.jpg" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="https://youtu.be/5ZGyKWjQDr0?t=920" target="_blank"><img loading="lazy" src="img/lessons-from-every-memory-system/s05_920.jpg" alt="slide at 15:20"><div class="ts">15:20</div></a><a href="https://youtu.be/5ZGyKWjQDr0?t=1000" target="_blank"><img loading="lazy" src="img/lessons-from-every-memory-system/s06_1000.jpg" alt="slide at 16:40"><div class="ts">16:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (7)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">warns</td><td>ChatGPT memory v1 made every memory-creation event visible to the user, which put the burden of managing memory on the user during ordinary conversation.</td><td class="tt"><a href="https://youtu.be/5ZGyKWjQDr0?t=187" target="_blank">03:07</a></td></tr><tr><td class="st">asserts</td><td>Claude&#x27;s running profile is roughly 1,000 tokens, much smaller than ChatGPT&#x27;s roughly 4,000-token profile.</td><td class="tt"><a href="https://youtu.be/5ZGyKWjQDr0?t=496" target="_blank">08:16</a></td></tr><tr><td class="st">asserts</td><td>Claude updates its profile every 24 hours (versus ChatGPT&#x27;s every few days) and lets users make explicit edits to it.</td><td class="tt"><a href="https://youtu.be/5ZGyKWjQDr0?t=529" target="_blank">08:49</a></td></tr><tr><td class="st">recommends</td><td>Serious product teams should build memory in-house alongside their product rather than outsourcing it, since no single architecture fits every product.</td><td class="tt"><a href="https://youtu.be/5ZGyKWjQDr0?t=685" target="_blank">11:25</a></td></tr><tr><td class="st">asserts</td><td>A memory system&#x27;s design is fundamentally a compute tradeoff between the cost of updating a profile and the cost of serving it in every conversation.</td><td class="tt"><a href="https://youtu.be/5ZGyKWjQDr0?t=716" target="_blank">11:56</a></td></tr><tr><td class="st">warns</td><td>Current memory systems don&#x27;t reason over rich existing context (email, in-person conversations) and aren&#x27;t even curious about contradictions in what they know, which is why personal AI still doesn&#x27;t feel complete.</td><td class="tt"><a href="https://youtu.be/5ZGyKWjQDr0?t=1094" target="_blank">18:14</a></td></tr><tr><td class="st">asserts</td><td>Despite its current gaps, memory for AI is still an early, roughly three-year-old field.</td><td class="tt"><a href="https://youtu.be/5ZGyKWjQDr0?t=1094" target="_blank">18:14</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "5ZGyKWjQDr0", "slug": "lessons-from-every-memory-system", "title": "Lessons from Studying Every Memory System", "speaker": "Shlok Khemani", "company": "Independent", "themes": ["memory", "product-ux", "context-engineering"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "warns", "topic": "ChatGPT memory v1's design flaw", "text": "ChatGPT memory v1 made every memory-creation event visible to the user, which put the burden of managing memory on the user during ordinary conversation.", "quote": "The biggest one was that as a user, because you could see every time a memory was created, it felt like you were responsible for both creating memories while you were just trying to have a conversation", "t": 187}, {"id": "c2", "stance": "asserts", "topic": "Claude's smaller profile size", "text": "Claude's running profile is roughly 1,000 tokens, much smaller than ChatGPT's roughly 4,000-token profile.", "quote": "this profile was a,000 tokens. So it was much smaller than chat GPT's 4,000 tokens", "t": 496}, {"id": "c3", "stance": "asserts", "topic": "update frequency and editability", "text": "Claude updates its profile every 24 hours (versus ChatGPT's every few days) and lets users make explicit edits to it.", "quote": "Claude's profile updates every 24 hours. For chat GPT, it's every few days. And Claude also let you let the user make explicit edits to this profile", "t": 529}, {"id": "c4", "stance": "recommends", "topic": "memory cannot be outsourced", "text": "Serious product teams should build memory in-house alongside their product rather than outsourcing it, since no single architecture fits every product.", "quote": "The implications of this is that memory cannot be outsourced. If you're a serious team, you do not outsource memory. It is something that you build alongside your product", "t": 685}, {"id": "c5", "stance": "asserts", "topic": "memory is a function of compute", "text": "A memory system's design is fundamentally a compute tradeoff between the cost of updating a profile and the cost of serving it in every conversation.", "quote": "memory is a function of compute. What does that mean? Let's look at the costs associated with a running profile", "t": 716}, {"id": "c6", "stance": "warns", "topic": "the massive context problem", "text": "Current memory systems don't reason over rich existing context (email, in-person conversations) and aren't even curious about contradictions in what they know, which is why personal AI still doesn't feel complete.", "quote": "So for me, none of this feels like 2026. And what I keep asking myself every day is when will personal AI feel like personal AI", "t": 1094}, {"id": "c7", "stance": "asserts", "topic": "field maturity", "text": "Despite its current gaps, memory for AI is still an early, roughly three-year-old field.", "quote": "I still think we're very early. Memory for AI is just a three-year-old field", "t": 1094}]}</script>
+</body></html>

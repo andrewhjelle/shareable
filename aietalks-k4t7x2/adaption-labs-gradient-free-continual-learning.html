@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Adaption Labs: Gradient-Free Continual Learning — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/XEd_SRVHBgU" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 20 min</span><span class="ln"></span></div>
+<h1 class="lede">Adaption Labs: Gradient-Free Continual Learning</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Sara Hooker &middot; Adaption</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/XEd_SRVHBgU" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/XEd_SRVHBgU</a></span>
+</div>
+<div class="chips"><span class="chip hot">Continual learning</span><span class="chip hot">Post-training</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Auto Scientist, an automated model-training system, outperforms Adaption&#x27;s own research staff by searching a broader space of architectures and sizes than humans typically explore.</li><li>It only produced real gains once the data pipeline was co-optimized alongside the model, not treated as a separate step.</li><li>Pre-training scale is no longer the most lucrative axis for performance (per Hooker&#x27;s &#x27;Death of Scaling&#x27; paper), which shifts advantage toward recipe/algorithm work not gated by having the most GPUs.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>A narrow historical path to the frontier</span><span class="ln"></span></div>
+<div class="prose"><p>Hooker traces how becoming a frontier AI researcher has required a specific narrow path (right PhD program, right industry lab), professionalized and increasingly gated by access to compute. She frames the talk around who gets to participate in building frontier AI, noting whole regions are largely absent from documented AI breakthroughs.</p></div>
+<div class="quote"><p>&ldquo;modern computer science as a field has only existed for the last 77 years&rdquo;</p><a href="https://youtu.be/XEd_SRVHBgU?t=30" target="_blank">&#9654; watch at 00:30</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Auto Scientist: automating the training loop itself</span><span class="ln"></span></div>
+<div class="prose"><p>Adaption&#x27;s Auto Scientist automates training-model design across the full loop, from data to alignment, and self-evolves its approach based on domain and data type. Hooker states it outperforms the company&#x27;s own research staff, partly because it searches across many more model architectures and sizes (dense and mixture-of-experts) than a human team typically would. She reports the gains only materialized once the data pipeline was co-optimized together with the model, rather than treated as a fixed input.</p></div>
+<div class="quote"><p>&ldquo;what&#x27;s interesting as well is that it actually outperforms research staff&rdquo;</p><a href="https://youtu.be/XEd_SRVHBgU?t=339" target="_blank">&#9654; watch at 05:39</a></div><div class="quote"><p>&ldquo;This only worked when we co-optimized the data&rdquo;</p><a href="https://youtu.be/XEd_SRVHBgU?t=370" target="_blank">&#9654; watch at 06:10</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>A quirk in the reported win rates</span><span class="ln"></span></div>
+<div class="prose"><p>Hooker notes the win-rate charts shown are capped near 60% because the genetic search process was configured to exit once it crossed that threshold; that stopping condition has since been removed, and performance keeps climbing past it.</p></div>
+<div class="quote"><p>&ldquo;that&#x27;s because we put the budget stopping it stopping it above 60&rdquo;</p><a href="https://youtu.be/XEd_SRVHBgU?t=401" target="_blank">&#9654; watch at 06:41</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>The end of pre-training-scale dominance</span><span class="ln"></span></div>
+<div class="prose"><p>Citing her own paper on the topic, Hooker argues pre-training size is no longer the most lucrative axis for scaling model performance, evidenced by smaller models increasingly outperforming larger ones on leaderboards. Because pre-training compute needs to be co-located at large volume while inference and other compute can be distributed, this shift changes who can realistically compete on training recipes rather than raw compute access.</p></div>
+<div class="quote"><p>&ldquo;empirically, we do now know that um pre-training size in particular is not your most lucrative axis of scale&rdquo;</p><a href="https://youtu.be/XEd_SRVHBgU?t=647" target="_blank">&#9654; watch at 10:47</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Coverage and access choices</span><span class="ln"></span></div>
+<div class="prose"><p>Auto Scientist was built to cover 242 languages from day one and to target non-verifiable tasks, which Hooker says make up the bulk of everyday tasks and are where much of the near-term progress will come from.</p></div>
+<div class="quote"><p>&ldquo;we decided okay, we&#x27;re going to cover languages from day one, 242 languages&rdquo;</p><a href="https://youtu.be/XEd_SRVHBgU?t=524" target="_blank">&#9654; watch at 08:44</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">06</span><span>Q&amp;A: fewer than 5,000 people know how to train frontier models, and open access carries real risk</span><span class="ln"></span></div>
+<div class="prose"><p>Asked how AI becomes more democratized, Hooker estimated realistically fewer than 5,000 people in the world know how to train frontier models at scale, calling that knowledge &#x27;secret&#x27; and passed down like an apprenticeship; automating it accelerates innovation cycles by lowering the cost of asking a question. On the safety counterpoint, she said she does not believe open access carries no risk, describing it as a delicate balance between real risk and who gets to participate.</p></div>
+<div class="quote"><p>&ldquo;there&#x27;s very few people who know how to train frontier models. I would say realistically probably less than 5,000 in the world at scale&rdquo;</p><a href="https://youtu.be/XEd_SRVHBgU?t=834" target="_blank">&#9654; watch at 13:54</a></div><div class="quote"><p>&ldquo;when you make a tool more readily available, there&#x27;s a profile of risk associated with it&rdquo;</p><a href="https://youtu.be/XEd_SRVHBgU?t=962" target="_blank">&#9654; watch at 16:02</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>Adaption is selling Auto Scientist, so the &#x27;outperforms research staff&#x27; claim is self-reported without a named benchmark or comparison methodology in the talk; worth treating as a vendor claim pending independent verification (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Modern computer science as a field is only 77 years old.</td><td class="tt"><a href="https://youtu.be/XEd_SRVHBgU?t=30" target="_blank">00:30</a></td></tr><tr><td class="st">predicts</td><td>The field is at a turning point for who gets to participate in building frontier AI.</td><td class="tt"><a href="https://youtu.be/XEd_SRVHBgU?t=247" target="_blank">04:07</a></td></tr><tr><td class="st">asserts</td><td>Auto Scientist outperforms Adaption&#x27;s own research staff by exploring a broader search space of model types and sizes.</td><td class="tt"><a href="https://youtu.be/XEd_SRVHBgU?t=339" target="_blank">05:39</a></td></tr><tr><td class="st">asserts</td><td>Auto Scientist&#x27;s gains only appeared once data was co-optimized together with the model, not handled separately.</td><td class="tt"><a href="https://youtu.be/XEd_SRVHBgU?t=370" target="_blank">06:10</a></td></tr><tr><td class="st">warns</td><td>Reported win rates cluster around 60%+ because the search was configured to stop once it crossed that threshold.</td><td class="tt"><a href="https://youtu.be/XEd_SRVHBgU?t=401" target="_blank">06:41</a></td></tr><tr><td class="st">predicts</td><td>Pre-training size is no longer the most lucrative axis of scale for model performance.</td><td class="tt"><a href="https://youtu.be/XEd_SRVHBgU?t=647" target="_blank">10:47</a></td></tr><tr><td class="st">asserts</td><td>Realistically fewer than 5,000 people in the world know how to train frontier models at scale.</td><td class="tt"><a href="https://youtu.be/XEd_SRVHBgU?t=834" target="_blank">13:54</a></td></tr><tr><td class="st">asserts</td><td>Auto Scientist was built to cover 242 languages from day one, with a focus on non-verifiable tasks.</td><td class="tt"><a href="https://youtu.be/XEd_SRVHBgU?t=524" target="_blank">08:44</a></td></tr><tr><td class="st">warns</td><td>Making a tool more widely available carries a real, non-zero risk profile.</td><td class="tt"><a href="https://youtu.be/XEd_SRVHBgU?t=962" target="_blank">16:02</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "XEd_SRVHBgU", "slug": "adaption-labs-gradient-free-continual-learning", "title": "Adaption Labs: Gradient-Free Continual Learning", "speaker": "Sara Hooker", "company": "Adaption", "themes": ["continual-learning", "post-training"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "field age", "text": "Modern computer science as a field is only 77 years old.", "quote": "modern computer science as a field has only existed for the last 77 years", "t": 30}, {"id": "c2", "stance": "predicts", "topic": "who builds frontier AI", "text": "The field is at a turning point for who gets to participate in building frontier AI.", "quote": "we are ripe for a revolution in who gets to participate at the frontier of AI", "t": 247}, {"id": "c3", "stance": "asserts", "topic": "Auto Scientist performance", "text": "Auto Scientist outperforms Adaption's own research staff by exploring a broader search space of model types and sizes.", "quote": "what's interesting as well is that it actually outperforms research staff", "t": 339}, {"id": "c4", "stance": "asserts", "topic": "data co-optimization", "text": "Auto Scientist's gains only appeared once data was co-optimized together with the model, not handled separately.", "quote": "This only worked when we co-optimized the data", "t": 370}, {"id": "c5", "stance": "warns", "topic": "win-rate cap artifact", "text": "Reported win rates cluster around 60%+ because the search was configured to stop once it crossed that threshold.", "quote": "that's because we put the budget stopping it stopping it above 60", "t": 401}, {"id": "c6", "stance": "predicts", "topic": "death of scaling", "text": "Pre-training size is no longer the most lucrative axis of scale for model performance.", "quote": "empirically, we do now know that um pre-training size in particular is not your most lucrative axis of scale", "t": 647}, {"id": "c7", "stance": "asserts", "topic": "scarcity of frontier training knowledge", "text": "Realistically fewer than 5,000 people in the world know how to train frontier models at scale.", "quote": "there's very few people who know how to train frontier models. I would say realistically probably less than 5,000 in the world at scale", "t": 834}, {"id": "c8", "stance": "asserts", "topic": "language and task coverage", "text": "Auto Scientist was built to cover 242 languages from day one, with a focus on non-verifiable tasks.", "quote": "we decided okay, we're going to cover languages from day one, 242 languages", "t": 524}, {"id": "c9", "stance": "warns", "topic": "open access risk", "text": "Making a tool more widely available carries a real, non-zero risk profile.", "quote": "when you make a tool more readily available, there's a profile of risk associated with it", "t": 962}]}</script>
+</body></html>

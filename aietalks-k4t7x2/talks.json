@@ -1,90 +1,446 @@
 {
-  "schema_version": "0.1",
-  "corpus": "AI Engineer (YouTube channel @aiDotEngineer), talks May 20 - Aug 20 2026",
-  "vocabulary": {
-    "topics": ["harness-design", "context-engineering", "sandboxing", "agent-safety-review", "long-running-agents", "agent-protocols", "managed-infrastructure", "computer-use", "memory-self-improvement", "agent-evals", "latency-engineering", "open-source-strategy"],
-    "claim_stances": ["asserts", "recommends", "warns", "predicts"],
-    "relevance_hooks": ["personal-os", "team-coordination", "client-platform-architecture"]
-  },
-  "talks": [
+ "schema_version": "0.1",
+ "corpus": "AI Engineer (YouTube channel @aiDotEngineer), talks May 20 - Aug 20 2026",
+ "vocabulary": {
+  "topics": [
+   "harness-design",
+   "context-engineering",
+   "sandboxing",
+   "agent-safety-review",
+   "long-running-agents",
+   "agent-protocols",
+   "managed-infrastructure",
+   "computer-use",
+   "memory-self-improvement",
+   "agent-evals",
+   "latency-engineering",
+   "open-source-strategy"
+  ],
+  "claim_stances": [
+   "asserts",
+   "recommends",
+   "warns",
+   "predicts"
+  ],
+  "relevance_hooks": [
+   "personal-os",
+   "team-coordination",
+   "client-platform-architecture"
+  ]
+ },
+ "talks": [
+  {
+   "talk_id": "codex-behind-the-harness",
+   "title": "Codex, Behind the Harness",
+   "speakers": [
     {
-      "talk_id": "codex-behind-the-harness",
-      "title": "Codex, Behind the Harness",
-      "speakers": [{"name": "Dominik Kundel", "org": "OpenAI"}],
-      "event": "AI Engineer World's Fair 2026",
-      "track": "Agentic Engineering (Track 8)",
-      "date": "2026-07-02",
-      "duration_min": 21,
-      "video": "https://youtu.be/shRR1e2HXMk",
-      "one_line": "A guided tour of the open-source Codex harness (Rust, Apache-2): how context gets built, how actions run safely, and why the interesting harness features keep migrating down into the Responses API.",
-      "topics": ["harness-design", "context-engineering", "sandboxing", "agent-safety-review", "agent-protocols", "computer-use", "latency-engineering", "open-source-strategy"],
-      "claims": [
-        {"id": "cx1", "stance": "asserts", "topic": "agent-protocols", "text": "The Codex harness is open source (Rust; the repo is Apache-2 - the talk stumbles over the license name) and speaks two protocols: an app-server protocol between UI and harness, and the Responses API between harness and inference - both designed as open ecosystems.", "quote": "the Codex harness and everything I'm showing you is actually open source", "t": 66},
-        {"id": "cx2", "stance": "asserts", "topic": "context-engineering", "text": "Context construction optimizes three things: size, flexibility, cacheability. Tools can be marked deferred (loaded via tool search), and the skills list is capped at 2% of the context window.", "quote": "we actually cap the available skills list at 2% of your context total", "t": 375},
-        {"id": "cx3", "stance": "asserts", "topic": "computer-use", "text": "Computer use moved from one-action-at-a-time tool calls to code execution: the agent scripts its own browser interactions (Playwright in a persistent node REPL), which is dramatically faster.", "quote": "the agent can script its own interactions with whatever computer implementation you want to have", "t": 528},
-        {"id": "cx4", "stance": "asserts", "topic": "sandboxing", "text": "Sandboxing is per-OS: Seatbelt on macOS, Bubblewrap on Linux, and a custom open-source Windows sandbox OpenAI had to build.", "quote": "on Windows ... we actually had to build our own custom open source Windows sandbox", "t": 690},
-        {"id": "cx5", "stance": "recommends", "topic": "agent-safety-review", "text": "Full-access mode stays risky even as models improve; the answer is an auto-review subagent (read-only, isolated) that judges escalations in context - user authorization, risk taxonomy, transcript - and auto-approves the safe ones.", "quote": "cover all of the things that are harder to predict that an agent might do ... while keeping things like data exfiltration outside of it", "t": 787},
-        {"id": "cx6", "stance": "asserts", "topic": "latency-engineering", "text": "At 1,000 tok/s (GPT-5.3 Codex Spark on Cerebras) inference stopped being the bottleneck - the network was. WebSocket mode with stateful context (send only deltas) is the fix.", "quote": "inference was no longer the bottleneck. It was actually the network.", "t": 951},
-        {"id": "cx7", "stance": "recommends", "topic": "long-running-agents", "text": "/goal loops inject a continuation prompt until the model itself calls update-goal; write concrete, verifiable goals, not essays, so completion is detectable. (Transcript ASR renders 'verifiable' as 'fiable'; emended.)", "quote": "have very concrete and very [verifiable] prompts, so that it's easy to detect when things are done", "t": 1112},
-        {"id": "cx8", "stance": "asserts", "topic": "harness-design", "text": "Server-side auto-compaction is trained into the model, so long runs keep performance without manual context management.", "quote": "automatically trigger compaction on the server side in a way that the model got trained with so that the performance stays the same", "t": 1153},
-        {"id": "cx9", "stance": "predicts", "topic": "agent-protocols", "text": "Standout harness features keep getting exposed in the Responses API (tool search, apply_patch, WebSockets, compaction) - watch the API to know how to evolve your own agents.", "quote": "most of the features that are stand out for Codex are actually features that are exposed in the responses API", "t": 1186}
-      ],
-      "stack": ["Codex harness (Rust)", "Responses API", "app-server protocol", "tool search / deferred tools", "apply_patch", "ripgrep", "Seatbelt", "Bubblewrap", "custom Windows sandbox", "WebSocket mode", "GPT-5.3 Codex Spark / Cerebras", "server-side compaction"],
-      "relevance_hooks": {
-        "personal-os": "Deferred tools + the 2% skills cap are directly applicable to a skills-heavy personal agent; /goal verifiability discipline matches habit/automation loops.",
-        "team-coordination": "Auto-review pattern replaces approval fatigue in shared-agent settings.",
-        "client-platform-architecture": "Open harness + open protocol is the build-your-own path: fork the harness, keep the API surface."
-      }
+     "name": "Dominik Kundel",
+     "org": "OpenAI"
+    }
+   ],
+   "event": "AI Engineer World's Fair 2026",
+   "track": "Agentic Engineering (Track 8)",
+   "date": "2026-07-02",
+   "duration_min": 21,
+   "video": "https://youtu.be/shRR1e2HXMk",
+   "one_line": "A guided tour of the open-source Codex harness (Rust, Apache-2): how context gets built, how actions run safely, and why the interesting harness features keep migrating down into the Responses API.",
+   "topics": [
+    "harness-design",
+    "context-engineering",
+    "sandboxing",
+    "agent-safety-review",
+    "agent-protocols",
+    "computer-use",
+    "latency-engineering",
+    "open-source-strategy"
+   ],
+   "claims": [
+    {
+     "id": "cx1",
+     "stance": "asserts",
+     "topic": "agent-protocols",
+     "text": "The Codex harness is open source (Rust; the repo is Apache-2 - the talk stumbles over the license name) and speaks two protocols: an app-server protocol between UI and harness, and the Responses API between harness and inference - both designed as open ecosystems.",
+     "quote": "the Codex harness and everything I'm showing you is actually open source",
+     "t": 66
     },
     {
-      "talk_id": "evolution-of-agentic-surfaces",
-      "title": "The Evolution of Agentic Surfaces",
-      "speakers": [{"name": "Gagan Bhat", "org": "Anthropic (Applied AI)"}, {"name": "Isabella He", "org": "Anthropic (Applied AI)"}],
-      "event": "AI Engineer World's Fair 2026",
-      "track": "Anthropic session",
-      "date": "2026-07-02",
-      "duration_min": 31,
-      "video": "https://youtu.be/K0X9QDRkIdg",
-      "one_line": "Anthropic's Applied AI team traces Messages API to Agent SDK to Claude Managed Agents, and argues the harness - not the model - is now the limiting factor.",
-      "topics": ["harness-design", "managed-infrastructure", "long-running-agents", "context-engineering", "sandboxing", "memory-self-improvement", "latency-engineering", "agent-evals"],
-      "claims": [
-        {"id": "as1", "stance": "asserts", "topic": "harness-design", "text": "Harnesses encode assumptions about what the model cannot do; those assumptions go stale as models improve - Sonnet 4.5's context-anxiety fixes became pure overhead on Opus 4.5.", "quote": "when the model moves and the harness doesn't, it degrades the agent", "t": 528},
-        {"id": "as2", "stance": "asserts", "topic": "managed-infrastructure", "text": "The surface evolved Messages API (tokens in/out) to Agent SDK (packaged harness, you host it) to Managed Agents (Anthropic runs loop, sandbox, credentials, sessions, observability; you own task, context, domain knowledge).", "quote": "you own the product, you own the task, you own your context, and you call Claude managed agents to get production-grade infrastructure", "t": 333},
-        {"id": "as3", "stance": "asserts", "topic": "harness-design", "text": "Core architecture: decouple the brain (agent loop) from the hands (tool-execution sandbox). Three primitives: agent, environment, session - the session is a durable log.", "quote": "separating the brain or the agent loop from the hands or the tool execution environment", "t": 725},
-        {"id": "as4", "stance": "asserts", "topic": "long-running-agents", "text": "Reliability is a state machine: idle / running / rescheduling / terminated. Either half can die and be respawned; the brain resumes from the session log.", "quote": "the agent can always go back to an existing session and resume where it left off", "t": 862},
-        {"id": "as5", "stance": "asserts", "topic": "context-engineering", "text": "Session log and context window are deliberately not the same thing: everything is persisted, so the harness can re-read slices of discarded context back into the window.", "quote": "the harness can actually just read in slices of that context from the session log into its current window", "t": 925},
-        {"id": "as6", "stance": "asserts", "topic": "latency-engineering", "text": "Decoupling brain from hands let model reasoning start while container setup runs in parallel (or is skipped): 60% faster time-to-first-token at P50, over 90% at P95.", "quote": "60% faster time to first token for P50 use cases or median use cases. And over 90% improvements in latency ... in P95", "t": 1435},
-        {"id": "as7", "stance": "recommends", "topic": "sandboxing", "text": "Keep credentials away from the agent entirely: vaults decrypt only at tool-execution runtime; self-hosted sandboxes and MCP tunnels keep execution and MCP servers inside the customer's VPC.", "quote": "you can effectively keep credentials away from your agent, and the model never sees your security tokens", "t": 1352},
-        {"id": "as8", "stance": "asserts", "topic": "memory-self-improvement", "text": "Dreaming: a periodic batch process feeds session transcripts + memory state back through the model to rewrite memory - agents that get better every day, heading toward org-scale memory.", "quote": "it allows us to extract new insights ... that essentially feed back and edit the memory as needed to make the next day's agent sessions automatically much more intelligent", "t": 1672},
-        {"id": "as9", "stance": "asserts", "topic": "agent-evals", "text": "Outcomes: user-defined success rubric + a separate grader agent that runs alongside the loop and keeps the agent retrying until the rubric passes.", "quote": "outcomes essentially starts a separate grader agent that runs alongside your agent loop", "t": 1758},
-        {"id": "as10", "stance": "predicts", "topic": "harness-design", "text": "Harnesses have become the limiting factor on what models can achieve; managed agents exists to close the product-capability gap.", "quote": "harnesses have become the limiting factor to what models can achieve", "t": 1822}
-      ],
-      "stack": ["Messages API", "Claude Agent SDK", "Claude Managed Agents", "sessions (durable log)", "vaults", "self-hosted sandboxes", "MCP tunnels", "dreaming", "outcomes (grader agents)", "Claude Opus 4.8"],
-      "relevance_hooks": {
-        "personal-os": "Session-log-as-source-of-truth and dreaming map directly onto a memory-file personal OS; the harness-staleness lesson applies to any hand-built automation.",
-        "team-coordination": "Session states + observability dashboards are the pattern for multi-person agent fleets.",
-        "client-platform-architecture": "Managed-vs-self-hosted is the central buy/build decision; vaults and VPC sandboxes answer enterprise security review."
-      }
+     "id": "cx2",
+     "stance": "asserts",
+     "topic": "context-engineering",
+     "text": "Context construction optimizes three things: size, flexibility, cacheability. Tools can be marked deferred (loaded via tool search), and the skills list is capped at 2% of the context window.",
+     "quote": "we actually cap the available skills list at 2% of your context total",
+     "t": 375
+    },
+    {
+     "id": "cx3",
+     "stance": "asserts",
+     "topic": "computer-use",
+     "text": "Computer use moved from one-action-at-a-time tool calls to code execution: the agent scripts its own browser interactions (Playwright in a persistent node REPL), which is dramatically faster.",
+     "quote": "the agent can script its own interactions with whatever computer implementation you want to have",
+     "t": 528
+    },
+    {
+     "id": "cx4",
+     "stance": "asserts",
+     "topic": "sandboxing",
+     "text": "Sandboxing is per-OS: Seatbelt on macOS, Bubblewrap on Linux, and a custom open-source Windows sandbox OpenAI had to build.",
+     "quote": "on Windows ... we actually had to build our own custom open source Windows sandbox",
+     "t": 690
+    },
+    {
+     "id": "cx5",
+     "stance": "recommends",
+     "topic": "agent-safety-review",
+     "text": "Full-access mode stays risky even as models improve; the answer is an auto-review subagent (read-only, isolated) that judges escalations in context - user authorization, risk taxonomy, transcript - and auto-approves the safe ones.",
+     "quote": "cover all of the things that are harder to predict that an agent might do ... while keeping things like data exfiltration outside of it",
+     "t": 787
+    },
+    {
+     "id": "cx6",
+     "stance": "asserts",
+     "topic": "latency-engineering",
+     "text": "At 1,000 tok/s (GPT-5.3 Codex Spark on Cerebras) inference stopped being the bottleneck - the network was. WebSocket mode with stateful context (send only deltas) is the fix.",
+     "quote": "inference was no longer the bottleneck. It was actually the network.",
+     "t": 951
+    },
+    {
+     "id": "cx7",
+     "stance": "recommends",
+     "topic": "long-running-agents",
+     "text": "/goal loops inject a continuation prompt until the model itself calls update-goal; write concrete, verifiable goals, not essays, so completion is detectable. (Transcript ASR renders 'verifiable' as 'fiable'; emended.)",
+     "quote": "have very concrete and very [verifiable] prompts, so that it's easy to detect when things are done",
+     "t": 1112
+    },
+    {
+     "id": "cx8",
+     "stance": "asserts",
+     "topic": "harness-design",
+     "text": "Server-side auto-compaction is trained into the model, so long runs keep performance without manual context management.",
+     "quote": "automatically trigger compaction on the server side in a way that the model got trained with so that the performance stays the same",
+     "t": 1153
+    },
+    {
+     "id": "cx9",
+     "stance": "predicts",
+     "topic": "agent-protocols",
+     "text": "Standout harness features keep getting exposed in the Responses API (tool search, apply_patch, WebSockets, compaction) - watch the API to know how to evolve your own agents.",
+     "quote": "most of the features that are stand out for Codex are actually features that are exposed in the responses API",
+     "t": 1186
     }
-  ],
-  "cross_talk": {
-    "convergences": [
-      {"topic": "long-running-agents", "text": "Hours-to-days agent runs are the design assumption in both talks: server-side compaction trained in at OpenAI; durable sessions with rescheduling at Anthropic.", "evidence": ["cx8", "as4"]},
-      {"topic": "agent-safety-review", "text": "Structural convergence, different jobs: both attach a sidecar judge agent to the loop - Codex's auto-review judges safety escalations; Anthropic's outcomes grader judges task completion against a rubric.", "evidence": ["cx5", "as9"]},
-      {"topic": "context-engineering", "text": "Both engineer hard around the finite context window - by opposite mechanisms: OpenAI rations what enters (deferred tools, 2% skills cap); Anthropic makes what leaves recoverable (session-log slices re-read into the window).", "evidence": ["cx2", "as5"]},
-      {"topic": "harness-design", "text": "Anthropic states the thesis outright: harnesses are now the limiting factor. The Codex talk never makes the meta-claim, but a talk of pure harness mechanics with barely a word about model quality is consistent with it, not opposed.", "evidence": ["as1", "as10"], "note": "ASYMMETRY, not a two-talk convergence: explicit claim on one side, behavioral consistency on the other"}
-    ],
-    "divergences": [
-      {"topic": "open-source-strategy", "text": "Opposite ecosystem bets: OpenAI open-sources the harness and pushes features down into an open Responses API standard (fork it, build on it); Anthropic's flagship surface is managed, Anthropic-run infrastructure (bring your task, they run everything) - with the Agent SDK remaining as the self-host rung below it.", "evidence": ["cx1", "cx9", "as2"]}
-    ],
-    "contrasts": [
-      {"topic": "latency-engineering", "text": "Not a disagreement - different bottlenecks in different architectures: at Codex's inference speeds the network dominates (WebSockets, deltas); in managed sandboxes container startup dominates (decouple brain/hands, parallelize). Both can be true.", "evidence": ["cx6", "as6"]},
-      {"topic": "harness-design", "text": "The same model-harness coupling seen from two sides: OpenAI trains models WITH harness features (apply_patch, PowerShell, compaction); Anthropic engineers the harness around behaviors each model release changes (context anxiety). OpenAI's trained-in features are exactly the kind of coupling the staleness thesis says will need re-auditing.", "evidence": ["cx8", "as1"]}
-    ],
-    "trend_signals": [
-      "Harness features migrate downward - into the API (OpenAI) or the managed platform (Anthropic). If that holds, hand-rolled agent loops age into legacy code.",
-      "Judgment work is being delegated to sidecar agents (safety review, completion grading) rather than to humans-in-the-loop.",
-      "Caveat on all of the above: n=2, and both speakers sell the alternative to hand-rolling. Directional signals, not laws."
-    ]
+   ],
+   "stack": [
+    "Codex harness (Rust)",
+    "Responses API",
+    "app-server protocol",
+    "tool search / deferred tools",
+    "apply_patch",
+    "ripgrep",
+    "Seatbelt",
+    "Bubblewrap",
+    "custom Windows sandbox",
+    "WebSocket mode",
+    "GPT-5.3 Codex Spark / Cerebras",
+    "server-side compaction"
+   ],
+   "relevance_hooks": {
+    "personal-os": "Deferred tools + the 2% skills cap are directly applicable to a skills-heavy personal agent; /goal verifiability discipline matches habit/automation loops.",
+    "team-coordination": "Auto-review pattern replaces approval fatigue in shared-agent settings.",
+    "client-platform-architecture": "Open harness + open protocol is the build-your-own path: fork the harness, keep the API surface."
+   }
+  },
+  {
+   "talk_id": "evolution-of-agentic-surfaces",
+   "title": "The Evolution of Agentic Surfaces",
+   "speakers": [
+    {
+     "name": "Gagan Bhat",
+     "org": "Anthropic (Applied AI)"
+    },
+    {
+     "name": "Isabella He",
+     "org": "Anthropic (Applied AI)"
+    }
+   ],
+   "event": "AI Engineer World's Fair 2026",
+   "track": "Anthropic session",
+   "date": "2026-07-02",
+   "duration_min": 31,
+   "video": "https://youtu.be/K0X9QDRkIdg",
+   "one_line": "Anthropic's Applied AI team traces Messages API to Agent SDK to Claude Managed Agents, and argues the harness - not the model - is now the limiting factor.",
+   "topics": [
+    "harness-design",
+    "managed-infrastructure",
+    "long-running-agents",
+    "context-engineering",
+    "sandboxing",
+    "memory-self-improvement",
+    "latency-engineering",
+    "agent-evals"
+   ],
+   "claims": [
+    {
+     "id": "as1",
+     "stance": "asserts",
+     "topic": "harness-design",
+     "text": "Harnesses encode assumptions about what the model cannot do; those assumptions go stale as models improve - Sonnet 4.5's context-anxiety fixes became pure overhead on Opus 4.5.",
+     "quote": "when the model moves and the harness doesn't, it degrades the agent",
+     "t": 528
+    },
+    {
+     "id": "as2",
+     "stance": "asserts",
+     "topic": "managed-infrastructure",
+     "text": "The surface evolved Messages API (tokens in/out) to Agent SDK (packaged harness, you host it) to Managed Agents (Anthropic runs loop, sandbox, credentials, sessions, observability; you own task, context, domain knowledge).",
+     "quote": "you own the product, you own the task, you own your context, and you call Claude managed agents to get production-grade infrastructure",
+     "t": 333
+    },
+    {
+     "id": "as3",
+     "stance": "asserts",
+     "topic": "harness-design",
+     "text": "Core architecture: decouple the brain (agent loop) from the hands (tool-execution sandbox). Three primitives: agent, environment, session - the session is a durable log.",
+     "quote": "separating the brain or the agent loop from the hands or the tool execution environment",
+     "t": 725
+    },
+    {
+     "id": "as4",
+     "stance": "asserts",
+     "topic": "long-running-agents",
+     "text": "Reliability is a state machine: idle / running / rescheduling / terminated. Either half can die and be respawned; the brain resumes from the session log.",
+     "quote": "the agent can always go back to an existing session and resume where it left off",
+     "t": 862
+    },
+    {
+     "id": "as5",
+     "stance": "asserts",
+     "topic": "context-engineering",
+     "text": "Session log and context window are deliberately not the same thing: everything is persisted, so the harness can re-read slices of discarded context back into the window.",
+     "quote": "the harness can actually just read in slices of that context from the session log into its current window",
+     "t": 925
+    },
+    {
+     "id": "as6",
+     "stance": "asserts",
+     "topic": "latency-engineering",
+     "text": "Decoupling brain from hands let model reasoning start while container setup runs in parallel (or is skipped): 60% faster time-to-first-token at P50, over 90% at P95.",
+     "quote": "60% faster time to first token for P50 use cases or median use cases. And over 90% improvements in latency ... in P95",
+     "t": 1435
+    },
+    {
+     "id": "as7",
+     "stance": "recommends",
+     "topic": "sandboxing",
+     "text": "Keep credentials away from the agent entirely: vaults decrypt only at tool-execution runtime; self-hosted sandboxes and MCP tunnels keep execution and MCP servers inside the customer's VPC.",
+     "quote": "you can effectively keep credentials away from your agent, and the model never sees your security tokens",
+     "t": 1352
+    },
+    {
+     "id": "as8",
+     "stance": "asserts",
+     "topic": "memory-self-improvement",
+     "text": "Dreaming: a periodic batch process feeds session transcripts + memory state back through the model to rewrite memory - agents that get better every day, heading toward org-scale memory.",
+     "quote": "it allows us to extract new insights ... that essentially feed back and edit the memory as needed to make the next day's agent sessions automatically much more intelligent",
+     "t": 1672
+    },
+    {
+     "id": "as9",
+     "stance": "asserts",
+     "topic": "agent-evals",
+     "text": "Outcomes: user-defined success rubric + a separate grader agent that runs alongside the loop and keeps the agent retrying until the rubric passes.",
+     "quote": "outcomes essentially starts a separate grader agent that runs alongside your agent loop",
+     "t": 1758
+    },
+    {
+     "id": "as10",
+     "stance": "predicts",
+     "topic": "harness-design",
+     "text": "Harnesses have become the limiting factor on what models can achieve; managed agents exists to close the product-capability gap.",
+     "quote": "harnesses have become the limiting factor to what models can achieve",
+     "t": 1822
+    }
+   ],
+   "stack": [
+    "Messages API",
+    "Claude Agent SDK",
+    "Claude Managed Agents",
+    "sessions (durable log)",
+    "vaults",
+    "self-hosted sandboxes",
+    "MCP tunnels",
+    "dreaming",
+    "outcomes (grader agents)",
+    "Claude Opus 4.8"
+   ],
+   "relevance_hooks": {
+    "personal-os": "Session-log-as-source-of-truth and dreaming map directly onto a memory-file personal OS; the harness-staleness lesson applies to any hand-built automation.",
+    "team-coordination": "Session states + observability dashboards are the pattern for multi-person agent fleets.",
+    "client-platform-architecture": "Managed-vs-self-hosted is the central buy/build decision; vaults and VPC sandboxes answer enterprise security review."
+   }
   }
+ ],
+ "cross_talk": {
+  "convergences": [
+   {
+    "topic": "long-running-agents",
+    "text": "Hours-to-days agent runs are the design assumption in both talks: server-side compaction trained in at OpenAI; durable sessions with rescheduling at Anthropic.",
+    "evidence": [
+     "cx8",
+     "as4"
+    ]
+   },
+   {
+    "topic": "agent-safety-review",
+    "text": "Structural convergence, different jobs: both attach a sidecar judge agent to the loop - Codex's auto-review judges safety escalations; Anthropic's outcomes grader judges task completion against a rubric.",
+    "evidence": [
+     "cx5",
+     "as9"
+    ]
+   },
+   {
+    "topic": "context-engineering",
+    "text": "Both engineer hard around the finite context window - by opposite mechanisms: OpenAI rations what enters (deferred tools, 2% skills cap); Anthropic makes what leaves recoverable (session-log slices re-read into the window).",
+    "evidence": [
+     "cx2",
+     "as5"
+    ]
+   },
+   {
+    "topic": "harness-design",
+    "text": "Anthropic states the thesis outright: harnesses are now the limiting factor. The Codex talk never makes the meta-claim, but a talk of pure harness mechanics with barely a word about model quality is consistent with it, not opposed.",
+    "evidence": [
+     "as1",
+     "as10"
+    ],
+    "note": "ASYMMETRY, not a two-talk convergence: explicit claim on one side, behavioral consistency on the other"
+   }
+  ],
+  "divergences": [
+   {
+    "topic": "open-source-strategy",
+    "text": "Opposite ecosystem bets: OpenAI open-sources the harness and pushes features down into an open Responses API standard (fork it, build on it); Anthropic's flagship surface is managed, Anthropic-run infrastructure (bring your task, they run everything) - with the Agent SDK remaining as the self-host rung below it.",
+    "evidence": [
+     "cx1",
+     "cx9",
+     "as2"
+    ]
+   }
+  ],
+  "contrasts": [
+   {
+    "topic": "latency-engineering",
+    "text": "Not a disagreement - different bottlenecks in different architectures: at Codex's inference speeds the network dominates (WebSockets, deltas); in managed sandboxes container startup dominates (decouple brain/hands, parallelize). Both can be true.",
+    "evidence": [
+     "cx6",
+     "as6"
+    ]
+   },
+   {
+    "topic": "harness-design",
+    "text": "The same model-harness coupling seen from two sides: OpenAI trains models WITH harness features (apply_patch, PowerShell, compaction); Anthropic engineers the harness around behaviors each model release changes (context anxiety). OpenAI's trained-in features are exactly the kind of coupling the staleness thesis says will need re-auditing.",
+    "evidence": [
+     "cx8",
+     "as1"
+    ]
+   }
+  ],
+  "trend_signals": [
+   "Harness features migrate downward - into the API (OpenAI) or the managed platform (Anthropic). If that holds, hand-rolled agent loops age into legacy code.",
+   "Judgment work is being delegated to sidecar agents (safety review, completion grading) rather than to humans-in-the-loop.",
+   "Caveat on all of the above: n=2, and both speakers sell the alternative to hand-rolling. Directional signals, not laws."
+  ]
+ },
+ "corpus_synthesis": {
+  "n_talks": 52,
+  "n_claims": 430,
+  "convergences": [
+   {
+    "key": "harness-over-model",
+    "text": "Harness engineering, not model choice, is the working leverage point: a domain-tuned harness beats a generic one on the same model, and matches frontier-model judging at 1-2 orders of magnitude lower cost.",
+    "evidence": [
+     "agents-onto-the-web|c2",
+     "improving-agents-data-mining|c3",
+     "dark-arts-web-automation|c9",
+     "memory-harnesses-research-agents|c5",
+     "flagship|as4"
+    ]
+   },
+   {
+    "key": "sidecar-judges",
+    "text": "Sidecar judges are becoming the standard QC layer in every domain: live-traffic judges in health AI, clinician-rubric LM judges, hazard judges, token-selection judges in distillation, review-comment registries in code.",
+    "evidence": [
+     "guardrails-first-member-facing-health-ai|c6",
+     "ambient-documentation-to-clinical-intelligence|c5",
+     "shipping-ai-million-patients|c6",
+     "ai-largest-relationship-therapist|c7",
+     "continual-learning-into-enterprises|c8",
+     "kill-the-code-review|c5",
+     "flagship|as9",
+     "flagship|cx5"
+    ]
+   },
+   {
+    "key": "enforcement-outside-model",
+    "text": "Model alignment is not a security boundary. Enforcement is moving outside the model: byte-level network proxies, scoped short-lived credentials, deterministic code layers above the model, zero-trust object storage.",
+    "evidence": [
+     "security-firewall-for-agents|c1",
+     "guardrails-first-member-facing-health-ai|c5",
+     "it-admin-ai-workforce|c6",
+     "unlock-agent-autonomy|c3",
+     "enterprise-stack-not-ready-for-agents|c5"
+    ]
+   },
+   {
+    "key": "static-artifacts-rot",
+    "text": "Anything tuned to today's model rots at the next release: fine-tunes regress, harness workarounds become dead weight, evals go stale, and a better-benchmarked model can be worse for your system.",
+    "evidence": [
+     "fine-tuned-tech-debt|c2",
+     "fine-tuned-tech-debt|c5",
+     "agent-evolved-evals-didnt|c1",
+     "agent-evolved-evals-didnt|c7",
+     "healthcares-agent-bytecode-x12|c2",
+     "flagship|as1"
+    ]
+   },
+   {
+    "key": "expertise-next-axis",
+    "text": "Continual learning / accumulated expertise is framed as the next scarce axis now that raw intelligence is abundant - a whole conference track plus practitioners converging on it independently.",
+    "evidence": [
+     "intelligence-plus-continual-learning|c7",
+     "scaling-continual-learning|c5",
+     "improving-agents-data-mining|c7",
+     "compound-engineering-era|c6"
+    ]
+   }
+  ],
+  "divergences": [
+   {
+    "key": "human-code-review",
+    "text": "Whether humans keep reading diffs is genuinely contested: one camp moves review to intent + verification evidence (30% of changes already merge unreviewed), another insists you never ship code you haven't personally read.",
+    "evidence": [
+     "kill-the-code-review|c7",
+     "kill-the-code-review|c2",
+     "prototyping-as-leadership|c8",
+     "ai-native-health-company|c7",
+     "last-human-code-review|c3"
+    ]
+   },
+   {
+    "key": "context-compaction",
+    "text": "Two independent evaluations found leaving context alone beats compaction (recall dropped to 32% after compaction; plain in-context learning beat memory machinery) - while both big labs ship compaction as core infrastructure. Scope matters: the evals tested recall within window limits; the labs engineer for runs that exceed them.",
+    "evidence": [
+     "context-engineering-2026|c1",
+     "context-engineering-2026|c5",
+     "context-engineering-2026|c9",
+     "evaluating-continual-learning|c6",
+     "flagship|cx6",
+     "flagship|as10"
+    ]
+   }
+  ],
+  "trend_signals": [
+   "Agent-generated data is predicted to eclipse all human-produced data on shortening timescales (n=2 talks - directional, not law).",
+   "Vertical-AI moats are claimed to be domain experts + proprietary data, never the model (n=4 talks across health, pharma, trading).",
+   "Costs quoted for agent work keep collapsing: 75x cheaper CLI vs MCP, 100x cheaper real-time video vs batch, 1-2 orders cheaper judging via harness work. Vendor-stated numbers; treat as direction."
+  ]
+ }
 }
