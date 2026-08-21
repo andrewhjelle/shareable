@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>How Forward Deployed Engineering is done at Factory — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/wpOA-UXynoM" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 21 min</span><span class="ln"></span></div>
+<h1 class="lede">How Forward Deployed Engineering is done at Factory</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Eno Reyes &middot; Factory</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/wpOA-UXynoM" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/wpOA-UXynoM</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Coding agents</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Factory&#x27;s deployed engineers refuse to do professional-services migration work on customers&#x27; behalf and instead act as the feedback loop from customer environments back into the product (c1).</li><li>Autonomy depends on &#x27;agent readiness&#x27; — deterministic validation loops in the code base; roughly 30-40% of gaps are fixable with a single automated pass, the other 60% require workflow changes, and models need this as &#x27;dense reward&#x27; to stay on track (c3, c6, c7).</li><li>Factory reports AI-reviewed code changes are about 87% less likely to hit a bug, and its own code base runs at an internal autonomy ratio in the upper 80% range (c4, c5).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Deployed engineers are the product&#x27;s feedback loop, not a services team</span><span class="ln"></span></div>
+<div class="prose"><p>Reyes says Factory deliberately avoids taking on professional-services work like codebase modernizations, even when a customer offers to pay and Factory&#x27;s own tool would be used to do it. Instead, deployed engineers are positioned as &#x27;the tip of the spear&#x27; — the channel carrying information from the largest customers&#x27; engineering leadership back into product decisions.</p></div>
+<div class="quote"><p>&ldquo;Uh our goal is not to go and actually do that migration on their behalf, even if we happen to be using our product, right?&rdquo;</p><a href="https://youtu.be/wpOA-UXynoM?t=214" target="_blank">&#9654; watch at 03:34</a></div>
+<figure class="slide"><a href="https://youtu.be/wpOA-UXynoM?t=70" target="_blank"><img loading="lazy" src="img/fde-at-factory/s03_70.webp" alt="Deployed engineers are the product&#x27;s feedback loop, not a services team"></a><figcaption>Slide at 01:10 &middot; Deployed engineers are the product&#x27;s feedback loop, not a services team &middot; <a href="https://youtu.be/wpOA-UXynoM?t=70" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Software factories are built, not bought</span><span class="ln"></span></div>
+<div class="prose"><p>Factory frames its offering as building blocks for a customer-owned &#x27;software factory&#x27;: a pipeline where signals (bug reports, Slack messages, exec directives) flow in, get triaged into plans, converted to code, validated, and shipped, generating new signals in turn. Reyes argues this has to be built by the organization with model-independent tooling, not bought as a locked-in packaged product, partly so the customer retains ownership of the data and traces flowing through it.</p></div>
+<div class="quote"><p>&ldquo;We we like to say this is built, not bought, right?&rdquo;</p><a href="https://youtu.be/wpOA-UXynoM?t=372" target="_blank">&#9654; watch at 06:12</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Agent readiness gates autonomy</span><span class="ln"></span></div>
+<div class="prose"><p>Reyes defines &#x27;agent readiness&#x27; as the density of deterministic validation loops (linters, type checkers, security scans, tests) present in a code base, arguing that agents can operate for longer on harder tasks without human intervention only where verification signals are dense. In practice, he says about 30-40% of readiness gaps can be closed with a single automated fix, while the remaining 60% require actual workflow changes. He ties this directly to how the underlying models were trained: they need dense, verifiable reward signals to stay on track on long-horizon tasks.</p></div>
+<div class="quote"><p>&ldquo;So, if your code base isn&#x27;t agent ready, you won&#x27;t see any of the success of the most capable AI systems in the world today, right?&rdquo;</p><a href="https://youtu.be/wpOA-UXynoM?t=965" target="_blank">&#9654; watch at 16:05</a></div><div class="quote"><p>&ldquo;for I&#x27;d say maybe 30 to 40% of the low-hanging fruit, you click droid, please fix all of this and it&#x27;ll go in and it&#x27;ll fix it, right? But for the other 60% some of them involve workflow changes.&rdquo;</p><a href="https://youtu.be/wpOA-UXynoM?t=775" target="_blank">&#9654; watch at 12:55</a></div><div class="quote"><p>&ldquo;Models need dense reward. These verification signals form the basis of that reward that they use to keep them on track over a long-term goal-directed problem.&rdquo;</p><a href="https://youtu.be/wpOA-UXynoM?t=996" target="_blank">&#9654; watch at 16:36</a></div>
+<figure class="slide"><a href="https://youtu.be/wpOA-UXynoM?t=1240" target="_blank"><img loading="lazy" src="img/fde-at-factory/s04_1240.webp" alt="Agent readiness gates autonomy"></a><figcaption>Slide at 20:40 &middot; Agent readiness gates autonomy &middot; <a href="https://youtu.be/wpOA-UXynoM?t=1240" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Measuring outcomes: bug reduction and autonomy ratio</span><span class="ln"></span></div>
+<div class="prose"><p>Reyes cites a customer-facing ROI figure — code changes that pass through AI code review, QA, and security analysis are roughly 87% less likely to hit a bug — as the kind of business case deployed engineers need to build. He also states Factory&#x27;s own code base runs at an internal autonomy ratio (ratio of AI to human actions before interruption) in the upper 80% range, though the company estimates only 15-20% overall autonomy today.</p></div>
+<div class="quote"><p>&ldquo;well, we know every code change that flows through that gets AI code review, AI QA, AI security analysis is maybe 87% less likely to hit a bug.&rdquo;</p><a href="https://youtu.be/wpOA-UXynoM?t=559" target="_blank">&#9654; watch at 09:19</a></div><div class="quote"><p>&ldquo;we ourselves have roughly 15 to 20% of what we call like autonomy, and our autonomy ratio is like in the upper 80%, which means the ratio of actions done by humans to AI systems before interruption, right?&rdquo;</p><a href="https://youtu.be/wpOA-UXynoM?t=1118" target="_blank">&#9654; watch at 18:38</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Rolling out change without building a theme park</span><span class="ln"></span></div>
+<div class="prose"><p>Using an analogy to Walt Disney&#x27;s Epcot, Reyes warns that a demonstration environment built too far ahead of an org&#x27;s actual practices reads as a novelty (&#x27;a theme park&#x27;) that people can&#x27;t see how to apply to their own work, rather than as a model other teams will copy.</p></div>
+<div class="quote"><p>&ldquo;if you build too much of an advanced example, then people will say, &quot;That&#x27;s a theme park. That is not at all how the rest of the world works.&rdquo;</p><a href="https://youtu.be/wpOA-UXynoM?t=1087" target="_blank">&#9654; watch at 18:07</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The 87%-less-likely-to-hit-a-bug figure and the 15-20% autonomy estimate are both self-reported by Factory with no methodology given in the talk; useful as a directional claim, not a benchmark to cite without asking how it was measured.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/wpOA-UXynoM?t=20" target="_blank"><img loading="lazy" src="img/fde-at-factory/s00_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="https://youtu.be/wpOA-UXynoM?t=30" target="_blank"><img loading="lazy" src="img/fde-at-factory/s01_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="https://youtu.be/wpOA-UXynoM?t=60" target="_blank"><img loading="lazy" src="img/fde-at-factory/s02_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="https://youtu.be/wpOA-UXynoM?t=70" target="_blank"><img loading="lazy" src="img/fde-at-factory/s03_70.webp" alt="slide at 01:10"><div class="ts">01:10</div></a><a href="https://youtu.be/wpOA-UXynoM?t=1240" target="_blank"><img loading="lazy" src="img/fde-at-factory/s04_1240.webp" alt="slide at 20:40"><div class="ts">20:40</div></a><a href="https://youtu.be/wpOA-UXynoM?t=1250" target="_blank"><img loading="lazy" src="img/fde-at-factory/s05_1250.webp" alt="slide at 20:50"><div class="ts">20:50</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Factory&#x27;s deployed engineers avoid doing professional-service migration work on behalf of customers, even when using Factory&#x27;s own product to do it.</td><td class="tt"><a href="https://youtu.be/wpOA-UXynoM?t=214" target="_blank">03:34</a></td></tr><tr><td class="st">recommends</td><td>Factory frames its software-factory platform as something the customer&#x27;s organization must build with model-independent tooling, rather than buy as a locked-in packaged solution.</td><td class="tt"><a href="https://youtu.be/wpOA-UXynoM?t=372" target="_blank">06:12</a></td></tr><tr><td class="st">warns</td><td>Without a sufficiently &#x27;agent ready&#x27; code base, customers will not see results from even the most capable AI coding systems.</td><td class="tt"><a href="https://youtu.be/wpOA-UXynoM?t=965" target="_blank">16:05</a></td></tr><tr><td class="st">asserts</td><td>Factory claims code changes that pass through its AI code review, QA, and security analysis are roughly 87% less likely to hit a bug.</td><td class="tt"><a href="https://youtu.be/wpOA-UXynoM?t=559" target="_blank">09:19</a></td></tr><tr><td class="st">asserts</td><td>Factory estimates its own code base runs at roughly 15-20% overall autonomy, with an internal autonomy ratio (AI vs. human actions before interruption) in the upper 80% range.</td><td class="tt"><a href="https://youtu.be/wpOA-UXynoM?t=1118" target="_blank">18:38</a></td></tr><tr><td class="st">asserts</td><td>About 30-40% of agent-readiness gaps can be closed with a single automated fix; the remaining 60% require actual workflow changes.</td><td class="tt"><a href="https://youtu.be/wpOA-UXynoM?t=775" target="_blank">12:55</a></td></tr><tr><td class="st">asserts</td><td>Reyes ties agent readiness to how models are post-trained, arguing that dense verification signals function like the reward signals models need to stay on track on long-horizon tasks.</td><td class="tt"><a href="https://youtu.be/wpOA-UXynoM?t=996" target="_blank">16:36</a></td></tr><tr><td class="st">warns</td><td>A demonstration of the future that is too advanced relative to an org&#x27;s current practices gets dismissed as a novelty rather than adopted as a model.</td><td class="tt"><a href="https://youtu.be/wpOA-UXynoM?t=1087" target="_blank">18:07</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "wpOA-UXynoM", "slug": "fde-at-factory", "title": "How Forward Deployed Engineering is done at Factory", "speaker": "Eno Reyes", "company": "Factory", "themes": ["agentic-engineering", "coding-agents"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "professional services vs. product feedback role", "text": "Factory's deployed engineers avoid doing professional-service migration work on behalf of customers, even when using Factory's own product to do it.", "quote": "Uh our goal is not to go and actually do that migration on their behalf, even if we happen to be using our product, right?", "t": 214}, {"id": "c2", "stance": "recommends", "topic": "software factory must be built, not bought", "text": "Factory frames its software-factory platform as something the customer's organization must build with model-independent tooling, rather than buy as a locked-in packaged solution.", "quote": "We we like to say this is built, not bought, right?", "t": 372}, {"id": "c3", "stance": "warns", "topic": "agent readiness as a prerequisite", "text": "Without a sufficiently 'agent ready' code base, customers will not see results from even the most capable AI coding systems.", "quote": "So, if your code base isn't agent ready, you won't see any of the success of the most capable AI systems in the world today, right?", "t": 965}, {"id": "c4", "stance": "asserts", "topic": "bug-rate reduction from AI review", "text": "Factory claims code changes that pass through its AI code review, QA, and security analysis are roughly 87% less likely to hit a bug.", "quote": "well, we know every code change that flows through that gets AI code review, AI QA, AI security analysis is maybe 87% less likely to hit a bug.", "t": 559}, {"id": "c5", "stance": "asserts", "topic": "Factory's internal autonomy metrics", "text": "Factory estimates its own code base runs at roughly 15-20% overall autonomy, with an internal autonomy ratio (AI vs. human actions before interruption) in the upper 80% range.", "quote": "we ourselves have roughly 15 to 20% of what we call like autonomy, and our autonomy ratio is like in the upper 80%, which means the ratio of actions done by humans to AI systems before interruption, right?", "t": 1118}, {"id": "c6", "stance": "asserts", "topic": "share of agent-readiness fixes that are simple vs. workflow changes", "text": "About 30-40% of agent-readiness gaps can be closed with a single automated fix; the remaining 60% require actual workflow changes.", "quote": "for I'd say maybe 30 to 40% of the low-hanging fruit, you click droid, please fix all of this and it'll go in and it'll fix it, right? But for the other 60% some of them involve workflow changes.", "t": 775}, {"id": "c7", "stance": "asserts", "topic": "verification signals as training-analogous reward", "text": "Reyes ties agent readiness to how models are post-trained, arguing that dense verification signals function like the reward signals models need to stay on track on long-horizon tasks.", "quote": "Models need dense reward. These verification signals form the basis of that reward that they use to keep them on track over a long-term goal-directed problem.", "t": 996}, {"id": "c8", "stance": "warns", "topic": "risk of over-advanced demo environments", "text": "A demonstration of the future that is too advanced relative to an org's current practices gets dismissed as a novelty rather than adopted as a model.", "quote": "if you build too much of an advanced example, then people will say, \"That's a theme park. That is not at all how the rest of the world works.", "t": 1087}]}</script>
+</body></html>

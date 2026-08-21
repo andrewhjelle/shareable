@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Benchmarking Coding Agents on New vs Legacy Codebases — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/7vn4WpqNpck" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 18 min</span><span class="ln"></span></div>
+<h1 class="lede">Benchmarking Coding Agents on New vs Legacy Codebases</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Denys Linkov &middot; Wisedocs</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/7vn4WpqNpck" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/7vn4WpqNpck</a></span>
+</div>
+<div class="chips"><span class="chip hot">Coding agents</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Agentic engineering</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Re-running the same refactor task: O3 took 3 hours of back-and-forth and made 10 major mistakes; Sonnet 4.6 solved it with one extra iteration; Opus 4.8 one-shot it, at roughly 1/5 the original time (c1, c2, c3).</li><li>Recommends reading model task-length/accuracy meters at 90-99% accuracy rather than 50%, since a 50% chance of completing an hour-long agent run risks wasting that hour (c4, c5).</li><li>GPT-5.5 still can&#x27;t zero-shot a full monorepo refactor (it scaffolded but skipped real implementation in about 10 minutes); the six-month monorepo refactor itself paid off, cutting pipeline time/cost and letting features that took months ship in under a week (c6, c7).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Same task, different models</span><span class="ln"></span></div>
+<div class="prose"><p>During the original 6-month refactor of a 10,000+ page medical-claims processing pipeline (more than 10 repos merged into one), giving O3 a code-migration task took 3 hours of back-and-forth and produced 10 major mistakes, requiring manual intervention. Re-running the same benchmark later on Sonnet 4.6 and Opus 4.8 showed both models were substantially faster: Sonnet 4.6 solved it with one additional iteration, and Opus 4.8 one-shot it.</p></div>
+<div class="quote"><p>&ldquo;This refactor took uh 3 hours of back and forth chatting with Incursr, but it made 10 major mistakes.&rdquo;</p><a href="https://youtu.be/7vn4WpqNpck?t=306" target="_blank">&#9654; watch at 05:06</a></div><div class="quote"><p>&ldquo;Sonnet 4.6 with one additional iteration was able to solve the task. And with Opus, it was basically able to one-shot this problem.&rdquo;</p><a href="https://youtu.be/7vn4WpqNpck?t=337" target="_blank">&#9654; watch at 05:37</a></div><div class="quote"><p>&ldquo;if I was rebuilding the same task that I had for for this refactor, it would take around 1/5 of the time to accomplish, which is pretty good progress&rdquo;</p><a href="https://youtu.be/7vn4WpqNpck?t=367" target="_blank">&#9654; watch at 06:07</a></div>
+<figure class="slide"><a href="https://youtu.be/7vn4WpqNpck?t=290" target="_blank"><img loading="lazy" src="img/benchmarking-coding-agents-legacy/s05_290.webp" alt="Same task, different models"></a><figcaption>Slide at 04:50 &middot; Same task, different models &middot; <a href="https://youtu.be/7vn4WpqNpck?t=290" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Reading the task-length/accuracy curve correctly</span><span class="ln"></span></div>
+<div class="prose"><p>Referencing model capability meters (task length a model can complete vs. success rate), the speaker argues the commonly cited 50% accuracy line is misleading; models are not reliably completing tasks that would take a human 18+ hours. He recommends planning around the 90-99% accuracy threshold instead, since kicking off an hour-long agent run with only a 50% chance of success risks wasting that hour and the attention spent constructing the plan.</p></div>
+<div class="quote"><p>&ldquo;we&#x27;re no longer claiming that models can accomplish tasks that would take a human 18+ hours. Now, I actually think it&#x27;s much better to measure the accuracy at 90% or 99%&rdquo;</p><a href="https://youtu.be/7vn4WpqNpck?t=489" target="_blank">&#9654; watch at 08:09</a></div><div class="quote"><p>&ldquo;if you&#x27;re kicking off a process that is going to take an hour and it has a 50% chance of completing, there&#x27;s a very high chance you just wasted that hour and you could have been doing something different&rdquo;</p><a href="https://youtu.be/7vn4WpqNpck?t=519" target="_blank">&#9654; watch at 08:39</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Can a modern model just zero-shot the refactor?</span><span class="ln"></span></div>
+<div class="prose"><p>Testing whether a current frontier model could zero-shot the whole migration, the speaker gave GPT-5.5 (extra-high reasoning) the refactor goal directly. It completed in 10 minutes 22 seconds and wrote only 2,000 lines of code, which turned out to be scaffolding rather than a real implementation of the underlying models, indicating models still cannot reliably self-validate and zero-shot a substantial refactor.</p></div>
+<div class="quote"><p>&ldquo;I ran this experiment with GPT 5.5 extra high, and I gave it this goal, giving some of the names of the repositories with the underlying models and other components, and it completed its goal in in 10 minutes and 22 seconds&rdquo;</p><a href="https://youtu.be/7vn4WpqNpck?t=702" target="_blank">&#9654; watch at 11:42</a></div>
+<figure class="slide"><a href="https://youtu.be/7vn4WpqNpck?t=1060" target="_blank"><img loading="lazy" src="img/benchmarking-coding-agents-legacy/s06_1060.webp" alt="Can a modern model just zero-shot the refactor?"></a><figcaption>Slide at 17:40 &middot; Can a modern model just zero-shot the refactor? &middot; <a href="https://youtu.be/7vn4WpqNpck?t=1060" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Was the refactor worth it?</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker concludes the refactor was worthwhile: it reduced pipeline processing time and cost, enabled support for larger files, and let the team ship features in under a week that previously took multiple months. In Q&amp;A, he notes the refactor hit 15 of 17 originally gathered requirements, and that PR review stayed fully human throughout, since the small team was using PRs partly to build shared context on the new codebase.</p></div>
+<div class="quote"><p>&ldquo;we were able to actually reduce the amount of time the pipeline took. We were able to reduce the costs. We could support larger files, and now we can ship features that would take multiple months in under a week.&rdquo;</p><a href="https://youtu.be/7vn4WpqNpck?t=824" target="_blank">&#9654; watch at 13:44</a></div><div class="quote"><p>&ldquo;I think we got uh 15 out of 17 requirements right when we were going ahead with the refactor&rdquo;</p><a href="https://youtu.be/7vn4WpqNpck?t=959" target="_blank">&#9654; watch at 15:59</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The model-vs-model comparison (O3 vs Sonnet 4.6 vs Opus 4.8 on the same task) is the most concrete, checkable claim in the talk; the GPT-5.5 zero-shot result is a single anecdote on one specific migration task and shouldn&#x27;t be generalized to &quot;models can&#x27;t zero-shot refactors&quot; broadly.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/7vn4WpqNpck?t=10" target="_blank"><img loading="lazy" src="img/benchmarking-coding-agents-legacy/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="https://youtu.be/7vn4WpqNpck?t=40" target="_blank"><img loading="lazy" src="img/benchmarking-coding-agents-legacy/s01_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="https://youtu.be/7vn4WpqNpck?t=130" target="_blank"><img loading="lazy" src="img/benchmarking-coding-agents-legacy/s02_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="https://youtu.be/7vn4WpqNpck?t=160" target="_blank"><img loading="lazy" src="img/benchmarking-coding-agents-legacy/s03_160.webp" alt="slide at 02:40"><div class="ts">02:40</div></a><a href="https://youtu.be/7vn4WpqNpck?t=240" target="_blank"><img loading="lazy" src="img/benchmarking-coding-agents-legacy/s04_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="https://youtu.be/7vn4WpqNpck?t=290" target="_blank"><img loading="lazy" src="img/benchmarking-coding-agents-legacy/s05_290.webp" alt="slide at 04:50"><div class="ts">04:50</div></a><a href="https://youtu.be/7vn4WpqNpck?t=1060" target="_blank"><img loading="lazy" src="img/benchmarking-coding-agents-legacy/s06_1060.webp" alt="slide at 17:40"><div class="ts">17:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Using O3 for a refactor task took 3 hours of back-and-forth and produced 10 major mistakes.</td><td class="tt"><a href="https://youtu.be/7vn4WpqNpck?t=306" target="_blank">05:06</a></td></tr><tr><td class="st">asserts</td><td>Re-running the same task, Sonnet 4.6 solved it with one additional iteration and Opus 4.8 one-shot it.</td><td class="tt"><a href="https://youtu.be/7vn4WpqNpck?t=337" target="_blank">05:37</a></td></tr><tr><td class="st">asserts</td><td>Rebuilding the same refactor task today would take about one-fifth of the original time.</td><td class="tt"><a href="https://youtu.be/7vn4WpqNpck?t=367" target="_blank">06:07</a></td></tr><tr><td class="st">warns</td><td>Models are not reliably completing tasks that would take a human 18+ hours, and capability should be measured at 90-99% accuracy rather than 50%.</td><td class="tt"><a href="https://youtu.be/7vn4WpqNpck?t=489" target="_blank">08:09</a></td></tr><tr><td class="st">warns</td><td>Kicking off an hour-long agent run with only a 50% chance of completing risks wasting that hour.</td><td class="tt"><a href="https://youtu.be/7vn4WpqNpck?t=519" target="_blank">08:39</a></td></tr><tr><td class="st">asserts</td><td>GPT-5.5 attempted to zero-shot the full refactor in about 10 minutes but only produced scaffolding rather than a real implementation.</td><td class="tt"><a href="https://youtu.be/7vn4WpqNpck?t=702" target="_blank">11:42</a></td></tr><tr><td class="st">asserts</td><td>The completed refactor reduced pipeline time and cost, enabled support for larger files, and let features that took months ship in under a week.</td><td class="tt"><a href="https://youtu.be/7vn4WpqNpck?t=824" target="_blank">13:44</a></td></tr><tr><td class="st">asserts</td><td>The refactor achieved 15 of the 17 originally gathered requirements.</td><td class="tt"><a href="https://youtu.be/7vn4WpqNpck?t=959" target="_blank">15:59</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "7vn4WpqNpck", "slug": "benchmarking-coding-agents-legacy", "title": "Benchmarking Coding Agents on New vs Legacy Codebases", "speaker": "Denys Linkov", "company": "Wisedocs", "themes": ["coding-agents", "evals-benchmarks", "agentic-engineering"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "O3 refactor attempt", "text": "Using O3 for a refactor task took 3 hours of back-and-forth and produced 10 major mistakes.", "quote": "This refactor took uh 3 hours of back and forth chatting with Incursr, but it made 10 major mistakes.", "t": 306}, {"id": "c2", "stance": "asserts", "topic": "Sonnet 4.6 and Opus 4.8 rerun", "text": "Re-running the same task, Sonnet 4.6 solved it with one additional iteration and Opus 4.8 one-shot it.", "quote": "Sonnet 4.6 with one additional iteration was able to solve the task. And with Opus, it was basically able to one-shot this problem.", "t": 337}, {"id": "c3", "stance": "asserts", "topic": "time savings from newer models", "text": "Rebuilding the same refactor task today would take about one-fifth of the original time.", "quote": "if I was rebuilding the same task that I had for for this refactor, it would take around 1/5 of the time to accomplish, which is pretty good progress", "t": 367}, {"id": "c4", "stance": "warns", "topic": "reading capability meters at 90-99% not 50%", "text": "Models are not reliably completing tasks that would take a human 18+ hours, and capability should be measured at 90-99% accuracy rather than 50%.", "quote": "we're no longer claiming that models can accomplish tasks that would take a human 18+ hours. Now, I actually think it's much better to measure the accuracy at 90% or 99%", "t": 489}, {"id": "c5", "stance": "warns", "topic": "wasted time from low-confidence agent runs", "text": "Kicking off an hour-long agent run with only a 50% chance of completing risks wasting that hour.", "quote": "if you're kicking off a process that is going to take an hour and it has a 50% chance of completing, there's a very high chance you just wasted that hour and you could have been doing something different", "t": 519}, {"id": "c6", "stance": "asserts", "topic": "GPT-5.5 zero-shot refactor attempt", "text": "GPT-5.5 attempted to zero-shot the full refactor in about 10 minutes but only produced scaffolding rather than a real implementation.", "quote": "I ran this experiment with GPT 5.5 extra high, and I gave it this goal, giving some of the names of the repositories with the underlying models and other components, and it completed its goal in in 10 minutes and 22 seconds", "t": 702}, {"id": "c7", "stance": "asserts", "topic": "refactor outcomes", "text": "The completed refactor reduced pipeline time and cost, enabled support for larger files, and let features that took months ship in under a week.", "quote": "we were able to actually reduce the amount of time the pipeline took. We were able to reduce the costs. We could support larger files, and now we can ship features that would take multiple months in under a week.", "t": 824}, {"id": "c8", "stance": "asserts", "topic": "requirements coverage", "text": "The refactor achieved 15 of the 17 originally gathered requirements.", "quote": "I think we got uh 15 out of 17 requirements right when we were going ahead with the refactor", "t": 959}]}</script>
+</body></html>

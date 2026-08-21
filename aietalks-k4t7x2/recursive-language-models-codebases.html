@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>RLM: Recursive Language Models for Large Codebases — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/8oyalrfwgjw" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 17 min</span><span class="ln"></span></div>
+<h1 class="lede">RLM: Recursive Language Models for Large Codebases</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Shashi &middot; Superagentic AI</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/8oyalrfwgjw" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/8oyalrfwgjw</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Coding agents</span><span class="chip hot">Context engineering</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Coding agent performance degrades as context grows, and this gets worse specifically on large monorepos.</li><li>RLM&#x27;s core idea: externalize context management into a separate programmable execution environment where the model writes code to inspect, slice, and compute relevant chunks rather than loading everything into its own context window.</li><li>The speaker reports that Codex and Anthropic&#x27;s Claude Code engineers have independently used RLM-style recursive context curation inside their coding-agent harnesses.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Large monorepos break standard coding-agent context handling</span><span class="ln"></span></div>
+<div class="prose"><p>The talk frames the problem as: coding agents work well on small repos, but on monorepos with large context, performance degrades as context grows, and this problem worsens further as repo size increases. Existing mitigations mentioned are grep-style file search, semantic/local search, context compression/summarization, and dedicated memory solutions.</p></div>
+<div class="quote"><p>&ldquo;if you have ever tried it with the monor repos with the large context you know there&#x27;s a context problem as the context grows the performance degrade&rdquo;</p><a href="https://youtu.be/8oyalrfwgjw?t=61" target="_blank">&#9654; watch at 01:01</a></div><div class="quote"><p>&ldquo;there are different approaches that other coding agent harnesses have been taken to solve this problem. Most common approach is searching using the tools like grab.&rdquo;</p><a href="https://youtu.be/8oyalrfwgjw?t=92" target="_blank">&#9654; watch at 01:32</a></div>
+<figure class="slide"><a href="https://youtu.be/8oyalrfwgjw?t=60" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s02_60.webp" alt="Large monorepos break standard coding-agent context handling"></a><figcaption>Slide at 01:00 &middot; Large monorepos break standard coding-agent context handling &middot; <a href="https://youtu.be/8oyalrfwgjw?t=60" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>RLM&#x27;s core idea: externalize context into a programmable environment</span><span class="ln"></span></div>
+<div class="prose"><p>The RLM thesis is to move context management out of the model&#x27;s own context window and into a separate, dedicated programmable execution environment (a REPL), where the whole repository is treated as data the model can operate on. The model writes code to inspect, slice, and compute relevant chunks, then feeds only those results back into its main context, functioning as another context-management technique or memory layer.</p></div>
+<div class="quote"><p>&ldquo;Core thesis of the RLM is you need to externalize the context management into programmable execution environment.&rdquo;</p><a href="https://youtu.be/8oyalrfwgjw?t=125" target="_blank">&#9654; watch at 02:05</a></div><div class="quote"><p>&ldquo;rather than putting everything into the model&#x27;s context create a separate dedicated environment give them a coding agent or ripple and then model write the code to curate the context that can be used into the main&rdquo;</p><a href="https://youtu.be/8oyalrfwgjw?t=157" target="_blank">&#9654; watch at 02:37</a></div>
+<figure class="slide"><a href="https://youtu.be/8oyalrfwgjw?t=120" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s04_120.webp" alt="RLM&#x27;s core idea: externalize context into a programmable environment"></a><figcaption>Slide at 02:00 &middot; RLM&#x27;s core idea: externalize context into a programmable environment &middot; <a href="https://youtu.be/8oyalrfwgjw?t=120" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>RLM code: an open-source reference harness</span><span class="ln"></span></div>
+<div class="prose"><p>Superagentic AI built RLM code as an independent, open-source reference implementation of the RLM pattern -- not adding anything beyond the paper&#x27;s ideas -- so it can be run against local or cloud models, plugged into any observability framework, and integrated into other agent frameworks. A live demo showed the loop executing in a Docker sandbox, producing a ripple (REPL) trace, an LLM query call, and a final synthesized answer, with full run traces exportable in JSONL.</p></div>
+<div class="quote"><p>&ldquo;We have implemented something called RLM mode. We are using RLM as it is. We are not adding anything on top of RLM&#x27;s ideas and RLM&#x27;s paper.&rdquo;</p><a href="https://youtu.be/8oyalrfwgjw?t=470" target="_blank">&#9654; watch at 07:50</a></div>
+<figure class="slide"><a href="https://youtu.be/8oyalrfwgjw?t=460" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s12_460.webp" alt="RLM code: an open-source reference harness"></a><figcaption>Slide at 07:40 &middot; RLM code: an open-source reference harness &middot; <a href="https://youtu.be/8oyalrfwgjw?t=460" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Practical use cases and where RLM shows up already</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker recommends RLM-style harnesses for tasks like root-cause analysis and onboarding onto unfamiliar large repositories. He also reports observing RLM-like recursive context curation already in use inside proprietary systems: the Codex harness writing Python in a REPL to curate context, and Anthropic Claude Code engineers acknowledging on X that they use RLM concepts, alongside broader speculation about managed agents and multi-agent &quot;software factory&quot; workflows using similar ideas.</p></div>
+<div class="quote"><p>&ldquo;there are few things for example if you&#x27;re dealing with the large source code and you want to for example root cause analysis or on boarding of the repositories or some unfamiliar repos&rdquo;</p><a href="https://youtu.be/8oyalrfwgjw?t=906" target="_blank">&#9654; watch at 15:06</a></div><div class="quote"><p>&ldquo;Recently I saw that the codeex harness is writing the Python Python code in the ripple that you can see to curate the context that is one form of RLM I have seen myself&rdquo;</p><a href="https://youtu.be/8oyalrfwgjw?t=968" target="_blank">&#9654; watch at 16:08</a></div><div class="quote"><p>&ldquo;some of the cloud code engineers from anthropic has accepted on X that they have used concepts of RLM&rdquo;</p><a href="https://youtu.be/8oyalrfwgjw?t=998" target="_blank">&#9654; watch at 16:38</a></div>
+<figure class="slide"><a href="https://youtu.be/8oyalrfwgjw?t=900" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s22_900.webp" alt="Practical use cases and where RLM shows up already"></a><figcaption>Slide at 15:00 &middot; Practical use cases and where RLM shows up already &middot; <a href="https://youtu.be/8oyalrfwgjw?t=900" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>If Codex and Claude Code are independently converging on RLM-style recursive context curation without a shared standard, that suggests the pattern is becoming a default architectural choice for large-codebase agents rather than a niche research technique -- worth watching whether a common interface for it emerges (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/8oyalrfwgjw?t=20" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s00_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="https://youtu.be/8oyalrfwgjw?t=30" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s01_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="https://youtu.be/8oyalrfwgjw?t=60" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s02_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="https://youtu.be/8oyalrfwgjw?t=110" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s03_110.webp" alt="slide at 01:50"><div class="ts">01:50</div></a><a href="https://youtu.be/8oyalrfwgjw?t=120" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s04_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="https://youtu.be/8oyalrfwgjw?t=180" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s05_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="https://youtu.be/8oyalrfwgjw?t=280" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s06_280.webp" alt="slide at 04:40"><div class="ts">04:40</div></a><a href="https://youtu.be/8oyalrfwgjw?t=320" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s07_320.webp" alt="slide at 05:20"><div class="ts">05:20</div></a><a href="https://youtu.be/8oyalrfwgjw?t=360" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s08_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="https://youtu.be/8oyalrfwgjw?t=370" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s09_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="https://youtu.be/8oyalrfwgjw?t=390" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s10_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="https://youtu.be/8oyalrfwgjw?t=400" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s11_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="https://youtu.be/8oyalrfwgjw?t=460" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s12_460.webp" alt="slide at 07:40"><div class="ts">07:40</div></a><a href="https://youtu.be/8oyalrfwgjw?t=510" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s13_510.webp" alt="slide at 08:30"><div class="ts">08:30</div></a><a href="https://youtu.be/8oyalrfwgjw?t=520" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s14_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a><a href="https://youtu.be/8oyalrfwgjw?t=530" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s15_530.webp" alt="slide at 08:50"><div class="ts">08:50</div></a><a href="https://youtu.be/8oyalrfwgjw?t=560" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s16_560.webp" alt="slide at 09:20"><div class="ts">09:20</div></a><a href="https://youtu.be/8oyalrfwgjw?t=570" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s17_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="https://youtu.be/8oyalrfwgjw?t=580" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s18_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="https://youtu.be/8oyalrfwgjw?t=840" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s19_840.webp" alt="slide at 14:00"><div class="ts">14:00</div></a><a href="https://youtu.be/8oyalrfwgjw?t=870" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s20_870.webp" alt="slide at 14:30"><div class="ts">14:30</div></a><a href="https://youtu.be/8oyalrfwgjw?t=890" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s21_890.webp" alt="slide at 14:50"><div class="ts">14:50</div></a><a href="https://youtu.be/8oyalrfwgjw?t=900" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s22_900.webp" alt="slide at 15:00"><div class="ts">15:00</div></a><a href="https://youtu.be/8oyalrfwgjw?t=930" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s23_930.webp" alt="slide at 15:30"><div class="ts">15:30</div></a><a href="https://youtu.be/8oyalrfwgjw?t=1020" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s24_1020.webp" alt="slide at 17:00"><div class="ts">17:00</div></a><a href="https://youtu.be/8oyalrfwgjw?t=1030" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s25_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a><a href="https://youtu.be/8oyalrfwgjw?t=1040" target="_blank"><img loading="lazy" src="img/recursive-language-models-codebases/s26_1040.webp" alt="slide at 17:20"><div class="ts">17:20</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Coding agent performance degrades as context grows, and this gets worse on large monorepos.</td><td class="tt"><a href="https://youtu.be/8oyalrfwgjw?t=61" target="_blank">01:01</a></td></tr><tr><td class="st">asserts</td><td>RLM&#x27;s core thesis is to externalize context management into a separate programmable execution environment.</td><td class="tt"><a href="https://youtu.be/8oyalrfwgjw?t=125" target="_blank">02:05</a></td></tr><tr><td class="st">recommends</td><td>Instead of loading everything into the model&#x27;s context, give it a dedicated environment (REPL) where it writes code to curate the relevant context.</td><td class="tt"><a href="https://youtu.be/8oyalrfwgjw?t=157" target="_blank">02:37</a></td></tr><tr><td class="st">asserts</td><td>RLM code is an independent reference implementation that uses RLM&#x27;s ideas as-is without adding anything beyond the original paper.</td><td class="tt"><a href="https://youtu.be/8oyalrfwgjw?t=470" target="_blank">07:50</a></td></tr><tr><td class="st">recommends</td><td>RLM-style harnesses are recommended for root-cause analysis and onboarding onto large or unfamiliar repositories.</td><td class="tt"><a href="https://youtu.be/8oyalrfwgjw?t=906" target="_blank">15:06</a></td></tr><tr><td class="st">asserts</td><td>The speaker observed the Codex harness writing Python code in a REPL to curate context, which he identifies as one form of RLM in the wild.</td><td class="tt"><a href="https://youtu.be/8oyalrfwgjw?t=968" target="_blank">16:08</a></td></tr><tr><td class="st">asserts</td><td>Anthropic Claude Code engineers have acknowledged on X that they use concepts from RLM.</td><td class="tt"><a href="https://youtu.be/8oyalrfwgjw?t=998" target="_blank">16:38</a></td></tr><tr><td class="st">asserts</td><td>Existing coding-agent harnesses commonly rely on grep-style search among other techniques to manage large context.</td><td class="tt"><a href="https://youtu.be/8oyalrfwgjw?t=92" target="_blank">01:32</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "8oyalrfwgjw", "slug": "recursive-language-models-codebases", "title": "RLM: Recursive Language Models for Large Codebases", "speaker": "Shashi", "company": "Superagentic AI", "themes": ["agentic-engineering", "coding-agents", "context-engineering"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "context degradation on monorepos", "text": "Coding agent performance degrades as context grows, and this gets worse on large monorepos.", "quote": "if you have ever tried it with the monor repos with the large context you know there's a context problem as the context grows the performance degrade", "t": 61}, {"id": "c2", "stance": "asserts", "topic": "RLM core thesis", "text": "RLM's core thesis is to externalize context management into a separate programmable execution environment.", "quote": "Core thesis of the RLM is you need to externalize the context management into programmable execution environment.", "t": 125}, {"id": "c3", "stance": "recommends", "topic": "model writes code to curate context", "text": "Instead of loading everything into the model's context, give it a dedicated environment (REPL) where it writes code to curate the relevant context.", "quote": "rather than putting everything into the model's context create a separate dedicated environment give them a coding agent or ripple and then model write the code to curate the context that can be used into the main", "t": 157}, {"id": "c4", "stance": "asserts", "topic": "RLM code implementation scope", "text": "RLM code is an independent reference implementation that uses RLM's ideas as-is without adding anything beyond the original paper.", "quote": "We have implemented something called RLM mode. We are using RLM as it is. We are not adding anything on top of RLM's ideas and RLM's paper.", "t": 470}, {"id": "c5", "stance": "recommends", "topic": "practical use cases", "text": "RLM-style harnesses are recommended for root-cause analysis and onboarding onto large or unfamiliar repositories.", "quote": "there are few things for example if you're dealing with the large source code and you want to for example root cause analysis or on boarding of the repositories or some unfamiliar repos", "t": 906}, {"id": "c6", "stance": "asserts", "topic": "Codex uses RLM-style context curation", "text": "The speaker observed the Codex harness writing Python code in a REPL to curate context, which he identifies as one form of RLM in the wild.", "quote": "Recently I saw that the codeex harness is writing the Python Python code in the ripple that you can see to curate the context that is one form of RLM I have seen myself", "t": 968}, {"id": "c7", "stance": "asserts", "topic": "Anthropic engineers confirm RLM use", "text": "Anthropic Claude Code engineers have acknowledged on X that they use concepts from RLM.", "quote": "some of the cloud code engineers from anthropic has accepted on X that they have used concepts of RLM", "t": 998}, {"id": "c8", "stance": "asserts", "topic": "existing context-management approaches", "text": "Existing coding-agent harnesses commonly rely on grep-style search among other techniques to manage large context.", "quote": "there are different approaches that other coding agent harnesses have been taken to solve this problem. Most common approach is searching using the tools like grab.", "t": 92}]}</script>
+</body></html>

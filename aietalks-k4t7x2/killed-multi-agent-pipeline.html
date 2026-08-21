@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Why We Killed Our Multi-Agent Pipeline — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/u6jJcIFDLE4" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 15 min</span><span class="ln"></span></div>
+<h1 class="lede">Why We Killed Our Multi-Agent Pipeline</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Subbiah Sethuraman and Abhilash Asokan &middot; ZS Associates</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/u6jJcIFDLE4" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/u6jJcIFDLE4</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Context engineering</span><span class="chip hot">Vertical AI</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>A four-agent pipeline mirroring an analyst&#x27;s workflow (signal detection, source localization, driver attribution, synthesis) produced individually-correct facts but an incoherent end-to-end answer, because context was lost at each agent handoff and no single agent owned the full picture (c1, c2, c3).</li><li>The fix moved signal detection out of the LLM entirely into a deterministic statistical pipeline, and consolidated reasoning into one agent that can delegate investigation (not judgment) to sub-agents (c4, c5).</li><li>A domain knowledge graph was rebuilt to act as a control plane bounding the agent&#x27;s investigation, where each graph edge represents a hypothesis the agent can evaluate; the resulting system reproduces work that took an analyst three to four weeks in about 20-30 minutes after 50-plus agent turns (c6, c7, c8).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Mirroring the analyst workflow, and where it broke</span><span class="ln"></span></div>
+<div class="prose"><p>ZS built one agent per stage of a pharma commercial analyst&#x27;s workflow: signal detection, source localization, driver attribution, and synthesis, tied together by an orchestrator agent. The system produced a clean-looking summary (a prescription drop, a payer coverage cause, a recommended action, an outlook), but on inspection the recommended action ignored the payer/insurance cause that had correctly been identified, and the resulting outlook didn&#x27;t follow from the wrong action.</p></div>
+<div class="quote"><p>&ldquo;we built agents for every step, right? Signal detection, we said, &quot;Okay, we&#x27;ll have an agent for signal detection. It&#x27;ll identify identify the signals for me.&quot;&rdquo;</p><a href="https://youtu.be/u6jJcIFDLE4?t=155" target="_blank">&#9654; watch at 02:35</a></div><div class="quote"><p>&ldquo;The cause is right. It identified the right cause, right? Because patients can&#x27;t afford the drug drug, right? But the action it said it didn&#x27;t really focus on the payer part, the insurance part of it, right?&rdquo;</p><a href="https://youtu.be/u6jJcIFDLE4?t=247" target="_blank">&#9654; watch at 04:07</a></div>
+<figure class="slide"><a href="https://youtu.be/u6jJcIFDLE4?t=70" target="_blank"><img loading="lazy" src="img/killed-multi-agent-pipeline/s02_70.webp" alt="Mirroring the analyst workflow, and where it broke"></a><figcaption>Slide at 01:10 &middot; Mirroring the analyst workflow, and where it broke &middot; <a href="https://youtu.be/u6jJcIFDLE4?t=70" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Diagnosis: context lost at every handoff</span><span class="ln"></span></div>
+<div class="prose"><p>The team traced the failure to context being lost at each agent-to-agent handoff, not to any individual LLM call being wrong; each agent derived a locally correct fact, but no single agent understood or carried forward the end-to-end picture across handoffs.</p></div>
+<div class="quote"><p>&ldquo;there is a lot of context hand off which is happening, and context is actually getting lost at each of these hand offs.&rdquo;</p><a href="https://youtu.be/u6jJcIFDLE4?t=309" target="_blank">&#9654; watch at 05:09</a></div>
+<figure class="slide"><a href="https://youtu.be/u6jJcIFDLE4?t=350" target="_blank"><img loading="lazy" src="img/killed-multi-agent-pipeline/s04_350.webp" alt="Diagnosis: context lost at every handoff"></a><figcaption>Slide at 05:50 &middot; Diagnosis: context lost at every handoff &middot; <a href="https://youtu.be/u6jJcIFDLE4?t=350" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Fix 1: pull deterministic work out of the agent</span><span class="ln"></span></div>
+<div class="prose"><p>Signal detection (e.g., a sales or prescription drop) was identified as a purely deterministic, statistical task that an LLM should not be performing inconsistently. The team separated it into an automated deterministic pipeline with statistical methods, guardrails, and thresholds that runs before any agent is invoked; the agent only wakes up once a signal is queued, and its job becomes investigation, not identification.</p></div>
+<div class="quote"><p>&ldquo;This is something we don&#x27;t want an agent to do. This is a completely deterministic workflow. So, we separated it out from the agentic system.&rdquo;</p><a href="https://youtu.be/u6jJcIFDLE4?t=434" target="_blank">&#9654; watch at 07:14</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Fix 2: consolidate reasoning into one agent</span><span class="ln"></span></div>
+<div class="prose"><p>Rather than distributing judgment across separate agents per stage, the team consolidated end-to-end reasoning into a single agent, based on observing how Claude Code operates. That agent can still delegate focused, bounded investigations to dynamically spawned sub-agents and get results back, but the sub-agents return findings, not reasoning or judgment, which stays with the single owning agent.</p></div>
+<div class="quote"><p>&ldquo;need to have one agent, right? Which owns the reasoning end to end, right? This agent can actually take the call to use sub agents, tools, skills to actually spawn off other other tasks basically&rdquo;</p><a href="https://youtu.be/u6jJcIFDLE4?t=837" target="_blank">&#9654; watch at 13:57</a></div>
+<figure class="slide"><a href="https://youtu.be/u6jJcIFDLE4?t=650" target="_blank"><img loading="lazy" src="img/killed-multi-agent-pipeline/s05_650.webp" alt="Fix 2: consolidate reasoning into one agent"></a><figcaption>Slide at 10:50 &middot; Fix 2: consolidate reasoning into one agent &middot; <a href="https://youtu.be/u6jJcIFDLE4?t=650" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Fix 3: the knowledge graph as a control plane</span><span class="ln"></span></div>
+<div class="prose"><p>A domain knowledge graph, built with pharma domain experts, maps entities like geography, payer, account, brand, and KPI relationships. The team&#x27;s key reframe is that this graph is not a lookup layer the agent queries for data, but a control plane: every graph edge represents a hypothesis the agent can evaluate against the underlying data, which bounds the space of investigations the agent is allowed to pursue.</p></div>
+<div class="quote"><p>&ldquo;graph has to be treated as a control plane which the agent uses to navigate and takes the next decisions basically.&rdquo;</p><a href="https://youtu.be/u6jJcIFDLE4?t=867" target="_blank">&#9654; watch at 14:27</a></div><div class="quote"><p>&ldquo;Graph access the control surface. So, agent every edge is a hypothesis.&rdquo;</p><a href="https://youtu.be/u6jJcIFDLE4?t=715" target="_blank">&#9654; watch at 11:55</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">06</span><span>Result</span><span class="ln"></span></div>
+<div class="prose"><p>After the redesign, the agent runs a loop of traversing the graph, forming a hypothesis from an edge, checking it against underlying data, and either continuing or backtracking, until it converges on a root cause. The team reports the resulting run reproduces analysis that previously took an analyst three to four weeks, in roughly 20-30 minutes and 50-plus agent turns.</p></div>
+<div class="quote"><p>&ldquo;after like 50 plus turns, a whole lot of tokens, it&#x27;s able to produce something an analyst was able to produce maybe in three or four weeks in like maybe 20 30 minutes.&rdquo;</p><a href="https://youtu.be/u6jJcIFDLE4?t=806" target="_blank">&#9654; watch at 13:26</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The headline speed comparison (three to four weeks vs. 20-30 minutes) is the speakers&#x27; own framing and isn&#x27;t benchmarked against a baseline in the talk; the more load-bearing claim is the architectural lesson that distributing judgment across agents, not distributing work, was the actual bug.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/u6jJcIFDLE4?t=10" target="_blank"><img loading="lazy" src="img/killed-multi-agent-pipeline/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="https://youtu.be/u6jJcIFDLE4?t=40" target="_blank"><img loading="lazy" src="img/killed-multi-agent-pipeline/s01_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="https://youtu.be/u6jJcIFDLE4?t=70" target="_blank"><img loading="lazy" src="img/killed-multi-agent-pipeline/s02_70.webp" alt="slide at 01:10"><div class="ts">01:10</div></a><a href="https://youtu.be/u6jJcIFDLE4?t=240" target="_blank"><img loading="lazy" src="img/killed-multi-agent-pipeline/s03_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="https://youtu.be/u6jJcIFDLE4?t=350" target="_blank"><img loading="lazy" src="img/killed-multi-agent-pipeline/s04_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="https://youtu.be/u6jJcIFDLE4?t=650" target="_blank"><img loading="lazy" src="img/killed-multi-agent-pipeline/s05_650.webp" alt="slide at 10:50"><div class="ts">10:50</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>ZS built a separate agent for each stage of the analyst workflow: signal detection, source localization, driver attribution, and synthesis, tied together by an orchestrator.</td><td class="tt"><a href="https://youtu.be/u6jJcIFDLE4?t=155" target="_blank">02:35</a></td></tr><tr><td class="st">warns</td><td>The system correctly identified the root cause but the recommended action ignored it, making the output internally incoherent despite looking clean.</td><td class="tt"><a href="https://youtu.be/u6jJcIFDLE4?t=247" target="_blank">04:07</a></td></tr><tr><td class="st">asserts</td><td>Context was getting lost at each handoff between agents, which was the actual cause of the incoherent output, not any single LLM failing.</td><td class="tt"><a href="https://youtu.be/u6jJcIFDLE4?t=309" target="_blank">05:09</a></td></tr><tr><td class="st">recommends</td><td>Signal detection should be a deterministic statistical workflow run before the agent, not a task performed inconsistently by an LLM.</td><td class="tt"><a href="https://youtu.be/u6jJcIFDLE4?t=434" target="_blank">07:14</a></td></tr><tr><td class="st">recommends</td><td>One agent should own end-to-end reasoning and can delegate bounded investigations to sub-agents, but judgment should not be distributed across agents.</td><td class="tt"><a href="https://youtu.be/u6jJcIFDLE4?t=837" target="_blank">13:57</a></td></tr><tr><td class="st">recommends</td><td>The domain knowledge graph should be treated as a control plane that guides the agent&#x27;s navigation and decisions, not just a lookup layer.</td><td class="tt"><a href="https://youtu.be/u6jJcIFDLE4?t=867" target="_blank">14:27</a></td></tr><tr><td class="st">asserts</td><td>Every edge in the domain graph represents a hypothesis the agent can evaluate, bounding the surface the agent is allowed to investigate.</td><td class="tt"><a href="https://youtu.be/u6jJcIFDLE4?t=715" target="_blank">11:55</a></td></tr><tr><td class="st">asserts</td><td>After 50-plus agent turns, the system reproduces analysis that previously took a human analyst three to four weeks, in about 20-30 minutes.</td><td class="tt"><a href="https://youtu.be/u6jJcIFDLE4?t=806" target="_blank">13:26</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "u6jJcIFDLE4", "slug": "killed-multi-agent-pipeline", "title": "Why We Killed Our Multi-Agent Pipeline", "speaker": "Subbiah Sethuraman and Abhilash Asokan", "company": "ZS Associates", "themes": ["agentic-engineering", "context-engineering", "vertical-ai"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "original multi-agent architecture", "text": "ZS built a separate agent for each stage of the analyst workflow: signal detection, source localization, driver attribution, and synthesis, tied together by an orchestrator.", "quote": "we built agents for every step, right? Signal detection, we said, \"Okay, we'll have an agent for signal detection. It'll identify identify the signals for me.\"", "t": 155}, {"id": "c2", "stance": "warns", "topic": "coherent-looking but broken output", "text": "The system correctly identified the root cause but the recommended action ignored it, making the output internally incoherent despite looking clean.", "quote": "The cause is right. It identified the right cause, right? Because patients can't afford the drug drug, right? But the action it said it didn't really focus on the payer part, the insurance part of it, right?", "t": 247}, {"id": "c3", "stance": "asserts", "topic": "root cause of the failure", "text": "Context was getting lost at each handoff between agents, which was the actual cause of the incoherent output, not any single LLM failing.", "quote": "there is a lot of context hand off which is happening, and context is actually getting lost at each of these hand offs.", "t": 309}, {"id": "c4", "stance": "recommends", "topic": "deterministic signal detection", "text": "Signal detection should be a deterministic statistical workflow run before the agent, not a task performed inconsistently by an LLM.", "quote": "This is something we don't want an agent to do. This is a completely deterministic workflow. So, we separated it out from the agentic system.", "t": 434}, {"id": "c5", "stance": "recommends", "topic": "single agent owns reasoning", "text": "One agent should own end-to-end reasoning and can delegate bounded investigations to sub-agents, but judgment should not be distributed across agents.", "quote": "need to have one agent, right? Which owns the reasoning end to end, right? This agent can actually take the call to use sub agents, tools, skills to actually spawn off other other tasks basically", "t": 837}, {"id": "c6", "stance": "recommends", "topic": "graph as control plane", "text": "The domain knowledge graph should be treated as a control plane that guides the agent's navigation and decisions, not just a lookup layer.", "quote": "graph has to be treated as a control plane which the agent uses to navigate and takes the next decisions basically.", "t": 867}, {"id": "c7", "stance": "asserts", "topic": "edges as hypotheses", "text": "Every edge in the domain graph represents a hypothesis the agent can evaluate, bounding the surface the agent is allowed to investigate.", "quote": "Graph access the control surface. So, agent every edge is a hypothesis.", "t": 715}, {"id": "c8", "stance": "asserts", "topic": "speed of the resulting system", "text": "After 50-plus agent turns, the system reproduces analysis that previously took a human analyst three to four weeks, in about 20-30 minutes.", "quote": "after like 50 plus turns, a whole lot of tokens, it's able to produce something an analyst was able to produce maybe in three or four weeks in like maybe 20 30 minutes.", "t": 806}]}</script>
+</body></html>

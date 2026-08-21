@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Semantic Blindness: 500,000 Sensors Confused an LLM — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/EUsPvBeIx70" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 16 min</span><span class="ln"></span></div>
+<h1 class="lede">Semantic Blindness: 500,000 Sensors Confused an LLM</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Raahul Singh &amp; Vanč Levstik &middot; Phaidra</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/EUsPvBeIx70" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/EUsPvBeIx70</a></span>
+</div>
+<div class="chips"><span class="chip hot">Vertical AI</span><span class="chip hot">Context engineering</span><span class="chip hot">Evals & benchmarks</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Naive sharded LLM search over equipment names produced horrible recall and hallucinated phantom equipment; the old approach&#x27;s correctness dropped from 80% at 64 GPUs to about 30% at 460,000 GPUs.</li><li>The fix uses an LLM only to plan (produce a structured scope + filter) while a deterministic tree-indexed resolver does exact set operations, restoring 100% correctness across scales and real production systems with zero failures in 66 test cases.</li><li>This cut token cost from 116 million tokens for a single validation pass down to 390,000, and made per-query cost flat (about 9,000 tokens) whether the system has 64 GPUs or 460,000.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The problem: near-identical names at massive scale</span><span class="ln"></span></div>
+<div class="prose"><p>Phaidra builds agents that let data center operators query their infrastructure in natural language. At gigawatt scale, a facility can have 400,000+ GPUs plus power meters, chillers, and other equipment, and naming conventions vary by customer from simple to cryptic (e.g., &quot;CH3 something something six&quot;). This exceeds LLM context windows and defeats naive approaches once systems move past demo scale.</p></div>
+<div class="quote"><p>&ldquo;at 1 gigawatt scale factories you will see 400,000 plus GPUs and to support those GPUs you have power meters, you have chillers, you have other equipments&rdquo;</p><a href="https://youtu.be/EUsPvBeIx70?t=93" target="_blank">&#9654; watch at 01:33</a></div>
+<figure class="slide"><a href="https://youtu.be/EUsPvBeIx70?t=90" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s01_90.webp" alt="The problem: near-identical names at massive scale"></a><figcaption>Slide at 01:30 &middot; The problem: near-identical names at massive scale &middot; <a href="https://youtu.be/EUsPvBeIx70?t=90" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Both naive LLM search and vector RAG fail at scale</span><span class="ln"></span></div>
+<div class="prose"><p>Semantic/vector search fails because equipment names are often nearly identical strings differing by one character, giving poor recall. Pure LLM approaches also hit an internal frequency penalty that causes the model to cut off output when asked to list many similar names in a row (e.g., listing 100 GPUs). Sharding equipment across parallel LLM calls doesn&#x27;t fix this either -- it produces horrible recall and hallucinated phantom equipment that doesn&#x27;t exist while silently dropping equipment that does.</p></div>
+<div class="quote"><p>&ldquo;the problem is often times the names are so similar that semantic search just fails.&rdquo;</p><a href="https://youtu.be/EUsPvBeIx70?t=125" target="_blank">&#9654; watch at 02:05</a></div><div class="quote"><p>&ldquo;If you keep on outputting very similar names over and over again, or very similar tokens, uh more accurately, over and over again, there are internal penalties in the LLM which just shut off their output.&rdquo;</p><a href="https://youtu.be/EUsPvBeIx70?t=156" target="_blank">&#9654; watch at 02:36</a></div>
+<figure class="slide"><a href="https://youtu.be/EUsPvBeIx70?t=120" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s02_120.webp" alt="Both naive LLM search and vector RAG fail at scale"></a><figcaption>Slide at 02:00 &middot; Both naive LLM search and vector RAG fail at scale &middot; <a href="https://youtu.be/EUsPvBeIx70?t=120" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>The fix: LLM plans, deterministic code resolves</span><span class="ln"></span></div>
+<div class="prose"><p>Because data center equipment forms a shallow, wide hierarchy (data center to hall to aisle to row to rack to device), Phaidra&#x27;s system uses the LLM only to convert a vague query into a structured plan (scope + filter), then a deterministic resolver runs exact set operations over pre-indexed subtrees to produce the final result set -- a two-to-three step process instead of an open-ended agentic loop.</p></div>
+<div class="quote"><p>&ldquo;the lesson for new built AI native systems runs a little bit the other way&rdquo;</p><a href="https://youtu.be/EUsPvBeIx70?t=808" target="_blank">&#9654; watch at 13:28</a></div><div class="quote"><p>&ldquo;The simple heuristic that usually works, if you can write down the structure or the rules, it&#x27;s a 1.0 job&rdquo;</p><a href="https://youtu.be/EUsPvBeIx70?t=871" target="_blank">&#9654; watch at 14:31</a></div>
+<figure class="slide"><a href="https://youtu.be/EUsPvBeIx70?t=810" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s13_810.webp" alt="The fix: LLM plans, deterministic code resolves"></a><figcaption>Slide at 13:30 &middot; The fix: LLM plans, deterministic code resolves &middot; <a href="https://youtu.be/EUsPvBeIx70?t=810" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Measured results: accuracy restored, cost collapses</span><span class="ln"></span></div>
+<div class="prose"><p>Head-to-head testing (same model, same data, three runs per case) showed the old sharded approach degraded from 80% correctness at 64 GPUs to about 30% at 460,000 GPUs, while the new approach held 100% correctness across all scales and across 66 real-world cases on six production systems with zero failures. Token cost for a full validation pass at 1GW scale dropped from 116 million tokens to 390,000, and per-query cost stayed flat at roughly 9,000 tokens regardless of system size.</p></div>
+<div class="quote"><p>&ldquo;we got 80% correctness at 64 GPUs, and that dropped to about 30% when the GPU grew to 400 460,000&rdquo;</p><a href="https://youtu.be/EUsPvBeIx70?t=652" target="_blank">&#9654; watch at 10:52</a></div><div class="quote"><p>&ldquo;On the other hand, the our new approach has maintained correctness with 100% accuracy across all of those um tests that we give it.&rdquo;</p><a href="https://youtu.be/EUsPvBeIx70?t=684" target="_blank">&#9654; watch at 11:24</a></div><div class="quote"><p>&ldquo;the old approach burned 116 million tokens for just a single validation pass while still having a lot of errors&rdquo;</p><a href="https://youtu.be/EUsPvBeIx70?t=716" target="_blank">&#9654; watch at 11:56</a></div><div class="quote"><p>&ldquo;the cost of the query was 9,000 tokens a query where the system was 64 GPUs or 460,000&rdquo;</p><a href="https://youtu.be/EUsPvBeIx70?t=746" target="_blank">&#9654; watch at 12:26</a></div>
+<figure class="slide"><a href="https://youtu.be/EUsPvBeIx70?t=630" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s10_630.webp" alt="Measured results: accuracy restored, cost collapses"></a><figcaption>Slide at 10:30 &middot; Measured results: accuracy restored, cost collapses &middot; <a href="https://youtu.be/EUsPvBeIx70?t=630" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The team&#x27;s framing of an inversion on Karpathy&#x27;s software 1.0/3.0 trend -- new AI-native systems starting almost pure 3.0 (everything in the prompt) and maturing back toward 1.0 for whatever proves reproducible -- is a useful heuristic for other teams building agents over structured data: use the LLM&#x27;s context-window flexibility to find what&#x27;s worth hardening into code, then harden it (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/EUsPvBeIx70?t=40" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s00_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="https://youtu.be/EUsPvBeIx70?t=90" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s01_90.webp" alt="slide at 01:30"><div class="ts">01:30</div></a><a href="https://youtu.be/EUsPvBeIx70?t=120" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s02_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="https://youtu.be/EUsPvBeIx70?t=200" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s03_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="https://youtu.be/EUsPvBeIx70?t=260" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s04_260.webp" alt="slide at 04:20"><div class="ts">04:20</div></a><a href="https://youtu.be/EUsPvBeIx70?t=310" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s05_310.webp" alt="slide at 05:10"><div class="ts">05:10</div></a><a href="https://youtu.be/EUsPvBeIx70?t=390" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s06_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="https://youtu.be/EUsPvBeIx70?t=460" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s07_460.webp" alt="slide at 07:40"><div class="ts">07:40</div></a><a href="https://youtu.be/EUsPvBeIx70?t=520" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s08_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a><a href="https://youtu.be/EUsPvBeIx70?t=580" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s09_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="https://youtu.be/EUsPvBeIx70?t=630" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s10_630.webp" alt="slide at 10:30"><div class="ts">10:30</div></a><a href="https://youtu.be/EUsPvBeIx70?t=700" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s11_700.webp" alt="slide at 11:40"><div class="ts">11:40</div></a><a href="https://youtu.be/EUsPvBeIx70?t=750" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s12_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="https://youtu.be/EUsPvBeIx70?t=810" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s13_810.webp" alt="slide at 13:30"><div class="ts">13:30</div></a><a href="https://youtu.be/EUsPvBeIx70?t=880" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s14_880.webp" alt="slide at 14:40"><div class="ts">14:40</div></a><a href="https://youtu.be/EUsPvBeIx70?t=940" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s15_940.webp" alt="slide at 15:40"><div class="ts">15:40</div></a><a href="https://youtu.be/EUsPvBeIx70?t=970" target="_blank"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s16_970.webp" alt="slide at 16:10"><div class="ts">16:10</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>At 1 gigawatt scale data center facilities there are 400,000+ GPUs plus power meters, chillers, and other equipment to track.</td><td class="tt"><a href="https://youtu.be/EUsPvBeIx70?t=93" target="_blank">01:33</a></td></tr><tr><td class="st">warns</td><td>Semantic/vector search fails because equipment names are often nearly identical strings, giving poor recall.</td><td class="tt"><a href="https://youtu.be/EUsPvBeIx70?t=125" target="_blank">02:05</a></td></tr><tr><td class="st">warns</td><td>LLMs have an internal frequency penalty that shuts off output when asked to repeat many similar names or tokens in a row.</td><td class="tt"><a href="https://youtu.be/EUsPvBeIx70?t=156" target="_blank">02:36</a></td></tr><tr><td class="st">asserts</td><td>The old sharded LLM approach&#x27;s correctness dropped from 80% at 64 GPUs to about 30% at 460,000 GPUs.</td><td class="tt"><a href="https://youtu.be/EUsPvBeIx70?t=652" target="_blank">10:52</a></td></tr><tr><td class="st">asserts</td><td>The new hierarchical planner-plus-resolver approach maintained 100% correctness across all tested scales.</td><td class="tt"><a href="https://youtu.be/EUsPvBeIx70?t=684" target="_blank">11:24</a></td></tr><tr><td class="st">asserts</td><td>The old approach burned 116 million tokens for a single validation pass at 1GW scale despite errors; the new approach uses about 390,000 tokens.</td><td class="tt"><a href="https://youtu.be/EUsPvBeIx70?t=716" target="_blank">11:56</a></td></tr><tr><td class="st">asserts</td><td>Per-query token cost stayed flat at about 9,000 tokens whether the system had 64 GPUs or 460,000.</td><td class="tt"><a href="https://youtu.be/EUsPvBeIx70?t=746" target="_blank">12:26</a></td></tr><tr><td class="st">asserts</td><td>Unlike legacy software drifting from deterministic code (1.0) toward prompts (3.0), new AI-native systems tend to start almost pure prompt-based and mature toward deterministic code for what earns it.</td><td class="tt"><a href="https://youtu.be/EUsPvBeIx70?t=808" target="_blank">13:28</a></td></tr><tr><td class="st">recommends</td><td>The recommended heuristic is that anything with a definable structure or rule set should be implemented as deterministic code rather than left to LLM judgment.</td><td class="tt"><a href="https://youtu.be/EUsPvBeIx70?t=871" target="_blank">14:31</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "EUsPvBeIx70", "slug": "semantic-blindness-500000-sensors", "title": "Semantic Blindness: 500,000 Sensors Confused an LLM", "speaker": "Raahul Singh & Vanč Levstik", "company": "Phaidra", "themes": ["vertical-ai", "context-engineering", "evals-benchmarks"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "scale of equipment at gigawatt facilities", "text": "At 1 gigawatt scale data center facilities there are 400,000+ GPUs plus power meters, chillers, and other equipment to track.", "quote": "at 1 gigawatt scale factories you will see 400,000 plus GPUs and to support those GPUs you have power meters, you have chillers, you have other equipments", "t": 93}, {"id": "c2", "stance": "warns", "topic": "vector search fails on near-identical names", "text": "Semantic/vector search fails because equipment names are often nearly identical strings, giving poor recall.", "quote": "the problem is often times the names are so similar that semantic search just fails.", "t": 125}, {"id": "c3", "stance": "warns", "topic": "LLM frequency penalty cuts off output", "text": "LLMs have an internal frequency penalty that shuts off output when asked to repeat many similar names or tokens in a row.", "quote": "If you keep on outputting very similar names over and over again, or very similar tokens, uh more accurately, over and over again, there are internal penalties in the LLM which just shut off their output.", "t": 156}, {"id": "c4", "stance": "asserts", "topic": "old approach accuracy degradation", "text": "The old sharded LLM approach's correctness dropped from 80% at 64 GPUs to about 30% at 460,000 GPUs.", "quote": "we got 80% correctness at 64 GPUs, and that dropped to about 30% when the GPU grew to 400 460,000", "t": 652}, {"id": "c5", "stance": "asserts", "topic": "new approach accuracy", "text": "The new hierarchical planner-plus-resolver approach maintained 100% correctness across all tested scales.", "quote": "On the other hand, the our new approach has maintained correctness with 100% accuracy across all of those um tests that we give it.", "t": 684}, {"id": "c6", "stance": "asserts", "topic": "token cost reduction", "text": "The old approach burned 116 million tokens for a single validation pass at 1GW scale despite errors; the new approach uses about 390,000 tokens.", "quote": "the old approach burned 116 million tokens for just a single validation pass while still having a lot of errors", "t": 716}, {"id": "c7", "stance": "asserts", "topic": "flat per-query cost", "text": "Per-query token cost stayed flat at about 9,000 tokens whether the system had 64 GPUs or 460,000.", "quote": "the cost of the query was 9,000 tokens a query where the system was 64 GPUs or 460,000", "t": 746}, {"id": "c8", "stance": "asserts", "topic": "AI-native systems mature from 3.0 toward 1.0", "text": "Unlike legacy software drifting from deterministic code (1.0) toward prompts (3.0), new AI-native systems tend to start almost pure prompt-based and mature toward deterministic code for what earns it.", "quote": "the lesson for new built AI native systems runs a little bit the other way", "t": 808}, {"id": "c9", "stance": "recommends", "topic": "heuristic for what to harden into code", "text": "The recommended heuristic is that anything with a definable structure or rule set should be implemented as deterministic code rather than left to LLM judgment.", "quote": "The simple heuristic that usually works, if you can write down the structure or the rules, it's a 1.0 job", "t": 871}]}</script>
+</body></html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>How Forward Deployed Engineering is done at Decagon — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/7wu2hsRfvV0" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 18 min</span><span class="ln"></span></div>
+<h1 class="lede">How Forward Deployed Engineering is done at Decagon</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Sunny Rekhi &middot; Decagon</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/7wu2hsRfvV0" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/7wu2hsRfvV0</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Product & UX</span><span class="chip hot">Vertical AI</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>As Decagon grew from 50 to 500 people in a year, it split its blended forward-deployed role into two specialized lanes: agent builders (configure the agent via UI) and agent software engineers (handle custom product asks) (c1, c2).</li><li>Rekhi argues that with AI coding now easy, the scarce skill for a forward-deployed engineer is restraint — resisting the urge to write a one-off fix and instead building something that scales to future customers, evidenced by turning custom integrations into a self-serve product after the 25th one-off build (c3, c5).</li><li>Decagon&#x27;s process is to nail down what &#x27;success&#x27; means with the customer before building, and to treat forward-deployed staff as advisors who use cross-customer pattern data to recommend where a customer will see the highest ROI, not just executors of stated requests (c4, c6).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>From 50 to 500: splitting one role into two</span><span class="ln"></span></div>
+<div class="prose"><p>Rekhi describes Decagon&#x27;s headcount growing from 50 to 500 people over roughly a year. As the company scaled, it deliberately broke apart a single blended &#x27;agent software engineer&#x27; role — which had handled both configuring the agent for a customer and building custom product features — into two specialized lanes to make the system scale.</p></div>
+<div class="quote"><p>&ldquo;A year ago we were at 50 people.&rdquo;</p><a href="https://youtu.be/7wu2hsRfvV0?t=370" target="_blank">&#9654; watch at 06:10</a></div><div class="quote"><p>&ldquo;effectively we we we broke apart this agent software engineering role into two specialized lanes.&rdquo;</p><a href="https://youtu.be/7wu2hsRfvV0?t=400" target="_blank">&#9654; watch at 06:40</a></div>
+<figure class="slide"><a href="https://youtu.be/7wu2hsRfvV0?t=350" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s06_350.webp" alt="From 50 to 500: splitting one role into two"></a><figcaption>Slide at 05:50 &middot; From 50 to 500: splitting one role into two &middot; <a href="https://youtu.be/7wu2hsRfvV0?t=350" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Two forms of forward deployment: configuring the agent vs. product asks</span><span class="ln"></span></div>
+<div class="prose"><p>Rekhi frames Decagon&#x27;s forward-deployed work as two distinct motions: configuring the AI customer-service agent&#x27;s behavior and tonality for a given enterprise (often within the product UI), and being the front line for customer product requests that then need to get folded back into the core product. He gives Hertz as an example of a customer relationship that expanded from inbound support deflection into proactive revenue workflows, like reaching out when it&#x27;s time to renew a car lease.</p></div>
+<div class="quote"><p>&ldquo;I imagine this is the case for a lot of agentic companies, but Decagon has effectively two kinds of forward deployment engineering.&rdquo;</p><a href="https://youtu.be/7wu2hsRfvV0?t=217" target="_blank">&#9654; watch at 03:37</a></div><div class="quote"><p>&ldquo;Decagon now does for them is to reach out proactively to a customer when it&#x27;s time to renew their car lease or extend it or whatever, and they can do that from within Decagon.&rdquo;</p><a href="https://youtu.be/7wu2hsRfvV0?t=154" target="_blank">&#9654; watch at 02:34</a></div>
+<figure class="slide"><a href="https://youtu.be/7wu2hsRfvV0?t=200" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s05_200.webp" alt="Two forms of forward deployment: configuring the agent vs. product asks"></a><figcaption>Slide at 03:20 &middot; Two forms of forward deployment: configuring the agent vs. product asks &middot; <a href="https://youtu.be/7wu2hsRfvV0?t=200" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Restraint is the scarce skill</span><span class="ln"></span></div>
+<div class="prose"><p>Rekhi argues that with AI coding tools now capable of quickly producing a one-off fix, the harder and scarcer skill for a forward-deployed engineer is restraint — resisting the temptation to just prompt a coding agent to patch a single customer&#x27;s request, and instead architecting a solution that will scale to future customers.</p></div>
+<div class="quote"><p>&ldquo;and Cloud Code to just do it for me. But the scarce skill now that AI coding is so good, the scarce skill is actually exercising restraint.&rdquo;</p><a href="https://youtu.be/7wu2hsRfvV0?t=493" target="_blank">&#9654; watch at 08:13</a></div>
+<figure class="slide"><a href="https://youtu.be/7wu2hsRfvV0?t=470" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s07_470.webp" alt="Restraint is the scarce skill"></a><figcaption>Slide at 07:50 &middot; Restraint is the scarce skill &middot; <a href="https://youtu.be/7wu2hsRfvV0?t=470" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Defining success upfront, then productizing custom work</span><span class="ln"></span></div>
+<div class="prose"><p>Decagon tries to pin down what success looks like for a customer — metrics, channels, pain points — in writing during the earliest deal conversations, before building anything. Rekhi describes how repeated one-off custom integrations eventually get promoted into self-serve product features once the pattern repeats enough (he cites building a self-serve integration path after roughly the 25th custom one).</p></div>
+<div class="quote"><p>&ldquo;we&#x27;ve learned like early on when you&#x27;re scoping the deal, like literally when the very first conversations, you want to figure out ahead of time what does success look like for the customer.&rdquo;</p><a href="https://youtu.be/7wu2hsRfvV0?t=555" target="_blank">&#9654; watch at 09:15</a></div><div class="quote"><p>&ldquo;After like the 25th one, we&#x27;re like, &quot;I don&#x27;t know how many more are coming up.&quot; Uh so, let&#x27;s just like build it a self-serve way.&rdquo;</p><a href="https://youtu.be/7wu2hsRfvV0?t=713" target="_blank">&#9654; watch at 11:53</a></div>
+<figure class="slide"><a href="https://youtu.be/7wu2hsRfvV0?t=540" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s08_540.webp" alt="Defining success upfront, then productizing custom work"></a><figcaption>Slide at 09:00 &middot; Defining success upfront, then productizing custom work &middot; <a href="https://youtu.be/7wu2hsRfvV0?t=540" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Advisor, not just executor</span><span class="ln"></span></div>
+<div class="prose"><p>Rekhi recommends that forward-deployed staff treat themselves as advisors rather than pure executors of what a customer asks for, since Decagon can see patterns across many customers&#x27; historical support data and tell a given customer which workflow to automate first for the highest ROI, even when that differs from what the customer originally requested.</p></div>
+<div class="quote"><p>&ldquo;you&#x27;re you should treat yourself as an advisor rather than just an executor, right?&rdquo;</p><a href="https://youtu.be/7wu2hsRfvV0?t=837" target="_blank">&#9654; watch at 13:57</a></div>
+<figure class="slide"><a href="https://youtu.be/7wu2hsRfvV0?t=810" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s12_810.webp" alt="Advisor, not just executor"></a><figcaption>Slide at 13:30 &middot; Advisor, not just executor &middot; <a href="https://youtu.be/7wu2hsRfvV0?t=810" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/7wu2hsRfvV0?t=10" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=20" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=50" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s02_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=100" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s03_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=160" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s04_160.webp" alt="slide at 02:40"><div class="ts">02:40</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=200" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s05_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=350" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s06_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=470" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s07_470.webp" alt="slide at 07:50"><div class="ts">07:50</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=540" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s08_540.webp" alt="slide at 09:00"><div class="ts">09:00</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=610" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s09_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=670" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s10_670.webp" alt="slide at 11:10"><div class="ts">11:10</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=750" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s11_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=810" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s12_810.webp" alt="slide at 13:30"><div class="ts">13:30</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=890" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s13_890.webp" alt="slide at 14:50"><div class="ts">14:50</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=920" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s14_920.webp" alt="slide at 15:20"><div class="ts">15:20</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=930" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s15_930.webp" alt="slide at 15:30"><div class="ts">15:30</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=1030" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s16_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=1040" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s17_1040.webp" alt="slide at 17:20"><div class="ts">17:20</div></a><a href="https://youtu.be/7wu2hsRfvV0?t=1060" target="_blank"><img loading="lazy" src="img/fde-at-decagon/s18_1060.webp" alt="slide at 17:40"><div class="ts">17:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Decagon grew from 50 to 500 employees in roughly a year, a pace of hypergrowth that forced its forward-deployed org design to change.</td><td class="tt"><a href="https://youtu.be/7wu2hsRfvV0?t=370" target="_blank">06:10</a></td></tr><tr><td class="st">asserts</td><td>As Decagon scaled, it broke apart its combined agent-software-engineering role into two specialized lanes: agent builders and agent software engineers.</td><td class="tt"><a href="https://youtu.be/7wu2hsRfvV0?t=400" target="_blank">06:40</a></td></tr><tr><td class="st">warns</td><td>Now that AI coding makes one-off fixes trivially easy, the scarce skill for a forward-deployed engineer is exercising restraint rather than shipping the quick patch.</td><td class="tt"><a href="https://youtu.be/7wu2hsRfvV0?t=493" target="_blank">08:13</a></td></tr><tr><td class="st">recommends</td><td>Rekhi recommends nailing down, in writing during the earliest deal conversations, what success looks like for the customer before starting to build.</td><td class="tt"><a href="https://youtu.be/7wu2hsRfvV0?t=555" target="_blank">09:15</a></td></tr><tr><td class="st">asserts</td><td>After building roughly 25 custom one-off integrations, Decagon decided to build a self-serve integration path instead of continuing to hand-build each one.</td><td class="tt"><a href="https://youtu.be/7wu2hsRfvV0?t=713" target="_blank">11:53</a></td></tr><tr><td class="st">recommends</td><td>Rekhi recommends forward-deployed staff treat themselves as advisors who use cross-customer data to recommend the highest-ROI workflow, not just executors of the customer&#x27;s literal request.</td><td class="tt"><a href="https://youtu.be/7wu2hsRfvV0?t=837" target="_blank">13:57</a></td></tr><tr><td class="st">asserts</td><td>Decagon&#x27;s relationship with a customer like Hertz expanded from deflecting inbound support cases into proactive outreach, such as reminding customers when it&#x27;s time to renew a car lease.</td><td class="tt"><a href="https://youtu.be/7wu2hsRfvV0?t=154" target="_blank">02:34</a></td></tr><tr><td class="st">asserts</td><td>Rekhi describes Decagon as having two distinct kinds of forward-deployed engineering work, one focused on configuring the agent and one on handling customer product requests.</td><td class="tt"><a href="https://youtu.be/7wu2hsRfvV0?t=217" target="_blank">03:37</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "7wu2hsRfvV0", "slug": "fde-at-decagon", "title": "How Forward Deployed Engineering is done at Decagon", "speaker": "Sunny Rekhi", "company": "Decagon", "themes": ["agentic-engineering", "product-ux", "vertical-ai"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "Decagon's headcount growth", "text": "Decagon grew from 50 to 500 employees in roughly a year, a pace of hypergrowth that forced its forward-deployed org design to change.", "quote": "A year ago we were at 50 people.", "t": 370}, {"id": "c2", "stance": "asserts", "topic": "splitting the blended role into two lanes", "text": "As Decagon scaled, it broke apart its combined agent-software-engineering role into two specialized lanes: agent builders and agent software engineers.", "quote": "effectively we we we broke apart this agent software engineering role into two specialized lanes.", "t": 400}, {"id": "c3", "stance": "warns", "topic": "restraint as the scarce skill in AI-coding era", "text": "Now that AI coding makes one-off fixes trivially easy, the scarce skill for a forward-deployed engineer is exercising restraint rather than shipping the quick patch.", "quote": "and Cloud Code to just do it for me. But the scarce skill now that AI coding is so good, the scarce skill is actually exercising restraint.", "t": 493}, {"id": "c4", "stance": "recommends", "topic": "defining success criteria before building", "text": "Rekhi recommends nailing down, in writing during the earliest deal conversations, what success looks like for the customer before starting to build.", "quote": "we've learned like early on when you're scoping the deal, like literally when the very first conversations, you want to figure out ahead of time what does success look like for the customer.", "t": 555}, {"id": "c5", "stance": "asserts", "topic": "converting repeated custom work into self-serve", "text": "After building roughly 25 custom one-off integrations, Decagon decided to build a self-serve integration path instead of continuing to hand-build each one.", "quote": "After like the 25th one, we're like, \"I don't know how many more are coming up.\" Uh so, let's just like build it a self-serve way.", "t": 713}, {"id": "c6", "stance": "recommends", "topic": "acting as advisor, not just executor", "text": "Rekhi recommends forward-deployed staff treat themselves as advisors who use cross-customer data to recommend the highest-ROI workflow, not just executors of the customer's literal request.", "quote": "you're you should treat yourself as an advisor rather than just an executor, right?", "t": 837}, {"id": "c7", "stance": "asserts", "topic": "expanding from support deflection to proactive revenue", "text": "Decagon's relationship with a customer like Hertz expanded from deflecting inbound support cases into proactive outreach, such as reminding customers when it's time to renew a car lease.", "quote": "Decagon now does for them is to reach out proactively to a customer when it's time to renew their car lease or extend it or whatever, and they can do that from within Decagon.", "t": 154}, {"id": "c8", "stance": "asserts", "topic": "two kinds of forward deployment at Decagon", "text": "Rekhi describes Decagon as having two distinct kinds of forward-deployed engineering work, one focused on configuring the agent and one on handling customer product requests.", "quote": "I imagine this is the case for a lot of agentic companies, but Decagon has effectively two kinds of forward deployment engineering.", "t": 217}]}</script>
+</body></html>

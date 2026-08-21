@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>The maturity phases of running evals — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/FB-MLPhL9Ms" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 18 min</span><span class="ln"></span></div>
+<h1 class="lede">The maturity phases of running evals</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Phil Hetzel &middot; Braintrust</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/FB-MLPhL9Ms" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/FB-MLPhL9Ms</a></span>
+</div>
+<div class="chips"><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Agentic engineering</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Evals should target an agent&#x27;s specific known failure modes rather than exhaustive unit-test-style coverage of every possible input (c1).</li><li>Start with documented human vibe-checks (thumbs up/down plus a written justification), then scale that judgment with LLM-as-judge -- but evaluate the judge itself so it stays aligned with human judgment (c2, c3, c8).</li><li>As agents gain tool calls, especially CRUD operations against external systems, evals must capture full traces and grapple with representing external system state offline without overwriting production data (c5, c6).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Evals target failure modes, not exhaustive coverage</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker distinguishes evals from unit tests: unit tests aim for exhaustive coverage, while evals should start from an agent&#x27;s known failure modes (identified by the builder or a subject matter expert) rather than trying to test every possible scenario, which would be infinite.</p></div>
+<div class="quote"><p>&ldquo;Evals are not unit tests where whereas unit tests are very exhaustive in in how you perform them&rdquo;</p><a href="https://youtu.be/FB-MLPhL9Ms?t=249" target="_blank">&#9654; watch at 04:09</a></div>
+<figure class="slide"><a href="https://youtu.be/FB-MLPhL9Ms?t=130" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s03_130.webp" alt="Evals target failure modes, not exhaustive coverage"></a><figcaption>Slide at 02:10 &middot; Evals target failure modes, not exhaustive coverage &middot; <a href="https://youtu.be/FB-MLPhL9Ms?t=130" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Stage one: vibe-checking with documented justification</span><span class="ln"></span></div>
+<div class="prose"><p>Starting with informal &#x27;vibe checks&#x27; is acceptable, but the speaker recommends having a human (ideally a subject matter expert) give a thumbs up/down on sample outputs plus a written justification for that judgment. The justification is what later gets used to scale that domain expertise into automated grading.</p></div>
+<div class="quote"><p>&ldquo;you should make that human annotator um perform a justification for why they chose that thumbs up up or thumbs down&rdquo;</p><a href="https://youtu.be/FB-MLPhL9Ms?t=469" target="_blank">&#9654; watch at 07:49</a></div>
+<figure class="slide"><a href="https://youtu.be/FB-MLPhL9Ms?t=540" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s04_540.webp" alt="Stage one: vibe-checking with documented justification"></a><figcaption>Slide at 09:00 &middot; Stage one: vibe-checking with documented justification &middot; <a href="https://youtu.be/FB-MLPhL9Ms?t=540" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Stage two: scaling judgment with LLM-as-judge</span><span class="ln"></span></div>
+<div class="prose"><p>Once failure modes are understood from human annotations, teams can use LLM-as-judge techniques to automate scoring at scale, sometimes combined with deterministic code-based checks (e.g., too many tool calls or tokens). The speaker warns that an LLM judge isn&#x27;t automatically trustworthy just because it&#x27;s an LLM -- judge outputs should themselves be evaluated against what a human would decide, and should be gathered from production or UAT traces rather than synthetic tests.</p></div>
+<div class="quote"><p>&ldquo;just because you put a robe and a cloak on an LLM, that doesn&#x27;t make it inherently more trustworthy&rdquo;</p><a href="https://youtu.be/FB-MLPhL9Ms?t=624" target="_blank">&#9654; watch at 10:24</a></div><div class="quote"><p>&ldquo;I would embrace LLM as judge, but also perform a lot of evals on the LLM as judge so that like it&#x27;s it&#x27;s very aligned with what a human would decide&rdquo;</p><a href="https://youtu.be/FB-MLPhL9Ms?t=1063" target="_blank">&#9654; watch at 17:43</a></div>
+<figure class="slide"><a href="https://youtu.be/FB-MLPhL9Ms?t=570" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s05_570.webp" alt="Stage two: scaling judgment with LLM-as-judge"></a><figcaption>Slide at 09:30 &middot; Stage two: scaling judgment with LLM-as-judge &middot; <a href="https://youtu.be/FB-MLPhL9Ms?t=570" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Production traces should feed the eval flywheel</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker recommends treating evals as re-running production rather than running isolated tests, capturing real production traces into the evaluation dataset to build a flywheel: capture traces, diagnose issues, feed examples back into offline experiments, and use results to guide agent improvements.</p></div>
+<div class="quote"><p>&ldquo;Think about evals like rerunning production because ultimately we want to be confident as we run, uh, run these workloads in in production&rdquo;</p><a href="https://youtu.be/FB-MLPhL9Ms?t=687" target="_blank">&#9654; watch at 11:27</a></div>
+<figure class="slide"><a href="https://youtu.be/FB-MLPhL9Ms?t=710" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s06_710.webp" alt="Production traces should feed the eval flywheel"></a><figcaption>Slide at 11:50 &middot; Production traces should feed the eval flywheel &middot; <a href="https://youtu.be/FB-MLPhL9Ms?t=710" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Stage three: tool calls and CRUD operations complicate evals</span><span class="ln"></span></div>
+<div class="prose"><p>As agents move beyond simple model calls to tool use, the speaker separates context-gathering tools (which inject data into the LLM) from CRUD-based tools (create/read/update/delete against external systems). CRUD tools make evals harder because it&#x27;s difficult to represent what state an external system was in at the time an eval input was created, and running evals live risks overwriting production data.</p></div>
+<div class="quote"><p>&ldquo;There is context gathering tools that are just, uh, gathering data and injecting that into the LLM. And then there is CRUD-based tools where you&#x27;re creating, reading, updating, or deleting information&rdquo;</p><a href="https://youtu.be/FB-MLPhL9Ms?t=781" target="_blank">&#9654; watch at 13:01</a></div><div class="quote"><p>&ldquo;really challenging to represent the state that the other external systems were were in at the time that eval input was created&rdquo;</p><a href="https://youtu.be/FB-MLPhL9Ms?t=874" target="_blank">&#9654; watch at 14:34</a></div>
+<figure class="slide"><a href="https://youtu.be/FB-MLPhL9Ms?t=750" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s07_750.webp" alt="Stage three: tool calls and CRUD operations complicate evals"></a><figcaption>Slide at 12:30 &middot; Stage three: tool calls and CRUD operations complicate evals &middot; <a href="https://youtu.be/FB-MLPhL9Ms?t=750" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">06</span><span>What&#x27;s emerging next</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker points to two emerging patterns: automated topic modeling at scale to surface failure modes in production without manual review, and running evals through coding-agent CLIs (e.g., Claude Code paired with an eval provider&#x27;s CLI) to automate the eval workflow itself.</p></div>
+<div class="quote"><p>&ldquo;performing topic modeling at scale to make sure that you&#x27;re uncovering those failure modes automatically in production&rdquo;</p><a href="https://youtu.be/FB-MLPhL9Ms?t=1031" target="_blank">&#9654; watch at 17:11</a></div>
+<figure class="slide"><a href="https://youtu.be/FB-MLPhL9Ms?t=1080" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s10_1080.webp" alt="What&#x27;s emerging next"></a><figcaption>Slide at 18:00 &middot; What&#x27;s emerging next &middot; <a href="https://youtu.be/FB-MLPhL9Ms?t=1080" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The CRUD-eval state-representation problem the speaker flags as &#x27;not completely solved&#x27; looks like the next real bottleneck in agent evals once teams move past simple text-in/text-out tasks -- worth tracking which vendors ship a credible mock-state or timestamped-query solution first (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/FB-MLPhL9Ms?t=30" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s00_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="https://youtu.be/FB-MLPhL9Ms?t=50" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s01_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="https://youtu.be/FB-MLPhL9Ms?t=60" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s02_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="https://youtu.be/FB-MLPhL9Ms?t=130" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s03_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="https://youtu.be/FB-MLPhL9Ms?t=540" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s04_540.webp" alt="slide at 09:00"><div class="ts">09:00</div></a><a href="https://youtu.be/FB-MLPhL9Ms?t=570" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s05_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="https://youtu.be/FB-MLPhL9Ms?t=710" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s06_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="https://youtu.be/FB-MLPhL9Ms?t=750" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s07_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="https://youtu.be/FB-MLPhL9Ms?t=890" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s08_890.webp" alt="slide at 14:50"><div class="ts">14:50</div></a><a href="https://youtu.be/FB-MLPhL9Ms?t=910" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s09_910.webp" alt="slide at 15:10"><div class="ts">15:10</div></a><a href="https://youtu.be/FB-MLPhL9Ms?t=1080" target="_blank"><img loading="lazy" src="img/eval-maturity-phases/s10_1080.webp" alt="slide at 18:00"><div class="ts">18:00</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Evals differ from unit tests in that they target known failure modes rather than exhaustive coverage of every possible input.</td><td class="tt"><a href="https://youtu.be/FB-MLPhL9Ms?t=249" target="_blank">04:09</a></td></tr><tr><td class="st">recommends</td><td>Human annotators evaluating agent outputs should give both a thumbs up/down and a written justification for their judgment.</td><td class="tt"><a href="https://youtu.be/FB-MLPhL9Ms?t=469" target="_blank">07:49</a></td></tr><tr><td class="st">warns</td><td>Using an LLM as a judge does not make its verdicts inherently more trustworthy; judge outputs need their own evaluation.</td><td class="tt"><a href="https://youtu.be/FB-MLPhL9Ms?t=624" target="_blank">10:24</a></td></tr><tr><td class="st">recommends</td><td>Evals should be built around gathering real production traces rather than treating evals as isolated tests.</td><td class="tt"><a href="https://youtu.be/FB-MLPhL9Ms?t=687" target="_blank">11:27</a></td></tr><tr><td class="st">asserts</td><td>Tool calls split into context-gathering tools that inject data into the LLM and CRUD-based tools that create, read, update, or delete data in external systems.</td><td class="tt"><a href="https://youtu.be/FB-MLPhL9Ms?t=781" target="_blank">13:01</a></td></tr><tr><td class="st">warns</td><td>Evaluating CRUD-based agent actions offline is difficult because it&#x27;s hard to represent what state external systems were in when the eval input was created.</td><td class="tt"><a href="https://youtu.be/FB-MLPhL9Ms?t=874" target="_blank">14:34</a></td></tr><tr><td class="st">predicts</td><td>The speaker expects topic modeling at scale to automatically surface production failure modes as an emerging eval technique.</td><td class="tt"><a href="https://youtu.be/FB-MLPhL9Ms?t=1031" target="_blank">17:11</a></td></tr><tr><td class="st">recommends</td><td>Teams should embrace LLM-as-judge but also run evals on the judge itself to keep it aligned with human decisions.</td><td class="tt"><a href="https://youtu.be/FB-MLPhL9Ms?t=1063" target="_blank">17:43</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "FB-MLPhL9Ms", "slug": "eval-maturity-phases", "title": "The maturity phases of running evals", "speaker": "Phil Hetzel", "company": "Braintrust", "themes": ["evals-benchmarks", "agentic-engineering"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "evals vs unit tests", "text": "Evals differ from unit tests in that they target known failure modes rather than exhaustive coverage of every possible input.", "quote": "Evals are not unit tests where whereas unit tests are very exhaustive in in how you perform them", "t": 249}, {"id": "c2", "stance": "recommends", "topic": "documented human annotation", "text": "Human annotators evaluating agent outputs should give both a thumbs up/down and a written justification for their judgment.", "quote": "you should make that human annotator um perform a justification for why they chose that thumbs up up or thumbs down", "t": 469}, {"id": "c3", "stance": "warns", "topic": "LLM judges aren't automatically trustworthy", "text": "Using an LLM as a judge does not make its verdicts inherently more trustworthy; judge outputs need their own evaluation.", "quote": "just because you put a robe and a cloak on an LLM, that doesn't make it inherently more trustworthy", "t": 624}, {"id": "c4", "stance": "recommends", "topic": "production traces as eval data", "text": "Evals should be built around gathering real production traces rather than treating evals as isolated tests.", "quote": "Think about evals like rerunning production because ultimately we want to be confident as we run, uh, run these workloads in in production", "t": 687}, {"id": "c5", "stance": "asserts", "topic": "two categories of tool calls", "text": "Tool calls split into context-gathering tools that inject data into the LLM and CRUD-based tools that create, read, update, or delete data in external systems.", "quote": "There is context gathering tools that are just, uh, gathering data and injecting that into the LLM. And then there is CRUD-based tools where you're creating, reading, updating, or deleting information", "t": 781}, {"id": "c6", "stance": "warns", "topic": "CRUD eval state representation", "text": "Evaluating CRUD-based agent actions offline is difficult because it's hard to represent what state external systems were in when the eval input was created.", "quote": "really challenging to represent the state that the other external systems were were in at the time that eval input was created", "t": 874}, {"id": "c7", "stance": "predicts", "topic": "emerging eval techniques", "text": "The speaker expects topic modeling at scale to automatically surface production failure modes as an emerging eval technique.", "quote": "performing topic modeling at scale to make sure that you're uncovering those failure modes automatically in production", "t": 1031}, {"id": "c8", "stance": "recommends", "topic": "evaluating the LLM judge", "text": "Teams should embrace LLM-as-judge but also run evals on the judge itself to keep it aligned with human decisions.", "quote": "I would embrace LLM as judge, but also perform a lot of evals on the LLM as judge so that like it's it's very aligned with what a human would decide", "t": 1063}]}</script>
+</body></html>

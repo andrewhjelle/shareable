@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Agent Output Is Not UX: Rendering Layer Your LLM Pipeline Is Missing — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/maTp79FD9gI" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 14 min</span><span class="ln"></span></div>
+<h1 class="lede">Agent Output Is Not UX: Rendering Layer Your LLM Pipeline Is Missing</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Bala Ramdoss &middot; Amazon Lens</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/maTp79FD9gI" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/maTp79FD9gI</a></span>
+</div>
+<div class="chips"><span class="chip hot">Product & UX</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Context engineering</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>The model already does the reasoning work; the gap that decides whether users can act on it is the rendering layer between model output and screen (c1).</li><li>Mobile clients can&#x27;t be patched after an unrecognized UI type ships, so the model must be given a fixed, version-aware menu of components rather than allowed to invent one (c3, c4).</li><li>Streaming typed UI blocks (not text) and chasing time-to-first-chunk instead of total latency changes what&#x27;s measured and what feels responsive (c2, c5).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The model isn&#x27;t the bottleneck, delivery is</span><span class="ln"></span></div>
+<div class="prose"><p>Ramdoss opens with an AI assistant that correctly answers a restaurant-booking question but leaves the user to still do the work of booking. He argues the model already does the real work; the layer between model output and something a human can act on, not the model itself, is what determines whether an agentic product succeeds.</p></div>
+<div class="quote"><p>&ldquo;The model did the real work, but look at the outcome. I have to do my research and work towards actually booking the table.&rdquo;</p><a href="https://youtu.be/maTp79FD9gI?t=15" target="_blank">&#9654; watch at 00:15</a></div>
+<figure class="slide"><a href="https://youtu.be/maTp79FD9gI?t=30" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s00_30.webp" alt="The model isn&#x27;t the bottleneck, delivery is"></a><figcaption>Slide at 00:30 &middot; The model isn&#x27;t the bottleneck, delivery is &middot; <a href="https://youtu.be/maTp79FD9gI?t=30" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Generative UI: the model describes UI as data</span><span class="ln"></span></div>
+<div class="prose"><p>He introduces generative UI and Google&#x27;s open A2UI spec as a shared vocabulary for a problem he used to solve bespoke each time: instead of returning raw text or HTML, the model describes UI as a list of typed components that the client renders with native widgets. He places this on a control spectrum from fixed pre-built components to fully open-ended generation, noting most production mobile apps stay in the safer, lower end of that spectrum.</p></div>
+<div class="quote"><p>&ldquo;Instead of the agent handing you a raw text or HTML, it describes the UI as data. A list of components and the client renders them with its own native widgets.&rdquo;</p><a href="https://youtu.be/maTp79FD9gI?t=188" target="_blank">&#9654; watch at 03:08</a></div>
+<figure class="slide"><a href="https://youtu.be/maTp79FD9gI?t=160" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s05_160.webp" alt="Generative UI: the model describes UI as data"></a><figcaption>Slide at 02:40 &middot; Generative UI: the model describes UI as data &middot; <a href="https://youtu.be/maTp79FD9gI?t=160" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Mobile clients cannot be patched, so give the model a fixed menu</span><span class="ln"></span></div>
+<div class="prose"><p>Unlike web, mobile apps can&#x27;t ship a fix in minutes; an unrecognized content type causes the app to crash repeatedly for users on old versions rather than degrade gracefully. His fix is a version-aware rendering contract: the model is only ever allowed to choose from a fixed, versioned menu of UI components it&#x27;s told the client supports, never invent a new one.</p></div>
+<div class="quote"><p>&ldquo;You cannot meaningfully patch the client.&rdquo;</p><a href="https://youtu.be/maTp79FD9gI?t=343" target="_blank">&#9654; watch at 05:43</a></div><div class="quote"><p>&ldquo;notice what the model never does. It never invents a component. It chooses from a fixed menu that you provide to it.&rdquo;</p><a href="https://youtu.be/maTp79FD9gI?t=471" target="_blank">&#9654; watch at 07:51</a></div>
+<figure class="slide"><a href="https://youtu.be/maTp79FD9gI?t=340" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s08_340.webp" alt="Mobile clients cannot be patched, so give the model a fixed menu"></a><figcaption>Slide at 05:40 &middot; Mobile clients cannot be patched, so give the model a fixed menu &middot; <a href="https://youtu.be/maTp79FD9gI?t=340" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Stream typed UI blocks and measure time-to-first-chunk</span><span class="ln"></span></div>
+<div class="prose"><p>Because LLM latency plus safety checks make waiting for a full response impractical, Ramdoss recommends streaming UI in chunks (skeleton, partial, complete) rather than one blocking response, and switching the core latency metric from total response time to time-to-first-chunk. He also recommends showing the agent&#x27;s in-progress state sparingly, since users now expect visibility into what an agent is doing rather than a bare loading spinner.</p></div>
+<div class="quote"><p>&ldquo;You stop chasing the total latency, which we have done for over a decade. You start chasing time to first chunk.&rdquo;</p><a href="https://youtu.be/maTp79FD9gI?t=566" target="_blank">&#9654; watch at 09:26</a></div><div class="quote"><p>&ldquo;please use it sparingly. The overall AI users have moved out of the forgiving phase, and now they expect to know what is happening.&rdquo;</p><a href="https://youtu.be/maTp79FD9gI?t=629" target="_blank">&#9654; watch at 10:29</a></div>
+<figure class="slide"><a href="https://youtu.be/maTp79FD9gI?t=560" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s16_560.webp" alt="Stream typed UI blocks and measure time-to-first-chunk"></a><figcaption>Slide at 09:20 &middot; Stream typed UI blocks and measure time-to-first-chunk &middot; <a href="https://youtu.be/maTp79FD9gI?t=560" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>The BFF absorbs model output so the client stays dumb and safe</span><span class="ln"></span></div>
+<div class="prose"><p>A backend-for-frontend (BFF) sits between the streamed model output and the client, doing more than layout: it hydrates each element with action payloads (tap behavior, deep links, impression metrics) and carries conversational context across turns. He recommends reusing an app&#x27;s existing UI components (the same flight row, product card) through this layer rather than building a separate agentic look, so the result feels native to the existing app.</p></div>
+<div class="quote"><p>&ldquo;The BF BFF doesn&#x27;t just ship layout. It does a little more. In addition to the format and context, it does the hydration and adds actions.&rdquo;</p><a href="https://youtu.be/maTp79FD9gI?t=721" target="_blank">&#9654; watch at 12:01</a></div><div class="quote"><p>&ldquo;You can reuse the existing CX units you already have. The flight row, the product card, the components your app already shipped in production.&rdquo;</p><a href="https://youtu.be/maTp79FD9gI?t=752" target="_blank">&#9654; watch at 12:32</a></div>
+<figure class="slide"><a href="https://youtu.be/maTp79FD9gI?t=720" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s22_720.webp" alt="The BFF absorbs model output so the client stays dumb and safe"></a><figcaption>Slide at 12:00 &middot; The BFF absorbs model output so the client stays dumb and safe &middot; <a href="https://youtu.be/maTp79FD9gI?t=720" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/maTp79FD9gI?t=30" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s00_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="https://youtu.be/maTp79FD9gI?t=60" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s01_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="https://youtu.be/maTp79FD9gI?t=70" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s02_70.webp" alt="slide at 01:10"><div class="ts">01:10</div></a><a href="https://youtu.be/maTp79FD9gI?t=100" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s03_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="https://youtu.be/maTp79FD9gI?t=120" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s04_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="https://youtu.be/maTp79FD9gI?t=160" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s05_160.webp" alt="slide at 02:40"><div class="ts">02:40</div></a><a href="https://youtu.be/maTp79FD9gI?t=220" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s06_220.webp" alt="slide at 03:40"><div class="ts">03:40</div></a><a href="https://youtu.be/maTp79FD9gI?t=300" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s07_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="https://youtu.be/maTp79FD9gI?t=340" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s08_340.webp" alt="slide at 05:40"><div class="ts">05:40</div></a><a href="https://youtu.be/maTp79FD9gI?t=380" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s09_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="https://youtu.be/maTp79FD9gI?t=400" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s10_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="https://youtu.be/maTp79FD9gI?t=430" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s11_430.webp" alt="slide at 07:10"><div class="ts">07:10</div></a><a href="https://youtu.be/maTp79FD9gI?t=440" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s12_440.webp" alt="slide at 07:20"><div class="ts">07:20</div></a><a href="https://youtu.be/maTp79FD9gI?t=510" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s13_510.webp" alt="slide at 08:30"><div class="ts">08:30</div></a><a href="https://youtu.be/maTp79FD9gI?t=520" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s14_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a><a href="https://youtu.be/maTp79FD9gI?t=550" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s15_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="https://youtu.be/maTp79FD9gI?t=560" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s16_560.webp" alt="slide at 09:20"><div class="ts">09:20</div></a><a href="https://youtu.be/maTp79FD9gI?t=580" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s17_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="https://youtu.be/maTp79FD9gI?t=600" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s18_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="https://youtu.be/maTp79FD9gI?t=630" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s19_630.webp" alt="slide at 10:30"><div class="ts">10:30</div></a><a href="https://youtu.be/maTp79FD9gI?t=650" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s20_650.webp" alt="slide at 10:50"><div class="ts">10:50</div></a><a href="https://youtu.be/maTp79FD9gI?t=690" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s21_690.webp" alt="slide at 11:30"><div class="ts">11:30</div></a><a href="https://youtu.be/maTp79FD9gI?t=720" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s22_720.webp" alt="slide at 12:00"><div class="ts">12:00</div></a><a href="https://youtu.be/maTp79FD9gI?t=780" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s23_780.webp" alt="slide at 13:00"><div class="ts">13:00</div></a><a href="https://youtu.be/maTp79FD9gI?t=830" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s24_830.webp" alt="slide at 13:50"><div class="ts">13:50</div></a><a href="https://youtu.be/maTp79FD9gI?t=840" target="_blank"><img loading="lazy" src="img/agent-output-not-ux/s25_840.webp" alt="slide at 14:00"><div class="ts">14:00</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The model already does the real work; the rendering layer between model output and the user is what determines whether an agentic product is usable.</td><td class="tt"><a href="https://youtu.be/maTp79FD9gI?t=15" target="_blank">00:15</a></td></tr><tr><td class="st">asserts</td><td>Generative UI has the agent describe UI as a list of typed components rather than raw text or HTML, rendered natively by the client.</td><td class="tt"><a href="https://youtu.be/maTp79FD9gI?t=188" target="_blank">03:08</a></td></tr><tr><td class="st">warns</td><td>Mobile apps can&#x27;t ship fixes quickly, so an unrecognized component type crashes the app for users on old versions until they update.</td><td class="tt"><a href="https://youtu.be/maTp79FD9gI?t=343" target="_blank">05:43</a></td></tr><tr><td class="st">recommends</td><td>The model should only pick UI components from a fixed, provided menu and never be allowed to invent a new one.</td><td class="tt"><a href="https://youtu.be/maTp79FD9gI?t=471" target="_blank">07:51</a></td></tr><tr><td class="st">recommends</td><td>Teams should measure time-to-first-chunk instead of total latency once streaming UI is in place.</td><td class="tt"><a href="https://youtu.be/maTp79FD9gI?t=566" target="_blank">09:26</a></td></tr><tr><td class="st">recommends</td><td>Show the agent&#x27;s in-progress state sparingly; users now expect visibility into what&#x27;s happening rather than a generic spinner.</td><td class="tt"><a href="https://youtu.be/maTp79FD9gI?t=629" target="_blank">10:29</a></td></tr><tr><td class="st">asserts</td><td>The backend-for-frontend does more than ship layout; it also hydrates elements with action payloads and context.</td><td class="tt"><a href="https://youtu.be/maTp79FD9gI?t=721" target="_blank">12:01</a></td></tr><tr><td class="st">recommends</td><td>Teams should reuse their app&#x27;s existing UI components through the agentic rendering layer rather than build a separate agentic look.</td><td class="tt"><a href="https://youtu.be/maTp79FD9gI?t=752" target="_blank">12:32</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "maTp79FD9gI", "slug": "agent-output-not-ux", "title": "Agent Output Is Not UX: Rendering Layer Your LLM Pipeline Is Missing", "speaker": "Bala Ramdoss", "company": "Amazon Lens", "themes": ["product-ux", "agentic-engineering", "context-engineering"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "delivery layer, not the model, decides success", "text": "The model already does the real work; the rendering layer between model output and the user is what determines whether an agentic product is usable.", "quote": "The model did the real work, but look at the outcome. I have to do my research and work towards actually booking the table.", "t": 15}, {"id": "c2", "stance": "asserts", "topic": "generative UI as data", "text": "Generative UI has the agent describe UI as a list of typed components rather than raw text or HTML, rendered natively by the client.", "quote": "Instead of the agent handing you a raw text or HTML, it describes the UI as data. A list of components and the client renders them with its own native widgets.", "t": 188}, {"id": "c3", "stance": "warns", "topic": "mobile clients can't be patched", "text": "Mobile apps can't ship fixes quickly, so an unrecognized component type crashes the app for users on old versions until they update.", "quote": "You cannot meaningfully patch the client.", "t": 343}, {"id": "c4", "stance": "recommends", "topic": "fixed component menu", "text": "The model should only pick UI components from a fixed, provided menu and never be allowed to invent a new one.", "quote": "notice what the model never does. It never invents a component. It chooses from a fixed menu that you provide to it.", "t": 471}, {"id": "c5", "stance": "recommends", "topic": "time-to-first-chunk as the metric", "text": "Teams should measure time-to-first-chunk instead of total latency once streaming UI is in place.", "quote": "You stop chasing the total latency, which we have done for over a decade. You start chasing time to first chunk.", "t": 566}, {"id": "c6", "stance": "recommends", "topic": "sparing use of thinking UI", "text": "Show the agent's in-progress state sparingly; users now expect visibility into what's happening rather than a generic spinner.", "quote": "please use it sparingly. The overall AI users have moved out of the forgiving phase, and now they expect to know what is happening.", "t": 629}, {"id": "c7", "stance": "asserts", "topic": "BFF does more than layout", "text": "The backend-for-frontend does more than ship layout; it also hydrates elements with action payloads and context.", "quote": "The BF BFF doesn't just ship layout. It does a little more. In addition to the format and context, it does the hydration and adds actions.", "t": 721}, {"id": "c8", "stance": "recommends", "topic": "reuse existing UI components", "text": "Teams should reuse their app's existing UI components through the agentic rendering layer rather than build a separate agentic look.", "quote": "You can reuse the existing CX units you already have. The flight row, the product card, the components your app already shipped in production.", "t": 752}]}</script>
+</body></html>

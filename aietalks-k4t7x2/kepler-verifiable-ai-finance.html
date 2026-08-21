@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>How Kepler Built Verifiable AI for Financial Services — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/Tt2kX2sgQio" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 22 min</span><span class="ln"></span></div>
+<h1 class="lede">How Kepler Built Verifiable AI for Financial Services</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Vinoo Ganesh &middot; Kepler</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/Tt2kX2sgQio" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/Tt2kX2sgQio</a></span>
+</div>
+<div class="chips"><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Vertical AI</span><span class="chip hot">Infra & serving</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Citation (showing where a number came from) is not verification (deterministically proving the number is correct); most &#x27;trust and verifiability&#x27; claims about AI conflate the two.</li><li>Kepler&#x27;s platform separates the model&#x27;s non-deterministic reasoning (deciding what to compute, tracking provenance) from a deterministic layer that actually extracts and calculates numbers; the model never writes or manipulates the number itself.</li><li>A fine-tuned extraction model reached 94% accuracy, which the speaker frames as still not trustworthy enough for financial decisions given that a wrong number is still wrong for the remaining 6%.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Citation is not verification</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker distinguishes citation, an after-the-fact list of sources, from verification, a deterministic and repeatable mechanism that proves a specific number is correct. He argues most &#x27;trust and verifiability&#x27; language in AI products is actually just citation, and that evals cannot make a non-deterministic LLM deterministic.</p></div>
+<div class="quote"><p>&ldquo;The citation is effectively an after-the-fact audit. Now, a verification is a deterministic, repeatable, numerically verifiable mechanism that we can use to produce validity that a number is right&rdquo;</p><a href="https://youtu.be/Tt2kX2sgQio?t=375" target="_blank">&#9654; watch at 06:15</a></div><div class="quote"><p>&ldquo;Evals are not verifiable. You cannot take a non-deterministic LLM and eval your way to something deterministic&rdquo;</p><a href="https://youtu.be/Tt2kX2sgQio?t=93" target="_blank">&#9654; watch at 01:33</a></div>
+<figure class="slide"><a href="https://youtu.be/Tt2kX2sgQio?t=180" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s03_180.webp" alt="Citation is not verification"></a><figcaption>Slide at 03:00 &middot; Citation is not verification &middot; <a href="https://youtu.be/Tt2kX2sgQio?t=180" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Why finance lacks a verification layer other industries have</span><span class="ln"></span></div>
+<div class="prose"><p>Software has CI/CD, unit and integration tests, and code review; medicine has a pharmacist checking a doctor&#x27;s prescription; aviation has a pilot and co-pilot. Finance&#x27;s closest equivalent is an overworked VP, which the speaker says doesn&#x27;t function as a real verification layer, and part of why people buy tools like Bloomberg or FactSet is to displace culpability for information they didn&#x27;t personally verify.</p></div>
+<div class="quote"><p>&ldquo;In finance, we have maybe an overworked VP as a verification layer, but that concept doesn&#x27;t really exist&rdquo;</p><a href="https://youtu.be/Tt2kX2sgQio?t=220" target="_blank">&#9654; watch at 03:40</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Three tenets: atomic provenance, scope determinism, derivation chains</span><span class="ln"></span></div>
+<div class="prose"><p>Kepler&#x27;s model writes only a reference to where a number came from and never writes or manipulates the number itself; separate deterministic tools extract and persist numbers, and any number that fails an independent deterministic check is stripped before it reaches a user. The model decides what to compute (scope determinism) but never performs the computation, and a derivation chain records what inputs and steps produced each output so it can be replayed.</p></div>
+<div class="quote"><p>&ldquo;the model writes effectively a reference to the number. It cannot write the number or manipulate the number in any way. It doesn&#x27;t even understand what that number is&rdquo;</p><a href="https://youtu.be/Tt2kX2sgQio?t=656" target="_blank">&#9654; watch at 10:56</a></div><div class="quote"><p>&ldquo;the model decides what to compute. It never does the computation itself&rdquo;</p><a href="https://youtu.be/Tt2kX2sgQio?t=778" target="_blank">&#9654; watch at 12:58</a></div>
+<figure class="slide"><a href="https://youtu.be/Tt2kX2sgQio?t=670" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s05_670.webp" alt="Three tenets: atomic provenance, scope determinism, derivation chains"></a><figcaption>Slide at 11:10 &middot; Three tenets: atomic provenance, scope determinism, derivation chains &middot; <a href="https://youtu.be/Tt2kX2sgQio?t=670" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>94% is not good enough</span><span class="ln"></span></div>
+<div class="prose"><p>A model Kepler trained for extraction outperformed foundation models at 94% accuracy, which the speaker calls impressive on paper but insufficient in practice, since a wrong number is still wrong for whichever case falls in the remaining 6%, and no one should trade off information at that error rate.</p></div>
+<div class="quote"><p>&ldquo;It&#x27;s 94% great. It&#x27;s in the article. Who here would trade off of something that&#x27;s 94% accurate?&rdquo;</p><a href="https://youtu.be/Tt2kX2sgQio?t=625" target="_blank">&#9654; watch at 10:25</a></div>
+<figure class="slide"><a href="https://youtu.be/Tt2kX2sgQio?t=610" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s04_610.webp" alt="94% is not good enough"></a><figcaption>Slide at 10:10 &middot; 94% is not good enough &middot; <a href="https://youtu.be/Tt2kX2sgQio?t=610" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Where this generalizes beyond finance</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker argues the same pattern, extracting and persisting information deterministically so a model can&#x27;t hallucinate a citation or a number, applies to legal case citations and NIH drug-discovery compound data, and predicts the next stage of the industry will focus on using the right tool for the right computation rather than maximizing token consumption.</p></div>
+<div class="quote"><p>&ldquo;you can imagine a world where every court case, if you&#x27;re a Harvey or a Legora, runs through the same process&rdquo;</p><a href="https://youtu.be/Tt2kX2sgQio?t=965" target="_blank">&#9654; watch at 16:05</a></div>
+<figure class="slide"><a href="https://youtu.be/Tt2kX2sgQio?t=970" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s08_970.webp" alt="Where this generalizes beyond finance"></a><figcaption>Slide at 16:10 &middot; Where this generalizes beyond finance &middot; <a href="https://youtu.be/Tt2kX2sgQio?t=970" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The 94%-is-not-enough framing is a useful corrective to accuracy-percentage marketing generally, though it&#x27;s worth noting Kepler&#x27;s own atomic-provenance approach still depends on the model correctly deciding what to compute and where to look, which is itself a non-deterministic step the talk doesn&#x27;t fully quantify.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/Tt2kX2sgQio?t=40" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s00_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="https://youtu.be/Tt2kX2sgQio?t=90" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s01_90.webp" alt="slide at 01:30"><div class="ts">01:30</div></a><a href="https://youtu.be/Tt2kX2sgQio?t=120" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s02_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="https://youtu.be/Tt2kX2sgQio?t=180" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s03_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="https://youtu.be/Tt2kX2sgQio?t=610" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s04_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a><a href="https://youtu.be/Tt2kX2sgQio?t=670" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s05_670.webp" alt="slide at 11:10"><div class="ts">11:10</div></a><a href="https://youtu.be/Tt2kX2sgQio?t=910" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s06_910.webp" alt="slide at 15:10"><div class="ts">15:10</div></a><a href="https://youtu.be/Tt2kX2sgQio?t=930" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s07_930.webp" alt="slide at 15:30"><div class="ts">15:30</div></a><a href="https://youtu.be/Tt2kX2sgQio?t=970" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s08_970.webp" alt="slide at 16:10"><div class="ts">16:10</div></a><a href="https://youtu.be/Tt2kX2sgQio?t=1020" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s09_1020.webp" alt="slide at 17:00"><div class="ts">17:00</div></a><a href="https://youtu.be/Tt2kX2sgQio?t=1100" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s10_1100.webp" alt="slide at 18:20"><div class="ts">18:20</div></a><a href="https://youtu.be/Tt2kX2sgQio?t=1200" target="_blank"><img loading="lazy" src="img/kepler-verifiable-ai-finance/s11_1200.webp" alt="slide at 20:00"><div class="ts">20:00</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (7)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">warns</td><td>Citation, showing where information came from, is only an after-the-fact audit and is not the same as verification.</td><td class="tt"><a href="https://youtu.be/Tt2kX2sgQio?t=375" target="_blank">06:15</a></td></tr><tr><td class="st">warns</td><td>Evals cannot make a non-deterministic LLM produce deterministic, verifiable outputs.</td><td class="tt"><a href="https://youtu.be/Tt2kX2sgQio?t=93" target="_blank">01:33</a></td></tr><tr><td class="st">asserts</td><td>Finance lacks the equivalent of a pharmacist, co-pilot, or code review as a verification layer; at best it has an overworked VP.</td><td class="tt"><a href="https://youtu.be/Tt2kX2sgQio?t=220" target="_blank">03:40</a></td></tr><tr><td class="st">asserts</td><td>The model writes only a reference to where a number came from and cannot write or manipulate the number itself; deterministic tools handle the actual number.</td><td class="tt"><a href="https://youtu.be/Tt2kX2sgQio?t=656" target="_blank">10:56</a></td></tr><tr><td class="st">asserts</td><td>The model decides what to compute but never performs the computation itself, which is handed off to deterministic tooling.</td><td class="tt"><a href="https://youtu.be/Tt2kX2sgQio?t=778" target="_blank">12:58</a></td></tr><tr><td class="st">warns</td><td>A fine-tuned extraction model reached 94% accuracy, but a wrong number is still wrong for anyone in the remaining 6%, so it&#x27;s not trustworthy for trading decisions.</td><td class="tt"><a href="https://youtu.be/Tt2kX2sgQio?t=625" target="_blank">10:25</a></td></tr><tr><td class="st">predicts</td><td>The same deterministic-extraction pattern will extend to legal case citation tracking and NIH drug-discovery compound data to prevent hallucination.</td><td class="tt"><a href="https://youtu.be/Tt2kX2sgQio?t=965" target="_blank">16:05</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "Tt2kX2sgQio", "slug": "kepler-verifiable-ai-finance", "title": "How Kepler Built Verifiable AI for Financial Services", "speaker": "Vinoo Ganesh", "company": "Kepler", "themes": ["evals-benchmarks", "vertical-ai", "infra-serving"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "warns", "topic": "citation vs verification", "text": "Citation, showing where information came from, is only an after-the-fact audit and is not the same as verification.", "quote": "The citation is effectively an after-the-fact audit. Now, a verification is a deterministic, repeatable, numerically verifiable mechanism that we can use to produce validity that a number is right", "t": 375}, {"id": "c2", "stance": "warns", "topic": "evals are not verification", "text": "Evals cannot make a non-deterministic LLM produce deterministic, verifiable outputs.", "quote": "Evals are not verifiable. You cannot take a non-deterministic LLM and eval your way to something deterministic", "t": 93}, {"id": "c3", "stance": "asserts", "topic": "missing verification layer in finance", "text": "Finance lacks the equivalent of a pharmacist, co-pilot, or code review as a verification layer; at best it has an overworked VP.", "quote": "In finance, we have maybe an overworked VP as a verification layer, but that concept doesn't really exist", "t": 220}, {"id": "c4", "stance": "asserts", "topic": "atomic provenance", "text": "The model writes only a reference to where a number came from and cannot write or manipulate the number itself; deterministic tools handle the actual number.", "quote": "the model writes effectively a reference to the number. It cannot write the number or manipulate the number in any way. It doesn't even understand what that number is", "t": 656}, {"id": "c5", "stance": "asserts", "topic": "scope determinism", "text": "The model decides what to compute but never performs the computation itself, which is handed off to deterministic tooling.", "quote": "the model decides what to compute. It never does the computation itself", "t": 778}, {"id": "c6", "stance": "warns", "topic": "94% accuracy ceiling", "text": "A fine-tuned extraction model reached 94% accuracy, but a wrong number is still wrong for anyone in the remaining 6%, so it's not trustworthy for trading decisions.", "quote": "It's 94% great. It's in the article. Who here would trade off of something that's 94% accurate?", "t": 625}, {"id": "c7", "stance": "predicts", "topic": "generalization beyond finance", "text": "The same deterministic-extraction pattern will extend to legal case citation tracking and NIH drug-discovery compound data to prevent hallucination.", "quote": "you can imagine a world where every court case, if you're a Harvey or a Legora, runs through the same process", "t": 965}]}</script>
+</body></html>

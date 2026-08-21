@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>How Forward Deployed Engineering is done at Kepler — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/1OMHGsUZiqA" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 22 min</span><span class="ln"></span></div>
+<h1 class="lede">How Forward Deployed Engineering is done at Kepler</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Vinoo Ganesh &middot; Kepler</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/1OMHGsUZiqA" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/1OMHGsUZiqA</a></span>
+</div>
+<div class="chips"><span class="chip hot">Vertical AI</span><span class="chip hot">Product & UX</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>The core claim, attributed to Palantir&#x27;s current CTO: FDE is not a role, it&#x27;s a product strategy for discovering what to build (c1).</li><li>Watching a user&#x27;s actual workflow on site (not asking her opinion) surfaced why she rejected a Parquet migration; building her a Parquet viewer got it approved and cut pipeline execution time from 17 hours to about two (c3, c4).</li><li>Warns that shipped hacks never stay temporary: &quot;ship everything like it&#x27;s going to run for 18 months because it probably will&quot; (c6, c7).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>FDE is a product strategy, not a role</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker frames the entire talk around a quote from Palantir&#x27;s current CTO: the foundational truth of forward deployed engineering is that it is not a job title but a mechanism for discovering what a product should be. He traces this back to Palantir&#x27;s early, isolated build of a data-retention product (Phoenix) that failed on real bank data, arguing the root cause was building without being embedded with a customer.</p></div>
+<div class="quote"><p>&ldquo;the first fundamental truth of FTE is that this is not a role this is a product strategy&rdquo;</p><a href="https://youtu.be/1OMHGsUZiqA?t=123" target="_blank">&#9654; watch at 02:03</a></div><div class="quote"><p>&ldquo;about 350 of them went through a training program for how we got them to understand what we needed out of forward deployed product focused individuals&rdquo;</p><a href="https://youtu.be/1OMHGsUZiqA?t=92" target="_blank">&#9654; watch at 01:32</a></div>
+<figure class="slide"><a href="https://youtu.be/1OMHGsUZiqA?t=110" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s03_110.webp" alt="FDE is a product strategy, not a role"></a><figcaption>Slide at 01:50 &middot; FDE is a product strategy, not a role &middot; <a href="https://youtu.be/1OMHGsUZiqA?t=110" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Detect the real problem, ship the real thing</span><span class="ln"></span></div>
+<div class="prose"><p>A customer&#x27;s 47-page requirements doc for a custom BI dashboard was scoped for three months of dev work; going on site and asking what the dispatcher actually does each morning reduced the real need to a Slack alert, built in four hours. The lesson stated is that customers describe solutions, not problems, and the FTE&#x27;s job is to define the actual problem before building anything.</p></div>
+<div class="quote"><p>&ldquo;The first move that we learned from forward deployed perspective is detect the real problem and ship the real thing.&rdquo;</p><a href="https://youtu.be/1OMHGsUZiqA?t=339" target="_blank">&#9654; watch at 05:39</a></div>
+<figure class="slide"><a href="https://youtu.be/1OMHGsUZiqA?t=440" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s04_440.webp" alt="Detect the real problem, ship the real thing"></a><figcaption>Slide at 07:20 &middot; Detect the real problem, ship the real thing &middot; <a href="https://youtu.be/1OMHGsUZiqA?t=440" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Actions speak louder than words</span><span class="ln"></span></div>
+<div class="prose"><p>An engineer resisted migrating CSV exports to Parquet for a year despite clear pipeline benefits; going on site revealed she was manually opening CSVs in a spreadsheet-style viewer for spot checks, something Parquet&#x27;s format didn&#x27;t support. Building her a Parquet viewer overnight got the migration approved within two days and reduced pipeline execution time from about 17 hours to about two.</p></div>
+<div class="quote"><p>&ldquo;you are effectively an observer of what happens on site. An action speaks significantly louder than words.&rdquo;</p><a href="https://youtu.be/1OMHGsUZiqA?t=588" target="_blank">&#9654; watch at 09:48</a></div><div class="quote"><p>&ldquo;the pipeline execution time went from 17 hours to about two&rdquo;</p><a href="https://youtu.be/1OMHGsUZiqA?t=588" target="_blank">&#9654; watch at 09:48</a></div>
+<figure class="slide"><a href="https://youtu.be/1OMHGsUZiqA?t=500" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s05_500.webp" alt="Actions speak louder than words"></a><figcaption>Slide at 08:20 &middot; Actions speak louder than words &middot; <a href="https://youtu.be/1OMHGsUZiqA?t=500" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Own the vocabulary</span><span class="ln"></span></div>
+<div class="prose"><p>Different teams (sales, ops, finance, dev) define the same customer entity differently, causing integration breakage and data-quality issues. The speaker argues that codifying a shared ontology of nouns and verbs is a deliberate FTE responsibility, and that once users adopt a product, they also adopt its language.</p></div>
+<div class="quote"><p>&ldquo;users don&#x27;t just adopt your product, they actually adopt your language&rdquo;</p><a href="https://youtu.be/1OMHGsUZiqA?t=836" target="_blank">&#9654; watch at 13:56</a></div>
+<figure class="slide"><a href="https://youtu.be/1OMHGsUZiqA?t=740" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s09_740.webp" alt="Own the vocabulary"></a><figcaption>Slide at 12:20 &middot; Own the vocabulary &middot; <a href="https://youtu.be/1OMHGsUZiqA?t=740" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Ship fast has a cost</span><span class="ln"></span></div>
+<div class="prose"><p>A quick Groovy script written as a temporary fix ended up running in production for years at a ~100,000-person customer. The stated rule is that any hack that solves a real problem will go into production and stay there indefinitely, so FTEs should build with the expectation that whatever they ship will run for roughly 18 months.</p></div>
+<div class="quote"><p>&ldquo;The most dangerous words in forward deployed engineering or engineering is this is just temporary.&rdquo;</p><a href="https://youtu.be/1OMHGsUZiqA?t=1147" target="_blank">&#9654; watch at 19:07</a></div><div class="quote"><p>&ldquo;ship everything like it&#x27;s going to run for 18 months because it probably will&rdquo;</p><a href="https://youtu.be/1OMHGsUZiqA?t=1178" target="_blank">&#9654; watch at 19:38</a></div>
+<figure class="slide"><a href="https://youtu.be/1OMHGsUZiqA?t=1130" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s12_1130.webp" alt="Ship fast has a cost"></a><figcaption>Slide at 18:50 &middot; Ship fast has a cost &middot; <a href="https://youtu.be/1OMHGsUZiqA?t=1130" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The Palantir-scale claims (350 FDEs trained, Foundry as the generalized output) are hard to verify independently and function partly as origin mythology for the speaker&#x27;s current company; the on-site observation heuristics (repeated tasks, tool switching, pulling out a phone) are the more portable, checkable part of the talk.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/1OMHGsUZiqA?t=10" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=20" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=40" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s02_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=110" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s03_110.webp" alt="slide at 01:50"><div class="ts">01:50</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=440" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s04_440.webp" alt="slide at 07:20"><div class="ts">07:20</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=500" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s05_500.webp" alt="slide at 08:20"><div class="ts">08:20</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=680" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s06_680.webp" alt="slide at 11:20"><div class="ts">11:20</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=690" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s07_690.webp" alt="slide at 11:30"><div class="ts">11:30</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=700" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s08_700.webp" alt="slide at 11:40"><div class="ts">11:40</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=740" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s09_740.webp" alt="slide at 12:20"><div class="ts">12:20</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=950" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s10_950.webp" alt="slide at 15:50"><div class="ts">15:50</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=990" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s11_990.webp" alt="slide at 16:30"><div class="ts">16:30</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=1130" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s12_1130.webp" alt="slide at 18:50"><div class="ts">18:50</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=1180" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s13_1180.webp" alt="slide at 19:40"><div class="ts">19:40</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=1220" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s14_1220.webp" alt="slide at 20:20"><div class="ts">20:20</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=1230" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s15_1230.webp" alt="slide at 20:30"><div class="ts">20:30</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=1240" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s16_1240.webp" alt="slide at 20:40"><div class="ts">20:40</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=1250" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s17_1250.webp" alt="slide at 20:50"><div class="ts">20:50</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=1260" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s18_1260.webp" alt="slide at 21:00"><div class="ts">21:00</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=1270" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s19_1270.webp" alt="slide at 21:10"><div class="ts">21:10</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=1280" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s20_1280.webp" alt="slide at 21:20"><div class="ts">21:20</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=1290" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s21_1290.webp" alt="slide at 21:30"><div class="ts">21:30</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=1300" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s22_1300.webp" alt="slide at 21:40"><div class="ts">21:40</div></a><a href="https://youtu.be/1OMHGsUZiqA?t=1310" target="_blank"><img loading="lazy" src="img/fde-at-kepler/s23_1310.webp" alt="slide at 21:50"><div class="ts">21:50</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The foundational premise of forward deployed engineering is that it functions as a product-discovery strategy, not a job role.</td><td class="tt"><a href="https://youtu.be/1OMHGsUZiqA?t=123" target="_blank">02:03</a></td></tr><tr><td class="st">recommends</td><td>FTEs should identify the actual underlying problem and ship the minimal real fix rather than building the elaborate solution the customer described.</td><td class="tt"><a href="https://youtu.be/1OMHGsUZiqA?t=339" target="_blank">05:39</a></td></tr><tr><td class="st">recommends</td><td>FTEs should treat themselves as observers of what a user actually does on site, and watch for any task a user repeats.</td><td class="tt"><a href="https://youtu.be/1OMHGsUZiqA?t=588" target="_blank">09:48</a></td></tr><tr><td class="st">asserts</td><td>Building a Parquet viewer to match a user&#x27;s actual workflow got a stalled migration approved and cut pipeline execution time from about 17 hours to about two.</td><td class="tt"><a href="https://youtu.be/1OMHGsUZiqA?t=588" target="_blank">09:48</a></td></tr><tr><td class="st">asserts</td><td>When a customer adopts a product, they also adopt the vocabulary the product defines, which is why owning the ontology creates lock-in.</td><td class="tt"><a href="https://youtu.be/1OMHGsUZiqA?t=836" target="_blank">13:56</a></td></tr><tr><td class="st">warns</td><td>Any hack that solves a real problem will go into production and remain there indefinitely, regardless of intent.</td><td class="tt"><a href="https://youtu.be/1OMHGsUZiqA?t=1147" target="_blank">19:07</a></td></tr><tr><td class="st">recommends</td><td>Because shipped fixes tend to persist, FTEs should build anything they ship expecting it to run for roughly 18 months.</td><td class="tt"><a href="https://youtu.be/1OMHGsUZiqA?t=1178" target="_blank">19:38</a></td></tr><tr><td class="st">asserts</td><td>Roughly 350 engineers went through Palantir&#x27;s Project Frontline training program that produced many of the FDEs later working at OpenAI, Anthropic, and xAI.</td><td class="tt"><a href="https://youtu.be/1OMHGsUZiqA?t=92" target="_blank">01:32</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "1OMHGsUZiqA", "slug": "fde-at-kepler", "title": "How Forward Deployed Engineering is done at Kepler", "speaker": "Vinoo Ganesh", "company": "Kepler", "themes": ["vertical-ai", "product-ux"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "FDE as product strategy, not a role", "text": "The foundational premise of forward deployed engineering is that it functions as a product-discovery strategy, not a job role.", "quote": "the first fundamental truth of FTE is that this is not a role this is a product strategy", "t": 123}, {"id": "c2", "stance": "recommends", "topic": "solving the real problem fast", "text": "FTEs should identify the actual underlying problem and ship the minimal real fix rather than building the elaborate solution the customer described.", "quote": "The first move that we learned from forward deployed perspective is detect the real problem and ship the real thing.", "t": 339}, {"id": "c3", "stance": "recommends", "topic": "observing behavior on site", "text": "FTEs should treat themselves as observers of what a user actually does on site, and watch for any task a user repeats.", "quote": "you are effectively an observer of what happens on site. An action speaks significantly louder than words.", "t": 588}, {"id": "c4", "stance": "asserts", "topic": "Parquet viewer result", "text": "Building a Parquet viewer to match a user's actual workflow got a stalled migration approved and cut pipeline execution time from about 17 hours to about two.", "quote": "the pipeline execution time went from 17 hours to about two", "t": 588}, {"id": "c5", "stance": "asserts", "topic": "language and ontology lock-in", "text": "When a customer adopts a product, they also adopt the vocabulary the product defines, which is why owning the ontology creates lock-in.", "quote": "users don't just adopt your product, they actually adopt your language", "t": 836}, {"id": "c6", "stance": "warns", "topic": "temporary hacks becoming permanent", "text": "Any hack that solves a real problem will go into production and remain there indefinitely, regardless of intent.", "quote": "The most dangerous words in forward deployed engineering or engineering is this is just temporary.", "t": 1147}, {"id": "c7", "stance": "recommends", "topic": "shipping with a long-lifetime assumption", "text": "Because shipped fixes tend to persist, FTEs should build anything they ship expecting it to run for roughly 18 months.", "quote": "ship everything like it's going to run for 18 months because it probably will", "t": 1178}, {"id": "c8", "stance": "asserts", "topic": "scale of Palantir's FDE training program", "text": "Roughly 350 engineers went through Palantir's Project Frontline training program that produced many of the FDEs later working at OpenAI, Anthropic, and xAI.", "quote": "about 350 of them went through a training program for how we got them to understand what we needed out of forward deployed product focused individuals", "t": 92}]}</script>
+</body></html>

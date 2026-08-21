@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>How Autoresearch is changing ML research — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/iCj_ATyThvc" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 16 min</span><span class="ln"></span></div>
+<h1 class="lede">How Autoresearch is changing ML research</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Zhengyao Jiang &middot; Weco</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/iCj_ATyThvc" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/iCj_ATyThvc</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Data curation</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Weco&#x27;s Aiden agent set 7 leaderboard records in OpenAI&#x27;s 22-day Parameter Golf competition (best human: 3) and posted a PR H-index of 10 versus the next-best human&#x27;s 7.</li><li>It ran about 1,300 experiments on a single H100 node using only ~4% of the competition&#x27;s total compute, yet produced ~15% of the records with a 28% leaderboard hit rate, roughly six times the community average.</li><li>Jiang argues the real leverage now is eval design and code abstraction: a loose data-prep API let Aiden&#x27;s own pipeline leak test data into training, and tightening the API dropped the leakage rate to zero.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Aiden out-published the human competitors</span><span class="ln"></span></div>
+<div class="prose"><p>In OpenAI&#x27;s Parameter Golf hiring competition, Weco&#x27;s autonomous agent Aiden set seven leaderboard records over 22 days versus three for the best human competitor. Jiang also reports a PR-based H-index of 10 for Aiden against 7 for the next-best human, arguing this measures community impact (whether others build on the work) rather than just a raw benchmark score.</p></div>
+<div class="quote"><p>&ldquo;By the end, Aid has set seven leaderboard records. Each one is a new best for the competition stampled by OpenAI and the best human only made three.&rdquo;</p><a href="https://youtu.be/iCj_ATyThvc?t=155" target="_blank">&#9654; watch at 02:35</a></div><div class="quote"><p>&ldquo;Aiden was 10 and the next human was seven.&rdquo;</p><a href="https://youtu.be/iCj_ATyThvc?t=217" target="_blank">&#9654; watch at 03:37</a></div>
+<figure class="slide"><a href="https://youtu.be/iCj_ATyThvc?t=180" target="_blank"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s00_180.webp" alt="Aiden out-published the human competitors"></a><figcaption>Slide at 03:00 &middot; Aiden out-published the human competitors &middot; <a href="https://youtu.be/iCj_ATyThvc?t=180" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Throughput isn&#x27;t the whole story — quality held up too</span><span class="ln"></span></div>
+<div class="prose"><p>Aiden ran roughly 1,300 experiments over 22 days on a single H100 node. Jiang says it used at most 4% of the competition&#x27;s total compute but produced about 15% of the leaderboard records, and 28% of its submissions made the leaderboard, a hit rate he says is roughly six times the community average.</p></div>
+<div class="quote"><p>&ldquo;Over 22 days, it ran about 1,300 experiments on a single H100 node.&rdquo;</p><a href="https://youtu.be/iCj_ATyThvc?t=248" target="_blank">&#9654; watch at 04:08</a></div><div class="quote"><p>&ldquo;of competition&#x27;s total compute. and it made about 15% of the records. Also, 28% of its submissions made the leaderboard. Roughly six times higher heat rate than the community average.&rdquo;</p><a href="https://youtu.be/iCj_ATyThvc?t=279" target="_blank">&#9654; watch at 04:39</a></div>
+<figure class="slide"><a href="https://youtu.be/iCj_ATyThvc?t=250" target="_blank"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s01_250.webp" alt="Throughput isn&#x27;t the whole story — quality held up too"></a><figcaption>Slide at 04:10 &middot; Throughput isn&#x27;t the whole story — quality held up too &middot; <a href="https://youtu.be/iCj_ATyThvc?t=250" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>It recombines human ideas rather than inventing from scratch</span><span class="ln"></span></div>
+<div class="prose"><p>Jiang traces Aiden&#x27;s record-setting submissions to ideas already circulating in papers or abandoned by other participants, such as a gated-attention technique from a Qwen paper that Aiden combined with a quantization fix and a separately posted tokenizer improvement to produce a leaderboard record. He compares this shift to Karpathy&#x27;s decade-old observation that gradient descent could out-code humans, arguing autoresearch is now commoditizing certain execution skills while raising the value of eval and abstraction design.</p></div>
+<div class="quote"><p>&ldquo;paper called gated attention and it worked but it introduced more parameters and it broke the 16 megapy file size limit&rdquo;</p><a href="https://youtu.be/iCj_ATyThvc?t=402" target="_blank">&#9654; watch at 06:42</a></div><div class="quote"><p>&ldquo;I really like one tweet from Andre Kapasi about 10 years ago where he said greeting descent can write code better than you&rdquo;</p><a href="https://youtu.be/iCj_ATyThvc?t=593" target="_blank">&#9654; watch at 09:53</a></div>
+<figure class="slide"><a href="https://youtu.be/iCj_ATyThvc?t=550" target="_blank"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s02_550.webp" alt="It recombines human ideas rather than inventing from scratch"></a><figcaption>Slide at 09:10 &middot; It recombines human ideas rather than inventing from scratch &middot; <a href="https://youtu.be/iCj_ATyThvc?t=550" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>The eval and the code abstraction are the new leverage points</span><span class="ln"></span></div>
+<div class="prose"><p>In a separate fraud-detection pipeline experiment, a loose data-preprocessing API let test-set information leak into training data, inflating the score. Tightening the API into a stricter interface that prevented test data from reaching training dropped the leakage rate to zero, which Jiang uses to argue that codebase abstraction now functions like architecture design in neural networks: it biases what solutions the agent can even reach.</p></div>
+<div class="quote"><p>&ldquo;there&#x27;s a certain certain test set information got leaked to the training information. We then tighten the obstruction to a more strict API where the test data couldn&#x27;t reach the training and the data leakage rate just dropped to zero&rdquo;</p><a href="https://youtu.be/iCj_ATyThvc?t=843" target="_blank">&#9654; watch at 14:03</a></div>
+<figure class="slide"><a href="https://youtu.be/iCj_ATyThvc?t=870" target="_blank"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s05_870.webp" alt="The eval and the code abstraction are the new leverage points"></a><figcaption>Slide at 14:30 &middot; The eval and the code abstraction are the new leverage points &middot; <a href="https://youtu.be/iCj_ATyThvc?t=870" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/iCj_ATyThvc?t=180" target="_blank"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s00_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="https://youtu.be/iCj_ATyThvc?t=250" target="_blank"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s01_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="https://youtu.be/iCj_ATyThvc?t=550" target="_blank"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s02_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="https://youtu.be/iCj_ATyThvc?t=590" target="_blank"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s03_590.webp" alt="slide at 09:50"><div class="ts">09:50</div></a><a href="https://youtu.be/iCj_ATyThvc?t=750" target="_blank"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s04_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="https://youtu.be/iCj_ATyThvc?t=870" target="_blank"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s05_870.webp" alt="slide at 14:30"><div class="ts">14:30</div></a><a href="https://youtu.be/iCj_ATyThvc?t=950" target="_blank"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s06_950.webp" alt="slide at 15:50"><div class="ts">15:50</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (7)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Weco&#x27;s Aiden agent set seven leaderboard records in a 22-day OpenAI-run competition, more than double the best human competitor&#x27;s three.</td><td class="tt"><a href="https://youtu.be/iCj_ATyThvc?t=155" target="_blank">02:35</a></td></tr><tr><td class="st">asserts</td><td>Measured by an academic-style H-index computed over pull requests, Aiden scored 10 versus 7 for the next-best human contributor.</td><td class="tt"><a href="https://youtu.be/iCj_ATyThvc?t=217" target="_blank">03:37</a></td></tr><tr><td class="st">asserts</td><td>Aiden ran about 1,300 experiments over 22 days on a single H100 GPU node.</td><td class="tt"><a href="https://youtu.be/iCj_ATyThvc?t=248" target="_blank">04:08</a></td></tr><tr><td class="st">asserts</td><td>Aiden used only about 4% of the competition&#x27;s total compute but produced 15% of the records and had a 28% leaderboard hit rate, roughly six times the community average.</td><td class="tt"><a href="https://youtu.be/iCj_ATyThvc?t=279" target="_blank">04:39</a></td></tr><tr><td class="st">asserts</td><td>A record-setting submission combined a gated-attention technique from a research paper with a quantization fix and a separately posted tokenizer improvement.</td><td class="tt"><a href="https://youtu.be/iCj_ATyThvc?t=402" target="_blank">06:42</a></td></tr><tr><td class="st">predicts</td><td>Jiang compares the current moment to gradient descent commoditizing hand-written code a decade ago, predicting autoresearch will similarly commoditize execution skills while raising the value of eval and abstraction design.</td><td class="tt"><a href="https://youtu.be/iCj_ATyThvc?t=593" target="_blank">09:53</a></td></tr><tr><td class="st">warns</td><td>A loosely designed data-preprocessing API let test-set information leak into training in a fraud-detection experiment; tightening the API to prevent that access dropped the leakage rate to zero.</td><td class="tt"><a href="https://youtu.be/iCj_ATyThvc?t=843" target="_blank">14:03</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "iCj_ATyThvc", "slug": "how-autoresearch-is-changing-ml-research", "title": "How Autoresearch is changing ML research", "speaker": "Zhengyao Jiang", "company": "Weco", "themes": ["agentic-engineering", "evals-benchmarks", "data-curation"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "Parameter Golf leaderboard records", "text": "Weco's Aiden agent set seven leaderboard records in a 22-day OpenAI-run competition, more than double the best human competitor's three.", "quote": "By the end, Aid has set seven leaderboard records. Each one is a new best for the competition stampled by OpenAI and the best human only made three.", "t": 155}, {"id": "c2", "stance": "asserts", "topic": "PR H-index comparison", "text": "Measured by an academic-style H-index computed over pull requests, Aiden scored 10 versus 7 for the next-best human contributor.", "quote": "Aiden was 10 and the next human was seven.", "t": 217}, {"id": "c3", "stance": "asserts", "topic": "experiment throughput", "text": "Aiden ran about 1,300 experiments over 22 days on a single H100 GPU node.", "quote": "Over 22 days, it ran about 1,300 experiments on a single H100 node.", "t": 248}, {"id": "c4", "stance": "asserts", "topic": "compute efficiency and hit rate", "text": "Aiden used only about 4% of the competition's total compute but produced 15% of the records and had a 28% leaderboard hit rate, roughly six times the community average.", "quote": "of competition's total compute. and it made about 15% of the records. Also, 28% of its submissions made the leaderboard. Roughly six times higher heat rate than the community average.", "t": 279}, {"id": "c5", "stance": "asserts", "topic": "idea recombination example", "text": "A record-setting submission combined a gated-attention technique from a research paper with a quantization fix and a separately posted tokenizer improvement.", "quote": "paper called gated attention and it worked but it introduced more parameters and it broke the 16 megapy file size limit", "t": 402}, {"id": "c6", "stance": "predicts", "topic": "autoresearch commoditizing execution", "text": "Jiang compares the current moment to gradient descent commoditizing hand-written code a decade ago, predicting autoresearch will similarly commoditize execution skills while raising the value of eval and abstraction design.", "quote": "I really like one tweet from Andre Kapasi about 10 years ago where he said greeting descent can write code better than you", "t": 593}, {"id": "c7", "stance": "warns", "topic": "data leakage via loose API", "text": "A loosely designed data-preprocessing API let test-set information leak into training in a fraud-detection experiment; tightening the API to prevent that access dropped the leakage rate to zero.", "quote": "there's a certain certain test set information got leaked to the training information. We then tighten the obstruction to a more strict API where the test data couldn't reach the training and the data leakage rate just dropped to zero", "t": 843}]}</script>
+</body></html>

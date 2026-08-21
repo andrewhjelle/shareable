@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>RAG is dead, right?? — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/UM6sFg_jdlE" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 11 min</span><span class="ln"></span></div>
+<h1 class="lede">RAG is dead, right??</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Kuba Rogut &middot; Turbopuffer</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/UM6sFg_jdlE" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/UM6sFg_jdlE</a></span>
+</div>
+<div class="chips"><span class="chip hot">Context engineering</span><span class="chip hot">Infra & serving</span><span class="chip hot">Coding agents</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Cursor&#x27;s own blog posts report 12.5-24% higher answer accuracy and measurable retention/dissatisfaction gains from semantic search built on Turbopuffer, despite Twitter claiming RAG is dead.</li><li>Claude Code dropped its early local vector DB approach (per Boris Cherney) and instead relies on per-session grep, which the speaker frames as cache-compute: repeated re-discovery cost vs. upfront indexing cost.</li><li>Citing Jeff Dean, retrieval&#x27;s real job even with huge context windows is narrowing a trillion tokens down to &#x27;the right million,&#x27; not eliminating retrieval.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Defining rag vs. agentic search</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker distinguishes the popular narrow reading of RAG (simple one-shot vector search into an LLM) from the fuller retrieval-augmented-generation definition that also includes full-text search, BM25, grep, regex, and filters. Agentic search, commonly associated with tools like Claude Code and Codex, is defined as giving an agent tools to progressively and iteratively find and reason over context rather than a single retrieval call.</p></div>
+<div class="quote"><p>&ldquo;it&#x27;s really giving the agents a set of tools to kind of progressively and iteratively find and reason over context&rdquo;</p><a href="https://youtu.be/UM6sFg_jdlE?t=153" target="_blank">&#9654; watch at 02:33</a></div>
+<figure class="slide"><a href="https://youtu.be/UM6sFg_jdlE?t=130" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s03_130.webp" alt="Defining rag vs. agentic search"></a><figcaption>Slide at 02:10 &middot; Defining rag vs. agentic search &middot; <a href="https://youtu.be/UM6sFg_jdlE?t=130" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Cursor&#x27;s measured gains from semantic search</span><span class="ln"></span></div>
+<div class="prose"><p>Cursor indexes codebases by chunking and embedding them, using Merkle-tree hashing to avoid re-chunking/re-embedding shared code across a team, backed by Turbopuffer. Cursor&#x27;s internal benchmark reported roughly a 12.5-13.5% average increase in answer accuracy across models from adding semantic search, and close to a 24% increase for its Composer model (pre-Composer 2).</p></div>
+<div class="quote"><p>&ldquo;on average across models I think it&#x27;s like a 12 and a half or 13 and a half percent increase in answer accuracy&rdquo;</p><a href="https://youtu.be/UM6sFg_jdlE?t=246" target="_blank">&#9654; watch at 04:06</a></div><div class="quote"><p>&ldquo;on the right side their composer model so it&#x27;s this this is before composer two they had a almost a 24% increase in answer accuracy&rdquo;</p><a href="https://youtu.be/UM6sFg_jdlE?t=307" target="_blank">&#9654; watch at 05:07</a></div>
+<figure class="slide"><a href="https://youtu.be/UM6sFg_jdlE?t=250" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s06_250.webp" alt="Cursor&#x27;s measured gains from semantic search"></a><figcaption>Slide at 04:10 &middot; Cursor&#x27;s measured gains from semantic search &middot; <a href="https://youtu.be/UM6sFg_jdlE?t=250" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Small-looking numbers, real product impact</span><span class="ln"></span></div>
+<div class="prose"><p>An online A/B test Cursor ran showed about a 2.6% increase in code retention and a 2.2% decrease in dissatisfied user requests in large codebases from having semantic search available. The speaker notes these percentages look modest only because semantic search doesn&#x27;t get used on every query, not because the effect is weak.</p></div>
+<div class="quote"><p>&ldquo;it&#x27;s almost like a 2.6% retention code retention in large code bases and there&#x27;s a 2.2% decrease in dissatisfied user request&rdquo;</p><a href="https://youtu.be/UM6sFg_jdlE?t=339" target="_blank">&#9654; watch at 05:39</a></div>
+<figure class="slide"><a href="https://youtu.be/UM6sFg_jdlE?t=360" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s08_360.webp" alt="Small-looking numbers, real product impact"></a><figcaption>Slide at 06:00 &middot; Small-looking numbers, real product impact &middot; <a href="https://youtu.be/UM6sFg_jdlE?t=360" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Claude Code&#x27;s grep-only approach and its cost</span><span class="ln"></span></div>
+<div class="prose"><p>Per a tweet from Boris Cherney, Claude Code experimented with a local vector DB early on but abandoned it, relying instead on repeated per-session grep-read-assess loops to rediscover the same codebase understanding. The speaker frames semantic search/embeddings as &#x27;cache compute&#x27;: Cursor&#x27;s upfront indexing cost is paid once, while Claude Code-style grep pays a repeated token cost (an example subtask alone used around 6,000 tokens) every session, across every developer, every day.</p></div>
+<div class="quote"><p>&ldquo;Cloud Code doesn&#x27;t use vector search as covered by the tweet from Boris Cherney&rdquo;</p><a href="https://youtu.be/UM6sFg_jdlE?t=369" target="_blank">&#9654; watch at 06:09</a></div><div class="quote"><p>&ldquo;in early iterations of Cloud Code they actually did use rag in their local vector DB but they found that it just didn&#x27;t really work out for them&rdquo;</p><a href="https://youtu.be/UM6sFg_jdlE?t=369" target="_blank">&#9654; watch at 06:09</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>The real point of retrieval at scale</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker cites a Jeff Dean remark that large context windows don&#x27;t remove the need for staged retrieval: even at a trillion-token context, you still need a lightweight mechanism to narrow that down to millions of relevant tokens. Turbopuffer frames its own role as helping customers go from trillions of stored tokens down to the right hundred-thousand, ten-thousand, or million tokens to pass into a model&#x27;s context window.</p></div>
+<div class="quote"><p>&ldquo;the exact quote is you don&#x27;t need a trillion at once, you need the right million&rdquo;</p><a href="https://youtu.be/UM6sFg_jdlE?t=618" target="_blank">&#9654; watch at 10:18</a></div>
+<figure class="slide"><a href="https://youtu.be/UM6sFg_jdlE?t=630" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s16_630.webp" alt="The real point of retrieval at scale"></a><figcaption>Slide at 10:30 &middot; The real point of retrieval at scale &middot; <a href="https://youtu.be/UM6sFg_jdlE?t=630" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The framing of embeddings as &#x27;cache compute&#x27; is the sharpest reusable idea here -- it reduces the RAG-vs-agentic-grep debate to an amortization question (how many repeated queries justify upfront indexing cost) rather than a philosophical one, which is a cleaner lens for picking a retrieval architecture (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/UM6sFg_jdlE?t=10" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=60" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s01_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=90" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s02_90.webp" alt="slide at 01:30"><div class="ts">01:30</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=130" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s03_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=180" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s04_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=190" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s05_190.webp" alt="slide at 03:10"><div class="ts">03:10</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=250" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s06_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=280" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s07_280.webp" alt="slide at 04:40"><div class="ts">04:40</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=360" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s08_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=380" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s09_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=390" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s10_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=420" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s11_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=430" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s12_430.webp" alt="slide at 07:10"><div class="ts">07:10</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=440" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s13_440.webp" alt="slide at 07:20"><div class="ts">07:20</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=470" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s14_470.webp" alt="slide at 07:50"><div class="ts">07:50</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=510" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s15_510.webp" alt="slide at 08:30"><div class="ts">08:30</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=630" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s16_630.webp" alt="slide at 10:30"><div class="ts">10:30</div></a><a href="https://youtu.be/UM6sFg_jdlE?t=650" target="_blank"><img loading="lazy" src="img/rag-is-dead-agentic-retrieval/s17_650.webp" alt="slide at 10:50"><div class="ts">10:50</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (7)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Agentic search means giving agents tools to progressively and iteratively find and reason over context, not just grepping.</td><td class="tt"><a href="https://youtu.be/UM6sFg_jdlE?t=153" target="_blank">02:33</a></td></tr><tr><td class="st">asserts</td><td>Cursor&#x27;s internal benchmark found roughly a 12.5-13.5% average increase in answer accuracy across models from semantic search.</td><td class="tt"><a href="https://youtu.be/UM6sFg_jdlE?t=246" target="_blank">04:06</a></td></tr><tr><td class="st">asserts</td><td>Cursor&#x27;s Composer model (pre-Composer 2) saw close to a 24% increase in answer accuracy from semantic search.</td><td class="tt"><a href="https://youtu.be/UM6sFg_jdlE?t=307" target="_blank">05:07</a></td></tr><tr><td class="st">asserts</td><td>Cursor&#x27;s online A/B test found about 2.6% higher code retention and 2.2% lower dissatisfied-request rate in large codebases with semantic search.</td><td class="tt"><a href="https://youtu.be/UM6sFg_jdlE?t=339" target="_blank">05:39</a></td></tr><tr><td class="st">asserts</td><td>Claude Code does not use vector search, per a tweet from Boris Cherney.</td><td class="tt"><a href="https://youtu.be/UM6sFg_jdlE?t=369" target="_blank">06:09</a></td></tr><tr><td class="st">asserts</td><td>Early iterations of Claude Code used RAG with a local vector DB but the approach was dropped because it didn&#x27;t work out.</td><td class="tt"><a href="https://youtu.be/UM6sFg_jdlE?t=369" target="_blank">06:09</a></td></tr><tr><td class="st">asserts</td><td>Jeff Dean argued that even huge context windows still require staged retrieval to narrow tokens down to the relevant subset.</td><td class="tt"><a href="https://youtu.be/UM6sFg_jdlE?t=618" target="_blank">10:18</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "UM6sFg_jdlE", "slug": "rag-is-dead-agentic-retrieval", "title": "RAG is dead, right??", "speaker": "Kuba Rogut", "company": "Turbopuffer", "themes": ["context-engineering", "infra-serving", "coding-agents"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "definition of agentic search", "text": "Agentic search means giving agents tools to progressively and iteratively find and reason over context, not just grepping.", "quote": "it's really giving the agents a set of tools to kind of progressively and iteratively find and reason over context", "t": 153}, {"id": "c2", "stance": "asserts", "topic": "Cursor accuracy gain", "text": "Cursor's internal benchmark found roughly a 12.5-13.5% average increase in answer accuracy across models from semantic search.", "quote": "on average across models I think it's like a 12 and a half or 13 and a half percent increase in answer accuracy", "t": 246}, {"id": "c3", "stance": "asserts", "topic": "Composer model accuracy gain", "text": "Cursor's Composer model (pre-Composer 2) saw close to a 24% increase in answer accuracy from semantic search.", "quote": "on the right side their composer model so it's this this is before composer two they had a almost a 24% increase in answer accuracy", "t": 307}, {"id": "c4", "stance": "asserts", "topic": "A/B test results", "text": "Cursor's online A/B test found about 2.6% higher code retention and 2.2% lower dissatisfied-request rate in large codebases with semantic search.", "quote": "it's almost like a 2.6% retention code retention in large code bases and there's a 2.2% decrease in dissatisfied user request", "t": 339}, {"id": "c5", "stance": "asserts", "topic": "Claude Code architecture", "text": "Claude Code does not use vector search, per a tweet from Boris Cherney.", "quote": "Cloud Code doesn't use vector search as covered by the tweet from Boris Cherney", "t": 369}, {"id": "c6", "stance": "asserts", "topic": "Claude Code's abandoned local vector DB", "text": "Early iterations of Claude Code used RAG with a local vector DB but the approach was dropped because it didn't work out.", "quote": "in early iterations of Cloud Code they actually did use rag in their local vector DB but they found that it just didn't really work out for them", "t": 369}, {"id": "c7", "stance": "asserts", "topic": "Jeff Dean quote on retrieval", "text": "Jeff Dean argued that even huge context windows still require staged retrieval to narrow tokens down to the relevant subset.", "quote": "the exact quote is you don't need a trillion at once, you need the right million", "t": 618}]}</script>
+</body></html>

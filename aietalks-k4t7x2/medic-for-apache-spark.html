@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Medic for Apache Spark - First Aid for Failing Jobs — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/0RNNfxpdbQk" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 11 min</span><span class="ln"></span></div>
+<h1 class="lede">Medic for Apache Spark - First Aid for Failing Jobs</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Drasko Profirovic &middot; Pinterest</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/0RNNfxpdbQk" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/0RNNfxpdbQk</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Context engineering</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>A single-prompt React agent hit unsustainable prompt tuning (fixing one area degraded another) and inconsistent, sometimes context-window-breaking output on large log dumps.</li><li>Converting raw time-series metrics into annotated collage images (rather than feeding raw data) let the team guarantee a fixed token budget regardless of job duration.</li><li>Moving to a multi-agent architecture built on LangGraph&#x27;s deep agent library (dedicated prompts, subset of MCP tools per agent, built-in to-do list/virtual file system) substantially reduced inaccurate root causes versus the single-agent approach.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>From single prompt to unsustainable complexity</span><span class="ln"></span></div>
+<div class="prose"><p>The first working prototype was a single React agent with one prompt covering the problem-solving approach, report structure, and failure-pattern examples. Beta trials revealed prompt tuning became unsustainable because improving one area degraded another, response quality was inconsistent, and large tool outputs from logs quickly consumed the context window and stalled reasoning.</p></div>
+<div class="quote"><p>&ldquo;Prompt tuning became unsustainable. One prompt had to do everything, and adding detail in one area degraded the behavior in another&rdquo;</p><a href="https://youtu.be/0RNNfxpdbQk?t=166" target="_blank">&#9654; watch at 02:46</a></div><div class="quote"><p>&ldquo;large tool outputs from logs would click quickly consume tokens and brought a halt to the agent&#x27;s reasoning&rdquo;</p><a href="https://youtu.be/0RNNfxpdbQk?t=166" target="_blank">&#9654; watch at 02:46</a></div>
+<figure class="slide"><a href="https://youtu.be/0RNNfxpdbQk?t=170" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s03_170.webp" alt="From single prompt to unsustainable complexity"></a><figcaption>Slide at 02:50 &middot; From single prompt to unsustainable complexity &middot; <a href="https://youtu.be/0RNNfxpdbQk?t=170" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Building an offline test harness before scaling further</span><span class="ln"></span></div>
+<div class="prose"><p>The team built a record/playback end-to-end test harness: in record mode the agent calls real downstream systems and saves tool responses as checked-in fixtures; in playback mode the agent runs against those fixtures and generates a report graded against authored offline evals (for example, capping suggested fixes at three).</p></div>
+<div class="quote"><p>&ldquo;In record mode, the agent calls real downstream systems, and tool responses are captured as fixtures&rdquo;</p><a href="https://youtu.be/0RNNfxpdbQk?t=280" target="_blank">&#9654; watch at 04:40</a></div>
+<figure class="slide"><a href="https://youtu.be/0RNNfxpdbQk?t=260" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s05_260.webp" alt="Building an offline test harness before scaling further"></a><figcaption>Slide at 04:20 &middot; Building an offline test harness before scaling further &middot; <a href="https://youtu.be/0RNNfxpdbQk?t=260" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Turning noisy logs and metrics into bounded signal</span><span class="ln"></span></div>
+<div class="prose"><p>Rather than feeding raw exceptions, the team built an exception classifier pipeline that fingerprints and clusters exceptions, learns which ones commonly appear in successful jobs (treating those as red herrings), and ranks the rest by relevance and recency, exposed to the agent as two MCP tools (top-K truncated exceptions, or full detail for one). For metrics, a quarantine sub-agent converts raw time-series data into an annotated collage image before it enters the main LLM conversation, guaranteeing a fixed token cost regardless of job duration.</p></div>
+<div class="quote"><p>&ldquo;The core idea was we would learn which exceptions commonly appear in successful jobs, treat those as likely red herrings, and filter them out in the future analysis&rdquo;</p><a href="https://youtu.be/0RNNfxpdbQk?t=341" target="_blank">&#9654; watch at 05:41</a></div><div class="quote"><p>&ldquo;Images worked better because we could guarantee how many input tokens would be used for analyzing any given Spark job irrespective of its duration&rdquo;</p><a href="https://youtu.be/0RNNfxpdbQk?t=465" target="_blank">&#9654; watch at 07:45</a></div>
+<figure class="slide"><a href="https://youtu.be/0RNNfxpdbQk?t=320" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s07_320.webp" alt="Turning noisy logs and metrics into bounded signal"></a><figcaption>Slide at 05:20 &middot; Turning noisy logs and metrics into bounded signal &middot; <a href="https://youtu.be/0RNNfxpdbQk?t=320" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Multi-agent architecture on LangGraph deep agents</span><span class="ln"></span></div>
+<div class="prose"><p>The team rebuilt the single React agent into a multi-agent system on LangGraph&#x27;s deep agent library, giving each agent a dedicated prompt and subset of MCP tools, plus built-in tracking tools like a to-do list and virtual file system. A triage agent classifies intent and job lifecycle state, parallel research agents score competing failure hypotheses, a supervisor selects the highest-confidence root cause, and a healer agent proposes remediations from a runbook vector database.</p></div>
+<div class="quote"><p>&ldquo;We went from a single react agent with multi-agent architecture. This was accomplished by building on top of LangGraph&#x27;s deep agent library&rdquo;</p><a href="https://youtu.be/0RNNfxpdbQk?t=497" target="_blank">&#9654; watch at 08:17</a></div><div class="quote"><p>&ldquo;We trialed using LangGraph&#x27;s workflows to make the agent more deterministic, but this approach proved to be brittle compared to the reasoning and acting agent paradigm&rdquo;</p><a href="https://youtu.be/0RNNfxpdbQk?t=655" target="_blank">&#9654; watch at 10:55</a></div>
+<figure class="slide"><a href="https://youtu.be/0RNNfxpdbQk?t=490" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s09_490.webp" alt="Multi-agent architecture on LangGraph deep agents"></a><figcaption>Slide at 08:10 &middot; Multi-agent architecture on LangGraph deep agents &middot; <a href="https://youtu.be/0RNNfxpdbQk?t=490" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The result that deterministic LangGraph workflows proved &#x27;brittle compared to the reasoning and acting agent paradigm&#x27; (their word, not just ours) is a useful counter-data-point for teams assuming more deterministic orchestration is always safer than a React-style loop for this kind of open-ended diagnostic task.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/0RNNfxpdbQk?t=10" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=110" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s01_110.webp" alt="slide at 01:50"><div class="ts">01:50</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=140" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s02_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=170" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s03_170.webp" alt="slide at 02:50"><div class="ts">02:50</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=220" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s04_220.webp" alt="slide at 03:40"><div class="ts">03:40</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=260" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s05_260.webp" alt="slide at 04:20"><div class="ts">04:20</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=300" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s06_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=320" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s07_320.webp" alt="slide at 05:20"><div class="ts">05:20</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=400" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s08_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=490" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s09_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=560" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s10_560.webp" alt="slide at 09:20"><div class="ts">09:20</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=570" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s11_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=620" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s12_620.webp" alt="slide at 10:20"><div class="ts">10:20</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=660" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s13_660.webp" alt="slide at 11:00"><div class="ts">11:00</div></a><a href="https://youtu.be/0RNNfxpdbQk?t=670" target="_blank"><img loading="lazy" src="img/medic-for-apache-spark/s14_670.webp" alt="slide at 11:10"><div class="ts">11:10</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (7)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">warns</td><td>A single prompt covering the entire agent behavior became unsustainable to tune because fixing one area degraded another.</td><td class="tt"><a href="https://youtu.be/0RNNfxpdbQk?t=166" target="_blank">02:46</a></td></tr><tr><td class="st">warns</td><td>Large tool outputs from logs quickly consumed tokens and halted the agent&#x27;s reasoning process.</td><td class="tt"><a href="https://youtu.be/0RNNfxpdbQk?t=166" target="_blank">02:46</a></td></tr><tr><td class="st">recommends</td><td>Recommends a record/playback harness that captures real tool responses as fixtures, then grades agent output against authored offline evals in playback mode.</td><td class="tt"><a href="https://youtu.be/0RNNfxpdbQk?t=280" target="_blank">04:40</a></td></tr><tr><td class="st">asserts</td><td>The exception classifier learns which exceptions commonly appear in successful jobs and filters those as likely red herrings before analysis.</td><td class="tt"><a href="https://youtu.be/0RNNfxpdbQk?t=341" target="_blank">05:41</a></td></tr><tr><td class="st">recommends</td><td>Converting raw time-series metrics into annotated collage images guarantees a fixed input token cost regardless of job duration.</td><td class="tt"><a href="https://youtu.be/0RNNfxpdbQk?t=465" target="_blank">07:45</a></td></tr><tr><td class="st">asserts</td><td>The team rebuilt the agent as a multi-agent system on LangGraph&#x27;s deep agent library, with dedicated prompts and MCP tool subsets per agent.</td><td class="tt"><a href="https://youtu.be/0RNNfxpdbQk?t=497" target="_blank">08:17</a></td></tr><tr><td class="st">warns</td><td>Deterministic LangGraph workflows proved more brittle than the reasoning-and-acting agent paradigm for this task.</td><td class="tt"><a href="https://youtu.be/0RNNfxpdbQk?t=655" target="_blank">10:55</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "0RNNfxpdbQk", "slug": "medic-for-apache-spark", "title": "Medic for Apache Spark - First Aid for Failing Jobs", "speaker": "Drasko Profirovic", "company": "Pinterest", "themes": ["agentic-engineering", "evals-benchmarks", "context-engineering"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "warns", "topic": "single-prompt scaling", "text": "A single prompt covering the entire agent behavior became unsustainable to tune because fixing one area degraded another.", "quote": "Prompt tuning became unsustainable. One prompt had to do everything, and adding detail in one area degraded the behavior in another", "t": 166}, {"id": "c2", "stance": "warns", "topic": "context window limits", "text": "Large tool outputs from logs quickly consumed tokens and halted the agent's reasoning process.", "quote": "large tool outputs from logs would click quickly consume tokens and brought a halt to the agent's reasoning", "t": 166}, {"id": "c3", "stance": "recommends", "topic": "record/playback test harness", "text": "Recommends a record/playback harness that captures real tool responses as fixtures, then grades agent output against authored offline evals in playback mode.", "quote": "In record mode, the agent calls real downstream systems, and tool responses are captured as fixtures", "t": 280}, {"id": "c4", "stance": "asserts", "topic": "exception classifier design", "text": "The exception classifier learns which exceptions commonly appear in successful jobs and filters those as likely red herrings before analysis.", "quote": "The core idea was we would learn which exceptions commonly appear in successful jobs, treat those as likely red herrings, and filter them out in the future analysis", "t": 341}, {"id": "c5", "stance": "recommends", "topic": "metrics as images", "text": "Converting raw time-series metrics into annotated collage images guarantees a fixed input token cost regardless of job duration.", "quote": "Images worked better because we could guarantee how many input tokens would be used for analyzing any given Spark job irrespective of its duration", "t": 465}, {"id": "c6", "stance": "asserts", "topic": "multi-agent architecture", "text": "The team rebuilt the agent as a multi-agent system on LangGraph's deep agent library, with dedicated prompts and MCP tool subsets per agent.", "quote": "We went from a single react agent with multi-agent architecture. This was accomplished by building on top of LangGraph's deep agent library", "t": 497}, {"id": "c7", "stance": "warns", "topic": "deterministic workflows", "text": "Deterministic LangGraph workflows proved more brittle than the reasoning-and-acting agent paradigm for this task.", "quote": "We trialed using LangGraph's workflows to make the agent more deterministic, but this approach proved to be brittle compared to the reasoning and acting agent paradigm", "t": 655}]}</script>
+</body></html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Active Graph Agent Runtime (BabyAGI 4) — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/khVX_BUnEwU" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 17 min</span><span class="ln"></span></div>
+<h1 class="lede">Active Graph Agent Runtime (BabyAGI 4)</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Yohei Nakajima &middot; Untapped Capital</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/khVX_BUnEwU" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/khVX_BUnEwU</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Memory</span><span class="chip hot">Continual learning</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>ActiveGraph is an event-sourced graph runtime where LLMs never talk to each other directly; they all read and write a shared immutable event log, and behaviors react to graph changes rather than to messages (c2, c3).</li><li>A policy-gated self-modification loop (propose a patch, gate-check, test, accept only on measured improvement) produced statistically significant gains on long-mem-eval and raised win rate across ~80 tuning passes on a Pokemon-deck competition (c4, c6, c7, c8)</li><li>Nakajima&#x27;s working hypothesis is that blackboard/Kafka-style multi-worker coordination through shared state outperforms pure LLM-centric harnesses because decades of training data exist on that pattern, unlike the ~3-year-old LLM-agent pattern (c9, c10)</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Building around the log instead of the LLM</span><span class="ln"></span></div>
+<div class="prose"><p>Nakajima frames most current agent-building as LLM-centric: start with the LLM, add tools, memory, and logging on top. ActiveGraph inverts this, treating every change to the agent (not just what it does) as a single immutable event log that projects the agent&#x27;s current state as a graph. LLMs and deterministic behaviors never communicate directly with each other; they all read and write through this shared state.</p></div>
+<div class="quote"><p>&ldquo;Let&#x27;s build the simplest thing that can build itself has basically been kind of my research theme for the last 3 years&rdquo;</p><a href="https://youtu.be/khVX_BUnEwU?t=45" target="_blank">&#9654; watch at 00:45</a></div><div class="quote"><p>&ldquo;ActiveGraph is an event-sourced graph runtime for building auditable agents.&rdquo;</p><a href="https://youtu.be/khVX_BUnEwU?t=95" target="_blank">&#9654; watch at 01:35</a></div><div class="quote"><p>&ldquo;let&#x27;s flatten that down into a single immutable event log, and this is the ground truth of the agent.&rdquo;</p><a href="https://youtu.be/khVX_BUnEwU?t=165" target="_blank">&#9654; watch at 02:45</a></div>
+<figure class="slide"><a href="https://youtu.be/khVX_BUnEwU?t=50" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s01_50.webp" alt="Building around the log instead of the LLM"></a><figcaption>Slide at 00:50 &middot; Building around the log instead of the LLM &middot; <a href="https://youtu.be/khVX_BUnEwU?t=50" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Policies gate what the agent can change about itself</span><span class="ln"></span></div>
+<div class="prose"><p>ActiveGraph adds a policy layer that determines what kinds of graph changes are allowed automatically versus requiring human approval or contradiction checks. In a self-modification experiment called Regimes, the agent classified its own failures, proposed a targeted patch, ran a static and sandbox gate check, tested the patch, and only accepted it if accuracy measurably improved. Across these loops it typically proposed 8-13 patches per run but accepted only 4-5.</p></div>
+<div class="quote"><p>&ldquo;some graph changes require a proposed patch before approval&rdquo;</p><a href="https://youtu.be/khVX_BUnEwU?t=385" target="_blank">&#9654; watch at 06:25</a></div><div class="quote"><p>&ldquo;it would loop like eight or 13 times, but only accept four or five of those patches&rdquo;</p><a href="https://youtu.be/khVX_BUnEwU?t=715" target="_blank">&#9654; watch at 11:55</a></div><div class="quote"><p>&ldquo;it actually did have, you know, modest, but like statistically significant improvement on long mem eval scores.&rdquo;</p><a href="https://youtu.be/khVX_BUnEwU?t=725" target="_blank">&#9654; watch at 12:05</a></div>
+<figure class="slide"><a href="https://youtu.be/khVX_BUnEwU?t=390" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s09_390.webp" alt="Policies gate what the agent can change about itself"></a><figcaption>Slide at 06:30 &middot; Policies gate what the agent can change about itself &middot; <a href="https://youtu.be/khVX_BUnEwU?t=390" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Two test cases: long-mem-eval and a Pokemon deck bot</span><span class="ln"></span></div>
+<div class="prose"><p>Nakajima tested using the event log itself as agent memory (no vector RAG, no fact/entity extraction, just embedding the query against logged messages) and reported it performed well on long-mem-eval. Separately, he used ActiveGraph to iterate a deterministic Pokemon trading-card-deck bot competing in an Elo-style Kaggle competition, running roughly 80 tuning passes, accepting about 20-30 of them, with score improving slowly over that process.</p></div>
+<div class="quote"><p>&ldquo;did pretty well on long mem eval, right? Like a lot of the data in your memory is actually overlaps with the memory uh the data in your log.&rdquo;</p><a href="https://youtu.be/khVX_BUnEwU?t=530" target="_blank">&#9654; watch at 08:50</a></div><div class="quote"><p>&ldquo;out of those 80 passes, it probably accepted about 20 to 30 and the score did slowly improve.&rdquo;</p><a href="https://youtu.be/khVX_BUnEwU?t=845" target="_blank">&#9654; watch at 14:05</a></div>
+<figure class="slide"><a href="https://youtu.be/khVX_BUnEwU?t=540" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s10_540.webp" alt="Two test cases: long-mem-eval and a Pokemon deck bot"></a><figcaption>Slide at 09:00 &middot; Two test cases: long-mem-eval and a Pokemon deck bot &middot; <a href="https://youtu.be/khVX_BUnEwU?t=540" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Why this pattern might work better than pure LLM harnesses</span><span class="ln"></span></div>
+<div class="prose"><p>Nakajima&#x27;s hypothesis is that blackboard architecture (1970s-80s) and Kafka-style shared-state, multi-worker coordination have decades of prior discussion and examples in the training data, whereas LLM-based agent design is only about three years old. He extends this into a speculative claim that long-running agents may need an &#x27;experiential world model,&#x27; derived from an immutable event log analogous to the hippocampus, in addition to a predictive world model.</p></div>
+<div class="quote"><p>&ldquo;there&#x27;s decades of conversations about how to make that work better. And my hypothesis is that that&#x27;s in the training data.&rdquo;</p><a href="https://youtu.be/khVX_BUnEwU?t=905" target="_blank">&#9654; watch at 15:05</a></div><div class="quote"><p>&ldquo;I&#x27;m starting to really think that long-running agents need not just a world world model and like a predictive world model, but what I might call an experiential world model.&rdquo;</p><a href="https://youtu.be/khVX_BUnEwU?t=940" target="_blank">&#9654; watch at 15:40</a></div>
+<figure class="slide"><a href="https://youtu.be/khVX_BUnEwU?t=830" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s19_830.webp" alt="Why this pattern might work better than pure LLM harnesses"></a><figcaption>Slide at 13:50 &middot; Why this pattern might work better than pure LLM harnesses &middot; <a href="https://youtu.be/khVX_BUnEwU?t=830" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The self-modification results (accepting 4-5 of 8-13 proposed patches, or 20-30 of 80 Pokemon-deck tuning passes) are framed by Nakajima himself as modest and early; there&#x27;s no baseline comparison against an ungated self-modification loop, so it&#x27;s unclear how much of the gain comes from the log architecture versus simply having a strict accept/reject gate at all (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/khVX_BUnEwU?t=10" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="https://youtu.be/khVX_BUnEwU?t=50" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s01_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="https://youtu.be/khVX_BUnEwU?t=60" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s02_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="https://youtu.be/khVX_BUnEwU?t=80" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s03_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="https://youtu.be/khVX_BUnEwU?t=90" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s04_90.webp" alt="slide at 01:30"><div class="ts">01:30</div></a><a href="https://youtu.be/khVX_BUnEwU?t=100" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s05_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="https://youtu.be/khVX_BUnEwU?t=240" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s06_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="https://youtu.be/khVX_BUnEwU?t=340" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s07_340.webp" alt="slide at 05:40"><div class="ts">05:40</div></a><a href="https://youtu.be/khVX_BUnEwU?t=370" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s08_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="https://youtu.be/khVX_BUnEwU?t=390" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s09_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="https://youtu.be/khVX_BUnEwU?t=540" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s10_540.webp" alt="slide at 09:00"><div class="ts">09:00</div></a><a href="https://youtu.be/khVX_BUnEwU?t=570" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s11_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="https://youtu.be/khVX_BUnEwU?t=600" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s12_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="https://youtu.be/khVX_BUnEwU?t=620" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s13_620.webp" alt="slide at 10:20"><div class="ts">10:20</div></a><a href="https://youtu.be/khVX_BUnEwU?t=640" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s14_640.webp" alt="slide at 10:40"><div class="ts">10:40</div></a><a href="https://youtu.be/khVX_BUnEwU?t=700" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s15_700.webp" alt="slide at 11:40"><div class="ts">11:40</div></a><a href="https://youtu.be/khVX_BUnEwU?t=720" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s16_720.webp" alt="slide at 12:00"><div class="ts">12:00</div></a><a href="https://youtu.be/khVX_BUnEwU?t=730" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s17_730.webp" alt="slide at 12:10"><div class="ts">12:10</div></a><a href="https://youtu.be/khVX_BUnEwU?t=770" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s18_770.webp" alt="slide at 12:50"><div class="ts">12:50</div></a><a href="https://youtu.be/khVX_BUnEwU?t=830" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s19_830.webp" alt="slide at 13:50"><div class="ts">13:50</div></a><a href="https://youtu.be/khVX_BUnEwU?t=1030" target="_blank"><img loading="lazy" src="img/active-graph-agent-runtime/s20_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Nakajima&#x27;s research theme for 3+ years, since BabyAGI in March 2023, has been building the simplest agent that can improve itself.</td><td class="tt"><a href="https://youtu.be/khVX_BUnEwU?t=45" target="_blank">00:45</a></td></tr><tr><td class="st">asserts</td><td>ActiveGraph is defined as an event-sourced graph runtime for building auditable agents.</td><td class="tt"><a href="https://youtu.be/khVX_BUnEwU?t=95" target="_blank">01:35</a></td></tr><tr><td class="st">asserts</td><td>ActiveGraph flattens what the agent does and how it changes into a single immutable event log that serves as the agent&#x27;s ground truth.</td><td class="tt"><a href="https://youtu.be/khVX_BUnEwU?t=165" target="_blank">02:45</a></td></tr><tr><td class="st">recommends</td><td>Some graph changes should require a proposed patch to go through approval before being applied.</td><td class="tt"><a href="https://youtu.be/khVX_BUnEwU?t=385" target="_blank">06:25</a></td></tr><tr><td class="st">asserts</td><td>Using the structured event log itself (embedding the query, retrieving surrounding logged messages) performed well on long-mem-eval without semantic ingestion or entity extraction.</td><td class="tt"><a href="https://youtu.be/khVX_BUnEwU?t=530" target="_blank">08:50</a></td></tr><tr><td class="st">asserts</td><td>In the Regimes self-modification experiment, each loop proposed 8-13 patches but only accepted 4-5 of them.</td><td class="tt"><a href="https://youtu.be/khVX_BUnEwU?t=715" target="_blank">11:55</a></td></tr><tr><td class="st">asserts</td><td>The accepted self-modification patches produced a modest but statistically significant improvement on long-mem-eval scores.</td><td class="tt"><a href="https://youtu.be/khVX_BUnEwU?t=725" target="_blank">12:05</a></td></tr><tr><td class="st">asserts</td><td>Across roughly 80 tuning passes on a Pokemon-deck competition, about 20-30 were accepted and the score improved slowly.</td><td class="tt"><a href="https://youtu.be/khVX_BUnEwU?t=845" target="_blank">14:05</a></td></tr><tr><td class="st">predicts</td><td>Nakajima hypothesizes that blackboard/Kafka-style shared-state coordination works better for agents than pure LLM harnesses because decades of prior discussion of that pattern exist in the training data.</td><td class="tt"><a href="https://youtu.be/khVX_BUnEwU?t=905" target="_blank">15:05</a></td></tr><tr><td class="st">predicts</td><td>Nakajima predicts long-running agents need an experiential world model derived from an immutable event log, in addition to a predictive world model.</td><td class="tt"><a href="https://youtu.be/khVX_BUnEwU?t=940" target="_blank">15:40</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "khVX_BUnEwU", "slug": "active-graph-agent-runtime", "title": "Active Graph Agent Runtime (BabyAGI 4)", "speaker": "Yohei Nakajima", "company": "Untapped Capital", "themes": ["agentic-engineering", "memory", "continual-learning"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "research theme since BabyAGI", "text": "Nakajima's research theme for 3+ years, since BabyAGI in March 2023, has been building the simplest agent that can improve itself.", "quote": "Let's build the simplest thing that can build itself has basically been kind of my research theme for the last 3 years", "t": 45}, {"id": "c2", "stance": "asserts", "topic": "ActiveGraph definition", "text": "ActiveGraph is defined as an event-sourced graph runtime for building auditable agents.", "quote": "ActiveGraph is an event-sourced graph runtime for building auditable agents.", "t": 95}, {"id": "c3", "stance": "asserts", "topic": "log as ground truth", "text": "ActiveGraph flattens what the agent does and how it changes into a single immutable event log that serves as the agent's ground truth.", "quote": "let's flatten that down into a single immutable event log, and this is the ground truth of the agent.", "t": 165}, {"id": "c4", "stance": "recommends", "topic": "policies gating changes", "text": "Some graph changes should require a proposed patch to go through approval before being applied.", "quote": "some graph changes require a proposed patch before approval", "t": 385}, {"id": "c5", "stance": "asserts", "topic": "log as memory", "text": "Using the structured event log itself (embedding the query, retrieving surrounding logged messages) performed well on long-mem-eval without semantic ingestion or entity extraction.", "quote": "did pretty well on long mem eval, right? Like a lot of the data in your memory is actually overlaps with the memory uh the data in your log.", "t": 530}, {"id": "c6", "stance": "asserts", "topic": "self-modification loop acceptance rate", "text": "In the Regimes self-modification experiment, each loop proposed 8-13 patches but only accepted 4-5 of them.", "quote": "it would loop like eight or 13 times, but only accept four or five of those patches", "t": 715}, {"id": "c7", "stance": "asserts", "topic": "self-modification results", "text": "The accepted self-modification patches produced a modest but statistically significant improvement on long-mem-eval scores.", "quote": "it actually did have, you know, modest, but like statistically significant improvement on long mem eval scores.", "t": 725}, {"id": "c8", "stance": "asserts", "topic": "Pokemon deck tuning results", "text": "Across roughly 80 tuning passes on a Pokemon-deck competition, about 20-30 were accepted and the score improved slowly.", "quote": "out of those 80 passes, it probably accepted about 20 to 30 and the score did slowly improve.", "t": 845}, {"id": "c9", "stance": "predicts", "topic": "training data hypothesis", "text": "Nakajima hypothesizes that blackboard/Kafka-style shared-state coordination works better for agents than pure LLM harnesses because decades of prior discussion of that pattern exist in the training data.", "quote": "there's decades of conversations about how to make that work better. And my hypothesis is that that's in the training data.", "t": 905}, {"id": "c10", "stance": "predicts", "topic": "experiential world model", "text": "Nakajima predicts long-running agents need an experiential world model derived from an immutable event log, in addition to a predictive world model.", "quote": "I'm starting to really think that long-running agents need not just a world world model and like a predictive world model, but what I might call an experiential world model.", "t": 940}]}</script>
+</body></html>

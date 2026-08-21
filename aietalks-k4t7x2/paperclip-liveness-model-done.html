@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>What Does Done Even Mean? Agents and Paperclip&#x27;s Liveness Model — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/7P0elyLIxXo" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 7 min</span><span class="ln"></span></div>
+<h1 class="lede">What Does Done Even Mean? Agents and Paperclip&#x27;s Liveness Model</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Dotta &middot; Paperclip</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/7P0elyLIxXo" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/7P0elyLIxXo</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Coding agents</span><span class="chip hot">Evals & benchmarks</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Agents can now produce more code and documentation than humans have time to verify, so a single green checkmark for &#x27;done&#x27; hides a bundle of separate claims (artifact, evidence, rubric, owner, next step).</li><li>Paperclip&#x27;s control plane targets three invariants -- productive work continues, only real blockers stop work, infinite loops are bounded -- via explicit task blockers, an audit trail for human approvals, and harness-agnostic watchdog agents.</li><li>The stated general recommendation is to separate the verifier from the author, often using a different model for each, and to give agents tools to produce actual evidence of completion rather than just asserting it.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The failure mode: agents outpace human verification</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker argues programming is &#x27;solved&#x27; in the sense that agents can now produce code and documentation faster than any human can verify, which creates a new failure mode where agents generate more work than humans have time to check. He reframes &#x27;done&#x27; as a bundle of separate claims rather than a single status flip: that an artifact was produced, evidence exists it&#x27;s complete, a rubric exists to verify against, an owner is known, and the next step is known.</p></div>
+<div class="quote"><p>&ldquo;agents can actually create more work than humans have time to verify&rdquo;</p><a href="https://youtu.be/7P0elyLIxXo?t=30" target="_blank">&#9654; watch at 00:30</a></div><div class="quote"><p>&ldquo;Saying that something is done is actually a bundle of claims.&rdquo;</p><a href="https://youtu.be/7P0elyLIxXo?t=30" target="_blank">&#9654; watch at 00:30</a></div>
+<figure class="slide"><a href="https://youtu.be/7P0elyLIxXo?t=20" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s00_20.webp" alt="The failure mode: agents outpace human verification"></a><figcaption>Slide at 00:20 &middot; The failure mode: agents outpace human verification &middot; <a href="https://youtu.be/7P0elyLIxXo?t=20" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Exhaustive human review doesn&#x27;t scale</span><span class="ln"></span></div>
+<div class="prose"><p>He states that exhaustive human verification fails at high volume, humans can only verify a limited number of tasks per day, and requiring universal human sign-off produces what he calls verification theater rather than real quality control.</p></div>
+<div class="quote"><p>&ldquo;exhaustive human verification fails at high volume&rdquo;</p><a href="https://youtu.be/7P0elyLIxXo?t=94" target="_blank">&#9654; watch at 01:34</a></div>
+<figure class="slide"><a href="https://youtu.be/7P0elyLIxXo?t=90" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s04_90.webp" alt="Exhaustive human review doesn&#x27;t scale"></a><figcaption>Slide at 01:30 &middot; Exhaustive human review doesn&#x27;t scale &middot; <a href="https://youtu.be/7P0elyLIxXo?t=90" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Balancing liveliness and verification</span><span class="ln"></span></div>
+<div class="prose"><p>The talk frames the core design tension as liveliness (work keeps moving with no blockers) versus verification (a human has reviewed and trusts the work). Tasks that are fully live with no approvals produce what he calls classic AI slop, worse than producing nothing over time, while full peer review creates a review queue humans can&#x27;t clear by hand. Paperclip&#x27;s control plane targets three invariants: productive work continues, only real blockers stop work, and infinite loops are bounded.</p></div>
+<div class="quote"><p>&ldquo;If you have tasks that are completely alive with no approvals, then what you get is this classic AI slop because you&#x27;re producing a lot of things with kind of no quality control and it&#x27;s worse than creating nothing after a long period of time&rdquo;</p><a href="https://youtu.be/7P0elyLIxXo?t=156" target="_blank">&#9654; watch at 02:36</a></div><div class="quote"><p>&ldquo;You want to ensure that productive work continues. You want to make sure that only real blockers stop work. And you want to make sure that infinite loops are bounded&rdquo;</p><a href="https://youtu.be/7P0elyLIxXo?t=219" target="_blank">&#9654; watch at 03:39</a></div>
+<figure class="slide"><a href="https://youtu.be/7P0elyLIxXo?t=140" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s06_140.webp" alt="Balancing liveliness and verification"></a><figcaption>Slide at 02:20 &middot; Balancing liveliness and verification &middot; <a href="https://youtu.be/7P0elyLIxXo?t=140" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Paperclip&#x27;s mechanisms and recommended practices</span><span class="ln"></span></div>
+<div class="prose"><p>Paperclip enforces explicit blockers between tasks, records human approval decisions in an audit trail, and supports &#x27;watchdog&#x27; agents in a maximizer mode that push work toward a goal until it&#x27;s achieved; the watchdog is harness-agnostic, working across Pi, OpenGL, Hermes, Claude Code, and Codex through one consistent interface. His stated recommendation, independent of Paperclip, is to treat &#x27;done&#x27; as an object rather than a boolean, and specifically to separate the verifier from the author, often using a different model (e.g., coding with Claude, verifying with Codex).</p></div>
+<div class="quote"><p>&ldquo;the watchdog within Paperclip is harness agnostic. You can use it with Pi, OpenGL, Hermes, Claude Code, Codex, whatever you&#x27;re using, you have one consistent interface&rdquo;</p><a href="https://youtu.be/7P0elyLIxXo?t=281" target="_blank">&#9654; watch at 04:41</a></div><div class="quote"><p>&ldquo;one of the best pieces of advice we have is that you stop treating done as a Boolean and treat it more like an object&rdquo;</p><a href="https://youtu.be/7P0elyLIxXo?t=313" target="_blank">&#9654; watch at 05:13</a></div><div class="quote"><p>&ldquo;You definitely want to separate the verifier from the author. Often, this means you&#x27;re using a different model. So, if you&#x27;re coding using Claude, have Codex verify&rdquo;</p><a href="https://youtu.be/7P0elyLIxXo?t=345" target="_blank">&#9654; watch at 05:45</a></div>
+<figure class="slide"><a href="https://youtu.be/7P0elyLIxXo?t=300" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s10_300.webp" alt="Paperclip&#x27;s mechanisms and recommended practices"></a><figcaption>Slide at 05:00 &middot; Paperclip&#x27;s mechanisms and recommended practices &middot; <a href="https://youtu.be/7P0elyLIxXo?t=300" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The verification-theater framing is sharper than most &#x27;human in the loop&#x27; advice because it names the actual failure: universal sign-off doesn&#x27;t add trust once volume exceeds review capacity, it just adds latency (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/7P0elyLIxXo?t=20" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s00_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="https://youtu.be/7P0elyLIxXo?t=40" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s01_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="https://youtu.be/7P0elyLIxXo?t=50" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s02_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="https://youtu.be/7P0elyLIxXo?t=60" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s03_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="https://youtu.be/7P0elyLIxXo?t=90" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s04_90.webp" alt="slide at 01:30"><div class="ts">01:30</div></a><a href="https://youtu.be/7P0elyLIxXo?t=110" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s05_110.webp" alt="slide at 01:50"><div class="ts">01:50</div></a><a href="https://youtu.be/7P0elyLIxXo?t=140" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s06_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="https://youtu.be/7P0elyLIxXo?t=200" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s07_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="https://youtu.be/7P0elyLIxXo?t=220" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s08_220.webp" alt="slide at 03:40"><div class="ts">03:40</div></a><a href="https://youtu.be/7P0elyLIxXo?t=240" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s09_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="https://youtu.be/7P0elyLIxXo?t=300" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s10_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="https://youtu.be/7P0elyLIxXo?t=350" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s11_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="https://youtu.be/7P0elyLIxXo?t=360" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s12_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="https://youtu.be/7P0elyLIxXo?t=400" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s13_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="https://youtu.be/7P0elyLIxXo?t=420" target="_blank"><img loading="lazy" src="img/paperclip-liveness-model-done/s14_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">warns</td><td>Agents can now create more work than humans have time to verify, a new failure mode.</td><td class="tt"><a href="https://youtu.be/7P0elyLIxXo?t=30" target="_blank">00:30</a></td></tr><tr><td class="st">asserts</td><td>Saying a task is done is actually a bundle of separate claims, not a single status flip.</td><td class="tt"><a href="https://youtu.be/7P0elyLIxXo?t=30" target="_blank">00:30</a></td></tr><tr><td class="st">warns</td><td>Exhaustive human verification fails at high volume; requiring sign-off on every task produces verification theater rather than real quality control.</td><td class="tt"><a href="https://youtu.be/7P0elyLIxXo?t=94" target="_blank">01:34</a></td></tr><tr><td class="st">warns</td><td>Tasks kept fully live with no approvals produce AI slop with no quality control, worse than producing nothing over a long period.</td><td class="tt"><a href="https://youtu.be/7P0elyLIxXo?t=156" target="_blank">02:36</a></td></tr><tr><td class="st">recommends</td><td>A control plane for agentic work should ensure productive work continues, only real blockers stop work, and infinite loops are bounded.</td><td class="tt"><a href="https://youtu.be/7P0elyLIxXo?t=219" target="_blank">03:39</a></td></tr><tr><td class="st">asserts</td><td>Paperclip&#x27;s watchdog agent enforces goal completion across any harness (Pi, OpenGL, Hermes, Claude Code, Codex) through one consistent interface.</td><td class="tt"><a href="https://youtu.be/7P0elyLIxXo?t=281" target="_blank">04:41</a></td></tr><tr><td class="st">recommends</td><td>Teams should stop treating &#x27;done&#x27; as a boolean and treat it as an object with multiple fields.</td><td class="tt"><a href="https://youtu.be/7P0elyLIxXo?t=313" target="_blank">05:13</a></td></tr><tr><td class="st">recommends</td><td>Separate the verifier from the author, often using a different model, such as verifying Claude-written code with Codex.</td><td class="tt"><a href="https://youtu.be/7P0elyLIxXo?t=345" target="_blank">05:45</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "7P0elyLIxXo", "slug": "paperclip-liveness-model-done", "title": "What Does Done Even Mean? Agents and Paperclip's Liveness Model", "speaker": "Dotta", "company": "Paperclip", "themes": ["agentic-engineering", "coding-agents", "evals-benchmarks"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "warns", "topic": "agents outpacing verification", "text": "Agents can now create more work than humans have time to verify, a new failure mode.", "quote": "agents can actually create more work than humans have time to verify", "t": 30}, {"id": "c2", "stance": "asserts", "topic": "done as a bundle of claims", "text": "Saying a task is done is actually a bundle of separate claims, not a single status flip.", "quote": "Saying that something is done is actually a bundle of claims.", "t": 30}, {"id": "c3", "stance": "warns", "topic": "verification theater", "text": "Exhaustive human verification fails at high volume; requiring sign-off on every task produces verification theater rather than real quality control.", "quote": "exhaustive human verification fails at high volume", "t": 94}, {"id": "c4", "stance": "warns", "topic": "AI slop from unchecked liveliness", "text": "Tasks kept fully live with no approvals produce AI slop with no quality control, worse than producing nothing over a long period.", "quote": "If you have tasks that are completely alive with no approvals, then what you get is this classic AI slop because you're producing a lot of things with kind of no quality control and it's worse than creating nothing after a long period of time", "t": 156}, {"id": "c5", "stance": "recommends", "topic": "three control-plane invariants", "text": "A control plane for agentic work should ensure productive work continues, only real blockers stop work, and infinite loops are bounded.", "quote": "You want to ensure that productive work continues. You want to make sure that only real blockers stop work. And you want to make sure that infinite loops are bounded", "t": 219}, {"id": "c6", "stance": "asserts", "topic": "harness-agnostic watchdog", "text": "Paperclip's watchdog agent enforces goal completion across any harness (Pi, OpenGL, Hermes, Claude Code, Codex) through one consistent interface.", "quote": "the watchdog within Paperclip is harness agnostic. You can use it with Pi, OpenGL, Hermes, Claude Code, Codex, whatever you're using, you have one consistent interface", "t": 281}, {"id": "c7", "stance": "recommends", "topic": "done as object not boolean", "text": "Teams should stop treating 'done' as a boolean and treat it as an object with multiple fields.", "quote": "one of the best pieces of advice we have is that you stop treating done as a Boolean and treat it more like an object", "t": 313}, {"id": "c8", "stance": "recommends", "topic": "separate verifier from author", "text": "Separate the verifier from the author, often using a different model, such as verifying Claude-written code with Codex.", "quote": "You definitely want to separate the verifier from the author. Often, this means you're using a different model. So, if you're coding using Claude, have Codex verify", "t": 345}]}</script>
+</body></html>

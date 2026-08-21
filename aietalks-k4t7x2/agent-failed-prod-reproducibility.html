@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Your Agent Failed in Prod. Good Luck Reproducing It. — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/Lc8zRh9muoY" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 14 min</span><span class="ln"></span></div>
+<h1 class="lede">Your Agent Failed in Prod. Good Luck Reproducing It.</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Tisha Chawla &amp; Susheem Koul &middot; Microsoft</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/Lc8zRh9muoY" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/Lc8zRh9muoY</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Infra & serving</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Setting temperature to zero doesn&#x27;t make an agent reproducible -- it&#x27;s not even bitwise deterministic on real hardware because of batch-dependent floating-point ops and MoE routing, and it just repeats the same reasoning error identically.</li><li>The real target is replayability (capturing what a run did, well enough to debug it) rather than bitwise determinism (guaranteed identical output), and recording should happen at method-level &#x27;boundaries&#x27; rather than the network layer.</li><li>Chronicle&#x27;s boundary annotation records every input/output at each node so failed production traces can be replayed with the LLM stubbed out, turning them into free, rerunnable, deterministic regression tests.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>A trading agent mis-parses a dollar amount as a share quantity</span><span class="ln"></span></div>
+<div class="prose"><p>The talk&#x27;s running example: a user asks an agent to sell $1,000 of stock, but the agent puts the raw number 1,000 into the order quantity field instead of computing shares, selling 1,000 shares (~$190,000) instead of $1,000. The API returned a clean 200 OK with zero exceptions or alerts, so nothing in the dashboards flagged the error.</p></div>
+<div class="quote"><p>&ldquo;Instead of doing the math, the agent sells the raw number 1,000 and dumps it straight into the quantity field&rdquo;</p><a href="https://youtu.be/Lc8zRh9muoY?t=94" target="_blank">&#9654; watch at 01:34</a></div>
+<figure class="slide"><a href="https://youtu.be/Lc8zRh9muoY?t=80" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s00_80.webp" alt="A trading agent mis-parses a dollar amount as a share quantity"></a><figcaption>Slide at 01:20 &middot; A trading agent mis-parses a dollar amount as a share quantity &middot; <a href="https://youtu.be/Lc8zRh9muoY?t=80" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Temperature zero doesn&#x27;t fix or reliably reproduce the bug</span><span class="ln"></span></div>
+<div class="prose"><p>The speakers argue that setting temperature to zero is a common but flawed reflex: it doesn&#x27;t fix a broken reasoning path, it just makes the model repeat the same logical error the same way. They cite hardware-level non-determinism -- floating-point non-associativity, batch-dependent execution, and mixture-of-experts routing that depends on what else is in the batch -- as reasons temperature zero isn&#x27;t even truly bitwise deterministic on real GPU infrastructure.</p></div>
+<div class="quote"><p>&ldquo;Setting the temperature to zero doesn&#x27;t fix a broken reasoning path. It just means the model is going to make the exact same logical error, the exact same way, at the exact same time&rdquo;</p><a href="https://youtu.be/Lc8zRh9muoY?t=157" target="_blank">&#9654; watch at 02:37</a></div><div class="quote"><p>&ldquo;Running the same prompt a thousand times can still return dozens of completely different responses just due to the underlying GPU non-determinism and the MOE architectures which are there&rdquo;</p><a href="https://youtu.be/Lc8zRh9muoY?t=189" target="_blank">&#9654; watch at 03:09</a></div>
+<figure class="slide"><a href="https://youtu.be/Lc8zRh9muoY?t=140" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s02_140.webp" alt="Temperature zero doesn&#x27;t fix or reliably reproduce the bug"></a><figcaption>Slide at 02:20 &middot; Temperature zero doesn&#x27;t fix or reliably reproduce the bug &middot; <a href="https://youtu.be/Lc8zRh9muoY?t=140" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Replayability, not bitwise determinism, is the right target</span><span class="ln"></span></div>
+<div class="prose"><p>The speakers distinguish bitwise determinism (same input, same output -- not available from hosted APIs and not actually wanted, since randomness is part of what makes the model good) from replayability (capturing a run well enough to debug it later). They recommend recording at method-level &#x27;boundaries&#x27; rather than the network layer, since large parts of an agent&#x27;s work (local retrieval, in-process tools, memory) never touch the network.</p></div>
+<div class="quote"><p>&ldquo;The other one is replayability, which is re-validates a run that already happened well enough to debug it. That&#x27;s observability. You don&#x27;t need the model deterministic. You need the run recorded, and you don&#x27;t freeze the model. You capture what it did&rdquo;</p><a href="https://youtu.be/Lc8zRh9muoY?t=344" target="_blank">&#9654; watch at 05:44</a></div><div class="quote"><p>&ldquo;Record at the boundary instead because you need to capture what enters each node and what leaves it&rdquo;</p><a href="https://youtu.be/Lc8zRh9muoY?t=374" target="_blank">&#9654; watch at 06:14</a></div>
+<figure class="slide"><a href="https://youtu.be/Lc8zRh9muoY?t=360" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s08_360.webp" alt="Replayability, not bitwise determinism, is the right target"></a><figcaption>Slide at 06:00 &middot; Replayability, not bitwise determinism, is the right target &middot; <a href="https://youtu.be/Lc8zRh9muoY?t=360" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Chronicle: boundary annotations turn failed traces into test cases</span><span class="ln"></span></div>
+<div class="prose"><p>Chronicle is a proof-of-concept tool that annotates any node (tool call, LLM call, retrieval) with a boundary annotation recording every input/output pair plus metadata like model or code version. Because the LLM can&#x27;t be controlled, the recommended fix is guardrails on tools; recorded traces can then be replayed with every node except the changed one stubbed, so a full agent run becomes a rerunnable, free, model-free test case for deterministic nodes, while subjective aspects like tone or trajectory still need LLM-as-judge behavioral testing.</p></div>
+<div class="quote"><p>&ldquo;You cannot control the LLM. That&#x27;s what this entire discussion is about. You cannot enforce bitwise determinism. What you can do is you can put guardrails on your tools to enforce some level of uh credibility on your production agent&rdquo;</p><a href="https://youtu.be/Lc8zRh9muoY?t=589" target="_blank">&#9654; watch at 09:49</a></div><div class="quote"><p>&ldquo;Now, when we talk about testing in AI agents, I want to draw a very clear distinction here. There are two ways of testing AI agents, and both of them are equally important&rdquo;</p><a href="https://youtu.be/Lc8zRh9muoY?t=716" target="_blank">&#9654; watch at 11:56</a></div><div class="quote"><p>&ldquo;keep the generation time variation alive. Don&#x27;t try to pin the temperature to zero. After all, that is what brings the agency into your agent&rdquo;</p><a href="https://youtu.be/Lc8zRh9muoY?t=808" target="_blank">&#9654; watch at 13:28</a></div>
+<figure class="slide"><a href="https://youtu.be/Lc8zRh9muoY?t=510" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s14_510.webp" alt="Chronicle: boundary annotations turn failed traces into test cases"></a><figcaption>Slide at 08:30 &middot; Chronicle: boundary annotations turn failed traces into test cases &middot; <a href="https://youtu.be/Lc8zRh9muoY?t=510" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The deterministic-vs-behavioral testing split maps well onto the broader agent-testing problem of separating what can be pinned down (tool calls, guardrails) from what can&#x27;t (LLM judgment calls), and the boundary-annotation pattern looks portable to any agent framework with a clear node/edge structure, not just this specific trading example (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/Lc8zRh9muoY?t=80" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s00_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=110" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s01_110.webp" alt="slide at 01:50"><div class="ts">01:50</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=140" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s02_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=180" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s03_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=190" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s04_190.webp" alt="slide at 03:10"><div class="ts">03:10</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=200" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s05_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=210" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s06_210.webp" alt="slide at 03:30"><div class="ts">03:30</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=300" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s07_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=360" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s08_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=380" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s09_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=410" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s10_410.webp" alt="slide at 06:50"><div class="ts">06:50</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=420" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s11_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=430" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s12_430.webp" alt="slide at 07:10"><div class="ts">07:10</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=480" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s13_480.webp" alt="slide at 08:00"><div class="ts">08:00</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=510" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s14_510.webp" alt="slide at 08:30"><div class="ts">08:30</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=780" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s15_780.webp" alt="slide at 13:00"><div class="ts">13:00</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=790" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s16_790.webp" alt="slide at 13:10"><div class="ts">13:10</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=810" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s17_810.webp" alt="slide at 13:30"><div class="ts">13:30</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=820" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s18_820.webp" alt="slide at 13:40"><div class="ts">13:40</div></a><a href="https://youtu.be/Lc8zRh9muoY?t=840" target="_blank"><img loading="lazy" src="img/agent-failed-prod-reproducibility/s19_840.webp" alt="slide at 14:00"><div class="ts">14:00</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">warns</td><td>If a failed agent run can&#x27;t be reproduced, it can&#x27;t be debugged, and you can&#x27;t promise the same failure won&#x27;t recur for the next user.</td><td class="tt"><a href="https://youtu.be/Lc8zRh9muoY?t=31" target="_blank">00:31</a></td></tr><tr><td class="st">asserts</td><td>The agent mis-parsed a $1,000 sell request, putting the raw number 1,000 into the order quantity field instead of computing shares.</td><td class="tt"><a href="https://youtu.be/Lc8zRh9muoY?t=94" target="_blank">01:34</a></td></tr><tr><td class="st">warns</td><td>Setting temperature to zero doesn&#x27;t fix a broken reasoning path; it just makes the model repeat the same logical error identically.</td><td class="tt"><a href="https://youtu.be/Lc8zRh9muoY?t=157" target="_blank">02:37</a></td></tr><tr><td class="st">warns</td><td>Running the same prompt at temperature zero a thousand times can still return dozens of different responses due to GPU non-determinism and MoE routing.</td><td class="tt"><a href="https://youtu.be/Lc8zRh9muoY?t=189" target="_blank">03:09</a></td></tr><tr><td class="st">recommends</td><td>The goal should be replayability (capturing a run well enough to debug it) rather than bitwise determinism, which hosted APIs don&#x27;t provide and which isn&#x27;t actually desirable.</td><td class="tt"><a href="https://youtu.be/Lc8zRh9muoY?t=344" target="_blank">05:44</a></td></tr><tr><td class="st">recommends</td><td>Recording should happen at method-level boundaries rather than the network layer, since much of an agent&#x27;s work never touches the network.</td><td class="tt"><a href="https://youtu.be/Lc8zRh9muoY?t=374" target="_blank">06:14</a></td></tr><tr><td class="st">recommends</td><td>Since you cannot control or make the LLM bitwise deterministic, the fix is putting guardrails on the tools it calls.</td><td class="tt"><a href="https://youtu.be/Lc8zRh9muoY?t=589" target="_blank">09:49</a></td></tr><tr><td class="st">asserts</td><td>Testing AI agents splits into deterministic testing and behavioral testing, both equally important.</td><td class="tt"><a href="https://youtu.be/Lc8zRh9muoY?t=716" target="_blank">11:56</a></td></tr><tr><td class="st">recommends</td><td>Don&#x27;t pin temperature to zero -- the generation-time variation is what brings agency into the agent.</td><td class="tt"><a href="https://youtu.be/Lc8zRh9muoY?t=808" target="_blank">13:28</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "Lc8zRh9muoY", "slug": "agent-failed-prod-reproducibility", "title": "Your Agent Failed in Prod. Good Luck Reproducing It.", "speaker": "Tisha Chawla & Susheem Koul", "company": "Microsoft", "themes": ["agentic-engineering", "evals-benchmarks", "infra-serving"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "warns", "topic": "irreproducibility blocks debugging", "text": "If a failed agent run can't be reproduced, it can't be debugged, and you can't promise the same failure won't recur for the next user.", "quote": "You can't reproduce it. And if you can't reproduce it, you can't debug it. And if you can't debug it, you can't promise it won't happen to your next customer or user", "t": 31}, {"id": "c2", "stance": "asserts", "topic": "dollar-to-share bug", "text": "The agent mis-parsed a $1,000 sell request, putting the raw number 1,000 into the order quantity field instead of computing shares.", "quote": "Instead of doing the math, the agent sells the raw number 1,000 and dumps it straight into the quantity field", "t": 94}, {"id": "c3", "stance": "warns", "topic": "temperature zero misconception", "text": "Setting temperature to zero doesn't fix a broken reasoning path; it just makes the model repeat the same logical error identically.", "quote": "Setting the temperature to zero doesn't fix a broken reasoning path. It just means the model is going to make the exact same logical error, the exact same way, at the exact same time", "t": 157}, {"id": "c4", "stance": "warns", "topic": "GPU non-determinism", "text": "Running the same prompt at temperature zero a thousand times can still return dozens of different responses due to GPU non-determinism and MoE routing.", "quote": "Running the same prompt a thousand times can still return dozens of completely different responses just due to the underlying GPU non-determinism and the MOE architectures which are there", "t": 189}, {"id": "c5", "stance": "recommends", "topic": "replayability over bitwise determinism", "text": "The goal should be replayability (capturing a run well enough to debug it) rather than bitwise determinism, which hosted APIs don't provide and which isn't actually desirable.", "quote": "The other one is replayability, which is re-validates a run that already happened well enough to debug it. That's observability. You don't need the model deterministic. You need the run recorded, and you don't freeze the model. You capture what it did", "t": 344}, {"id": "c6", "stance": "recommends", "topic": "record at the boundary", "text": "Recording should happen at method-level boundaries rather than the network layer, since much of an agent's work never touches the network.", "quote": "Record at the boundary instead because you need to capture what enters each node and what leaves it", "t": 374}, {"id": "c7", "stance": "recommends", "topic": "guardrails since LLM can't be controlled", "text": "Since you cannot control or make the LLM bitwise deterministic, the fix is putting guardrails on the tools it calls.", "quote": "You cannot control the LLM. That's what this entire discussion is about. You cannot enforce bitwise determinism. What you can do is you can put guardrails on your tools to enforce some level of uh credibility on your production agent", "t": 589}, {"id": "c8", "stance": "asserts", "topic": "two kinds of agent testing", "text": "Testing AI agents splits into deterministic testing and behavioral testing, both equally important.", "quote": "Now, when we talk about testing in AI agents, I want to draw a very clear distinction here. There are two ways of testing AI agents, and both of them are equally important", "t": 716}, {"id": "c9", "stance": "recommends", "topic": "keep temperature nonzero", "text": "Don't pin temperature to zero -- the generation-time variation is what brings agency into the agent.", "quote": "keep the generation time variation alive. Don't try to pin the temperature to zero. After all, that is what brings the agency into your agent", "t": 808}]}</script>
+</body></html>

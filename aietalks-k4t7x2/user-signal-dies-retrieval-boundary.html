@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>User Signal Dies at the Retrieval Boundary — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/Jx4ZFEAq6bY" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 15 min</span><span class="ln"></span></div>
+<h1 class="lede">User Signal Dies at the Retrieval Boundary</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Sonam Pankaj &middot; StarlightSearch</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/Jx4ZFEAq6bY" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/Jx4ZFEAq6bY</a></span>
+</div>
+<div class="chips"><span class="chip hot">Memory</span><span class="chip hot">Context engineering</span><span class="chip hot">Evals & benchmarks</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>73% of retrieval pipeline failures come from retrieval being static, not from generation or context stuffing, per the speaker&#x27;s cited figure.</li><li>Existing memory systems (LangChain, Mem0) retrieve by embedding similarity and don&#x27;t learn from whether a memory actually helped or hurt the outcome; Reflect introduces a utility score that weights similarity by historical usefulness.</li><li>On TAU-bench, memory alone moved pass rate from 66% to 76%, and baking reasoning into &#x27;skills&#x27; after enough memories accumulate raised it further to 80%.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Retrieval, not generation, is the reported failure point</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker cites a figure that 73% of agent pipeline failures stem from static retrieval rather than generation or context stuffing, and separately cites an 85% AI project failure rate reported by Gartner. She frames current memory systems as storing user preferences and conversation history for chat personalization rather than functioning as self-improving learning systems for production agents.</p></div>
+<div class="quote"><p>&ldquo;73% of our uh pipelines fails because of retrieval, not generation, and context stuffing&rdquo;</p><a href="https://youtu.be/Jx4ZFEAq6bY?t=95" target="_blank">&#9654; watch at 01:35</a></div><div class="quote"><p>&ldquo;Gartner reported 85% of AI just failing traction. So, it&#x27;s in McKinsey&#x27;s 2025 report&rdquo;</p><a href="https://youtu.be/Jx4ZFEAq6bY?t=85" target="_blank">&#9654; watch at 01:25</a></div><div class="quote"><p>&ldquo;chat experience is not self-improving learning systems for production&rdquo;</p><a href="https://youtu.be/Jx4ZFEAq6bY?t=188" target="_blank">&#9654; watch at 03:08</a></div>
+<figure class="slide"><a href="https://youtu.be/Jx4ZFEAq6bY?t=100" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s04_100.webp" alt="Retrieval, not generation, is the reported failure point"></a><figcaption>Slide at 01:40 &middot; Retrieval, not generation, is the reported failure point &middot; <a href="https://youtu.be/Jx4ZFEAq6bY?t=100" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>The missing layer between evals and agent action</span><span class="ln"></span></div>
+<div class="prose"><p>She argues observability captures every tool call and completion, and eval suites judge pass/fail on final output, but neither signal is fed back into the agent&#x27;s context or retrieval, so an agent has no access to why yesterday&#x27;s runs passed or failed. Fixing this currently requires an engineer manually rewriting prompts or redeploying after reviewing evals and traces.</p></div>
+<div class="quote"><p>&ldquo;the agent doesn&#x27;t have any access to why yesterday&#x27;s runs, uh, runs passed or failed. The eval signal dies in the dashboard&rdquo;</p><a href="https://youtu.be/Jx4ZFEAq6bY?t=173" target="_blank">&#9654; watch at 02:53</a></div>
+<figure class="slide"><a href="https://youtu.be/Jx4ZFEAq6bY?t=170" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s06_170.webp" alt="The missing layer between evals and agent action"></a><figcaption>Slide at 02:50 &middot; The missing layer between evals and agent action &middot; <a href="https://youtu.be/Jx4ZFEAq6bY?t=170" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Utility score: weighting retrieval by outcome</span><span class="ln"></span></div>
+<div class="prose"><p>Reflect (Agent RX) introduces a utility score that weights semantic similarity by whether a given memory has historically helped or hurt task execution, making outcome a first-class signal in retrieval re-ranking rather than just embedding distance. The system treats memory as reasoning about a task rather than as stored facts, and after enough memories accumulate (around 10) it bakes the pattern into an updatable &#x27;skill.&#x27;</p></div>
+<div class="quote"><p>&ldquo;you do retrieve by semantic similarity to the current task weighted by whether those memories have historically helped or hurt the execution or the outcome&rdquo;</p><a href="https://youtu.be/Jx4ZFEAq6bY?t=314" target="_blank">&#9654; watch at 05:14</a></div><div class="quote"><p>&ldquo;it treat memory as reasoning, not as facts, statistics, fact with no context and no history, but reasoning&rdquo;</p><a href="https://youtu.be/Jx4ZFEAq6bY?t=347" target="_blank">&#9654; watch at 05:47</a></div>
+<figure class="slide"><a href="https://youtu.be/Jx4ZFEAq6bY?t=300" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s11_300.webp" alt="Utility score: weighting retrieval by outcome"></a><figcaption>Slide at 05:00 &middot; Utility score: weighting retrieval by outcome &middot; <a href="https://youtu.be/Jx4ZFEAq6bY?t=300" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Benchmark results and limitations</span><span class="ln"></span></div>
+<div class="prose"><p>On TAU-bench, which measures whether agents follow policy correctly, performance moved from a 66% baseline to 76% with memory alone and to 80% with skills baked in. On an agentic benchmark resembling Humanity&#x27;s Last Exam, the baseline was 35.7%, a comparable memory system reached 58.2%, and Reflect reached 61.3%; the speaker names cold start (pure semantic search until enough reviews accumulate) as a limitation that can&#x27;t be fully solved.</p></div>
+<div class="quote"><p>&ldquo;we have seen the performance improve from 66 to 76% without baking in uh skills and with skills reflect performance at 80&rdquo;</p><a href="https://youtu.be/Jx4ZFEAq6bY?t=411" target="_blank">&#9654; watch at 06:51</a></div><div class="quote"><p>&ldquo;with the other memory system, it gets to 58.2. But with the refined memory system, uh, it gets to 61.3%&rdquo;</p><a href="https://youtu.be/Jx4ZFEAq6bY?t=495" target="_blank">&#9654; watch at 08:15</a></div><div class="quote"><p>&ldquo;in the beginning, it&#x27;s pure semantic search until, uh, enough reviews have been accumulated&rdquo;</p><a href="https://youtu.be/Jx4ZFEAq6bY?t=536" target="_blank">&#9654; watch at 08:56</a></div>
+<figure class="slide"><a href="https://youtu.be/Jx4ZFEAq6bY?t=390" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s13_390.webp" alt="Benchmark results and limitations"></a><figcaption>Slide at 06:30 &middot; Benchmark results and limitations &middot; <a href="https://youtu.be/Jx4ZFEAq6bY?t=390" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The demo (searching for a &#x27;gaming mouse&#x27; that returns nothing until a later run surfaces a wireless mouse via accumulated feedback) is a small, single-example illustration, not a controlled test, so the benchmark numbers carry more evidentiary weight than the live demo (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/Jx4ZFEAq6bY?t=20" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s00_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=50" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s01_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=70" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s02_70.webp" alt="slide at 01:10"><div class="ts">01:10</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=80" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s03_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=100" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s04_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=130" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s05_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=170" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s06_170.webp" alt="slide at 02:50"><div class="ts">02:50</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=190" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s07_190.webp" alt="slide at 03:10"><div class="ts">03:10</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=200" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s08_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=220" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s09_220.webp" alt="slide at 03:40"><div class="ts">03:40</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=280" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s10_280.webp" alt="slide at 04:40"><div class="ts">04:40</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=300" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s11_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=330" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s12_330.webp" alt="slide at 05:30"><div class="ts">05:30</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=390" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s13_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=470" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s14_470.webp" alt="slide at 07:50"><div class="ts">07:50</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=480" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s15_480.webp" alt="slide at 08:00"><div class="ts">08:00</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=490" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s16_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=520" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s17_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=580" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s18_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=600" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s19_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=620" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s20_620.webp" alt="slide at 10:20"><div class="ts">10:20</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=630" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s21_630.webp" alt="slide at 10:30"><div class="ts">10:30</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=660" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s22_660.webp" alt="slide at 11:00"><div class="ts">11:00</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=670" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s23_670.webp" alt="slide at 11:10"><div class="ts">11:10</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=710" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s24_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=760" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s25_760.webp" alt="slide at 12:40"><div class="ts">12:40</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=770" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s26_770.webp" alt="slide at 12:50"><div class="ts">12:50</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=780" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s27_780.webp" alt="slide at 13:00"><div class="ts">13:00</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=870" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s28_870.webp" alt="slide at 14:30"><div class="ts">14:30</div></a><a href="https://youtu.be/Jx4ZFEAq6bY?t=930" target="_blank"><img loading="lazy" src="img/user-signal-dies-retrieval-boundary/s29_930.webp" alt="slide at 15:30"><div class="ts">15:30</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>73% of agent pipeline failures come from retrieval being static, not from generation or context stuffing.</td><td class="tt"><a href="https://youtu.be/Jx4ZFEAq6bY?t=95" target="_blank">01:35</a></td></tr><tr><td class="st">asserts</td><td>Gartner reported 85% of AI projects failing to gain traction.</td><td class="tt"><a href="https://youtu.be/Jx4ZFEAq6bY?t=85" target="_blank">01:25</a></td></tr><tr><td class="st">warns</td><td>Existing memory systems store preferences and history for chat personalization but are not self-improving learning systems for production agents.</td><td class="tt"><a href="https://youtu.be/Jx4ZFEAq6bY?t=188" target="_blank">03:08</a></td></tr><tr><td class="st">warns</td><td>Eval and observability signals are captured but never fed back into the agent&#x27;s context, so the agent has no access to why past runs passed or failed.</td><td class="tt"><a href="https://youtu.be/Jx4ZFEAq6bY?t=173" target="_blank">02:53</a></td></tr><tr><td class="st">asserts</td><td>Utility score weights semantic similarity to the current task by whether memories have historically helped or hurt execution outcomes.</td><td class="tt"><a href="https://youtu.be/Jx4ZFEAq6bY?t=314" target="_blank">05:14</a></td></tr><tr><td class="st">asserts</td><td>Reflect treats memory as reasoning about a task rather than as stored facts without context.</td><td class="tt"><a href="https://youtu.be/Jx4ZFEAq6bY?t=347" target="_blank">05:47</a></td></tr><tr><td class="st">asserts</td><td>Memory alone improved TAU-bench performance from 66% to 76%, and skills baked in after enough memories reached 80%.</td><td class="tt"><a href="https://youtu.be/Jx4ZFEAq6bY?t=411" target="_blank">06:51</a></td></tr><tr><td class="st">asserts</td><td>On the agentic benchmark, baseline was 35.7%, a comparable memory system reached 58.2%, and the refined memory system reached 61.3%.</td><td class="tt"><a href="https://youtu.be/Jx4ZFEAq6bY?t=495" target="_blank">08:15</a></td></tr><tr><td class="st">warns</td><td>The cold-start problem, where retrieval is pure semantic search until enough reviews accumulate, cannot be fully solved by this approach.</td><td class="tt"><a href="https://youtu.be/Jx4ZFEAq6bY?t=536" target="_blank">08:56</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "Jx4ZFEAq6bY", "slug": "user-signal-dies-retrieval-boundary", "title": "User Signal Dies at the Retrieval Boundary", "speaker": "Sonam Pankaj", "company": "StarlightSearch", "themes": ["memory", "context-engineering", "evals-benchmarks"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "retrieval failure rate", "text": "73% of agent pipeline failures come from retrieval being static, not from generation or context stuffing.", "quote": "73% of our uh pipelines fails because of retrieval, not generation, and context stuffing", "t": 95}, {"id": "c2", "stance": "asserts", "topic": "AI project failure rate", "text": "Gartner reported 85% of AI projects failing to gain traction.", "quote": "Gartner reported 85% of AI just failing traction. So, it's in McKinsey's 2025 report", "t": 85}, {"id": "c3", "stance": "warns", "topic": "current memory systems are not learning systems", "text": "Existing memory systems store preferences and history for chat personalization but are not self-improving learning systems for production agents.", "quote": "chat experience is not self-improving learning systems for production", "t": 188}, {"id": "c4", "stance": "warns", "topic": "eval signal doesn't reach the agent", "text": "Eval and observability signals are captured but never fed back into the agent's context, so the agent has no access to why past runs passed or failed.", "quote": "the agent doesn't have any access to why yesterday's runs, uh, runs passed or failed. The eval signal dies in the dashboard", "t": 173}, {"id": "c5", "stance": "asserts", "topic": "utility score definition", "text": "Utility score weights semantic similarity to the current task by whether memories have historically helped or hurt execution outcomes.", "quote": "you do retrieve by semantic similarity to the current task weighted by whether those memories have historically helped or hurt the execution or the outcome", "t": 314}, {"id": "c6", "stance": "asserts", "topic": "memory as reasoning", "text": "Reflect treats memory as reasoning about a task rather than as stored facts without context.", "quote": "it treat memory as reasoning, not as facts, statistics, fact with no context and no history, but reasoning", "t": 347}, {"id": "c7", "stance": "asserts", "topic": "TAU-bench results", "text": "Memory alone improved TAU-bench performance from 66% to 76%, and skills baked in after enough memories reached 80%.", "quote": "we have seen the performance improve from 66 to 76% without baking in uh skills and with skills reflect performance at 80", "t": 411}, {"id": "c8", "stance": "asserts", "topic": "agentic benchmark results", "text": "On the agentic benchmark, baseline was 35.7%, a comparable memory system reached 58.2%, and the refined memory system reached 61.3%.", "quote": "with the other memory system, it gets to 58.2. But with the refined memory system, uh, it gets to 61.3%", "t": 495}, {"id": "c9", "stance": "warns", "topic": "cold start limitation", "text": "The cold-start problem, where retrieval is pure semantic search until enough reviews accumulate, cannot be fully solved by this approach.", "quote": "in the beginning, it's pure semantic search until, uh, enough reviews have been accumulated", "t": 536}]}</script>
+</body></html>

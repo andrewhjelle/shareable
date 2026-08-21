@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>How we taught agents to use good retrieval — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/1IdzkRVmWAA" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 14 min</span><span class="ln"></span></div>
+<h1 class="lede">How we taught agents to use good retrieval</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Hanna Lichtenberg &middot; Mixedbread AI</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/1IdzkRVmWAA" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/1IdzkRVmWAA</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Evals & benchmarks</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Mixedbread found a large &#x27;knowledge gap&#x27; between LLM reasoning and retrieval: giving a model default tools instead of the oracle-correct documents drops accuracy from 93% to 9% on BrowseComp Plus and from 64% to 8% on Office QA Pro.</li><li>A dedicated Mixedbread search tool using four bounded search rounds with parallel queries recovers nearly all of that gap on both benchmarks.</li><li>Their trained small search agent hit NDCG@10 of 0.4, versus 0.18 for the best published GPT multi-hop agent, and topped the Match QA leaderboard at 93.4% accuracy paired with Gemini 3.5 Flash.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The oracle vs. default-tools gap</span><span class="ln"></span></div>
+<div class="prose"><p>Mixedbread benchmarked models on BrowseComp Plus (complex queries over a 100,000-document corpus) and Office QA Pro (complex questions over a century of US Treasury documents). Oracle performance -- giving the model the correct documents directly -- reaches 93% on BrowseComp Plus and 64% on Office QA Pro, but a model like Codex using its default search tools drops to single digits on both.</p></div>
+<div class="quote"><p>&ldquo;We see for Office for BrowseComp it&#x27;s 93% and for Office QA Pro it&#x27;s 64%.&rdquo;</p><a href="https://youtu.be/1IdzkRVmWAA?t=127" target="_blank">&#9654; watch at 02:07</a></div><div class="quote"><p>&ldquo;For BrowseComp it&#x27;s nine points and for Office QA Pro it&#x27;s eight points.&rdquo;</p><a href="https://youtu.be/1IdzkRVmWAA?t=158" target="_blank">&#9654; watch at 02:38</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>A dedicated search tool nearly closes the gap</span><span class="ln"></span></div>
+<div class="prose"><p>Swapping in Mixedbread&#x27;s own search tool, using latent interaction retrieval, recovers most of the lost performance: the gap to oracle shrinks to about three points on BrowseComp Plus and is almost entirely closed on Office QA Pro, indicating the bottleneck is retrieval access, not model reasoning.</p></div>
+<div class="quote"><p>&ldquo;the difference between the Oracle and the uh GPT-5 with Mixbread is just three point and for Office QA Pro we even almost completely closed the gap.&rdquo;</p><a href="https://youtu.be/1IdzkRVmWAA?t=188" target="_blank">&#9654; watch at 03:08</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Why agents write bad search queries</span><span class="ln"></span></div>
+<div class="prose"><p>Left to their default tools, models produce keyword-stuffed, near-gibberish queries because they are mostly trained on coding tasks that use grep-style regular-expression search, plus human-oriented web search habits and benchmark biases toward entity-based, BM25-favoring queries.</p></div>
+<div class="quote"><p>&ldquo;senator woman questions billionaires not a company then okay thank you staff will check hearing&rdquo;</p><a href="https://youtu.be/1IdzkRVmWAA?t=219" target="_blank">&#9654; watch at 03:39</a></div><div class="quote"><p>&ldquo;the models write these type of queries is they&#x27;re mostly trained for coding task, like for coding agents, which are then optimized for code base exploration using tools like grep.&rdquo;</p><a href="https://youtu.be/1IdzkRVmWAA?t=250" target="_blank">&#9654; watch at 04:10</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>A bounded, tool-diverse search harness</span><span class="ln"></span></div>
+<div class="prose"><p>Mixedbread&#x27;s agent harness offers four tools -- wide overview search, full-payload semantic search, metadata-facet filtering, and grep -- capped at four search rounds, with parallel searches allowed within each round. The harness also reframes query-writing as &#x27;describe one concise sentence of what you want to find&#x27; instead of &#x27;write a search query,&#x27; to steer the model away from keyword-stuffed BM25-style queries.</p></div>
+<div class="quote"><p>&ldquo;it has a maximum four search rounds, but within each search round it can have parallel searches&rdquo;</p><a href="https://youtu.be/1IdzkRVmWAA?t=408" target="_blank">&#9654; watch at 06:48</a></div><div class="quote"><p>&ldquo;We kind of trick the um model into not thinking it has to write the typical BM25 base query by just instructing it to write one concise sentence describing what it wants to find&rdquo;</p><a href="https://youtu.be/1IdzkRVmWAA?t=533" target="_blank">&#9654; watch at 08:53</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Training and benchmark results</span><span class="ln"></span></div>
+<div class="prose"><p>A small model trained via supervised fine-tuning plus on-policy reinforcement learning (with a retrieval reward and an LLM-judged trajectory reward) achieved an NDCG@10 of 0.4 on the BrowseComp benchmark, versus 0.18 for the best-performing published GPT multi-hop agent. Their production beta search agent topped the Match QA leaderboard with 93.4% accuracy when paired with Gemini 3.5 Flash.</p></div>
+<div class="quote"><p>&ldquo;we achieved an NDCG of 10 at 10 of 0.4, which is a huge jump um towards the model that performed best on the paper of this benchmark, which is the GPT multi-hop agent, and which achieves 0. 18.&rdquo;</p><a href="https://youtu.be/1IdzkRVmWAA?t=787" target="_blank">&#9654; watch at 13:07</a></div><div class="quote"><p>&ldquo;this agent is top one on the snowflakes match QA benchmark, achieving an accuracy of 93.4 when we give the Gemini 3.5 flash model our genetic search as search tool.&rdquo;</p><a href="https://youtu.be/1IdzkRVmWAA?t=819" target="_blank">&#9654; watch at 13:39</a></div>
+
+</section>
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Oracle performance, giving the model the correct documents directly, reaches 93% on BrowseComp Plus and 64% on Office QA Pro.</td><td class="tt"><a href="https://youtu.be/1IdzkRVmWAA?t=127" target="_blank">02:07</a></td></tr><tr><td class="st">warns</td><td>Using default search tools instead of oracle documents causes accuracy to crash to single digits on both benchmarks.</td><td class="tt"><a href="https://youtu.be/1IdzkRVmWAA?t=158" target="_blank">02:38</a></td></tr><tr><td class="st">asserts</td><td>Swapping in Mixedbread&#x27;s dedicated search tool nearly closes the gap to oracle performance on both benchmarks.</td><td class="tt"><a href="https://youtu.be/1IdzkRVmWAA?t=188" target="_blank">03:08</a></td></tr><tr><td class="st">warns</td><td>Models given default search tools sometimes produce near-gibberish keyword-stuffed queries.</td><td class="tt"><a href="https://youtu.be/1IdzkRVmWAA?t=219" target="_blank">03:39</a></td></tr><tr><td class="st">asserts</td><td>Models write keyword-stuffed queries because they are mostly trained on coding tasks optimized for grep-style code exploration.</td><td class="tt"><a href="https://youtu.be/1IdzkRVmWAA?t=250" target="_blank">04:10</a></td></tr><tr><td class="st">recommends</td><td>The agent&#x27;s harness caps exploration at four search rounds while allowing parallel searches within each round.</td><td class="tt"><a href="https://youtu.be/1IdzkRVmWAA?t=408" target="_blank">06:48</a></td></tr><tr><td class="st">recommends</td><td>Instructing the model to describe one concise sentence of what it wants to find, rather than &#x27;write a search query,&#x27; avoids default BM25-style keyword queries.</td><td class="tt"><a href="https://youtu.be/1IdzkRVmWAA?t=533" target="_blank">08:53</a></td></tr><tr><td class="st">asserts</td><td>The trained search agent achieved an NDCG@10 of 0.4, well above the 0.18 achieved by the best published GPT multi-hop agent on the same benchmark.</td><td class="tt"><a href="https://youtu.be/1IdzkRVmWAA?t=787" target="_blank">13:07</a></td></tr><tr><td class="st">asserts</td><td>Mixedbread&#x27;s production search agent topped the Match QA leaderboard at 93.4% accuracy when paired with Gemini 3.5 Flash.</td><td class="tt"><a href="https://youtu.be/1IdzkRVmWAA?t=819" target="_blank">13:39</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "1IdzkRVmWAA", "slug": "agents-good-retrieval-mixedbread", "title": "How we taught agents to use good retrieval", "speaker": "Hanna Lichtenberg", "company": "Mixedbread AI", "themes": ["agentic-engineering", "evals-benchmarks"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "oracle performance", "text": "Oracle performance, giving the model the correct documents directly, reaches 93% on BrowseComp Plus and 64% on Office QA Pro.", "quote": "We see for Office for BrowseComp it's 93% and for Office QA Pro it's 64%.", "t": 127}, {"id": "c2", "stance": "warns", "topic": "default tools performance drop", "text": "Using default search tools instead of oracle documents causes accuracy to crash to single digits on both benchmarks.", "quote": "For BrowseComp it's nine points and for Office QA Pro it's eight points.", "t": 158}, {"id": "c3", "stance": "asserts", "topic": "gap recovered by better search", "text": "Swapping in Mixedbread's dedicated search tool nearly closes the gap to oracle performance on both benchmarks.", "quote": "the difference between the Oracle and the uh GPT-5 with Mixbread is just three point and for Office QA Pro we even almost completely closed the gap.", "t": 188}, {"id": "c4", "stance": "warns", "topic": "gibberish queries", "text": "Models given default search tools sometimes produce near-gibberish keyword-stuffed queries.", "quote": "senator woman questions billionaires not a company then okay thank you staff will check hearing", "t": 219}, {"id": "c5", "stance": "asserts", "topic": "cause of bad queries", "text": "Models write keyword-stuffed queries because they are mostly trained on coding tasks optimized for grep-style code exploration.", "quote": "the models write these type of queries is they're mostly trained for coding task, like for coding agents, which are then optimized for code base exploration using tools like grep.", "t": 250}, {"id": "c6", "stance": "recommends", "topic": "bounded parallel search rounds", "text": "The agent's harness caps exploration at four search rounds while allowing parallel searches within each round.", "quote": "it has a maximum four search rounds, but within each search round it can have parallel searches", "t": 408}, {"id": "c7", "stance": "recommends", "topic": "query framing trick", "text": "Instructing the model to describe one concise sentence of what it wants to find, rather than 'write a search query,' avoids default BM25-style keyword queries.", "quote": "We kind of trick the um model into not thinking it has to write the typical BM25 base query by just instructing it to write one concise sentence describing what it wants to find", "t": 533}, {"id": "c8", "stance": "asserts", "topic": "training result vs published baseline", "text": "The trained search agent achieved an NDCG@10 of 0.4, well above the 0.18 achieved by the best published GPT multi-hop agent on the same benchmark.", "quote": "we achieved an NDCG of 10 at 10 of 0.4, which is a huge jump um towards the model that performed best on the paper of this benchmark, which is the GPT multi-hop agent, and which achieves 0. 18.", "t": 787}, {"id": "c9", "stance": "asserts", "topic": "production leaderboard result", "text": "Mixedbread's production search agent topped the Match QA leaderboard at 93.4% accuracy when paired with Gemini 3.5 Flash.", "quote": "this agent is top one on the snowflakes match QA benchmark, achieving an accuracy of 93.4 when we give the Gemini 3.5 flash model our genetic search as search tool.", "t": 819}]}</script>
+</body></html>

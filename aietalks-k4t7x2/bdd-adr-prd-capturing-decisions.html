@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>BDD, ADR, PRD, WTF: Capturing Decisions for Humans and AI Alike — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/504PvfXou5Y" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 12 min</span><span class="ln"></span></div>
+<h1 class="lede">BDD, ADR, PRD, WTF: Capturing Decisions for Humans and AI Alike</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Michal Cichra &middot; Safe Intelligence</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/504PvfXou5Y" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/504PvfXou5Y</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Context engineering</span><span class="chip hot">Product & UX</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>ADRs record why architecture decisions were made and how they&#x27;re enforced; PRDs record why a feature exists and the user journey through it (c1, c2).</li><li>BDD/Cucumber gives spec-driven development an executable, human-readable verification layer that closes the gap between a markdown spec and proof the product actually behaves that way (c3).</li><li>The team enforces all of this with a generic harness of git hooks, CI, and linters that reject and redirect agents back to the relevant document; despite running 20-50 context compacts per session, the speaker reports no fear of them because the important rules get re-looked-up (c6, c7, c9).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Limited context is a human and AI problem</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker opens with the five-monkeys-and-a-ladder parable to argue humans and LLMs share the same failure mode: limited context. People forget and eventually leave; LLM context compacts and the model has no memory. Teams end up enforcing rules nobody present can explain, a problem AI can surface much sooner than it used to take with human teams.</p></div>
+<div class="quote"><p>&ldquo;they have beaten up every monkey that tried to climb the ladder not knowing why. So, humans and LLMs, they suffer from the same trait.&rdquo;</p><a href="https://youtu.be/504PvfXou5Y?t=63" target="_blank">&#9654; watch at 01:03</a></div>
+<figure class="slide"><a href="https://youtu.be/504PvfXou5Y?t=80" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s01_80.webp" alt="Limited context is a human and AI problem"></a><figcaption>Slide at 01:20 &middot; Limited context is a human and AI problem &middot; <a href="https://youtu.be/504PvfXou5Y?t=80" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>ADRs and PRDs record the why</span><span class="ln"></span></div>
+<div class="prose"><p>An architecture decision record (ADR) captures why a technical decision was made and how it&#x27;s enforced, with examples, reference docs, and code snippets; it can also scope itself to specific files or folders. A product requirements document (PRD) is lighter: it captures why a feature exists, what problem it solves, and the user&#x27;s journey through it, and it&#x27;s meant for the human 6 weeks later as much as for the agent.</p></div>
+<div class="quote"><p>&ldquo;It records why you do something and how you enforce it or how you want to do that.&rdquo;</p><a href="https://youtu.be/504PvfXou5Y?t=127" target="_blank">&#9654; watch at 02:07</a></div><div class="quote"><p>&ldquo;PRD is a product requirements document. Uh that&#x27;s something lighter when you&#x27;re building a feature, you describe why that thing exists and what problems it solves.&rdquo;</p><a href="https://youtu.be/504PvfXou5Y?t=190" target="_blank">&#9654; watch at 03:10</a></div>
+<figure class="slide"><a href="https://youtu.be/504PvfXou5Y?t=160" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s02_160.webp" alt="ADRs and PRDs record the why"></a><figcaption>Slide at 02:40 &middot; ADRs and PRDs record the why &middot; <a href="https://youtu.be/504PvfXou5Y?t=160" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>BDD/Cucumber closes the spec-to-verification gap</span><span class="ln"></span></div>
+<div class="prose"><p>Spec-driven development leaves open the question of how you validate the product actually adheres to the spec, and AI-written tests are harder to read than AI-written code. The speaker&#x27;s answer is an old tool, Cucumber-style BDD, used as an intermediate layer that&#x27;s both executable and human-readable, and that can link directly back to PRDs and critical user journeys.</p></div>
+<div class="quote"><p>&ldquo;And BDD is not new and shiny, but it&#x27;s it can be executable and readable. So, enter Cucumber. It&#x27;s almost forgotten, suddenly useful again.&rdquo;</p><a href="https://youtu.be/504PvfXou5Y?t=286" target="_blank">&#9654; watch at 04:46</a></div>
+<figure class="slide"><a href="https://youtu.be/504PvfXou5Y?t=280" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s06_280.webp" alt="BDD/Cucumber closes the spec-to-verification gap"></a><figcaption>Slide at 04:40 &middot; BDD/Cucumber closes the spec-to-verification gap &middot; <a href="https://youtu.be/504PvfXou5Y?t=280" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Design systems for consistent AI-built UI</span><span class="ln"></span></div>
+<div class="prose"><p>Making consistent UIs with agents is described as another level of hard, so the team documents rules like button color, shape, and size, plus constraints such as only one primary button visible per page, then builds and reuses components bottom-up from small pieces so both humans and agents can check adherence.</p></div>
+<div class="quote"><p>&ldquo;making consistent UIs with agents is just another level of hard. Like design system and pattern library are the way to build consistent UIs.&rdquo;</p><a href="https://youtu.be/504PvfXou5Y?t=347" target="_blank">&#9654; watch at 05:47</a></div>
+<figure class="slide"><a href="https://youtu.be/504PvfXou5Y?t=350" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s07_350.webp" alt="Design systems for consistent AI-built UI"></a><figcaption>Slide at 05:50 &middot; Design systems for consistent AI-built UI &middot; <a href="https://youtu.be/504PvfXou5Y?t=350" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>A harness of git hooks, CI, and linters enforces it all</span><span class="ln"></span></div>
+<div class="prose"><p>The enforcement loop is generic: agents deliver a pull request through git hooks that run the same tasks later executed on CI, covering linting, formatting, type checking, code duplication, and architecture checks; style and formatting debates are no longer up for discussion because they&#x27;re automated. Architecture is enforced at the module level, e.g. the end-to-end BDD test suite is forbidden from importing any module that could access the database, so it&#x27;s structurally limited to browser-level interaction. The speaker reports running 20-50 context compacts per session over the last half year and says it&#x27;s fine because the important rules survive and the agent re-looks them up.</p></div>
+<div class="quote"><p>&ldquo;we use git hooks git hooks to run predefined tasks and these tasks are later executed on a CI.&rdquo;</p><a href="https://youtu.be/504PvfXou5Y?t=471" target="_blank">&#9654; watch at 07:51</a></div><div class="quote"><p>&ldquo;our end-to-end BDD test suite cannot access database. So, we forbid from accessing any module that could access database&rdquo;</p><a href="https://youtu.be/504PvfXou5Y?t=533" target="_blank">&#9654; watch at 08:53</a></div><div class="quote"><p>&ldquo;It is very context heavy. Like you can run out of half of the context in um starting the research.&rdquo;</p><a href="https://youtu.be/504PvfXou5Y?t=656" target="_blank">&#9654; watch at 10:56</a></div><div class="quote"><p>&ldquo;Um but I have no fear of context compacts. Like this actually for like last half year actually works, I think.&rdquo;</p><a href="https://youtu.be/504PvfXou5Y?t=656" target="_blank">&#9654; watch at 10:56</a></div>
+<figure class="slide"><a href="https://youtu.be/504PvfXou5Y?t=450" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s08_450.webp" alt="A harness of git hooks, CI, and linters enforces it all"></a><figcaption>Slide at 07:30 &middot; A harness of git hooks, CI, and linters enforces it all &middot; <a href="https://youtu.be/504PvfXou5Y?t=450" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The throughline is that none of ADR/PRD/BDD/design-system is novel on its own -- what&#x27;s new is treating them as the retrieval substrate an agent re-queries every time it loses context, which reframes documentation from a human-onboarding artifact into infrastructure the harness depends on (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/504PvfXou5Y?t=10" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="https://youtu.be/504PvfXou5Y?t=80" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s01_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="https://youtu.be/504PvfXou5Y?t=160" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s02_160.webp" alt="slide at 02:40"><div class="ts">02:40</div></a><a href="https://youtu.be/504PvfXou5Y?t=190" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s03_190.webp" alt="slide at 03:10"><div class="ts">03:10</div></a><a href="https://youtu.be/504PvfXou5Y?t=210" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s04_210.webp" alt="slide at 03:30"><div class="ts">03:30</div></a><a href="https://youtu.be/504PvfXou5Y?t=240" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s05_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="https://youtu.be/504PvfXou5Y?t=280" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s06_280.webp" alt="slide at 04:40"><div class="ts">04:40</div></a><a href="https://youtu.be/504PvfXou5Y?t=350" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s07_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="https://youtu.be/504PvfXou5Y?t=450" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s08_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="https://youtu.be/504PvfXou5Y?t=580" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s09_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="https://youtu.be/504PvfXou5Y?t=720" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s10_720.webp" alt="slide at 12:00"><div class="ts">12:00</div></a><a href="https://youtu.be/504PvfXou5Y?t=730" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s11_730.webp" alt="slide at 12:10"><div class="ts">12:10</div></a><a href="https://youtu.be/504PvfXou5Y?t=740" target="_blank"><img loading="lazy" src="img/bdd-adr-prd-capturing-decisions/s12_740.webp" alt="slide at 12:20"><div class="ts">12:20</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>An ADR records why an architecture decision was made and how it&#x27;s enforced, with reference docs and code examples.</td><td class="tt"><a href="https://youtu.be/504PvfXou5Y?t=127" target="_blank">02:07</a></td></tr><tr><td class="st">asserts</td><td>A PRD is a lighter document describing why a feature exists, what problem it solves, and the user journey.</td><td class="tt"><a href="https://youtu.be/504PvfXou5Y?t=190" target="_blank">03:10</a></td></tr><tr><td class="st">recommends</td><td>BDD via Cucumber gives spec-driven development an executable, readable verification layer that&#x27;s easier to review than typical tests.</td><td class="tt"><a href="https://youtu.be/504PvfXou5Y?t=286" target="_blank">04:46</a></td></tr><tr><td class="st">asserts</td><td>Humans and LLMs share a limited-context failure mode: people forget and leave, LLMs context-compact and have no memory.</td><td class="tt"><a href="https://youtu.be/504PvfXou5Y?t=63" target="_blank">01:03</a></td></tr><tr><td class="st">recommends</td><td>Design systems and pattern libraries are the way to build consistent UI with agents, same as before AI.</td><td class="tt"><a href="https://youtu.be/504PvfXou5Y?t=347" target="_blank">05:47</a></td></tr><tr><td class="st">recommends</td><td>The team enforces rules via git hooks that run the same predefined tasks later executed on CI.</td><td class="tt"><a href="https://youtu.be/504PvfXou5Y?t=471" target="_blank">07:51</a></td></tr><tr><td class="st">asserts</td><td>The end-to-end BDD test suite is structurally blocked from accessing the database by forbidding imports of any module that could reach it.</td><td class="tt"><a href="https://youtu.be/504PvfXou5Y?t=533" target="_blank">08:53</a></td></tr><tr><td class="st">warns</td><td>The documentation-and-enforcement loop is very context heavy, capable of consuming half the context budget just starting research.</td><td class="tt"><a href="https://youtu.be/504PvfXou5Y?t=656" target="_blank">10:56</a></td></tr><tr><td class="st">asserts</td><td>Despite 20-50 context compacts per session over the last half year, the speaker says the approach works because important rules survive and get re-looked-up.</td><td class="tt"><a href="https://youtu.be/504PvfXou5Y?t=656" target="_blank">10:56</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "504PvfXou5Y", "slug": "bdd-adr-prd-capturing-decisions", "title": "BDD, ADR, PRD, WTF: Capturing Decisions for Humans and AI Alike", "speaker": "Michal Cichra", "company": "Safe Intelligence", "themes": ["agentic-engineering", "context-engineering", "product-ux"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "ADR definition", "text": "An ADR records why an architecture decision was made and how it's enforced, with reference docs and code examples.", "quote": "It records why you do something and how you enforce it or how you want to do that.", "t": 127}, {"id": "c2", "stance": "asserts", "topic": "PRD definition", "text": "A PRD is a lighter document describing why a feature exists, what problem it solves, and the user journey.", "quote": "PRD is a product requirements document. Uh that's something lighter when you're building a feature, you describe why that thing exists and what problems it solves.", "t": 190}, {"id": "c3", "stance": "recommends", "topic": "BDD/Cucumber as verification layer", "text": "BDD via Cucumber gives spec-driven development an executable, readable verification layer that's easier to review than typical tests.", "quote": "And BDD is not new and shiny, but it's it can be executable and readable. So, enter Cucumber. It's almost forgotten, suddenly useful again.", "t": 286}, {"id": "c4", "stance": "asserts", "topic": "shared limited-context failure mode", "text": "Humans and LLMs share a limited-context failure mode: people forget and leave, LLMs context-compact and have no memory.", "quote": "they have beaten up every monkey that tried to climb the ladder not knowing why. So, humans and LLMs, they suffer from the same trait.", "t": 63}, {"id": "c5", "stance": "recommends", "topic": "design systems for agent-built UI", "text": "Design systems and pattern libraries are the way to build consistent UI with agents, same as before AI.", "quote": "making consistent UIs with agents is just another level of hard. Like design system and pattern library are the way to build consistent UIs.", "t": 347}, {"id": "c6", "stance": "recommends", "topic": "git hooks/CI enforcement loop", "text": "The team enforces rules via git hooks that run the same predefined tasks later executed on CI.", "quote": "we use git hooks git hooks to run predefined tasks and these tasks are later executed on a CI.", "t": 471}, {"id": "c7", "stance": "asserts", "topic": "module-level architecture enforcement", "text": "The end-to-end BDD test suite is structurally blocked from accessing the database by forbidding imports of any module that could reach it.", "quote": "our end-to-end BDD test suite cannot access database. So, we forbid from accessing any module that could access database", "t": 533}, {"id": "c8", "stance": "warns", "topic": "context cost of the harness", "text": "The documentation-and-enforcement loop is very context heavy, capable of consuming half the context budget just starting research.", "quote": "It is very context heavy. Like you can run out of half of the context in um starting the research.", "t": 656}, {"id": "c9", "stance": "asserts", "topic": "no fear of context compacts", "text": "Despite 20-50 context compacts per session over the last half year, the speaker says the approach works because important rules survive and get re-looked-up.", "quote": "Um but I have no fear of context compacts. Like this actually for like last half year actually works, I think.", "t": 656}]}</script>
+</body></html>

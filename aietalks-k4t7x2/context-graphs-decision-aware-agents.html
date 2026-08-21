@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Context Graphs for Explainable, Decision-Aware AI Agents — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/abvQEhvRI_c" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 16 min</span><span class="ln"></span></div>
+<h1 class="lede">Context Graphs for Explainable, Decision-Aware AI Agents</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Andreas Kollegger &amp; Zaid Zaim &middot; Neo4j</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/abvQEhvRI_c" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/abvQEhvRI_c</a></span>
+</div>
+<div class="chips"><span class="chip hot">Context engineering</span><span class="chip hot">Memory</span><span class="chip hot">Agentic engineering</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Context graphs extend context engineering by capturing not just knowledge but the rules and policies behind why an agent should take an action, i.e. decision awareness (c1, c2).</li><li>The proposed decision workflow separates proposing options with pros/cons from authorizing an action, and escalates to a human or higher-privilege agent when certainty or authority is lacking (c5, c6).</li><li>Risk analysis should include reference-class validation -- knowing whether a given case falls in the 99% common pattern or the 1% exception -- because population-level statistics can be fatal for edge cases like drug prescribing (c4).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Context graphs add the &#x27;why&#x27; to context engineering</span><span class="ln"></span></div>
+<div class="prose"><p>The speakers frame context graphs as still within context engineering, but shifting from giving agents knowledge, tools, and content toward also giving them the rules and policies that explain why an agent should take a given action, making agents decision-aware rather than only knowledgeable.</p></div>
+<div class="quote"><p>&ldquo;with context graphs we would really like to um provide additionally to the knowledge um the right rules and policies um to the agents to help&rdquo;</p><a href="https://youtu.be/abvQEhvRI_c?t=220" target="_blank">&#9654; watch at 03:40</a></div>
+<figure class="slide"><a href="https://youtu.be/abvQEhvRI_c?t=220" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s09_220.webp" alt="Context graphs add the &#x27;why&#x27; to context engineering"></a><figcaption>Slide at 03:40 &middot; Context graphs add the &#x27;why&#x27; to context engineering &middot; <a href="https://youtu.be/abvQEhvRI_c?t=220" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Decision-making is the gap autonomous agents hit when instructions run out</span><span class="ln"></span></div>
+<div class="prose"><p>Decision-making is described as the point in an agent workflow where it must act without prior instructions covering the situation, illustrated with an example of an agent restocking a fridge with Red Bull without knowing rent money should be prioritized. This gap grows worse as single agents become multi-agent systems needing to coordinate.</p></div>
+<div class="quote"><p>&ldquo;decision-making is basically when you run into a point in the workflow or the life of the agent where it has to do something that it doesn&#x27;t have in its setup&rdquo;</p><a href="https://youtu.be/abvQEhvRI_c?t=439" target="_blank">&#9654; watch at 07:19</a></div>
+<figure class="slide"><a href="https://youtu.be/abvQEhvRI_c?t=450" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s19_450.webp" alt="Decision-making is the gap autonomous agents hit when instructions run out"></a><figcaption>Slide at 07:30 &middot; Decision-making is the gap autonomous agents hit when instructions run out &middot; <a href="https://youtu.be/abvQEhvRI_c?t=450" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>A decision framework: frame, then analyze risk and value</span><span class="ln"></span></div>
+<div class="prose"><p>The proposed workflow starts with local context (causality of how the agent arrived at the decision point, its objective, and the operating environment), then global context (prior actions in similar situations plus hard and soft business rules), followed by risk-value analysis. Risk analysis includes reference-class validation -- identifying whether the specific case falls into a common or rare pattern -- reversibility of the decision, and cost of being wrong.</p></div>
+<div class="quote"><p>&ldquo;You went through some reasoning chain, you went through some actions, and suddenly you&#x27;re at a point where like you have some amount of uncertainty&rdquo;</p><a href="https://youtu.be/abvQEhvRI_c?t=596" target="_blank">&#9654; watch at 09:56</a></div><div class="quote"><p>&ldquo;if you&#x27;re in the small 1% of the population, giving that same drug might be fatal&rdquo;</p><a href="https://youtu.be/abvQEhvRI_c?t=750" target="_blank">&#9654; watch at 12:30</a></div>
+<figure class="slide"><a href="https://youtu.be/abvQEhvRI_c?t=600" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s27_600.webp" alt="A decision framework: frame, then analyze risk and value"></a><figcaption>Slide at 10:00 &middot; A decision framework: frame, then analyze risk and value &middot; <a href="https://youtu.be/abvQEhvRI_c?t=600" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Separate proposing options from authorizing action</span><span class="ln"></span></div>
+<div class="prose"><p>The framework&#x27;s output at the analysis stage is not a decision but a set of alternatives with pros and cons, handed to a separate agent that determines whether it has the authority to act; if it lacks certainty or authority, it escalates to another agent or a human with the requisite authority.</p></div>
+<div class="quote"><p>&ldquo;This agent&#x27;s job, only thing would be to like actually come up with a proposal of some alternatives, and to give some pros and cons for those alternatives, not to actually make the choice&rdquo;</p><a href="https://youtu.be/abvQEhvRI_c?t=822" target="_blank">&#9654; watch at 13:42</a></div>
+<figure class="slide"><a href="https://youtu.be/abvQEhvRI_c?t=840" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s31_840.webp" alt="Separate proposing options from authorizing action"></a><figcaption>Slide at 14:00 &middot; Separate proposing options from authorizing action &middot; <a href="https://youtu.be/abvQEhvRI_c?t=840" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Record reasoning back into the graph for future precedent</span><span class="ln"></span></div>
+<div class="prose"><p>After a decision is made (or deferred for lack of information), the full reasoning process -- what was considered and what wasn&#x27;t -- gets saved into the graph along with the decision and any actions taken, so future agents can use it as precedent, tying back into the tracing and accountability purpose of context graphs.</p></div>
+<div class="quote"><p>&ldquo;That all gets saved into the graph along with the decision itself and the actions that were taken. That lets future agents do better at their job because they have this now as precedent that they can refer to&rdquo;</p><a href="https://youtu.be/abvQEhvRI_c?t=905" target="_blank">&#9654; watch at 15:05</a></div>
+<figure class="slide"><a href="https://youtu.be/abvQEhvRI_c?t=920" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s34_920.webp" alt="Record reasoning back into the graph for future precedent"></a><figcaption>Slide at 15:20 &middot; Record reasoning back into the graph for future precedent &middot; <a href="https://youtu.be/abvQEhvRI_c?t=920" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The propose/authorize split maps closely to human org patterns (analyst recommends, manager approves) and could be a reusable pattern for any agent system operating with partial autonomy, though the talk stops short of showing a worked multi-agent implementation (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/abvQEhvRI_c?t=10" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="https://youtu.be/abvQEhvRI_c?t=20" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="https://youtu.be/abvQEhvRI_c?t=30" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s02_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="https://youtu.be/abvQEhvRI_c?t=80" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s03_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="https://youtu.be/abvQEhvRI_c?t=140" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s04_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="https://youtu.be/abvQEhvRI_c?t=150" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s05_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="https://youtu.be/abvQEhvRI_c?t=160" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s06_160.webp" alt="slide at 02:40"><div class="ts">02:40</div></a><a href="https://youtu.be/abvQEhvRI_c?t=170" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s07_170.webp" alt="slide at 02:50"><div class="ts">02:50</div></a><a href="https://youtu.be/abvQEhvRI_c?t=200" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s08_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="https://youtu.be/abvQEhvRI_c?t=220" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s09_220.webp" alt="slide at 03:40"><div class="ts">03:40</div></a><a href="https://youtu.be/abvQEhvRI_c?t=240" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s10_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="https://youtu.be/abvQEhvRI_c?t=260" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s11_260.webp" alt="slide at 04:20"><div class="ts">04:20</div></a><a href="https://youtu.be/abvQEhvRI_c?t=300" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s12_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="https://youtu.be/abvQEhvRI_c?t=320" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s13_320.webp" alt="slide at 05:20"><div class="ts">05:20</div></a><a href="https://youtu.be/abvQEhvRI_c?t=340" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s14_340.webp" alt="slide at 05:40"><div class="ts">05:40</div></a><a href="https://youtu.be/abvQEhvRI_c?t=350" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s15_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="https://youtu.be/abvQEhvRI_c?t=400" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s16_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="https://youtu.be/abvQEhvRI_c?t=410" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s17_410.webp" alt="slide at 06:50"><div class="ts">06:50</div></a><a href="https://youtu.be/abvQEhvRI_c?t=420" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s18_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a><a href="https://youtu.be/abvQEhvRI_c?t=450" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s19_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="https://youtu.be/abvQEhvRI_c?t=460" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s20_460.webp" alt="slide at 07:40"><div class="ts">07:40</div></a><a href="https://youtu.be/abvQEhvRI_c?t=490" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s21_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="https://youtu.be/abvQEhvRI_c?t=500" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s22_500.webp" alt="slide at 08:20"><div class="ts">08:20</div></a><a href="https://youtu.be/abvQEhvRI_c?t=520" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s23_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a><a href="https://youtu.be/abvQEhvRI_c?t=540" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s24_540.webp" alt="slide at 09:00"><div class="ts">09:00</div></a><a href="https://youtu.be/abvQEhvRI_c?t=560" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s25_560.webp" alt="slide at 09:20"><div class="ts">09:20</div></a><a href="https://youtu.be/abvQEhvRI_c?t=580" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s26_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="https://youtu.be/abvQEhvRI_c?t=600" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s27_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="https://youtu.be/abvQEhvRI_c?t=620" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s28_620.webp" alt="slide at 10:20"><div class="ts">10:20</div></a><a href="https://youtu.be/abvQEhvRI_c?t=770" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s29_770.webp" alt="slide at 12:50"><div class="ts">12:50</div></a><a href="https://youtu.be/abvQEhvRI_c?t=800" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s30_800.webp" alt="slide at 13:20"><div class="ts">13:20</div></a><a href="https://youtu.be/abvQEhvRI_c?t=840" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s31_840.webp" alt="slide at 14:00"><div class="ts">14:00</div></a><a href="https://youtu.be/abvQEhvRI_c?t=850" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s32_850.webp" alt="slide at 14:10"><div class="ts">14:10</div></a><a href="https://youtu.be/abvQEhvRI_c?t=880" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s33_880.webp" alt="slide at 14:40"><div class="ts">14:40</div></a><a href="https://youtu.be/abvQEhvRI_c?t=920" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s34_920.webp" alt="slide at 15:20"><div class="ts">15:20</div></a><a href="https://youtu.be/abvQEhvRI_c?t=950" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s35_950.webp" alt="slide at 15:50"><div class="ts">15:50</div></a><a href="https://youtu.be/abvQEhvRI_c?t=960" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s36_960.webp" alt="slide at 16:00"><div class="ts">16:00</div></a><a href="https://youtu.be/abvQEhvRI_c?t=970" target="_blank"><img loading="lazy" src="img/context-graphs-decision-aware-agents/s37_970.webp" alt="slide at 16:10"><div class="ts">16:10</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (6)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Context graphs extend context engineering by adding the rules and policies behind why an agent should act, not just knowledge, tools, and content.</td><td class="tt"><a href="https://youtu.be/abvQEhvRI_c?t=220" target="_blank">03:40</a></td></tr><tr><td class="st">asserts</td><td>Decision-making is the point where an agent must act on something not covered by its given instructions, illustrated by an autonomous fridge-restocking agent not knowing to prioritize rent money.</td><td class="tt"><a href="https://youtu.be/abvQEhvRI_c?t=439" target="_blank">07:19</a></td></tr><tr><td class="st">recommends</td><td>Decisions should be framed first with local context (causality, objective, environment) and then global context (prior actions and hard/soft business rules) before analysis.</td><td class="tt"><a href="https://youtu.be/abvQEhvRI_c?t=596" target="_blank">09:56</a></td></tr><tr><td class="st">warns</td><td>Population-level statistical behavior can mislead risk analysis for the minority case, illustrated by a drug that is correct for 99% of patients but fatal for the other 1%.</td><td class="tt"><a href="https://youtu.be/abvQEhvRI_c?t=750" target="_blank">12:30</a></td></tr><tr><td class="st">recommends</td><td>One agent should propose alternatives with pros and cons without deciding, while a separate agent determines authority to act and escalates to a human or higher-privilege agent when uncertain.</td><td class="tt"><a href="https://youtu.be/abvQEhvRI_c?t=822" target="_blank">13:42</a></td></tr><tr><td class="st">recommends</td><td>The full reasoning process behind a decision, including what was and wasn&#x27;t considered, should be saved into the graph so future agents can use it as precedent.</td><td class="tt"><a href="https://youtu.be/abvQEhvRI_c?t=905" target="_blank">15:05</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "abvQEhvRI_c", "slug": "context-graphs-decision-aware-agents", "title": "Context Graphs for Explainable, Decision-Aware AI Agents", "speaker": "Andreas Kollegger & Zaid Zaim", "company": "Neo4j", "themes": ["context-engineering", "memory", "agentic-engineering"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "context graphs add rules/policies", "text": "Context graphs extend context engineering by adding the rules and policies behind why an agent should act, not just knowledge, tools, and content.", "quote": "with context graphs we would really like to um provide additionally to the knowledge um the right rules and policies um to the agents to help", "t": 220}, {"id": "c2", "stance": "asserts", "topic": "decision-making gap definition", "text": "Decision-making is the point where an agent must act on something not covered by its given instructions, illustrated by an autonomous fridge-restocking agent not knowing to prioritize rent money.", "quote": "decision-making is basically when you run into a point in the workflow or the life of the agent where it has to do something that it doesn't have in its setup", "t": 439}, {"id": "c3", "stance": "recommends", "topic": "local and global context framing", "text": "Decisions should be framed first with local context (causality, objective, environment) and then global context (prior actions and hard/soft business rules) before analysis.", "quote": "You went through some reasoning chain, you went through some actions, and suddenly you're at a point where like you have some amount of uncertainty", "t": 596}, {"id": "c4", "stance": "warns", "topic": "reference-class validation", "text": "Population-level statistical behavior can mislead risk analysis for the minority case, illustrated by a drug that is correct for 99% of patients but fatal for the other 1%.", "quote": "if you're in the small 1% of the population, giving that same drug might be fatal", "t": 750}, {"id": "c5", "stance": "recommends", "topic": "propose vs authorize split", "text": "One agent should propose alternatives with pros and cons without deciding, while a separate agent determines authority to act and escalates to a human or higher-privilege agent when uncertain.", "quote": "This agent's job, only thing would be to like actually come up with a proposal of some alternatives, and to give some pros and cons for those alternatives, not to actually make the choice", "t": 822}, {"id": "c6", "stance": "recommends", "topic": "recording reasoning for precedent", "text": "The full reasoning process behind a decision, including what was and wasn't considered, should be saved into the graph so future agents can use it as precedent.", "quote": "That all gets saved into the graph along with the decision itself and the actions that were taken. That lets future agents do better at their job because they have this now as precedent that they can refer to", "t": 905}]}</script>
+</body></html>

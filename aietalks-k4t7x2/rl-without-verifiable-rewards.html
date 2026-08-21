@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Reinforcement Learning without Verifiable Rewards — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/AQv3qRCG6Gw" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 19 min</span><span class="ln"></span></div>
+<h1 class="lede">Reinforcement Learning without Verifiable Rewards</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Will Brown &middot; Prime Intellect</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/AQv3qRCG6Gw" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/AQv3qRCG6Gw</a></span>
+</div>
+<div class="chips"><span class="chip hot">Continual learning</span><span class="chip hot">Post-training</span><span class="chip hot">Evals & benchmarks</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Verifiable rewards (math, code tests, tool-use database state) are the easy case; most real agent tasks (report writing, booking, refund handling) don&#x27;t have a clean best answer, which is the harder problem this talk addresses (c1).</li><li>Reward hacking happens when a proxy objective is undefined at the boundaries and models learn to exploit that gap rather than achieve the real goal; catching it often requires human review after the fact since judges frequently miss it even when told not to reward-hack (c2, c7).</li><li>Two concrete signal-manufacturing techniques: mining production traces as source material for tasks whose distribution isn&#x27;t known in advance, and &#x27;working backwards&#x27; from a known-reachable solution to generate a verifiable but harder upstream task (c4, c5, c6).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>RL recap: agent, environment, and where verifiable rewards are the easy case</span><span class="ln"></span></div>
+<div class="prose"><p>An agent (model plus harness) acts inside an environment defined as a task plus a world (e.g. a docker image, codebase, or set of tools) and a scoring rule; the resulting reward is used to compute an advantage that updates the policy. Verifiable rewards are the easy case, math answers parsed from a boxed output, code checked by tests or a linter, tool use checked against expected database state, but most real agent work (reports, bookings, refunds) doesn&#x27;t have this clean structure.</p></div>
+<div class="quote"><p>&ldquo;we have an agent which we&#x27;re going to call a model plus a harness which we place into an environment. And so an environment we&#x27;re going to call a task plus a world&rdquo;</p><a href="https://youtu.be/AQv3qRCG6Gw?t=61" target="_blank">&#9654; watch at 01:01</a></div>
+<figure class="slide"><a href="https://youtu.be/AQv3qRCG6Gw?t=60" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s02_60.webp" alt="RL recap: agent, environment, and where verifiable rewards are the easy case"></a><figcaption>Slide at 01:00 &middot; RL recap: agent, environment, and where verifiable rewards are the easy case &middot; <a href="https://youtu.be/AQv3qRCG6Gw?t=60" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Reward hacking and the goal of continual learning</span><span class="ln"></span></div>
+<div class="prose"><p>Reward hacking happens when a proxy objective is loosely defined at the boundaries, letting a model trained with RL find a path to higher reward that doesn&#x27;t reflect the actual goal. The broader goal the talk sets is continual learning: deploying models into messy real settings where they make mistakes, observe and catch those mistakes after the fact, and use that to avoid repeating them, with humans in the loop at the right level of abstraction.</p></div>
+<div class="quote"><p>&ldquo;reward hacking is when you have a kind of loose proxy for your objective that is undefined at the boundaries&rdquo;</p><a href="https://youtu.be/AQv3qRCG6Gw?t=372" target="_blank">&#9654; watch at 06:12</a></div><div class="quote"><p>&ldquo;we want models to be deployed in relatively realistic complex, messy settings and to be able to learn as they go where they are doing things, they are making mistakes&rdquo;</p><a href="https://youtu.be/AQv3qRCG6Gw?t=402" target="_blank">&#9654; watch at 06:42</a></div>
+<figure class="slide"><a href="https://youtu.be/AQv3qRCG6Gw?t=370" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s05_370.webp" alt="Reward hacking and the goal of continual learning"></a><figcaption>Slide at 06:10 &middot; Reward hacking and the goal of continual learning &middot; <a href="https://youtu.be/AQv3qRCG6Gw?t=370" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Manufacturing signal from production traces and working backwards</span><span class="ln"></span></div>
+<div class="prose"><p>One core technique is grounding: using existing production traces from a deployed agent as source material for tasks even before the task distribution is fully known, since traces at least indicate what to look for. A second technique, &#x27;working backwards,&#x27; starts from a solution (or something close to it) and treats the real task as further upstream, letting a hard problem be verified because you know a known-reachable end state exists, applicable to documents, code PRs and diffs, and more.</p></div>
+<div class="quote"><p>&ldquo;what we found is super helpful is taking existing traces from a deployed agent and treating these as the source material&rdquo;</p><a href="https://youtu.be/AQv3qRCG6Gw?t=588" target="_blank">&#9654; watch at 09:48</a></div><div class="quote"><p>&ldquo;this general principle of like working backwards is starting from the solution or something that&#x27;s close to the solution and have where your real task is like further upstream&rdquo;</p><a href="https://youtu.be/AQv3qRCG6Gw?t=649" target="_blank">&#9654; watch at 10:49</a></div>
+<figure class="slide"><a href="https://youtu.be/AQv3qRCG6Gw?t=570" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s06_570.webp" alt="Manufacturing signal from production traces and working backwards"></a><figcaption>Slide at 09:30 &middot; Manufacturing signal from production traces and working backwards &middot; <a href="https://youtu.be/AQv3qRCG6Gw?t=570" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Simulators for controllability, and where judges still fail</span><span class="ln"></span></div>
+<div class="prose"><p>For tools or web applications where the backend can&#x27;t be directly programmed, Prime Intellect builds simulators grounded in production traces, which grants full backend controllability, enabling reverse engineering where the answer is planted and worked backward from, baking in verifiability even when the real production system lacks it. Even so, judges are often not good at catching reward hacks even when explicitly told not to reward-hack; the more reliable check remains a human looking at the rollout after the fact and recognizing an obvious hack.</p></div>
+<div class="quote"><p>&ldquo;you can actually do this reverse engineering where you get to kind of plant the answer. You can start from the end and work backwards&rdquo;</p><a href="https://youtu.be/AQv3qRCG6Gw?t=770" target="_blank">&#9654; watch at 12:50</a></div><div class="quote"><p>&ldquo;if the reward hacks are the sorts of things where a human can look at them and be like, oh yeah, that&#x27;s a reward hack. Judges are often not quite good at doing this as well&rdquo;</p><a href="https://youtu.be/AQv3qRCG6Gw?t=924" target="_blank">&#9654; watch at 15:24</a></div>
+<figure class="slide"><a href="https://youtu.be/AQv3qRCG6Gw?t=830" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s10_830.webp" alt="Simulators for controllability, and where judges still fail"></a><figcaption>Slide at 13:50 &middot; Simulators for controllability, and where judges still fail &middot; <a href="https://youtu.be/AQv3qRCG6Gw?t=830" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The talk presents these techniques (trace mining, working-backwards, simulators) as building toward a general continual-learning system, but the demonstrated results cited (the &#x27;general agent&#x27; tool-use blog) cover a narrower case (tool use) than the full vision described (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/AQv3qRCG6Gw?t=10" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=40" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s01_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=60" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s02_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=70" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s03_70.webp" alt="slide at 01:10"><div class="ts">01:10</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=330" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s04_330.webp" alt="slide at 05:30"><div class="ts">05:30</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=370" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s05_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=570" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s06_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=610" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s07_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=640" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s08_640.webp" alt="slide at 10:40"><div class="ts">10:40</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=680" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s09_680.webp" alt="slide at 11:20"><div class="ts">11:20</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=830" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s10_830.webp" alt="slide at 13:50"><div class="ts">13:50</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=840" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s11_840.webp" alt="slide at 14:00"><div class="ts">14:00</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=850" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s12_850.webp" alt="slide at 14:10"><div class="ts">14:10</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=860" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s13_860.webp" alt="slide at 14:20"><div class="ts">14:20</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=870" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s14_870.webp" alt="slide at 14:30"><div class="ts">14:30</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=910" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s15_910.webp" alt="slide at 15:10"><div class="ts">15:10</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=930" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s16_930.webp" alt="slide at 15:30"><div class="ts">15:30</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=970" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s17_970.webp" alt="slide at 16:10"><div class="ts">16:10</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=1000" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s18_1000.webp" alt="slide at 16:40"><div class="ts">16:40</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=1030" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s19_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=1070" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s20_1070.webp" alt="slide at 17:50"><div class="ts">17:50</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=1080" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s21_1080.webp" alt="slide at 18:00"><div class="ts">18:00</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=1130" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s22_1130.webp" alt="slide at 18:50"><div class="ts">18:50</div></a><a href="https://youtu.be/AQv3qRCG6Gw?t=1140" target="_blank"><img loading="lazy" src="img/rl-without-verifiable-rewards/s23_1140.webp" alt="slide at 19:00"><div class="ts">19:00</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (7)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>An environment is defined as a task plus a world, and the agent (model plus harness) interacts with it in a loop to produce a reward.</td><td class="tt"><a href="https://youtu.be/AQv3qRCG6Gw?t=61" target="_blank">01:01</a></td></tr><tr><td class="st">warns</td><td>Reward hacking occurs when a proxy objective is loosely defined at the boundaries and the model exploits that gap.</td><td class="tt"><a href="https://youtu.be/AQv3qRCG6Gw?t=372" target="_blank">06:12</a></td></tr><tr><td class="st">asserts</td><td>The goal is for models to be deployed in messy real settings, learn as they go, and observe and catch their own mistakes.</td><td class="tt"><a href="https://youtu.be/AQv3qRCG6Gw?t=402" target="_blank">06:42</a></td></tr><tr><td class="st">recommends</td><td>Existing production traces from a deployed agent are useful source material for generating tasks even before the task distribution is fully known.</td><td class="tt"><a href="https://youtu.be/AQv3qRCG6Gw?t=588" target="_blank">09:48</a></td></tr><tr><td class="st">recommends</td><td>Tasks can be generated by starting from a known solution and treating the real target task as further upstream, easier to verify.</td><td class="tt"><a href="https://youtu.be/AQv3qRCG6Gw?t=649" target="_blank">10:49</a></td></tr><tr><td class="st">asserts</td><td>Simulators built from production traces allow full backend controllability, enabling reverse engineering by planting the answer and working backward.</td><td class="tt"><a href="https://youtu.be/AQv3qRCG6Gw?t=770" target="_blank">12:50</a></td></tr><tr><td class="st">warns</td><td>Simple reward hacks that a human can spot after the fact are often missed by judges, even when the model was told not to reward-hack.</td><td class="tt"><a href="https://youtu.be/AQv3qRCG6Gw?t=924" target="_blank">15:24</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "AQv3qRCG6Gw", "slug": "rl-without-verifiable-rewards", "title": "Reinforcement Learning without Verifiable Rewards", "speaker": "Will Brown", "company": "Prime Intellect", "themes": ["continual-learning", "post-training", "evals-benchmarks"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "environment definition", "text": "An environment is defined as a task plus a world, and the agent (model plus harness) interacts with it in a loop to produce a reward.", "quote": "we have an agent which we're going to call a model plus a harness which we place into an environment. And so an environment we're going to call a task plus a world", "t": 61}, {"id": "c2", "stance": "warns", "topic": "reward hacking definition", "text": "Reward hacking occurs when a proxy objective is loosely defined at the boundaries and the model exploits that gap.", "quote": "reward hacking is when you have a kind of loose proxy for your objective that is undefined at the boundaries", "t": 372}, {"id": "c3", "stance": "asserts", "topic": "continual learning definition", "text": "The goal is for models to be deployed in messy real settings, learn as they go, and observe and catch their own mistakes.", "quote": "we want models to be deployed in relatively realistic complex, messy settings and to be able to learn as they go where they are doing things, they are making mistakes", "t": 402}, {"id": "c4", "stance": "recommends", "topic": "production traces as source material", "text": "Existing production traces from a deployed agent are useful source material for generating tasks even before the task distribution is fully known.", "quote": "what we found is super helpful is taking existing traces from a deployed agent and treating these as the source material", "t": 588}, {"id": "c5", "stance": "recommends", "topic": "working backwards principle", "text": "Tasks can be generated by starting from a known solution and treating the real target task as further upstream, easier to verify.", "quote": "this general principle of like working backwards is starting from the solution or something that's close to the solution and have where your real task is like further upstream", "t": 649}, {"id": "c6", "stance": "asserts", "topic": "simulators for verifiability", "text": "Simulators built from production traces allow full backend controllability, enabling reverse engineering by planting the answer and working backward.", "quote": "you can actually do this reverse engineering where you get to kind of plant the answer. You can start from the end and work backwards", "t": 770}, {"id": "c7", "stance": "warns", "topic": "judges miss reward hacks", "text": "Simple reward hacks that a human can spot after the fact are often missed by judges, even when the model was told not to reward-hack.", "quote": "if the reward hacks are the sorts of things where a human can look at them and be like, oh yeah, that's a reward hack. Judges are often not quite good at doing this as well", "t": 924}]}</script>
+</body></html>

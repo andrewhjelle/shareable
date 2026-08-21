@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>From fork() to Fleet: Designing an Agent Sandbox Cloud — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/OqM67QG_Ikk" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 44 min</span><span class="ln"></span></div>
+<h1 class="lede">From fork() to Fleet: Designing an Agent Sandbox Cloud</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Abhishek Bhardwaj &middot; OpenAI</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/OqM67QG_Ikk" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/OqM67QG_Ikk</a></span>
+</div>
+<div class="chips"><span class="chip hot">Infra & serving</span><span class="chip hot">Security</span><span class="chip hot">Agentic engineering</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Isolation options fall on a security ladder: fork/exec is fastest but fully exposes the host kernel; containers add namespace/cgroup isolation but still share the host kernel; gVisor moves syscalls to user space but a chained sentry-to-kernel exploit is still possible; only hardware virtualization (micro VMs) protects the host even if the guest kernel is fully compromised.</li><li>Bhardwaj&#x27;s direct recommendation for anyone building agent sandboxes: use micro VMs from the start rather than working through containers and gVisor first.</li><li>Persistence (incremental, copy-on-write snapshots plus NBD-backed tiered block storage) unlocks reliability at scale, recovery from node failure, and long-running or Monte Carlo-style multi-day agent tasks — Codex&#x27;s longest recorded &#x27;gold mode&#x27; run was 3 days at the time of the talk.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Why untrusted code needs a sandbox at all</span><span class="ln"></span></div>
+<div class="prose"><p>Bhardwaj traces the need for sandboxes back to giving models tool-calling/code-execution ability so they can solve verifiable-reward tasks like math and code, both in RL training and in production products like ChatGPT and Codex. Because models can attempt to get root or exploit the kernel, whether by accident or adversarially, that execution needs to be isolated from the host and from other users&#x27; sandboxes.</p></div>
+
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>The isolation ladder, and what each layer still allows</span><span class="ln"></span></div>
+<div class="prose"><p>Fork/exec is the fastest option but gives the executed process direct access to the kernel and no protection against a runaway process starving the node. Containers add namespace and cgroup isolation plus optional seccomp filtering, but still run on the same host kernel, so a container escape can still reach it. gVisor intercepts syscalls in a user-space kernel (the sentry), which is safer but still sits on top of the host kernel, so a two-step chained exploit through the sentry or gofer remains possible.</p></div>
+<div class="quote"><p>&ldquo;It&#x27;s native performance, but everything else is very bad about this solution.&rdquo;</p><a href="https://youtu.be/OqM67QG_Ikk?t=695" target="_blank">&#9654; watch at 11:35</a></div><div class="quote"><p>&ldquo;containers interact with the same host kernel, so they do they do have some protections, but at the end it&#x27;s the same host kernel they&#x27;re trying to attack, right? And they can get root and kernel exploits etc.&rdquo;</p><a href="https://youtu.be/OqM67QG_Ikk?t=940" target="_blank">&#9654; watch at 15:40</a></div><div class="quote"><p>&ldquo;the sentry and the gofer are still on top of the host kernel. So, if there is an exploit on them, you can still have a chained two-step exploit.&rdquo;</p><a href="https://youtu.be/OqM67QG_Ikk?t=1030" target="_blank">&#9654; watch at 17:10</a></div>
+<figure class="slide"><a href="https://youtu.be/OqM67QG_Ikk?t=570" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s04_570.webp" alt="The isolation ladder, and what each layer still allows"></a><figcaption>Slide at 09:30 &middot; The isolation ladder, and what each layer still allows &middot; <a href="https://youtu.be/OqM67QG_Ikk?t=570" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Micro VMs as the real security boundary</span><span class="ln"></span></div>
+<div class="prose"><p>Hardware virtualization runs the guest kernel in a separate CPU context (VMX non-root) from the host (VMX root), so a fully compromised guest kernel still cannot reach the host. Bhardwaj traces the lineage of Rust-based &#x27;micro&#x27; VMMs (CrosVM, Firecracker, Cloud Hypervisor) that replaced QEMU for memory safety and smaller attack surface, and states his direct recommendation to skip straight to micro VMs when building an agent sandbox.</p></div>
+<div class="quote"><p>&ldquo;even if you can get uh root or execute in like ring zero in the guest, your host is still protected.&rdquo;</p><a href="https://youtu.be/OqM67QG_Ikk?t=1160" target="_blank">&#9654; watch at 19:20</a></div><div class="quote"><p>&ldquo;if you&#x27;re a startup or a founder like in this space, like let me save you the story and two years of grief. Just please use micro VMs from the start.&rdquo;</p><a href="https://youtu.be/OqM67QG_Ikk?t=1755" target="_blank">&#9654; watch at 29:15</a></div>
+<figure class="slide"><a href="https://youtu.be/OqM67QG_Ikk?t=1130" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s07_1130.webp" alt="Micro VMs as the real security boundary"></a><figcaption>Slide at 18:50 &middot; Micro VMs as the real security boundary &middot; <a href="https://youtu.be/OqM67QG_Ikk?t=1130" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Persistence turns sandboxes into durable workers</span><span class="ln"></span></div>
+<div class="prose"><p>Without disk persistence, a node failure or model flake destroys hours of in-sandbox work (repos, presentations) and wastes GPU spend. Periodic checkpointing lets a sandbox be restored on a different node after failure, and unlocks long-running or Monte Carlo-style exploration where a harness checkpoints, branches, and backtracks across many days. Bhardwaj notes Codex&#x27;s longest observed &#x27;gold mode&#x27; run was 3 days at the time of the talk, with the trend toward longer tasks continuing.</p></div>
+<div class="quote"><p>&ldquo;If you keep checkpointing it periodically and if the node fails or the cluster fails, you can now restore the sandbox in the exact checkpoint state on another node.&rdquo;</p><a href="https://youtu.be/OqM67QG_Ikk?t=1915" target="_blank">&#9654; watch at 31:55</a></div><div class="quote"><p>&ldquo;my I think 3 days is my record for running something, but like now people are doing longer and longer tasks and I think this trend will continue in the cloud as well.&rdquo;</p><a href="https://youtu.be/OqM67QG_Ikk?t=1950" target="_blank">&#9654; watch at 32:30</a></div>
+<figure class="slide"><a href="https://youtu.be/OqM67QG_Ikk?t=1780" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s09_1780.webp" alt="Persistence turns sandboxes into durable workers"></a><figcaption>Slide at 29:40 &middot; Persistence turns sandboxes into durable workers &middot; <a href="https://youtu.be/OqM67QG_Ikk?t=1780" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Making snapshotting and storage cheap at scale</span><span class="ln"></span></div>
+<div class="prose"><p>Snapshots must be incremental (diff-based) rather than full saves, since saving gigabytes on every turn would be prohibitively expensive and slow at ChatGPT/Codex scale. For always-on persistence, Bhardwaj describes exposing the sandbox&#x27;s disk as a block device backed by NBD with a tiered cache to object storage, since NFS is not performant or POSIX-compliant enough for how models interact with a filesystem.</p></div>
+<div class="quote"><p>&ldquo;if I have to save gigabytes of data at every turn, like like I&#x27;m going to bankrupt the company and like it&#x27;s just a slow experience regardless&rdquo;</p><a href="https://youtu.be/OqM67QG_Ikk?t=2045" target="_blank">&#9654; watch at 34:05</a></div><div class="quote"><p>&ldquo;NFS, for instance, isn&#x27;t as performant and is not POSIX-compliant. And I think our models are just very good at anything POSIX compliant and standard.&rdquo;</p><a href="https://youtu.be/OqM67QG_Ikk?t=2420" target="_blank">&#9654; watch at 40:20</a></div>
+<figure class="slide"><a href="https://youtu.be/OqM67QG_Ikk?t=2190" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s10_2190.webp" alt="Making snapshotting and storage cheap at scale"></a><figcaption>Slide at 36:30 &middot; Making snapshotting and storage cheap at scale &middot; <a href="https://youtu.be/OqM67QG_Ikk?t=2190" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">06</span><span>Orchestrating across a fleet</span><span class="ln"></span></div>
+<div class="prose"><p>At fleet scale, a scheduler routes requests to the node needing the least data transfer by tracking which nodes already hold which layers of a snapshot&#x27;s lineage, improving both restore latency and reliability.</p></div>
+<div class="quote"><p>&ldquo;node B has all the layers that you need. So, the scheduler then routes you and it it gives it the highest score and routes it because it has all the snapshot layers.&rdquo;</p><a href="https://youtu.be/OqM67QG_Ikk?t=2610" target="_blank">&#9654; watch at 43:30</a></div>
+<figure class="slide"><a href="https://youtu.be/OqM67QG_Ikk?t=2530" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s12_2530.webp" alt="Orchestrating across a fleet"></a><figcaption>Slide at 42:10 &middot; Orchestrating across a fleet &middot; <a href="https://youtu.be/OqM67QG_Ikk?t=2530" target="_blank">jump into the talk &rarr;</a></figcaption></figure>
+</section>
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck &mdash; every slide, time-linked</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="https://youtu.be/OqM67QG_Ikk?t=10" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="https://youtu.be/OqM67QG_Ikk?t=20" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="https://youtu.be/OqM67QG_Ikk?t=390" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s02_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="https://youtu.be/OqM67QG_Ikk?t=490" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s03_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="https://youtu.be/OqM67QG_Ikk?t=570" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s04_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="https://youtu.be/OqM67QG_Ikk?t=880" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s05_880.webp" alt="slide at 14:40"><div class="ts">14:40</div></a><a href="https://youtu.be/OqM67QG_Ikk?t=940" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s06_940.webp" alt="slide at 15:40"><div class="ts">15:40</div></a><a href="https://youtu.be/OqM67QG_Ikk?t=1130" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s07_1130.webp" alt="slide at 18:50"><div class="ts">18:50</div></a><a href="https://youtu.be/OqM67QG_Ikk?t=1460" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s08_1460.webp" alt="slide at 24:20"><div class="ts">24:20</div></a><a href="https://youtu.be/OqM67QG_Ikk?t=1780" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s09_1780.webp" alt="slide at 29:40"><div class="ts">29:40</div></a><a href="https://youtu.be/OqM67QG_Ikk?t=2190" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s10_2190.webp" alt="slide at 36:30"><div class="ts">36:30</div></a><a href="https://youtu.be/OqM67QG_Ikk?t=2230" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s11_2230.webp" alt="slide at 37:10"><div class="ts">37:10</div></a><a href="https://youtu.be/OqM67QG_Ikk?t=2530" target="_blank"><img loading="lazy" src="img/agent-sandbox-cloud-fork-to-fleet/s12_2530.webp" alt="slide at 42:10"><div class="ts">42:10</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Fork/exec is the fastest sandboxing approach but offers essentially no isolation.</td><td class="tt"><a href="https://youtu.be/OqM67QG_Ikk?t=695" target="_blank">11:35</a></td></tr><tr><td class="st">warns</td><td>Containers isolate resources via namespaces and cgroups but a compromised container can still attack the shared host kernel.</td><td class="tt"><a href="https://youtu.be/OqM67QG_Ikk?t=940" target="_blank">15:40</a></td></tr><tr><td class="st">warns</td><td>gVisor&#x27;s sentry and gofer still run on the host kernel, so a two-step chained exploit through them remains possible.</td><td class="tt"><a href="https://youtu.be/OqM67QG_Ikk?t=1030" target="_blank">17:10</a></td></tr><tr><td class="st">asserts</td><td>Hardware virtualization keeps the host protected even if the guest kernel is fully compromised, because guest and host run in separate CPU contexts.</td><td class="tt"><a href="https://youtu.be/OqM67QG_Ikk?t=1160" target="_blank">19:20</a></td></tr><tr><td class="st">recommends</td><td>Teams building agent sandboxes should start with micro VMs rather than working through containers and gVisor first.</td><td class="tt"><a href="https://youtu.be/OqM67QG_Ikk?t=1755" target="_blank">29:15</a></td></tr><tr><td class="st">asserts</td><td>Periodic checkpointing lets a sandbox be restored on another node after a failure, improving reliability at scale.</td><td class="tt"><a href="https://youtu.be/OqM67QG_Ikk?t=1915" target="_blank">31:55</a></td></tr><tr><td class="st">asserts</td><td>Codex&#x27;s longest recorded continuous &#x27;gold mode&#x27; run was 3 days, with tasks trending longer over time.</td><td class="tt"><a href="https://youtu.be/OqM67QG_Ikk?t=1950" target="_blank">32:30</a></td></tr><tr><td class="st">recommends</td><td>Snapshots must be incremental diffs rather than full saves to be affordable at scale.</td><td class="tt"><a href="https://youtu.be/OqM67QG_Ikk?t=2045" target="_blank">34:05</a></td></tr><tr><td class="st">asserts</td><td>NFS is not performant or POSIX-compliant enough for how agent-driven filesystems are used.</td><td class="tt"><a href="https://youtu.be/OqM67QG_Ikk?t=2420" target="_blank">40:20</a></td></tr><tr><td class="st">asserts</td><td>The scheduler routes restores to whichever node already holds the most snapshot layers needed, minimizing data transfer.</td><td class="tt"><a href="https://youtu.be/OqM67QG_Ikk?t=2610" target="_blank">43:30</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "OqM67QG_Ikk", "slug": "agent-sandbox-cloud-fork-to-fleet", "title": "From fork() to Fleet: Designing an Agent Sandbox Cloud", "speaker": "Abhishek Bhardwaj", "company": "OpenAI", "themes": ["infra-serving", "security", "agentic-engineering"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "fork/exec tradeoffs", "text": "Fork/exec is the fastest sandboxing approach but offers essentially no isolation.", "quote": "It's native performance, but everything else is very bad about this solution.", "t": 695}, {"id": "c2", "stance": "warns", "topic": "containers still share the host kernel", "text": "Containers isolate resources via namespaces and cgroups but a compromised container can still attack the shared host kernel.", "quote": "containers interact with the same host kernel, so they do they do have some protections, but at the end it's the same host kernel they're trying to attack, right? And they can get root and kernel exploits etc.", "t": 940}, {"id": "c3", "stance": "warns", "topic": "gVisor chained exploit risk", "text": "gVisor's sentry and gofer still run on the host kernel, so a two-step chained exploit through them remains possible.", "quote": "the sentry and the gofer are still on top of the host kernel. So, if there is an exploit on them, you can still have a chained two-step exploit.", "t": 1030}, {"id": "c4", "stance": "asserts", "topic": "hardware virtualization isolation", "text": "Hardware virtualization keeps the host protected even if the guest kernel is fully compromised, because guest and host run in separate CPU contexts.", "quote": "even if you can get uh root or execute in like ring zero in the guest, your host is still protected.", "t": 1160}, {"id": "c5", "stance": "recommends", "topic": "starting point for sandbox builders", "text": "Teams building agent sandboxes should start with micro VMs rather than working through containers and gVisor first.", "quote": "if you're a startup or a founder like in this space, like let me save you the story and two years of grief. Just please use micro VMs from the start.", "t": 1755}, {"id": "c6", "stance": "asserts", "topic": "checkpointing for reliability", "text": "Periodic checkpointing lets a sandbox be restored on another node after a failure, improving reliability at scale.", "quote": "If you keep checkpointing it periodically and if the node fails or the cluster fails, you can now restore the sandbox in the exact checkpoint state on another node.", "t": 1915}, {"id": "c7", "stance": "asserts", "topic": "long-running agent task trend", "text": "Codex's longest recorded continuous 'gold mode' run was 3 days, with tasks trending longer over time.", "quote": "my I think 3 days is my record for running something, but like now people are doing longer and longer tasks and I think this trend will continue in the cloud as well.", "t": 1950}, {"id": "c8", "stance": "recommends", "topic": "incremental snapshotting", "text": "Snapshots must be incremental diffs rather than full saves to be affordable at scale.", "quote": "if I have to save gigabytes of data at every turn, like like I'm going to bankrupt the company and like it's just a slow experience regardless", "t": 2045}, {"id": "c9", "stance": "asserts", "topic": "NFS unsuitability", "text": "NFS is not performant or POSIX-compliant enough for how agent-driven filesystems are used.", "quote": "NFS, for instance, isn't as performant and is not POSIX-compliant. And I think our models are just very good at anything POSIX compliant and standard.", "t": 2420}, {"id": "c10", "stance": "asserts", "topic": "snapshot-aware scheduling", "text": "The scheduler routes restores to whichever node already holds the most snapshot layers needed, minimizing data transfer.", "quote": "node B has all the layers that you need. So, the scheduler then routes you and it it gives it the highest score and routes it because it has all the snapshot layers.", "t": 2610}]}</script>
+</body></html>
