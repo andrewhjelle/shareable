@@ -1,156 +1,142 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Family Reading Dashboard</title>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex, nofollow">
+<title>Books</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --tape:#17141a;--ink:#211d20;--cream:#f2e0c8;--cream2:#e9d5ba;
-  --lip:#d96b52;--lip2:#c24f3d;--cobalt:#4a6fb2;--signal:#cf4a2e;
-  --osd:#f4f1e4;--skin:#edbd97;--blush:#e58087;
-  --rule-soft:rgba(33,29,32,0.35);--rule-faint:rgba(33,29,32,0.18);
-  --mut:#7a6a5e;
-  --zada:#a855f7;--kai:#4a6fb2;--andrew:#c24f3d;--debbie:#d96b52;
-}
+:root{--tape:#17141a;--ink:#211d20;--skin:#edbd97;--lip:#d96b52;--lip2:#c24f3d;--cobalt:#4a6fb2;--signal:#cf4a2e;--cream:#f2e0c8;--cream2:#e9d5ba;--osd:#f4f1e4;--mut:#7a6a5e;
+  --zada:#a855f7;--kai:#4a6fb2;--andrew:#c24f3d;--debbie:#d96b52;--games:#4a8f5a}
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-html,body{background:var(--tape);color:var(--ink);font-family:"Zen Kaku Gothic New",system-ui,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+body{background:var(--tape);color:var(--ink);font:14px/1.5 "Zen Kaku Gothic New",system-ui,sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(10,8,12,.11) 3px 4px)}
-body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 30% 20%,rgba(217,107,82,.08),transparent 60%),radial-gradient(ellipse at 80% 90%,rgba(74,111,178,.08),transparent 60%)}
 a{color:var(--lip2);text-decoration:none;border-bottom:1px dotted rgba(194,79,61,.5)}
 a:hover{color:var(--ink);border-bottom-color:var(--ink)}
-::selection{background:var(--lip);color:var(--cream)}
+button{font:inherit;cursor:pointer}
 
-.wrap{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:20px 22px 80px}
-/* hub-style nav bar */
+/* shared hub nav */
 .hubnav{position:sticky;top:0;z-index:50;background:rgba(33,29,32,.92);backdrop-filter:blur(6px);border-bottom:1px solid rgba(244,241,228,.18);display:flex;gap:2px;align-items:center;padding:8px 20px;font-family:"DotGothic16",monospace;letter-spacing:.14em;font-size:12px;text-transform:uppercase}
 .hubnav a{color:var(--osd);text-decoration:none;padding:8px 14px;border-radius:2px;border:1px solid transparent;transition:color .15s,border-color .15s}
 .hubnav a:hover{color:var(--skin);border-color:rgba(244,201,165,.4)}
 .hubnav a.here{color:var(--skin);border-color:var(--skin)}
 .hubnav .brand{font-family:"Anton",sans-serif;font-size:18px;letter-spacing:.06em;color:#f4f1e4;margin-right:14px;padding-right:14px;border-right:1px solid rgba(244,241,228,.2)}
-/* hub-style masthead */
-.mast{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:26px 22px 8px}
-.mast .ep{font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.2em;color:var(--osd);text-shadow:1px 0 0 rgba(217,107,82,.7),-1px 0 0 rgba(74,111,178,.7);text-transform:uppercase}
-h1{font-family:"Anton",sans-serif;font-size:clamp(38px,6vw,64px);letter-spacing:.02em;text-transform:uppercase;transform:skewX(-6deg);color:var(--skin);text-shadow:3px 0 0 rgba(194,79,61,.55),-3px 0 0 rgba(74,111,178,.45);text-align:left;margin:10px 0 6px;line-height:1;background:none;-webkit-background-clip:initial;background-clip:initial}
-h1 i{font-style:normal;color:var(--lip)}
-.subtitle{display:none}
-/* tab card — cream card containing the who/mode selectors */
-.tabcard{position:relative;background:var(--cream);color:var(--ink);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:14px 18px 12px;box-shadow:5px 6px 0 rgba(33,29,32,.85);margin-bottom:18px}
-.tabcard::before{content:"";position:absolute;inset:4px;border:1px solid var(--ink);opacity:.22;border-radius:2px 9px 3px 8px;pointer-events:none;z-index:0}
-.tabcard > *{position:relative;z-index:1}
-.tabcard-label{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
-.tabcard .tabs{margin-bottom:8px}
-.tabcard .tabs:last-child{margin-bottom:0}
-.tabcard .tab{background:var(--cream2);color:var(--ink);border-color:var(--ink)}
-.tabcard .tab:hover{background:#fff;color:var(--lip2);border-color:var(--lip2)}
-.tabcard .tab[data-active="true"]{color:var(--cream)}
 
-.tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-start;margin-bottom:16px}
-.tab{border:1.5px solid rgba(244,241,228,.35);cursor:pointer;padding:6px 12px;border-radius:2px;background:rgba(23,20,26,.7);color:var(--osd);font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
-.tab:hover{color:var(--skin);border-color:var(--skin)}
-.tab .age{opacity:.6;font-size:10px}
-.tab[data-active="true"]{background:var(--lip2);border-color:var(--lip2);color:var(--cream)}
-.tab[data-tab="zada"][data-active="true"]{background:var(--zada);border-color:var(--zada);color:var(--cream)}
-.tab[data-tab="kai"][data-active="true"]{background:var(--kai);border-color:var(--kai);color:var(--cream)}
-.tab[data-tab="andrew"][data-active="true"]{background:var(--andrew);border-color:var(--andrew);color:var(--cream)}
-.tab[data-tab="debbie"][data-active="true"]{background:var(--debbie);border-color:var(--debbie);color:var(--cream)}
-.tab[data-modebtn="reading"][data-active="true"]{background:var(--cobalt);border-color:var(--cobalt);color:var(--cream)}
-.tab[data-modebtn="games"][data-active="true"]{background:#4a8f5a;border-color:#4a8f5a;color:var(--cream)}
-.modebar{margin-bottom:12px}
+/* control bar: mode toggle (left) + person tabs (right) */
+.ctrl{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 22px;background:rgba(23,20,26,.78);border-bottom:1px solid rgba(244,241,228,.14)}
+.ctrl .grp{display:flex;gap:6px;flex-wrap:wrap}
+.osdbtn{font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:transparent;color:var(--osd);border:1px solid rgba(244,241,228,.4);padding:4px 11px;border-radius:2px;transition:all .15s}
+.osdbtn:hover{color:var(--skin);border-color:var(--skin)}
+.osdbtn[data-active="true"]{background:var(--lip2);border-color:var(--lip2);color:var(--cream)}
+.osdbtn[data-tab="zada"][data-active="true"]{background:var(--zada);border-color:var(--zada)}
+.osdbtn[data-tab="kai"][data-active="true"]{background:var(--kai);border-color:var(--kai)}
+.osdbtn[data-tab="andrew"][data-active="true"]{background:var(--andrew);border-color:var(--andrew)}
+.osdbtn[data-tab="debbie"][data-active="true"]{background:var(--debbie);border-color:var(--debbie)}
+.osdbtn[data-modebtn="games"][data-active="true"]{background:var(--games);border-color:var(--games)}
 
-section{margin-bottom:18px;position:relative;background:var(--cream);color:var(--ink);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:18px 20px 14px;box-shadow:5px 6px 0 rgba(33,29,32,.85)}
-section::before{content:"";position:absolute;inset:4px;border:1px solid var(--ink);opacity:.22;border-radius:2px 9px 3px 8px;pointer-events:none;z-index:0}
-section > *{position:relative;z-index:1}
-h2{font-family:"Anton",sans-serif;font-size:22px;letter-spacing:.02em;text-transform:uppercase;transform:skewX(-5deg);color:var(--ink);margin:0 0 10px;display:flex;align-items:baseline;gap:8px;line-height:1.05;text-shadow:none;padding-bottom:6px;border-bottom:1.5px solid rgba(33,29,32,.35)}
-h2 .dot{display:none}
-h2.reading{color:var(--lip2)}
-h2.finished{color:var(--mut)}
-h2.ordered{color:var(--ink)}
-h2.selected{color:var(--ink)}
-h2.rec{color:var(--ink)}
-h2.fav{color:var(--lip2)}
-.empty{color:var(--mut);opacity:.75;font-size:13px;font-style:italic;padding:8px 0}
+/* masthead */
+.mast{position:relative;z-index:2;max-width:1460px;margin:0 auto;padding:18px 22px 4px}
+.mast h1{font-family:"Anton",sans-serif;font-size:clamp(34px,5vw,56px);letter-spacing:.02em;text-transform:uppercase;transform:skewX(-6deg);color:var(--skin);text-shadow:3px 0 0 rgba(194,79,61,.55),-3px 0 0 rgba(74,111,178,.45);line-height:1;margin-left:-4px}
+.mast h1 i{font-style:normal;color:var(--lip)}
+.mast .meta{font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--osd);opacity:.75;margin-top:6px}
 
-/* Cards — dense, one-line where possible */
-#content{display:grid;grid-template-columns:1fr;gap:0}
-section.rec-lead .cards-grid,
-section h2.rec + .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px}
-.card{position:relative;background:var(--cream);color:var(--ink);border:2px solid var(--ink);border-radius:2px 8px 3px 8px;padding:10px 12px;margin-bottom:6px;box-shadow:3px 3px 0 rgba(33,29,32,.75)}
-.card.reading{border-color:var(--cobalt)}
-.card.finished{opacity:.7}
-.card .row{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;min-width:0}
-.card .row > div:first-child{min-width:0;flex:1 1 auto}
-.card .title{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;font-size:13.5px;line-height:1.25;margin:0;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card .author{color:var(--mut);font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card .pitch{font-size:12px;color:var(--ink);margin:5px 0 0;line-height:1.4;display:none}
-.card:hover .pitch,.card.open .pitch{display:block}
-.card .meta{color:var(--mut);font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.06em;margin-top:3px}
-.badges{display:flex;flex-wrap:wrap;gap:4px;margin:5px 0 0}
-.badge{font-family:"DotGothic16",monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:1px 6px;border-radius:2px;background:var(--cream2);color:var(--ink);border:1px solid var(--ink);white-space:nowrap}
-.badge.novel{background:#6e8b5c;color:var(--cream);border-color:#6e8b5c}
-.badge.graphic{background:var(--zada);color:var(--cream);border-color:var(--zada)}
-.badge.manga{background:#c94b7a;color:var(--cream);border-color:#c94b7a}
-.badge.movie{background:var(--cobalt);color:var(--cream);border-color:var(--cobalt)}
-.badge.edgy{background:var(--signal);color:var(--cream);border-color:var(--signal)}
-.badge.audio{background:var(--lip);color:var(--cream);border-color:var(--lip)}
-.badge.match{background:var(--lip2);color:var(--cream);border-color:var(--lip2)}
-.badge.verdict{background:var(--ink);color:var(--cream);border-color:var(--ink)}
-.badge.bounced{background:var(--signal);color:var(--cream);border-color:var(--signal)}
-.badge.cp{background:#4a8f5a;color:var(--cream);border-color:#4a8f5a}
-.badge.free{background:var(--lip);color:var(--cream);border-color:var(--lip)}
-.badge.warn{background:var(--signal);color:var(--cream);border-color:var(--signal)}
-.btn{border:1.5px solid var(--ink);cursor:pointer;font-family:"DotGothic16",monospace;font-weight:400;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:2px 5px 2px 5px;color:var(--cream);white-space:nowrap;background:var(--ink);flex-shrink:0}
-.btn:hover{opacity:.9;transform:translate(-1px,-1px)}
-.btn.available{background:var(--lip);border-color:var(--lip)}
-.btn.selected{background:var(--cobalt);border-color:var(--cobalt)}
-.btn.ordered{background:#4a8f5a;border-color:#4a8f5a}
-.btn.reading{background:var(--zada);border-color:var(--zada)}
-.btn.finished{background:var(--mut);border-color:var(--mut)}
+/* grid */
+.cols{position:relative;z-index:2;max-width:1460px;margin:0 auto;padding:14px 22px 90px;display:grid;grid-template-columns:1fr;gap:18px;align-items:start}
+@media(min-width:900px){.cols{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}}
+.col{display:grid;gap:18px;min-width:0}
 
-.stars{display:inline-flex;gap:2px;margin-top:6px;align-items:center}
-.stars .lbl{font-family:"DotGothic16",monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-right:6px}
-.star{background:none;border:0;color:var(--mut);font-size:16px;cursor:pointer;padding:0 1px}
-.star.on{color:var(--lip)}
+/* cards */
+.card{position:relative;background:var(--cream);color:var(--ink);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:16px 18px 14px;box-shadow:5px 6px 0 rgba(33,29,32,.85)}
+.card::before{content:"";position:absolute;inset:4px;border:1px solid var(--ink);opacity:.22;border-radius:2px 9px 3px 8px;pointer-events:none}
+.card > *{position:relative}
+.ep{font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.2em;color:var(--lip2);text-transform:uppercase}
+.card h2{font-family:"Anton",sans-serif;font-size:clamp(20px,2.2vw,26px);letter-spacing:.02em;text-transform:uppercase;line-height:1.08;transform:skewX(-5deg);margin:5px 0 4px}
+.card h2 i{font-style:normal;color:var(--lip2)}
+.card .meta{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.1em;color:var(--mut);text-transform:uppercase;margin:0 0 6px}
+.sub{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:12px 0 2px;padding-bottom:3px;border-bottom:1.5px solid rgba(33,29,32,.35)}
+.sub:first-of-type{margin-top:6px}
+.empty{font-size:12.5px;color:var(--mut);font-style:italic;padding:6px 0}
 
-.librarian{background:var(--cream2);color:var(--ink);border:2px solid var(--ink);border-radius:2px 8px 3px 8px;padding:12px;margin-bottom:8px;box-shadow:3px 3px 0 rgba(33,29,32,.75)}
-.librarian .lbl{font-family:"Anton",sans-serif;font-size:16px;text-transform:uppercase;transform:skewX(-5deg);color:var(--lip2);margin:0 0 6px;text-align:left}
-.librarian ul{margin:0;padding:0;list-style:none}
-.librarian li{padding:5px 0;border-top:1px dashed var(--rule-soft);font-size:13px}
-.librarian li:first-child{border-top:0}
-.librarian .t{font-weight:700}
-.librarian .a{color:var(--mut);font-family:"DotGothic16",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+/* person tag */
+.who{display:inline-block;font-family:"DotGothic16",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:1px 6px;border-radius:2px;color:var(--cream);background:var(--ink);white-space:nowrap;min-width:58px;text-align:center}
+.who.zada{background:var(--zada)}.who.kai{background:var(--kai)}.who.andrew{background:var(--andrew)}.who.debbie{background:var(--debbie)}.who.games{background:var(--games)}
 
-.favlist{display:flex;flex-wrap:wrap;gap:6px}
-.favlist .fav{background:var(--lip2);color:var(--cream);border:1px solid var(--lip2);padding:3px 10px;border-radius:2px 5px 2px 5px;font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+/* compact rows (left column) */
+.rows{list-style:none}
+.rows li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;padding:6px 0;border-top:1.5px dashed rgba(33,29,32,.35);align-items:baseline}
+.rows li:first-child{border-top:0}
+.rows .body{min-width:0}
+.rows .t{font-weight:700;font-size:13.5px;line-height:1.3}
+.rows .au{font-weight:400;color:var(--mut);font-size:12.5px}
+.rows .st{font-family:"DotGothic16",monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--lip2);margin-top:1px}
+.rows li.x{cursor:pointer}
+.rows li.x .t::after{content:" \203A";color:var(--mut)}
+.rows li.x.open .t::after{content:" \2304";color:var(--lip2)}
+.rows .more{display:none;grid-column:1/-1;font-size:12.5px;line-height:1.5;margin-top:4px;padding:8px 12px;background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px}
+.rows li.open .more{display:block}
+.rows .more.bounced{border-color:var(--signal)}
+.favline{font-size:12.5px;line-height:1.45;color:var(--ink)}
 
-.verdictbox{background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 6px 2px 6px;padding:6px 10px;margin-top:5px;font-size:12px;color:var(--ink)}
-.verdictbox strong{color:var(--lip2)}
-
-.crewbox{background:var(--cream);border:2px solid var(--ink);border-radius:2px 8px 3px 8px;padding:12px;margin-bottom:14px;font-size:12.5px;box-shadow:3px 3px 0 rgba(33,29,32,.75)}
-.crewbox .who{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
-.crewbox .who span{background:var(--cream2);color:var(--ink);border:1px solid var(--ink);padding:2px 8px;border-radius:2px;font-family:"DotGothic16",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
-.crewbox .rule{color:var(--mut);font-size:12px}
-.deadlist{color:var(--mut);font-size:11.5px;line-height:1.5;font-family:"DotGothic16",monospace;letter-spacing:.04em}
-.deadlist strong{color:var(--ink);text-transform:uppercase}
-
-/* Top-of-page nav pill */
-.wrap > div:first-child{background:rgba(23,20,26,.7);border:1px solid rgba(244,241,228,.14);border-bottom-width:2px !important;padding:10px 14px !important;margin-bottom:16px !important;border-radius:2px 8px 2px 8px}
-.wrap > div:first-child a{color:var(--osd) !important;font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;border-bottom:0 !important}
-.wrap > div:first-child a:hover{color:var(--skin) !important}
-.wrap > div:first-child span{color:var(--osd) !important;opacity:.4}
-.hubnav{display:flex;justify-content:center;gap:2px;flex-wrap:wrap;font-family:"DotGothic16",monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase}
-.hubnav a{color:#f4f1e4;text-decoration:none;padding:5px 12px;border:1px solid transparent;border-radius:2px;transition:color .15s,border-color .15s}
-.hubnav a:hover{color:#edbd97;border-color:rgba(237,189,151,.4)}
-.hubnav a.here{color:#edbd97;border-color:#edbd97}
-
+/* ranked queue rows (right column) */
+.rank{list-style:none}
+.rank li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:8px;padding:6px 0;border-top:1.5px dashed rgba(33,29,32,.35);align-items:baseline}
+.rank li:first-child{border-top:0}
+.rank .n{font-family:"DotGothic16",monospace;font-size:11px;font-weight:700;color:var(--lip2);letter-spacing:.06em;padding-top:2px}
+.rank .row{min-width:0;cursor:pointer;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.rank .rtitle{flex:1 1 auto;min-width:0;font-weight:700;font-size:13.5px;color:var(--ink);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank .rtitle::after{content:" \203A";color:var(--mut);margin-left:2px;font-weight:400}
+.rank li.open .rtitle::after{content:" \2304";color:var(--lip2)}
+.rank .row:hover .rtitle{color:var(--lip2)}
+.rank .rmeta{flex:0 0 auto;font-family:"DotGothic16",monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);white-space:nowrap}
+.rank .rmeta .hi{color:var(--lip2);font-weight:700}
+.rank .btn{flex:0 0 auto;font-family:"DotGothic16",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border:1.5px solid var(--ink);border-radius:2px 6px 2px 6px;background:var(--cream2);color:var(--ink)}
+.rank .btn:hover{background:#fff;color:var(--lip2);border-color:var(--lip2)}
+.rank .btn.selected{background:var(--cobalt);color:var(--cream);border-color:var(--cobalt)}
+.rank .btn.ordered{background:var(--lip);color:var(--cream);border-color:var(--lip)}
+.rank .btn.reading{background:var(--lip2);color:var(--cream);border-color:var(--lip2)}
+.rank .btn.finished{background:var(--ink);color:var(--cream)}
+.rank .rwhy{display:none;flex-basis:100%;font-size:12.5px;line-height:1.5;margin-top:4px;padding:8px 12px;background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px}
+.rank li.open .rwhy{display:block}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.tag{font-family:"DotGothic16",monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:1px 6px;border:1px solid rgba(33,29,32,.4);border-radius:2px;background:var(--cream);color:var(--ink);white-space:nowrap}
+.tag.k{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.stars{margin-top:6px;display:flex;gap:2px;align-items:center}
+.stars .lbl{font-family:"DotGothic16",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-right:6px}
+.star{background:none;border:0;font-size:16px;color:rgba(33,29,32,.3);padding:0 1px;line-height:1}
+.star.on{color:var(--lip2)}
+.librarian{margin:6px 0 8px;padding:8px 12px;background:#fff;border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px;font-size:12.5px}
+.librarian .lbl{font-family:"DotGothic16",monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--lip2);margin-bottom:3px}
+.librarian div{padding:1px 0}
+.librarian .a{color:var(--mut)}
+.rulebox{font-size:12.5px;line-height:1.5;padding:8px 12px;background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px;margin-top:6px}
 </style>
-
 </head>
 <body>
+<script>
+(function(){
+  var KEY='hub_pw_ok_v1';
+  try{
+    if (sessionStorage.getItem(KEY)!=='1'){
+      var tries=0;
+      while(tries<5){
+        var v=window.prompt('Password:');
+        if (v===null){ document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>'; return; }
+        if (v.trim().toLowerCase()==='dakz'){ sessionStorage.setItem(KEY,'1'); break; }
+        tries++;
+      }
+      if (sessionStorage.getItem(KEY)!=='1'){
+        document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>';
+        return;
+      }
+    }
+  }catch(e){}
+})();
+</script>
+
 <nav class="hubnav" aria-label="Hub nav">
   <a class="brand" href="hub-h9k2m7.html">HUB</a>
   <a href="house-design-h9k2m7.html">HOUSE DESIGN</a>
@@ -159,24 +145,23 @@ section h2.rec + .cards-grid{display:grid;grid-template-columns:repeat(auto-fill
   <a href="books-h9k2m7.html" class="here">BOOKS</a>
   <a href="movies-h9k2m7.html">MOVIES</a>
 </nav>
+
+<div class="ctrl">
+  <div class="grp" id="modeToggle"></div>
+  <div class="grp" id="tabs"></div>
+</div>
+
 <header class="mast">
-  <div class="ep">SIDE C · FAMILY READING &middot; CURRENTLY READING · FINISHED · RECOMMENDATIONS</div>
-  <h1 id="pageTitle">Family <i>reading</i> dashboard</h1>
+  <h1 id="pageTitle">Family <i>reading</i></h1>
+  <div class="meta" id="lastUpdated"></div>
 </header>
-<div class="wrap">
-  <div class="tabcard">
-    <div class="tabcard-label">WHO / MODE</div>
-    <div class="tabs modebar" id="modeToggle"></div>
-    <div class="tabs" id="tabs"></div>
-  </div>
-  <div id="content"></div>
+
+<div class="cols">
+  <div class="col" id="left"></div>
+  <div class="col" id="right"></div>
 </div>
 
 <script>
-/* ============================================================
-   DATA — edit here to add/remove books.
-   ============================================================ */
-
 const LAST_UPDATED = "2026-07-22";
 
 const familyMembers = [
@@ -430,417 +415,163 @@ const GAME_NEXT = {
 };
 
 /* ============================================================
-   RENDERER
+   STATE
    ============================================================ */
-
-const FORMAT = {
-  novel:   { label: "📖 Chapter Book",  cls: "novel"   },
-  graphic: { label: "🎨 Graphic Novel", cls: "graphic" },
-  manga:   { label: "🇯🇵 Manga",        cls: "manga"   },
-};
-
-const NEXT_STATE = {
-  available: { next: "selected", label: "Select",        cls: "available" },
-  selected:  { next: "ordered",  label: "Mark Ordered",  cls: "selected"  },
-  ordered:   { next: "reading",  label: "Start Reading", cls: "ordered"   },
-  reading:   { next: "finished", label: "Finished!",     cls: "reading"   },
-  finished:  { next: "available",label: "Reset",         cls: "finished"  },
-};
-
 const STATE_KEY  = "familyBookStates";
 const RATING_KEY = "familyBookRatings";
-
 let activeMode  = localStorage.getItem("familyMode") || "reading";
 let activeTab   = localStorage.getItem("familyActiveTab") || "andrew";
 let bookStates  = JSON.parse(localStorage.getItem(STATE_KEY)  || "{}");
 let bookRatings = JSON.parse(localStorage.getItem(RATING_KEY) || "{}");
+function save(){ localStorage.setItem(STATE_KEY,JSON.stringify(bookStates)); localStorage.setItem(RATING_KEY,JSON.stringify(bookRatings)); localStorage.setItem("familyActiveTab",activeTab); localStorage.setItem("familyMode",activeMode); }
+function bookKey(k,t){return k+"|"+t}
+function getState(k,t){return bookStates[bookKey(k,t)]||"available"}
+function setState(k,t,s){bookStates[bookKey(k,t)]=s;save();render()}
+function getRating(k,t){return bookRatings[bookKey(k,t)]||0}
+function setRating(k,t,r){const c=getRating(k,t);bookRatings[bookKey(k,t)]=(r===c?0:r);save();render()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
-function save() {
-  localStorage.setItem(STATE_KEY,  JSON.stringify(bookStates));
-  localStorage.setItem(RATING_KEY, JSON.stringify(bookRatings));
-  localStorage.setItem("familyActiveTab", activeTab);
-  localStorage.setItem("familyMode", activeMode);
+const NEXT_STATE = {
+  available:{next:"selected",label:"Select",cls:"available"},
+  selected:{next:"ordered",label:"Ordered",cls:"selected"},
+  ordered:{next:"reading",label:"Reading",cls:"ordered"},
+  reading:{next:"finished",label:"Finished",cls:"reading"},
+  finished:{next:"available",label:"Reset",cls:"finished"},
+};
+const FORMAT = { novel:"Novel", graphic:"Graphic", manga:"Manga" };
+const NAME = Object.fromEntries(familyMembers.map(m=>[m.id,m.name]));
+
+/* ============================================================
+   PIECES
+   ============================================================ */
+function card(ep, h2, inner, meta){
+  return '<article class="card"><span class="ep">'+ep+'</span><h2>'+h2+'</h2>'+(meta?'<div class="meta">'+meta+'</div>':'')+inner+'</article>';
 }
-
-function bookKey(kid, title)      { return kid + "|" + title; }
-function getState(kid, title)     { return bookStates[bookKey(kid,title)]  || "available"; }
-function setState(kid, title, s)  { bookStates[bookKey(kid,title)]  = s; save(); render(); }
-function getRating(kid, title)    { return bookRatings[bookKey(kid,title)] || 0; }
-function setRating(kid, title, r) {
-  const cur = getRating(kid, title);
-  bookRatings[bookKey(kid,title)] = (r === cur ? 0 : r);
-  save(); render();
+function starsHTML(kid,title){
+  const r=getRating(kid,title); let o='<div class="stars"><span class="lbl">Rate</span>';
+  for(let i=1;i<=5;i++) o+='<button class="star '+(i<=r?'on':'')+'" data-star="'+i+'" data-kid="'+kid+'" data-title="'+esc(title)+'">&#9733;</button>';
+  return o+'</div>';
 }
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  }[c]));
+function tagsHTML(b,isKid){
+  const t=[];
+  if(isKid&&b.format&&FORMAT[b.format]) t.push('<span class="tag k">'+FORMAT[b.format]+'</span>');
+  if(b.movieReward) t.push('<span class="tag k">Movie</span>');
+  if(b.transgressive) t.push('<span class="tag k">Edgy</span>');
+  if(b.audiobook) t.push('<span class="tag k">Audiobook</span>');
+  (b.tags||[]).forEach(x=>t.push('<span class="tag">'+esc(x)+'</span>'));
+  return t.length?'<div class="tags">'+t.join('')+'</div>':'';
 }
-
-function badgeHTML(book, isKid) {
-  const b = [];
-  if (isKid && book.format && FORMAT[book.format]) {
-    b.push(`<span class="badge ${FORMAT[book.format].cls}">${FORMAT[book.format].label}</span>`);
-  }
-  if (book.movieReward)  b.push(`<span class="badge movie">🎬 Movie!</span>`);
-  if (book.transgressive) b.push(`<span class="badge edgy">🔥 Edgy</span>`);
-  if (book.audiobook)    b.push(`<span class="badge audio">🎧 Audiobook</span>`);
-  if (book.match)        b.push(`<span class="badge match">${escapeHtml(book.match)}</span>`);
-  (book.tags || []).forEach(t => b.push(`<span class="badge">${escapeHtml(t)}</span>`));
-  return `<div class="badges">${b.join("")}</div>`;
+function queueRow(b,kid,isKid,n){
+  const state=getState(kid,b.title), conf=NEXT_STATE[state];
+  const meta=[esc(b.author)];
+  if(b.match) meta.push('<span class="hi">'+esc(b.match)+'</span>');
+  if(b.pages) meta.push(esc(b.pages));
+  if(b.seriesInfo) meta.push(esc(b.seriesInfo));
+  const extra=(b.pitch?esc(b.pitch):'')+tagsHTML(b,isKid)+(state==='finished'?starsHTML(kid,b.title):'');
+  return '<li class="q" data-kid="'+kid+'" data-title="'+esc(b.title)+'"><span class="n">'+n+'</span><div class="row">'
+    +'<div class="rtitle">'+esc(b.title)+'</div><div class="rmeta">'+meta.join(' &middot; ')+'</div>'
+    +(isKid?'<button class="btn '+conf.cls+'" data-advance data-kid="'+kid+'" data-title="'+esc(b.title)+'" data-next="'+conf.next+'">'+conf.label+'</button>':'')
+    +'<div class="rwhy">'+extra+'</div></div></li>';
 }
-
-function starsHTML(kid, title) {
-  const r = getRating(kid, title);
-  let out = `<div class="stars"><span class="lbl">Rate it:</span>`;
-  for (let i = 1; i <= 5; i++) {
-    out += `<button class="star ${i <= r ? "on" : ""}" data-star="${i}" data-kid="${kid}" data-title="${escapeHtml(title)}">★</button>`;
-  }
-  out += `</div>`;
-  return out;
-}
-
-function bookCardHTML(book, kid, isKid) {
-  const state = getState(kid, book.title);
-  const conf  = NEXT_STATE[state];
-  const showBtn = isKid;
-  return `
-    <div class="card ${state}">
-      <div class="row">
-        <div style="flex:1; min-width:0;">
-          <p class="title">${escapeHtml(book.title)}</p>
-          <p class="author">${escapeHtml(book.author)}</p>
-          ${badgeHTML(book, isKid)}
-          ${book.pitch ? `<p class="pitch">${escapeHtml(book.pitch)}</p>` : ""}
-          ${(book.pages || book.seriesInfo) ? `<div class="meta">${escapeHtml(book.pages||"")}${book.seriesInfo ? " • " + escapeHtml(book.seriesInfo) : ""}</div>` : ""}
-          ${state === "finished" ? starsHTML(kid, book.title) : ""}
-        </div>
-        ${showBtn ? `<button class="btn ${conf.cls}" data-advance data-kid="${kid}" data-title="${escapeHtml(book.title)}" data-next="${conf.next}">${conf.label}</button>` : ""}
-      </div>
-    </div>`;
-}
-
-function sectionHTML(title, kls, cards, empty) {
-  return `
-    <section>
-      <h2 class="${kls}"><span class="dot"></span>${title}</h2>
-      ${cards.length ? `<div class="cards-grid">${cards.join("")}</div>` : `<p class="empty">${empty}</p>`}
-    </section>`;
-}
-
-function gameCardHTML(g) {
-  const state = getState("games", g.title);
-  const conf  = GAME_NEXT[state];
-  const badges = [
-    `<span class="badge cp">🔀 Full Crossplay</span>`,
-    g.price === "Free" ? `<span class="badge free">Free</span>` : `<span class="badge match">${escapeHtml(g.price)}</span>`,
-    `<span class="badge">${escapeHtml(g.players)}</span>`,
-    ...(g.tags || []).map(t => `<span class="badge">${escapeHtml(t)}</span>`),
-  ].join("");
-  return `
-    <div class="card ${state}">
-      <div class="row">
-        <div style="flex:1; min-width:0;">
-          <p class="title">${escapeHtml(g.title)}</p>
-          <div class="badges">${badges}</div>
-          <p class="pitch">${escapeHtml(g.pitch)}</p>
-          ${state === "played" ? starsHTML("games", g.title) : ""}
-        </div>
-        <button class="btn ${conf.cls}" data-advance data-kid="games" data-title="${escapeHtml(g.title)}" data-next="${conf.next}">${conf.label}</button>
-      </div>
-    </div>`;
-}
-
-function renderGames() {
-  const byState = s => games.filter(g => getState("games", g.title) === s);
-  const playing = byState("playing"), shortlist = byState("shortlist"),
-        avail = byState("available"), done = byState("played");
-  const parts = [];
-
-  parts.push(`
-    <div class="crewbox">
-      <div class="who">${crew.map(c => `<span><strong>${escapeHtml(c.name)}</strong> · ${escapeHtml(c.platforms)}</span>`).join("")}</div>
-      <div class="rule">${escapeHtml(crewRule)}</div>
-    </div>`);
-
-  if (playing.length)
-    parts.push(sectionHTML("Currently Playing", "reading", playing.map(gameCardHTML), ""));
-
-  parts.push(`
-    <section>
-      <h2 class="finished">Played Together</h2>
-      ${gamesPlayed.map(g => `
-        <div class="card finished">
-          <p class="title">${escapeHtml(g.title)}</p>
-          <div class="verdictbox">${g.warn ? "<strong>Heads up:</strong> " : ""}${escapeHtml(g.note)}</div>
-        </div>`).join("")}
-    </section>`);
-
-  parts.push(sectionHTML("✓ Shortlist — Next Game Night", "selected",
-    shortlist.map(gameCardHTML), "Shortlist games from the recommendations below."));
-
-  parts.push(sectionHTML("🎯 Recommended", "rec", avail.map(gameCardHTML), "All shortlisted or played!"));
-
-  if (done.length)
-    parts.push(sectionHTML("⭐ Finished", "finished", done.map(gameCardHTML), ""));
-
-  parts.push(`
-    <section>
-      <h2 class="fav">🚫 Ruled Out / Parked</h2>
-      <div class="deadlist">${gamesDead.map(d => `<div><strong>${escapeHtml(d.title)}</strong> — ${escapeHtml(d.why)}</div>`).join("")}</div>
-    </section>`);
-
-  document.getElementById("content").innerHTML = parts.join("");
-}
-
-function render() {
-  document.getElementById("lastUpdated").textContent = "Last updated: " + LAST_UPDATED;
-
-  document.getElementById("modeToggle").innerHTML = `
-    <button class="tab" data-modebtn="reading" data-active="${activeMode === "reading"}">📚 Reading</button>
-    <button class="tab" data-modebtn="games"   data-active="${activeMode === "games"}">🎮 Game Nights</button>`;
-  document.getElementById("pageTitle").textContent =
-    activeMode === "games" ? "🎮 Game Nights — Andrew · Jason · Brian" : "📚 Family Reading Dashboard";
-
-  if (activeMode === "games") {
-    document.getElementById("tabs").innerHTML = "";
-    renderGames();
-    return;
-  }
-
-  // Tabs
-  document.getElementById("tabs").innerHTML = familyMembers.map(m => `
-    <button class="tab" data-tab="${m.id}" data-active="${activeTab === m.id}">
-      <span>${m.emoji}</span><span>${m.name}</span>${m.age ? `<span class="age">(${m.age})</span>` : ""}
-    </button>
-  `).join("");
-
-  const kid = activeTab;
-  const isKid = kid === "zada" || kid === "kai";
-  const catalog = books[kid] || [];
-  const finished  = catalog.filter(b => getState(kid,b.title) === "finished");
-  const reading   = catalog.filter(b => getState(kid,b.title) === "reading");
-  const ordered   = catalog.filter(b => getState(kid,b.title) === "ordered");
-  const selected  = catalog.filter(b => getState(kid,b.title) === "selected");
-  const available = catalog.filter(b => getState(kid,b.title) === "available");
-
-  const parts = [];
-
-  // TOP 10 RECOMMENDATIONS (lead the page)
-  const top10 = available.slice(0, 10);
-  parts.push(`<section class="rec-lead"><h2 class="rec">Top ${top10.length} Recommendations</h2><div class="cards-grid">${
-    top10.length ? top10.map(b => bookCardHTML(b, kid, isKid)).join("") : '<p class="empty">All caught up on recs!</p>'
-  }</div></section>`);
-  if (available.length > 10) {
-    parts.push(`<section><h2 class="rec">More Recommendations (${available.length - 10})</h2><div class="cards-grid">${
-      available.slice(10).map(b => bookCardHTML(b, kid, isKid)).join("")
-    }</div></section>`);
-  }
-
-  // Ordered (queue)
-  if (ordered.length || isKid) {
-    let inner = "";
-    if (ordered.length) {
-      inner += `<div class="librarian"><p class="lbl">Show this to the librarian</p><ul>` +
-        ordered.map(b => `<li><span class="t">${escapeHtml(b.title)}</span> <span class="a">${escapeHtml(b.author)}</span></li>`).join("") +
-        `</ul></div>`;
-      inner += `<div class="cards-grid">${ordered.map(b => bookCardHTML(b, kid, isKid)).join("")}</div>`;
-    } else {
-      inner = `<p class="empty">No books on order</p>`;
-    }
-    parts.push(`<section><h2 class="ordered">Ordered from Library</h2>${inner}</section>`);
-  }
-
-  // Selected (shortlist)
-  if (selected.length || isKid) {
-    parts.push(sectionHTML("Selected — Ready to Order", "selected",
-      selected.map(b => bookCardHTML(b, kid, isKid)),
-      "Select books from recommendations above."));
-  }
-
-  // Currently reading
-  const currentCards = [];
-  (inProgress[kid] || []).forEach(b => {
-    const fmt = b.format && FORMAT[b.format] ? `<span class="badge ${FORMAT[b.format].cls}">${FORMAT[b.format].label}</span>` : "";
-    currentCards.push(`
-      <div class="card reading">
-        <div class="row">
-          <div><p class="title">${escapeHtml(b.title)}</p><p class="author">${escapeHtml(b.author)} &middot; ${escapeHtml(b.status)}</p></div>
-          ${isKid && fmt ? `<div>${fmt}</div>` : ""}
-        </div>
-      </div>`);
-  });
-  reading.forEach(b => currentCards.push(bookCardHTML(b, kid, isKid)));
-  parts.push(sectionHTML("Currently Reading", "reading", currentCards, "Nothing currently reading"));
-
-  // Recently finished
-  const rf = recentlyFinished[kid] || [];
-  if (rf.length) {
-    const rfCards = rf.map(b => `
-      <div class="card finished">
-        <div class="row">
-          <div><p class="title">${escapeHtml(b.title)}</p><p class="author">${escapeHtml(b.author)}</p>
-          <div class="verdictbox"><strong>${b.bounced ? "Bounced" : "Verdict"}:</strong> ${escapeHtml(b.verdict)}</div></div>
-        </div>
-      </div>`).join("");
-    parts.push(`<section><h2 class="finished">Recently Finished</h2>${rfCards}</section>`);
-  }
-
-  // Finished
-  if (finished.length) {
-    parts.push(sectionHTML("Finished", "finished", finished.map(b => bookCardHTML(b, kid, isKid)), ""));
-  }
-
-  // Favorites
-  if (favorites[kid]?.length) {
-    parts.push(`<section><h2 class="fav">All-Time Favorites</h2><div class="favlist">${favorites[kid].map(f => `<span class="fav">${escapeHtml(f)}</span>`).join("")}</div></section>`);
-  }
-
-  document.getElementById("content").innerHTML = parts.join("");
-}
-
-function render() {
-  document.getElementById("lastUpdated").textContent = "Last updated: " + LAST_UPDATED;
-
-  document.getElementById("modeToggle").innerHTML = `
-    <button class="tab" data-modebtn="reading" data-active="${activeMode === "reading"}">📚 Reading</button>
-    <button class="tab" data-modebtn="games"   data-active="${activeMode === "games"}">🎮 Game Nights</button>`;
-  document.getElementById("pageTitle").textContent =
-    activeMode === "games" ? "🎮 Game Nights — Andrew · Jason · Brian" : "📚 Family Reading Dashboard";
-
-  if (activeMode === "games") {
-    document.getElementById("tabs").innerHTML = "";
-    renderGames();
-    return;
-  }
-
-  // Tabs
-  document.getElementById("tabs").innerHTML = familyMembers.map(m => `
-    <button class="tab" data-tab="${m.id}" data-active="${activeTab === m.id}">
-      <span>${m.emoji}</span><span>${m.name}</span>${m.age ? `<span class="age">(${m.age})</span>` : ""}
-    </button>
-  `).join("");
-
-  const kid = activeTab;
-  const isKid = kid === "zada" || kid === "kai";
-  const catalog = books[kid] || [];
-  const finished  = catalog.filter(b => getState(kid,b.title) === "finished");
-  const reading   = catalog.filter(b => getState(kid,b.title) === "reading");
-  const ordered   = catalog.filter(b => getState(kid,b.title) === "ordered");
-  const selected  = catalog.filter(b => getState(kid,b.title) === "selected");
-  const available = catalog.filter(b => getState(kid,b.title) === "available");
-
-  const parts = [];
-
-  // Currently Reading
-  const currentCards = [];
-  (inProgress[kid] || []).forEach(b => {
-    const fmt = b.format && FORMAT[b.format] ? `<span class="badge ${FORMAT[b.format].cls}">${FORMAT[b.format].label}</span>` : "";
-    currentCards.push(`
-      <div class="card reading">
-        <div class="row">
-          <div>
-            <p class="title">${escapeHtml(b.title)}</p>
-            <p class="author">${escapeHtml(b.author)} • ${escapeHtml(b.status)}</p>
-          </div>
-          ${isKid && fmt ? `<div>${fmt}</div>` : ""}
-        </div>
-      </div>`);
-  });
-  reading.forEach(b => currentCards.push(bookCardHTML(b, kid, isKid)));
-  parts.push(sectionHTML("Currently Reading", "reading", currentCards, "Nothing currently reading"));
-
-  // Recently Finished (verdicts)
-  const rf = recentlyFinished[kid] || [];
-  if (rf.length) {
-    const rfCards = rf.map(b => `
-      <div class="card finished">
-        <div class="row">
-          <div style="flex:1;">
-            <p class="title">${escapeHtml(b.title)}</p>
-            <p class="author">${escapeHtml(b.author)}</p>
-            <div class="verdictbox"><strong>${b.bounced ? "Bounced" : "Verdict"}:</strong> ${escapeHtml(b.verdict)}</div>
-          </div>
-        </div>
-      </div>`).join("");
-    parts.push(`
-      <section>
-        <h2 class="finished">Recently Finished</h2>
-        ${rfCards}
-      </section>`);
-  }
-
-  // Ordered
-  if (ordered.length || isKid) {
-    let inner = "";
-    if (ordered.length) {
-      inner += `<div class="librarian"><p class="lbl">📋 Show this to the librarian!</p><ul>` +
-        ordered.map(b => `<li><span class="t">${escapeHtml(b.title)}</span><br><span class="a">${escapeHtml(b.author)}</span></li>`).join("") +
-        `</ul></div>`;
-      inner += ordered.map(b => bookCardHTML(b, kid, isKid)).join("");
-    } else {
-      inner = `<p class="empty">No books on order</p>`;
-    }
-    parts.push(`<section><h2 class="ordered">📋 Ordered from Library</h2>${inner}</section>`);
-  }
-
-  // Selected
-  if (selected.length || isKid) {
-    parts.push(sectionHTML("✓ Selected — Ready to Order", "selected",
-      selected.map(b => bookCardHTML(b, kid, isKid)),
-      "Select books from recommendations below!"));
-  }
-
-  // Recommended
-  parts.push(sectionHTML("🎯 Recommended", "rec",
-    available.map(b => bookCardHTML(b, kid, isKid)),
-    "All recommendations selected or finished!"));
-
-  // Finished (catalog-side, with ratings)
-  if (finished.length) {
-    parts.push(sectionHTML("⭐ Finished", "finished",
-      finished.map(b => bookCardHTML(b, kid, isKid)), ""));
-  }
-
-  // Favorites chips
-  if (favorites[kid]?.length) {
-    parts.push(`
-      <section>
-        <h2 class="fav">🔥 All-Time Favorites</h2>
-        <div class="favlist">${favorites[kid].map(f => `<span class="fav">${escapeHtml(f)}</span>`).join("")}</div>
-      </section>`);
-  }
-
-  document.getElementById("content").innerHTML = parts.join("");
+function gameRow(g,n){
+  const state=getState('games',g.title), conf=GAME_NEXT[state];
+  const extra=esc(g.pitch)+'<div class="tags"><span class="tag k">Crossplay</span><span class="tag k">'+esc(g.players)+'</span>'+(g.tags||[]).map(x=>'<span class="tag">'+esc(x)+'</span>').join('')+'</div>'+(state==='played'?starsHTML('games',g.title):'');
+  return '<li class="q"><span class="n">'+n+'</span><div class="row"><div class="rtitle">'+esc(g.title)+'</div><div class="rmeta"><span class="hi">'+esc(g.price)+'</span></div>'
+    +'<button class="btn '+conf.cls+'" data-advance data-kid="games" data-title="'+esc(g.title)+'" data-next="'+conf.next+'">'+conf.label+'</button>'
+    +'<div class="rwhy">'+extra+'</div></div></li>';
 }
 
 /* ============================================================
-   EVENTS
+   READING MODE
    ============================================================ */
+function renderReading(){
+  document.getElementById('pageTitle').innerHTML='Family <i>reading</i>';
+  document.getElementById('tabs').innerHTML=familyMembers.map(m=>'<button class="osdbtn" data-tab="'+m.id+'" data-active="'+(activeTab===m.id)+'">'+m.name+(m.age?' ('+m.age+')':'')+'</button>').join('');
 
-document.addEventListener("click", (e) => {
-  const modeBtn = e.target.closest("[data-modebtn]");
-  if (modeBtn) { activeMode = modeBtn.dataset.modebtn; save(); render(); return; }
+  /* LEFT — everyone at once */
+  let now='<ul class="rows">';
+  familyMembers.forEach(m=>{
+    const list=(inProgress[m.id]||[]).slice();
+    (books[m.id]||[]).filter(b=>getState(m.id,b.title)==='reading').forEach(b=>list.push({title:b.title,author:b.author,status:'From the queue'}));
+    if(!list.length){ now+='<li><span class="who '+m.id+'">'+m.name+'</span><div class="body"><div class="t" style="font-weight:400;color:var(--mut)">Nothing active</div></div></li>'; return; }
+    list.forEach((b,i)=>{ now+='<li>'+(i===0?'<span class="who '+m.id+'">'+m.name+'</span>':'<span></span>')+'<div class="body"><div class="t">'+esc(b.title)+' <span class="au">'+esc(b.author)+'</span></div><div class="st">'+esc(b.status)+'</div></div></li>'; });
+  });
+  now+='</ul>';
 
-  const tab = e.target.closest(".tab");
-  if (tab && tab.dataset.tab) { activeTab = tab.dataset.tab; save(); render(); return; }
+  let fin='<ul class="rows">'; let anyFin=false;
+  familyMembers.forEach(m=>{
+    (recentlyFinished[m.id]||[]).forEach(b=>{ anyFin=true; fin+='<li class="x"><span class="who '+m.id+'">'+m.name+'</span><div class="body"><div class="t">'+esc(b.title)+' <span class="au">'+esc(b.author)+'</span></div><div class="st" style="color:'+(b.bounced?'var(--signal)':'var(--mut)')+'">'+(b.bounced?'Bounced':'Finished')+'</div></div><div class="more'+(b.bounced?' bounced':'')+'">'+esc(b.verdict)+'</div></li>'; });
+    (books[m.id]||[]).filter(b=>getState(m.id,b.title)==='finished').forEach(b=>{ anyFin=true; fin+='<li class="x"><span class="who '+m.id+'">'+m.name+'</span><div class="body"><div class="t">'+esc(b.title)+' <span class="au">'+esc(b.author)+'</span></div><div class="st">Finished &middot; from the queue</div></div><div class="more">'+(b.pitch?esc(b.pitch):'')+starsHTML(m.id,b.title)+'</div></li>'; });
+  });
+  fin+='</ul>'; if(!anyFin) fin='<p class="empty">Nothing logged yet.</p>';
 
-  const adv = e.target.closest("[data-advance]");
-  if (adv) { setState(adv.dataset.kid, adv.dataset.title, adv.dataset.next); return; }
+  let fav='<ul class="rows">';
+  familyMembers.forEach(m=>{ if((favorites[m.id]||[]).length) fav+='<li><span class="who '+m.id+'">'+m.name+'</span><div class="body favline">'+favorites[m.id].map(esc).join(' &middot; ')+'</div></li>'; });
+  fav+='</ul>';
 
-  const star = e.target.closest(".star");
-  if (star) { setRating(star.dataset.kid, star.dataset.title, +star.dataset.star); return; }
+  document.getElementById('left').innerHTML=
+    card('NOW READING &middot; EVERYONE','On the <i>nightstand</i>',now)+
+    card('RECENTLY FINISHED','Verdicts <i>in</i>',fin,'Tap a row for the verdict')+
+    card('TASTE DNA','All-time <i>favorites</i>',fav);
+
+  /* RIGHT — the per-person queue */
+  const kid=activeTab, isKid=(kid==='zada'||kid==='kai'), cat=books[kid]||[];
+  const by=s=>cat.filter(b=>getState(kid,b.title)===s);
+  const ordered=by('ordered'), selected=by('selected'), avail=by('available');
+  let q='';
+  if(ordered.length){
+    q+='<div class="sub">Ordered from the library</div>';
+    if(isKid) q+='<div class="librarian"><div class="lbl">Show this to the librarian</div>'+ordered.map(b=>'<div><b>'+esc(b.title)+'</b> <span class="a">'+esc(b.author)+'</span></div>').join('')+'</div>';
+    q+='<ol class="rank">'+ordered.map((b,i)=>queueRow(b,kid,isKid,i+1)).join('')+'</ol>';
+  }
+  if(selected.length){ q+='<div class="sub">Selected &middot; ready to order</div><ol class="rank">'+selected.map((b,i)=>queueRow(b,kid,isKid,i+1)).join('')+'</ol>'; }
+  q+='<div class="sub">Recommended &middot; ranked</div>';
+  q+=avail.length?'<ol class="rank">'+avail.map((b,i)=>queueRow(b,kid,isKid,i+1)).join('')+'</ol>':'<p class="empty">All selected or finished.</p>';
+  const who=NAME[kid]||kid;
+  document.getElementById('right').innerHTML=card('QUEUE &middot; <span class="who '+kid+'">'+who+'</span>', who+'&rsquo;s <i>queue</i>', q, 'Tap a row for the pitch'+(isKid?' &middot; buttons walk it to the library':''));
+}
+
+/* ============================================================
+   GAME NIGHTS MODE
+   ============================================================ */
+function renderGames(){
+  document.getElementById('pageTitle').innerHTML='Game <i>nights</i>';
+  document.getElementById('tabs').innerHTML='';
+  let crewRows='<ul class="rows">'+crew.map(c=>'<li><span class="who games">'+esc(c.name)+'</span><div class="body"><div class="t" style="font-weight:400">'+esc(c.platforms)+'</div></div></li>').join('')+'</ul><div class="rulebox">'+esc(crewRule)+'</div>';
+  let played='<ul class="rows">'+gamesPlayed.map(g=>'<li class="x"><span class="who games">'+(g.warn?'Heads up':'Played')+'</span><div class="body"><div class="t">'+esc(g.title)+'</div></div><div class="more'+(g.warn?' bounced':'')+'">'+esc(g.note)+'</div></li>').join('')+'</ul>';
+  let dead='<ul class="rows">'+gamesDead.map(d=>'<li class="x"><span class="who">Parked</span><div class="body"><div class="t">'+esc(d.title)+'</div></div><div class="more">'+esc(d.why)+'</div></li>').join('')+'</ul>';
+  document.getElementById('left').innerHTML=
+    card('THE CREW','Who&rsquo;s <i>on</i>',crewRows,'Andrew &middot; Jason &middot; Brian')+
+    card('PLAYED TOGETHER','Already <i>done</i>',played,'Tap for notes')+
+    card('RULED OUT / PARKED','Don&rsquo;t <i>re-litigate</i>',dead,'Tap for why');
+
+  const by=s=>games.filter(g=>getState('games',g.title)===s);
+  const playing=by('playing'), short=by('shortlist'), avail=by('available'), done=by('played');
+  let q='';
+  if(playing.length) q+='<div class="sub">Currently playing</div><ol class="rank">'+playing.map((g,i)=>gameRow(g,i+1)).join('')+'</ol>';
+  if(short.length) q+='<div class="sub">Shortlist &middot; next game night</div><ol class="rank">'+short.map((g,i)=>gameRow(g,i+1)).join('')+'</ol>';
+  q+='<div class="sub">Recommended</div>'+(avail.length?'<ol class="rank">'+avail.map((g,i)=>gameRow(g,i+1)).join('')+'</ol>':'<p class="empty">All shortlisted or played.</p>');
+  if(done.length) q+='<div class="sub">Played</div><ol class="rank">'+done.map((g,i)=>gameRow(g,i+1)).join('')+'</ol>';
+  document.getElementById('right').innerHTML=card('QUEUE &middot; GAME NIGHTS','The <i>queue</i>',q,'Tap a row for the pitch &middot; buttons walk it to played');
+}
+
+function render(){
+  document.getElementById('lastUpdated').textContent='Last updated '+LAST_UPDATED;
+  document.getElementById('modeToggle').innerHTML=
+    '<button class="osdbtn" data-modebtn="reading" data-active="'+(activeMode==='reading')+'">Reading</button>'+
+    '<button class="osdbtn" data-modebtn="games" data-active="'+(activeMode==='games')+'">Game nights</button>';
+  if(activeMode==='games') renderGames(); else renderReading();
+}
+
+document.addEventListener('click',e=>{
+  const mb=e.target.closest('[data-modebtn]'); if(mb){activeMode=mb.dataset.modebtn;save();render();return;}
+  const tb=e.target.closest('[data-tab]'); if(tb){activeTab=tb.dataset.tab;save();render();return;}
+  const adv=e.target.closest('[data-advance]'); if(adv){setState(adv.dataset.kid,adv.dataset.title,adv.dataset.next);return;}
+  const st=e.target.closest('.star'); if(st){setRating(st.dataset.kid,st.dataset.title,+st.dataset.star);return;}
+  const row=e.target.closest('.rank .row'); if(row){row.parentElement.classList.toggle('open');return;}
+  const x=e.target.closest('.rows li.x'); if(x){x.classList.toggle('open');return;}
 });
-
 render();
-</script>
-
-<script>
-document.addEventListener('click', function(e){
-  var card = e.target.closest('.card');
-  if (card && !e.target.closest('button') && !e.target.closest('a')) card.classList.toggle('open');
-});
 </script>
 </body>
 </html>
