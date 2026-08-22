@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>From Chaos to Choreography: Multi-Agent Orchestration Patterns That Actually Work — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/2czYyrTzILg" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 26 min</span><span class="ln"></span></div>
+<h1 class="lede">From Chaos to Choreography: Multi-Agent Orchestration Patterns That Actually Work</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Sandipan Bhaumik &middot; Databricks</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/2czYyrTzILg" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/2czYyrTzILg</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Infra & serving</span><span class="chip hot">Memory</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Going from one agent to five agents doesn&#x27;t add linear complexity: the speaker states it makes the system &quot;25 times more complex&quot; because coordination connections grow combinatorially (c1).</li><li>A real credit-decisioning deployment hit a stale-cache race condition, one agent wrote a 750 credit score while another read a cached 680 for the same customer 500ms later, causing 20% of decisions to carry incorrect risk ratings (c2, c3).</li><li>The fix pattern is immutable, versioned state (append-only, never updated in place) plus circuit breakers and saga-style compensate methods for failure recovery, rather than shared mutable state agents write to directly (c7, c8, c9).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Why complexity explodes past one agent</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker argues that adding agents is not like adding features: coordination complexity grows combinatorially rather than linearly, since each additional agent adds potential connections, race conditions, and failure points between agents.</p></div>
+<div class="quote"><p>&ldquo;it doesn&#x27;t get just five times harder. It gets 25 times more complex. Coordination complexity grows exponentially.&rdquo;</p><a href="https://youtu.be/2czYyrTzILg?t=284" target="_blank">&#9654; watch at 04:44</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>A production war story: stale cache, wrong risk ratings</span><span class="ln"></span></div>
+<div class="prose"><p>In a five-agent credit-decisioning system, a credit-score agent wrote a score of 750 to the database while a risk-assessment agent read a cached value of 680 for the same customer 500 milliseconds later, because the cache wasn&#x27;t invalidated after the write. This caused 20% of decisions to carry incorrect risk ratings before the team traced it back to the caching layer over two days.</p></div>
+<div class="quote"><p>&ldquo;In 3 days&#x27; time, we started seeing weird approvals. Uh 20% of the decisions had incorrect risk ratings.&rdquo;</p><a href="https://youtu.be/2czYyrTzILg?t=158" target="_blank">&#9654; watch at 02:38</a></div><div class="quote"><p>&ldquo;Credit score agent calculated a score of 750 and wrote to the database. The risk assessment agent, on the other hand, read from the database 500 milliseconds later and got a score of 680 for the same customer.&rdquo;</p><a href="https://youtu.be/2czYyrTzILg?t=189" target="_blank">&#9654; watch at 03:09</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Choreography vs. orchestration as a decision, not a default</span><span class="ln"></span></div>
+<div class="prose"><p>Choreography (agents coordinate through published events, no central controller) scales well and is loosely coupled but is described as a debugging nightmare without strong observability. Orchestration (a central coordinator calls each agent directly, manages state, retries, and logging, and agents never call each other) trades autonomy for traceability. The speaker&#x27;s rule of thumb: simple workflow with high autonomy needs favors choreography; complex workflow with low autonomy tolerance favors orchestration.</p></div>
+<div class="quote"><p>&ldquo;However, the nightmare of choreography is debugging. When something fails, you&#x27;re playing detective with no real clue.&rdquo;</p><a href="https://youtu.be/2czYyrTzILg?t=410" target="_blank">&#9654; watch at 06:50</a></div><div class="quote"><p>&ldquo;Agents are dumb. They just take the input, they do the work, they return the output. The orchestrator does all the smart coordination.&rdquo;</p><a href="https://youtu.be/2czYyrTzILg?t=538" target="_blank">&#9654; watch at 08:58</a></div><div class="quote"><p>&ldquo;Simple workflow, high autonomy, you go with choreography. You need complex workflow with low autonomy tolerance, you go with orchestration.&rdquo;</p><a href="https://youtu.be/2czYyrTzILg?t=601" target="_blank">&#9654; watch at 10:01</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>State: replace shared mutable writes with immutable, versioned handoffs</span><span class="ln"></span></div>
+<div class="prose"><p>Instead of multiple agents writing to the same record (which produces lost updates and stale reads), each agent hands off an immutable, versioned state object that is appended, not updated, letting failures be traced by walking back through prior versions. Data contracts between agents (e.g., an analysis agent rejecting a handoff if a confidence score is below 0.7) catch bad data at the handoff boundary instead of several agents downstream.</p></div>
+<div class="quote"><p>&ldquo;It prevents race conditions on shared state. No stale reads. It provides a clear lineage.&rdquo;</p><a href="https://youtu.be/2czYyrTzILg?t=885" target="_blank">&#9654; watch at 14:45</a></div><div class="quote"><p>&ldquo;If confidence is below 0.7, it will reject the handoff.&rdquo;</p><a href="https://youtu.be/2czYyrTzILg?t=947" target="_blank">&#9654; watch at 15:47</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Failure recovery: circuit breakers and saga-style compensation</span><span class="ln"></span></div>
+<div class="prose"><p>A circuit breaker wraps each inter-agent call and opens after repeated failures (the example given is five in a row), so the system fails fast instead of retrying into a timeout each time, then tests recovery with a single request after a cooldown. Separately, a saga/compensation pattern gives every agent both an execute and a compensate method, so the orchestrator can walk backward through completed steps and undo them if a later agent fails.</p></div>
+<div class="quote"><p>&ldquo;If agent B fails repeatedly, say five times in a row, the circuit breaker opens.&rdquo;</p><a href="https://youtu.be/2czYyrTzILg?t=1009" target="_blank">&#9654; watch at 16:49</a></div><div class="quote"><p>&ldquo;Every agent has two methods, execute and compensate. Execute does the work. Compensate rolls it back, undoes it.&rdquo;</p><a href="https://youtu.be/2czYyrTzILg?t=1134" target="_blank">&#9654; watch at 18:54</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The talk maps its patterns to specific Databricks components (LangGraph as orchestrator, Unity Catalog for contracts, MLflow for tracing, AI Gateway for circuit breakers), but the underlying patterns, immutable versioned state, circuit breakers, saga compensation, are generic distributed-systems patterns and not specific to that stack.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Moving from one to five agents doesn&#x27;t get five times harder; coordination complexity grows exponentially, roughly 25 times more complex.</td><td class="tt"><a href="https://youtu.be/2czYyrTzILg?t=284" target="_blank">04:44</a></td></tr><tr><td class="st">asserts</td><td>A five-agent credit-decisioning deployment produced weird approvals within three days, with 20% of decisions carrying incorrect risk ratings.</td><td class="tt"><a href="https://youtu.be/2czYyrTzILg?t=158" target="_blank">02:38</a></td></tr><tr><td class="st">asserts</td><td>The credit-score agent wrote a score of 750 while the risk-assessment agent read a stale cached score of 680 for the same customer 500 milliseconds later.</td><td class="tt"><a href="https://youtu.be/2czYyrTzILg?t=189" target="_blank">03:09</a></td></tr><tr><td class="st">warns</td><td>Choreography is a debugging nightmare when something fails, because there&#x27;s no central coordinator to trace through.</td><td class="tt"><a href="https://youtu.be/2czYyrTzILg?t=410" target="_blank">06:50</a></td></tr><tr><td class="st">asserts</td><td>In orchestration, agents are deliberately kept simple; the orchestrator alone handles the smart coordination, execution graph, retries, and logging.</td><td class="tt"><a href="https://youtu.be/2czYyrTzILg?t=538" target="_blank">08:58</a></td></tr><tr><td class="st">recommends</td><td>Choose choreography for simple, high-autonomy workflows and orchestration for complex workflows with low autonomy tolerance.</td><td class="tt"><a href="https://youtu.be/2czYyrTzILg?t=601" target="_blank">10:01</a></td></tr><tr><td class="st">recommends</td><td>Immutable, versioned state handoffs between agents prevent race conditions and stale reads and provide a clear lineage of what each agent produced.</td><td class="tt"><a href="https://youtu.be/2czYyrTzILg?t=885" target="_blank">14:45</a></td></tr><tr><td class="st">recommends</td><td>A circuit breaker opens after an agent fails repeatedly, such as five times in a row, so subsequent calls fail fast instead of waiting for a timeout.</td><td class="tt"><a href="https://youtu.be/2czYyrTzILg?t=1009" target="_blank">16:49</a></td></tr><tr><td class="st">recommends</td><td>Every agent should implement both an execute and a compensate method so failures can be rolled back by walking backward through completed steps.</td><td class="tt"><a href="https://youtu.be/2czYyrTzILg?t=1134" target="_blank">18:54</a></td></tr><tr><td class="st">recommends</td><td>A data contract can reject a handoff outright, such as when a confidence score falls below 0.7, catching bad data at the boundary instead of downstream.</td><td class="tt"><a href="https://youtu.be/2czYyrTzILg?t=947" target="_blank">15:47</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "2czYyrTzILg", "slug": "multi-agent-choreography-orchestration", "title": "From Chaos to Choreography: Multi-Agent Orchestration Patterns That Actually Work", "speaker": "Sandipan Bhaumik", "company": "Databricks", "themes": ["agentic-engineering", "infra-serving", "memory"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "coordination complexity growth", "text": "Moving from one to five agents doesn't get five times harder; coordination complexity grows exponentially, roughly 25 times more complex.", "quote": "it doesn't get just five times harder. It gets 25 times more complex. Coordination complexity grows exponentially.", "t": 284}, {"id": "c2", "stance": "asserts", "topic": "production incident impact", "text": "A five-agent credit-decisioning deployment produced weird approvals within three days, with 20% of decisions carrying incorrect risk ratings.", "quote": "In 3 days' time, we started seeing weird approvals. Uh 20% of the decisions had incorrect risk ratings.", "t": 158}, {"id": "c3", "stance": "asserts", "topic": "root cause: stale cache read", "text": "The credit-score agent wrote a score of 750 while the risk-assessment agent read a stale cached score of 680 for the same customer 500 milliseconds later.", "quote": "Credit score agent calculated a score of 750 and wrote to the database. The risk assessment agent, on the other hand, read from the database 500 milliseconds later and got a score of 680 for the same customer.", "t": 189}, {"id": "c4", "stance": "warns", "topic": "choreography debugging difficulty", "text": "Choreography is a debugging nightmare when something fails, because there's no central coordinator to trace through.", "quote": "However, the nightmare of choreography is debugging. When something fails, you're playing detective with no real clue.", "t": 410}, {"id": "c5", "stance": "asserts", "topic": "orchestration pattern definition", "text": "In orchestration, agents are deliberately kept simple; the orchestrator alone handles the smart coordination, execution graph, retries, and logging.", "quote": "Agents are dumb. They just take the input, they do the work, they return the output. The orchestrator does all the smart coordination.", "t": 538}, {"id": "c6", "stance": "recommends", "topic": "choreography vs orchestration decision rule", "text": "Choose choreography for simple, high-autonomy workflows and orchestration for complex workflows with low autonomy tolerance.", "quote": "Simple workflow, high autonomy, you go with choreography. You need complex workflow with low autonomy tolerance, you go with orchestration.", "t": 601}, {"id": "c7", "stance": "recommends", "topic": "immutable versioned state", "text": "Immutable, versioned state handoffs between agents prevent race conditions and stale reads and provide a clear lineage of what each agent produced.", "quote": "It prevents race conditions on shared state. No stale reads. It provides a clear lineage.", "t": 885}, {"id": "c8", "stance": "recommends", "topic": "circuit breaker pattern", "text": "A circuit breaker opens after an agent fails repeatedly, such as five times in a row, so subsequent calls fail fast instead of waiting for a timeout.", "quote": "If agent B fails repeatedly, say five times in a row, the circuit breaker opens.", "t": 1009}, {"id": "c9", "stance": "recommends", "topic": "saga/compensation pattern", "text": "Every agent should implement both an execute and a compensate method so failures can be rolled back by walking backward through completed steps.", "quote": "Every agent has two methods, execute and compensate. Execute does the work. Compensate rolls it back, undoes it.", "t": 1134}, {"id": "c10", "stance": "recommends", "topic": "data contracts at handoff", "text": "A data contract can reject a handoff outright, such as when a confidence score falls below 0.7, catching bad data at the boundary instead of downstream.", "quote": "If confidence is below 0.7, it will reject the handoff.", "t": 947}]}</script>
+</body></html>

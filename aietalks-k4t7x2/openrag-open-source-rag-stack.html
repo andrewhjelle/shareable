@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>OpenRAG: An open-source stack for RAG — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/4TxOBhDRRCM" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 15 min</span><span class="ln"></span></div>
+<h1 class="lede">OpenRAG: An open-source stack for RAG</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Phil Nash &middot; IBM</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/4TxOBhDRRCM" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/4TxOBhDRRCM</a></span>
+</div>
+<div class="chips"><span class="chip hot">Open source</span><span class="chip hot">Data curation</span><span class="chip hot">Agentic engineering</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>OpenRAG combines three existing open-source projects: Docling for document processing, OpenSearch for search indexing, and LangFlow for visual orchestration and agents (c1).</li><li>It defaults to the JVector KNN plugin instead of OpenSearch&#x27;s built-in HNSW/IVF options specifically because JVector&#x27;s disk-based architecture means the index doesn&#x27;t need to fit in memory (c3, c4).</li><li>The whole stack, including Docling itself, can run fully offline with locally hosted models, which the speaker says makes air-gapped deployment possible (c6).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Three existing open-source projects, combined</span><span class="ln"></span></div>
+<div class="prose"><p>OpenRAG is presented as a baseline built from three existing open-source projects rather than a new framework from scratch: Docling handles document processing, OpenSearch handles search indexing, and LangFlow provides visual orchestration and agent construction.</p></div>
+<div class="quote"><p>&ldquo;it uses the open-source docling for document processing, open search for search indexing and LangFlow for visual orchestration and agents&rdquo;</p><a href="https://youtu.be/4TxOBhDRRCM?t=124" target="_blank">&#9654; watch at 02:04</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Document parsing: multiple pipelines, including a single vision-language-model option</span><span class="ln"></span></div>
+<div class="prose"><p>Docling routes different file types through different pipelines: a simple pipeline for straightforward text formats, an ASR pipeline for audio/video, and for PDFs either a standard pipeline of small focused models (layout analysis, table extraction, image extraction, optional OCR) or a newer, simpler VLM pipeline that uses the Granite Docling 258 million-parameter vision model to extract everything in one pass.</p></div>
+<div class="quote"><p>&ldquo;There&#x27;s also a VLM, a vision language model pipeline that uses the granite docling 258 million vision model to extract all of that in one go.&rdquo;</p><a href="https://youtu.be/4TxOBhDRRCM?t=247" target="_blank">&#9654; watch at 04:07</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Indexing choice: JVector over the default plugin</span><span class="ln"></span></div>
+<div class="prose"><p>Rather than OpenSearch&#x27;s built-in nearest-neighbor plugin (HNSW or IVF options), OpenRAG defaults to the JVector KNN plugin. Its disk-based architecture means the whole vector index doesn&#x27;t need to fit in memory, which the speaker frames as giving more headroom for scaling data servers.</p></div>
+<div class="quote"><p>&ldquo;The default open search nearest neighbors plugin gives you options for HNSW or IVF vector indexes but open rag uses the JVector KNN plugin by default.&rdquo;</p><a href="https://youtu.be/4TxOBhDRRCM?t=369" target="_blank">&#9654; watch at 06:09</a></div><div class="quote"><p>&ldquo;disk KNN architecture means your whole index doesn&#x27;t have to fit in memory giving you more options for scaling the data servers&rdquo;</p><a href="https://youtu.be/4TxOBhDRRCM?t=402" target="_blank">&#9654; watch at 06:42</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Agentic retrieval instead of fixed top-K</span><span class="ln"></span></div>
+<div class="prose"><p>Rather than a traditional pipeline that embeds the query, pulls a fixed top-K of chunks, and hopes the answer is in there, OpenRAG&#x27;s generation side hands the query to an agent with search tools and instructions, and the model itself decides what searches to run and how to use the results.</p></div>
+<div class="quote"><p>&ldquo;The model is actually responsible for deciding what searches to perform and what to do with the results.&rdquo;</p><a href="https://youtu.be/4TxOBhDRRCM?t=464" target="_blank">&#9654; watch at 07:44</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Offline capability and connectors</span><span class="ln"></span></div>
+<div class="prose"><p>The entire stack, including Docling, can run offline using locally hosted models (e.g., Ollama), which the speaker says supports air-gapped deployments. Separately, OAuth-based cloud connectors let users sync documents directly from Google Drive, SharePoint, or OneDrive rather than manually uploading them. The project is described as open source end to end, with a Next.js front end and a Python backend.</p></div>
+<div class="quote"><p>&ldquo;the entirety of open rag can be run offline using locally hosted models. Docling itself can be run offline so it can run in air gap situations.&rdquo;</p><a href="https://youtu.be/4TxOBhDRRCM?t=308" target="_blank">&#9654; watch at 05:08</a></div><div class="quote"><p>&ldquo;you can connect to uh Google Drive, you can connect to SharePoint, uh you can connect to OneDrive.&rdquo;</p><a href="https://youtu.be/4TxOBhDRRCM?t=621" target="_blank">&#9654; watch at 10:21</a></div><div class="quote"><p>&ldquo;the front end is a Next.js application. Everything else is a Python app.&rdquo;</p><a href="https://youtu.be/4TxOBhDRRCM?t=899" target="_blank">&#9654; watch at 14:59</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The talk is a project walkthrough rather than a benchmarked comparison; the specific component choices (JVector over default OpenSearch KNN, VLM pipeline vs. multi-model PDF pipeline) are presented as OpenRAG&#x27;s defaults, not as results of a documented evaluation against alternatives.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>OpenRAG combines Docling for document processing, OpenSearch for search indexing, and LangFlow for visual orchestration and agents.</td><td class="tt"><a href="https://youtu.be/4TxOBhDRRCM?t=124" target="_blank">02:04</a></td></tr><tr><td class="st">asserts</td><td>Docling offers a vision-language-model pipeline, using the Granite Docling 258 million-parameter vision model, to extract document content in one pass.</td><td class="tt"><a href="https://youtu.be/4TxOBhDRRCM?t=247" target="_blank">04:07</a></td></tr><tr><td class="st">asserts</td><td>OpenRAG uses the JVector KNN plugin by default rather than OpenSearch&#x27;s built-in HNSW or IVF nearest-neighbor options.</td><td class="tt"><a href="https://youtu.be/4TxOBhDRRCM?t=369" target="_blank">06:09</a></td></tr><tr><td class="st">asserts</td><td>JVector&#x27;s disk-based KNN architecture means the whole vector index doesn&#x27;t need to fit in memory, giving more scaling headroom.</td><td class="tt"><a href="https://youtu.be/4TxOBhDRRCM?t=402" target="_blank">06:42</a></td></tr><tr><td class="st">asserts</td><td>With agentic retrieval, the model itself decides what searches to run and what to do with the results, instead of a fixed top-K retrieval step.</td><td class="tt"><a href="https://youtu.be/4TxOBhDRRCM?t=464" target="_blank">07:44</a></td></tr><tr><td class="st">asserts</td><td>The entirety of OpenRAG, including Docling, can be run offline using locally hosted models, supporting air-gapped deployment.</td><td class="tt"><a href="https://youtu.be/4TxOBhDRRCM?t=308" target="_blank">05:08</a></td></tr><tr><td class="st">asserts</td><td>OAuth-based cloud connectors let OpenRAG sync documents directly from Google Drive, SharePoint, or OneDrive.</td><td class="tt"><a href="https://youtu.be/4TxOBhDRRCM?t=621" target="_blank">10:21</a></td></tr><tr><td class="st">asserts</td><td>OpenRAG&#x27;s own front end is a Next.js application, and everything else is a Python app.</td><td class="tt"><a href="https://youtu.be/4TxOBhDRRCM?t=899" target="_blank">14:59</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "4TxOBhDRRCM", "slug": "openrag-open-source-rag-stack", "title": "OpenRAG: An open-source stack for RAG", "speaker": "Phil Nash", "company": "IBM", "themes": ["open-source", "data-curation", "agentic-engineering"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "OpenRAG's component stack", "text": "OpenRAG combines Docling for document processing, OpenSearch for search indexing, and LangFlow for visual orchestration and agents.", "quote": "it uses the open-source docling for document processing, open search for search indexing and LangFlow for visual orchestration and agents", "t": 124}, {"id": "c2", "stance": "asserts", "topic": "VLM document-parsing pipeline", "text": "Docling offers a vision-language-model pipeline, using the Granite Docling 258 million-parameter vision model, to extract document content in one pass.", "quote": "There's also a VLM, a vision language model pipeline that uses the granite docling 258 million vision model to extract all of that in one go.", "t": 247}, {"id": "c3", "stance": "asserts", "topic": "default KNN plugin choice", "text": "OpenRAG uses the JVector KNN plugin by default rather than OpenSearch's built-in HNSW or IVF nearest-neighbor options.", "quote": "The default open search nearest neighbors plugin gives you options for HNSW or IVF vector indexes but open rag uses the JVector KNN plugin by default.", "t": 369}, {"id": "c4", "stance": "asserts", "topic": "JVector disk-based scaling", "text": "JVector's disk-based KNN architecture means the whole vector index doesn't need to fit in memory, giving more scaling headroom.", "quote": "disk KNN architecture means your whole index doesn't have to fit in memory giving you more options for scaling the data servers", "t": 402}, {"id": "c5", "stance": "asserts", "topic": "agentic retrieval", "text": "With agentic retrieval, the model itself decides what searches to run and what to do with the results, instead of a fixed top-K retrieval step.", "quote": "The model is actually responsible for deciding what searches to perform and what to do with the results.", "t": 464}, {"id": "c6", "stance": "asserts", "topic": "offline / air-gapped operation", "text": "The entirety of OpenRAG, including Docling, can be run offline using locally hosted models, supporting air-gapped deployment.", "quote": "the entirety of open rag can be run offline using locally hosted models. Docling itself can be run offline so it can run in air gap situations.", "t": 308}, {"id": "c7", "stance": "asserts", "topic": "cloud document connectors", "text": "OAuth-based cloud connectors let OpenRAG sync documents directly from Google Drive, SharePoint, or OneDrive.", "quote": "you can connect to uh Google Drive, you can connect to SharePoint, uh you can connect to OneDrive.", "t": 621}, {"id": "c8", "stance": "asserts", "topic": "tech stack of OpenRAG itself", "text": "OpenRAG's own front end is a Next.js application, and everything else is a Python app.", "quote": "the front end is a Next.js application. Everything else is a Python app.", "t": 899}]}</script>
+</body></html>

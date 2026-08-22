@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Running LLMs on your iPhone: 40 tok/s Gemma 4 with MLX — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/a2muGkT4WD4" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 10 min</span><span class="ln"></span></div>
+<h1 class="lede">Running LLMs on your iPhone: 40 tok/s Gemma 4 with MLX</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Adrien Grondin &middot; Locally AI</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/a2muGkT4WD4" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/a2muGkT4WD4</a></span>
+</div>
+<div class="chips"><span class="chip hot">Local models</span><span class="chip hot">Open source</span><span class="chip hot">Product & UX</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Gemma 4 quantized to 4-bit running via MLX on a recent iPhone generates at roughly 40 tokens per second locally and offline; older iPhones still manage around 20 tokens per second (c1, c2).</li><li>The speaker recommends staying between 4-bit and 8-bit quantization for on-device models, since going below 4-bit noticeably degrades output quality (c3, c4).</li><li>New open model releases typically appear quantized (4-bit, 6-bit, etc.) on Hugging Face&#x27;s MLX community within about 30 minutes of a lab&#x27;s release (c5).</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>On-device throughput numbers</span><span class="ln"></span></div>
+<div class="prose"><p>Running Gemma 4 (sourced at 8-bit, quantized down to 4-bit) through MLX on a recent iPhone produces roughly 40 tokens per second, demonstrated live and offline in the talk. On older iPhone hardware, throughput drops to around 20 tokens per second, which the speaker still considers usable for most application use cases.</p></div>
+<div class="quote"><p>&ldquo;if you take Gemma 4 8-bit quantized in 4-bit it&#x27;s extremely fast. Like it can run easily at 40 token 40 token per second.&rdquo;</p><a href="https://youtu.be/a2muGkT4WD4?t=342" target="_blank">&#9654; watch at 05:42</a></div><div class="quote"><p>&ldquo;you will not get 40 token per second, which is quite fast, but even if you get 20 tokens per second, that&#x27;s already great and useful&rdquo;</p><a href="https://youtu.be/a2muGkT4WD4?t=406" target="_blank">&#9654; watch at 06:46</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Quantization sweet spot</span><span class="ln"></span></div>
+<div class="prose"><p>For on-device deployment, the speaker recommends staying between 4-bit and 8-bit quantization, using 8-bit mainly for already-small models. Going below 4-bit starts to visibly degrade output quality, so 4-bit is presented as the practical floor.</p></div>
+<div class="quote"><p>&ldquo;4-bit is the lower I would go. And 8-bit is the higher I would go if you&#x27;re using really small models.&rdquo;</p><a href="https://youtu.be/a2muGkT4WD4?t=311" target="_blank">&#9654; watch at 05:11</a></div><div class="quote"><p>&ldquo;under like 4-bit it&#x27;s getting it&#x27;s starting to get a lot of impact on the output. And and the model are not that great&rdquo;</p><a href="https://youtu.be/a2muGkT4WD4?t=281" target="_blank">&#9654; watch at 04:41</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>How fast new models reach on-device form</span><span class="ln"></span></div>
+<div class="prose"><p>Hugging Face&#x27;s MLX community hosts pre-quantized weights (4-bit, 6-bit, full precision, etc.) for thousands of models, and new releases from labs typically appear there quantized within about 30 minutes of release, according to the speaker.</p></div>
+<div class="quote"><p>&ldquo;When a model is is released by a by a lab you will directly have it almost 30 minutes after release quantized in 4-bit, 6-bit and everything&rdquo;</p><a href="https://youtu.be/a2muGkT4WD4?t=218" target="_blank">&#9654; watch at 03:38</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Tool calling and current limits</span><span class="ln"></span></div>
+<div class="prose"><p>MLX Swift LM, the framework the Locally AI app is built on, supports tool calling but not yet structured generation, though the speaker notes third-party packages are working to add that on top.</p></div>
+<div class="quote"><p>&ldquo;So, it support tool calling. Um not yet custom not yet structured generation.&rdquo;</p><a href="https://youtu.be/a2muGkT4WD4?t=529" target="_blank">&#9654; watch at 08:49</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Distribution: download size and acquisition</span><span class="ln"></span></div>
+<div class="prose"><p>The main adoption barrier for the Locally AI app is model download size, typically around 1 to 3 gigabytes depending on the model. The speaker also announced that Locally AI had just been acquired by LM Studio.</p></div>
+<div class="quote"><p>&ldquo;Only thing is that you will have to download the model that&#x27;s usually around 1 gigabytes or 3 gigabytes.&rdquo;</p><a href="https://youtu.be/a2muGkT4WD4?t=436" target="_blank">&#9654; watch at 07:16</a></div><div class="quote"><p>&ldquo;maybe you have heard the news yesterday. Locally have been acquired by LM Studio.&rdquo;</p><a href="https://youtu.be/a2muGkT4WD4?t=467" target="_blank">&#9654; watch at 07:47</a></div>
+
+</section>
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Gemma 4 sourced at 8-bit and quantized to 4-bit runs at roughly 40 tokens per second on a recent iPhone via MLX.</td><td class="tt"><a href="https://youtu.be/a2muGkT4WD4?t=342" target="_blank">05:42</a></td></tr><tr><td class="st">asserts</td><td>Older iPhones don&#x27;t hit 40 tokens per second but still manage around 20 tokens per second, which remains useful for many applications.</td><td class="tt"><a href="https://youtu.be/a2muGkT4WD4?t=406" target="_blank">06:46</a></td></tr><tr><td class="st">recommends</td><td>For on-device models, stay between 4-bit and 8-bit quantization, using 8-bit mainly for already small models.</td><td class="tt"><a href="https://youtu.be/a2muGkT4WD4?t=311" target="_blank">05:11</a></td></tr><tr><td class="st">warns</td><td>Quantizing below 4-bit starts to noticeably degrade model output quality.</td><td class="tt"><a href="https://youtu.be/a2muGkT4WD4?t=281" target="_blank">04:41</a></td></tr><tr><td class="st">asserts</td><td>New model releases typically appear quantized on Hugging Face&#x27;s MLX community within about 30 minutes of a lab releasing them.</td><td class="tt"><a href="https://youtu.be/a2muGkT4WD4?t=218" target="_blank">03:38</a></td></tr><tr><td class="st">asserts</td><td>MLX Swift LM supports tool calling but not yet structured generation.</td><td class="tt"><a href="https://youtu.be/a2muGkT4WD4?t=529" target="_blank">08:49</a></td></tr><tr><td class="st">asserts</td><td>The biggest current barrier to app adoption is the model download size, typically around 1 to 3 gigabytes.</td><td class="tt"><a href="https://youtu.be/a2muGkT4WD4?t=436" target="_blank">07:16</a></td></tr><tr><td class="st">asserts</td><td>Locally AI was acquired by LM Studio, announced the day before the talk.</td><td class="tt"><a href="https://youtu.be/a2muGkT4WD4?t=467" target="_blank">07:47</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "a2muGkT4WD4", "slug": "gemma-4-mlx-iphone", "title": "Running LLMs on your iPhone: 40 tok/s Gemma 4 with MLX", "speaker": "Adrien Grondin", "company": "Locally AI", "themes": ["local-models", "open-source", "product-ux"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "Gemma 4 on-device throughput", "text": "Gemma 4 sourced at 8-bit and quantized to 4-bit runs at roughly 40 tokens per second on a recent iPhone via MLX.", "quote": "if you take Gemma 4 8-bit quantized in 4-bit it's extremely fast. Like it can run easily at 40 token 40 token per second.", "t": 342}, {"id": "c2", "stance": "asserts", "topic": "older iPhone throughput", "text": "Older iPhones don't hit 40 tokens per second but still manage around 20 tokens per second, which remains useful for many applications.", "quote": "you will not get 40 token per second, which is quite fast, but even if you get 20 tokens per second, that's already great and useful", "t": 406}, {"id": "c3", "stance": "recommends", "topic": "quantization bit range", "text": "For on-device models, stay between 4-bit and 8-bit quantization, using 8-bit mainly for already small models.", "quote": "4-bit is the lower I would go. And 8-bit is the higher I would go if you're using really small models.", "t": 311}, {"id": "c4", "stance": "warns", "topic": "sub-4-bit quality loss", "text": "Quantizing below 4-bit starts to noticeably degrade model output quality.", "quote": "under like 4-bit it's getting it's starting to get a lot of impact on the output. And and the model are not that great", "t": 281}, {"id": "c5", "stance": "asserts", "topic": "MLX community quantization turnaround", "text": "New model releases typically appear quantized on Hugging Face's MLX community within about 30 minutes of a lab releasing them.", "quote": "When a model is is released by a by a lab you will directly have it almost 30 minutes after release quantized in 4-bit, 6-bit and everything", "t": 218}, {"id": "c6", "stance": "asserts", "topic": "tool calling support status", "text": "MLX Swift LM supports tool calling but not yet structured generation.", "quote": "So, it support tool calling. Um not yet custom not yet structured generation.", "t": 529}, {"id": "c7", "stance": "asserts", "topic": "model download size barrier", "text": "The biggest current barrier to app adoption is the model download size, typically around 1 to 3 gigabytes.", "quote": "Only thing is that you will have to download the model that's usually around 1 gigabytes or 3 gigabytes.", "t": 436}, {"id": "c8", "stance": "asserts", "topic": "Locally AI acquisition", "text": "Locally AI was acquired by LM Studio, announced the day before the talk.", "quote": "maybe you have heard the news yesterday. Locally have been acquired by LM Studio.", "t": 467}]}</script>
+</body></html>
