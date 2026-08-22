@@ -4,104 +4,124 @@
 <meta charset="utf-8">
 <title>Family Reading Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0f172a; --panel: #1e293b; --panel-2: #273449; --border: #334155;
-    --ink: #f1f5f9; --ink-dim: #94a3b8; --ink-mute: #64748b;
-    --zada: #a855f7; --kai: #06b6d4; --andrew: #f59e0b; --debbie: #f43f5e;
-    --green: #22c55e; --blue: #3b82f6; --yellow: #eab308; --purple: #a855f7;
-    --pink: #ec4899; --violet: #7c3aed; --emerald: #059669;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
-    font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-  a { color: inherit; }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 80px; }
-  h1 { font-size: 24px; margin: 4px 0 20px; text-align: center; font-weight: 800;
-    background: linear-gradient(90deg, #facc15, #f472b6, #22d3ee);
-    -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .subtitle { text-align: center; color: var(--ink-mute); font-size: 12px; margin: -12px 0 20px; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 24px; }
-  .tab { border: 0; cursor: pointer; padding: 8px 14px; border-radius: 999px;
-    background: #334155; color: var(--ink); font-size: 14px; font-weight: 600;
-    display: inline-flex; align-items: center; gap: 6px; transition: all .15s ease; }
-  .tab:hover { background: #475569; }
-  .tab .age { opacity: .65; font-size: 11px; }
-  .tab[data-active="true"] { box-shadow: 0 2px 8px rgba(0,0,0,.35); }
-  .tab[data-tab="zada"][data-active="true"]   { background: var(--zada); }
-  .tab[data-tab="kai"][data-active="true"]    { background: var(--kai); }
-  .tab[data-tab="andrew"][data-active="true"] { background: var(--andrew); }
-  .tab[data-tab="debbie"][data-active="true"] { background: var(--debbie); }
-  .tab[data-modebtn="reading"][data-active="true"] { background: #2563eb; }
-  .tab[data-modebtn="games"][data-active="true"]   { background: #16a34a; }
-  .modebar { margin-bottom: 18px; }
-  .badge.cp   { background: #047857; }
-  .badge.free { background: #b45309; }
-  .badge.warn { background: #7f1d1d; }
-  .crewbox { background: var(--panel-2); border: 1px solid var(--border); border-radius: 14px;
-    padding: 14px; margin-bottom: 22px; font-size: 13.5px; }
-  .crewbox .who { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-  .crewbox .who span { background: #334155; padding: 4px 10px; border-radius: 999px; font-size: 12px; }
-  .crewbox .rule { color: var(--ink-dim); }
-  .deadlist { color: var(--ink-mute); font-size: 12.5px; line-height: 1.6; }
-  .deadlist strong { color: var(--ink-dim); }
-  section { margin-bottom: 26px; }
-  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .04em;
-    margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
-  h2 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-  h2.reading { color: #4ade80; } h2.reading .dot { background: #4ade80; }
-  h2.finished { color: #a78bfa; }
-  h2.ordered { color: #60a5fa; }
-  h2.selected { color: #facc15; }
-  h2.rec { color: #c084fc; }
-  h2.fav { color: #fb923c; }
-  .empty { color: var(--ink-mute); font-size: 13px; font-style: italic; }
-  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
-    padding: 14px; margin-bottom: 10px; }
-  .card.reading { border-color: #14532d; }
-  .card.finished { border-color: #4c1d95; }
-  .card .row { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; }
-  .card .title { font-weight: 700; line-height: 1.25; margin: 0; }
-  .card .author { color: var(--ink-dim); font-size: 13px; margin: 2px 0 0; }
-  .card .pitch { font-size: 13.5px; color: #cbd5e1; margin: 8px 0 0; }
-  .card .meta { color: var(--ink-mute); font-size: 12px; margin-top: 4px; }
-  .badges { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 0; }
-  .badge { font-size: 11px; padding: 2px 8px; border-radius: 6px; background: #475569; color: var(--ink); }
-  .badge.novel   { background: var(--emerald); }
-  .badge.graphic { background: var(--violet); }
-  .badge.manga   { background: var(--pink); }
-  .badge.movie   { background: #1d4ed8; }
-  .badge.edgy    { background: #b91c1c; }
-  .badge.audio   { background: #c2410c; }
-  .badge.match   { background: #b45309; }
-  .badge.verdict { background: #4c1d95; }
-  .badge.bounced { background: #7f1d1d; }
-  .btn { border: 0; cursor: pointer; font-weight: 600; font-size: 12px;
-    padding: 8px 12px; border-radius: 10px; color: white; white-space: nowrap; }
-  .btn:hover { opacity: .9; }
-  .btn.available { background: #ca8a04; }
-  .btn.selected  { background: #2563eb; }
-  .btn.ordered   { background: #16a34a; }
-  .btn.reading   { background: #9333ea; }
-  .btn.finished  { background: #475569; }
-  .stars { display: inline-flex; gap: 2px; margin-top: 8px; align-items: center; }
-  .stars .lbl { font-size: 11px; color: var(--ink-mute); margin-right: 6px; }
-  .star { background: none; border: 0; color: #475569; font-size: 18px; cursor: pointer; padding: 0 1px; }
-  .star.on { color: #facc15; }
-  .librarian { background: white; color: #0f172a; border-radius: 14px; padding: 14px; margin-bottom: 10px; }
-  .librarian .lbl { text-align: center; font-weight: 700; font-size: 13px; margin: 0 0 8px; }
-  .librarian ul { margin: 0; padding: 0; list-style: none; }
-  .librarian li { padding: 8px 0; border-top: 1px solid #e2e8f0; }
-  .librarian li:first-child { border-top: 0; }
-  .librarian .t { font-weight: 600; }
-  .librarian .a { color: #64748b; font-size: 13px; }
-  .favlist { display: flex; flex-wrap: wrap; gap: 8px; }
-  .favlist .fav { background: #422006; color: #fdba74; border: 1px solid #7c2d12;
-    padding: 4px 10px; border-radius: 999px; font-size: 12px; }
-  .verdictbox { background: #1e1b4b; border: 1px solid #4338ca; border-radius: 10px;
-    padding: 10px 12px; margin-top: 6px; font-size: 13px; color: #c7d2fe; }
-  .verdictbox strong { color: #e0e7ff; }
+:root{
+  --tape:#17141a;--ink:#211d20;--cream:#f2e0c8;--cream2:#e9d5ba;
+  --lip:#d96b52;--lip2:#c24f3d;--cobalt:#4a6fb2;--signal:#cf4a2e;
+  --osd:#f4f1e4;--skin:#edbd97;--blush:#e58087;
+  --rule-soft:rgba(33,29,32,0.35);--rule-faint:rgba(33,29,32,0.18);
+  --mut:#7a6a5e;
+  --zada:#a855f7;--kai:#4a6fb2;--andrew:#c24f3d;--debbie:#d96b52;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+html,body{background:var(--tape);color:var(--ink);font-family:"Zen Kaku Gothic New",system-ui,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(10,8,12,.11) 3px 4px)}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 30% 20%,rgba(217,107,82,.08),transparent 60%),radial-gradient(ellipse at 80% 90%,rgba(74,111,178,.08),transparent 60%)}
+a{color:var(--lip2);text-decoration:none;border-bottom:1px dotted rgba(194,79,61,.5)}
+a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+::selection{background:var(--lip);color:var(--cream)}
+
+.wrap{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:20px 22px 80px}
+h1{font-family:"Anton",sans-serif;font-size:38px;letter-spacing:.02em;text-transform:uppercase;transform:skewX(-5deg);color:var(--skin);text-shadow:3px 0 0 rgba(194,79,61,.55),-3px 0 0 rgba(74,111,178,.45);text-align:left;margin:6px 0 6px;line-height:1;background:none;-webkit-background-clip:initial;background-clip:initial}
+.subtitle{font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--osd);margin-bottom:16px;text-align:left}
+
+.tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-start;margin-bottom:16px}
+.tab{border:1.5px solid rgba(244,241,228,.35);cursor:pointer;padding:6px 12px;border-radius:2px;background:rgba(23,20,26,.7);color:var(--osd);font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.tab:hover{color:var(--skin);border-color:var(--skin)}
+.tab .age{opacity:.6;font-size:10px}
+.tab[data-active="true"]{background:var(--lip2);border-color:var(--lip2);color:var(--cream)}
+.tab[data-tab="zada"][data-active="true"]{background:var(--zada);border-color:var(--zada);color:var(--cream)}
+.tab[data-tab="kai"][data-active="true"]{background:var(--kai);border-color:var(--kai);color:var(--cream)}
+.tab[data-tab="andrew"][data-active="true"]{background:var(--andrew);border-color:var(--andrew);color:var(--cream)}
+.tab[data-tab="debbie"][data-active="true"]{background:var(--debbie);border-color:var(--debbie);color:var(--cream)}
+.tab[data-modebtn="reading"][data-active="true"]{background:var(--cobalt);border-color:var(--cobalt);color:var(--cream)}
+.tab[data-modebtn="games"][data-active="true"]{background:#4a8f5a;border-color:#4a8f5a;color:var(--cream)}
+.modebar{margin-bottom:12px}
+
+section{margin-bottom:22px}
+h2{font-family:"Anton",sans-serif;font-size:22px;letter-spacing:.02em;text-transform:uppercase;transform:skewX(-5deg);color:var(--cream);margin:14px 0 8px;display:flex;align-items:baseline;gap:8px;line-height:1.05;text-shadow:2px 0 0 rgba(194,79,61,.4)}
+h2 .dot{display:none}
+h2.reading{color:var(--skin)}
+h2.finished{color:var(--cream2);opacity:.75}
+h2.ordered{color:var(--skin)}
+h2.selected{color:var(--skin)}
+h2.rec{color:var(--cream)}
+h2.fav{color:var(--skin)}
+.empty{color:var(--osd);opacity:.65;font-size:13px;font-style:italic;padding:8px 0}
+
+/* Cards — dense, one-line where possible */
+#content{display:grid;grid-template-columns:1fr;gap:0}
+section.rec-lead .cards-grid,
+section h2.rec + .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px}
+.card{position:relative;background:var(--cream);color:var(--ink);border:2px solid var(--ink);border-radius:2px 8px 3px 8px;padding:10px 12px;margin-bottom:6px;box-shadow:3px 3px 0 rgba(33,29,32,.75)}
+.card.reading{border-color:var(--cobalt)}
+.card.finished{opacity:.7}
+.card .row{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;min-width:0}
+.card .row > div:first-child{min-width:0;flex:1 1 auto}
+.card .title{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;font-size:13.5px;line-height:1.25;margin:0;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .author{color:var(--mut);font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .pitch{font-size:12px;color:var(--ink);margin:5px 0 0;line-height:1.4;display:none}
+.card:hover .pitch,.card.open .pitch{display:block}
+.card .meta{color:var(--mut);font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.06em;margin-top:3px}
+.badges{display:flex;flex-wrap:wrap;gap:4px;margin:5px 0 0}
+.badge{font-family:"DotGothic16",monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:1px 6px;border-radius:2px;background:var(--cream2);color:var(--ink);border:1px solid var(--ink);white-space:nowrap}
+.badge.novel{background:#6e8b5c;color:var(--cream);border-color:#6e8b5c}
+.badge.graphic{background:var(--zada);color:var(--cream);border-color:var(--zada)}
+.badge.manga{background:#c94b7a;color:var(--cream);border-color:#c94b7a}
+.badge.movie{background:var(--cobalt);color:var(--cream);border-color:var(--cobalt)}
+.badge.edgy{background:var(--signal);color:var(--cream);border-color:var(--signal)}
+.badge.audio{background:var(--lip);color:var(--cream);border-color:var(--lip)}
+.badge.match{background:var(--lip2);color:var(--cream);border-color:var(--lip2)}
+.badge.verdict{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.badge.bounced{background:var(--signal);color:var(--cream);border-color:var(--signal)}
+.badge.cp{background:#4a8f5a;color:var(--cream);border-color:#4a8f5a}
+.badge.free{background:var(--lip);color:var(--cream);border-color:var(--lip)}
+.badge.warn{background:var(--signal);color:var(--cream);border-color:var(--signal)}
+.btn{border:1.5px solid var(--ink);cursor:pointer;font-family:"DotGothic16",monospace;font-weight:400;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:2px 5px 2px 5px;color:var(--cream);white-space:nowrap;background:var(--ink);flex-shrink:0}
+.btn:hover{opacity:.9;transform:translate(-1px,-1px)}
+.btn.available{background:var(--lip);border-color:var(--lip)}
+.btn.selected{background:var(--cobalt);border-color:var(--cobalt)}
+.btn.ordered{background:#4a8f5a;border-color:#4a8f5a}
+.btn.reading{background:var(--zada);border-color:var(--zada)}
+.btn.finished{background:var(--mut);border-color:var(--mut)}
+
+.stars{display:inline-flex;gap:2px;margin-top:6px;align-items:center}
+.stars .lbl{font-family:"DotGothic16",monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-right:6px}
+.star{background:none;border:0;color:var(--mut);font-size:16px;cursor:pointer;padding:0 1px}
+.star.on{color:var(--lip)}
+
+.librarian{background:var(--cream2);color:var(--ink);border:2px solid var(--ink);border-radius:2px 8px 3px 8px;padding:12px;margin-bottom:8px;box-shadow:3px 3px 0 rgba(33,29,32,.75)}
+.librarian .lbl{font-family:"Anton",sans-serif;font-size:16px;text-transform:uppercase;transform:skewX(-5deg);color:var(--lip2);margin:0 0 6px;text-align:left}
+.librarian ul{margin:0;padding:0;list-style:none}
+.librarian li{padding:5px 0;border-top:1px dashed var(--rule-soft);font-size:13px}
+.librarian li:first-child{border-top:0}
+.librarian .t{font-weight:700}
+.librarian .a{color:var(--mut);font-family:"DotGothic16",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+
+.favlist{display:flex;flex-wrap:wrap;gap:6px}
+.favlist .fav{background:var(--lip2);color:var(--cream);border:1px solid var(--lip2);padding:3px 10px;border-radius:2px 5px 2px 5px;font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+
+.verdictbox{background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 6px 2px 6px;padding:6px 10px;margin-top:5px;font-size:12px;color:var(--ink)}
+.verdictbox strong{color:var(--lip2)}
+
+.crewbox{background:var(--cream);border:2px solid var(--ink);border-radius:2px 8px 3px 8px;padding:12px;margin-bottom:14px;font-size:12.5px;box-shadow:3px 3px 0 rgba(33,29,32,.75)}
+.crewbox .who{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.crewbox .who span{background:var(--cream2);color:var(--ink);border:1px solid var(--ink);padding:2px 8px;border-radius:2px;font-family:"DotGothic16",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+.crewbox .rule{color:var(--mut);font-size:12px}
+.deadlist{color:var(--mut);font-size:11.5px;line-height:1.5;font-family:"DotGothic16",monospace;letter-spacing:.04em}
+.deadlist strong{color:var(--ink);text-transform:uppercase}
+
+/* Top-of-page nav pill */
+.wrap > div:first-child{background:rgba(23,20,26,.7);border:1px solid rgba(244,241,228,.14);border-bottom-width:2px !important;padding:10px 14px !important;margin-bottom:16px !important;border-radius:2px 8px 2px 8px}
+.wrap > div:first-child a{color:var(--osd) !important;font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;border-bottom:0 !important}
+.wrap > div:first-child a:hover{color:var(--skin) !important}
+.wrap > div:first-child span{color:var(--osd) !important;opacity:.4}
 </style>
+
 </head>
 <body>
 <div class="wrap">
@@ -473,7 +493,7 @@ function sectionHTML(title, kls, cards, empty) {
   return `
     <section>
       <h2 class="${kls}"><span class="dot"></span>${title}</h2>
-      ${cards.length ? cards.join("") : `<p class="empty">${empty}</p>`}
+      ${cards.length ? `<div class="cards-grid">${cards.join("")}</div>` : `<p class="empty">${empty}</p>`}
     </section>`;
 }
 
@@ -538,6 +558,112 @@ function renderGames() {
       <h2 class="fav">🚫 Ruled Out / Parked</h2>
       <div class="deadlist">${gamesDead.map(d => `<div><strong>${escapeHtml(d.title)}</strong> — ${escapeHtml(d.why)}</div>`).join("")}</div>
     </section>`);
+
+  document.getElementById("content").innerHTML = parts.join("");
+}
+
+function render() {
+  document.getElementById("lastUpdated").textContent = "Last updated: " + LAST_UPDATED;
+
+  document.getElementById("modeToggle").innerHTML = `
+    <button class="tab" data-modebtn="reading" data-active="${activeMode === "reading"}">📚 Reading</button>
+    <button class="tab" data-modebtn="games"   data-active="${activeMode === "games"}">🎮 Game Nights</button>`;
+  document.getElementById("pageTitle").textContent =
+    activeMode === "games" ? "🎮 Game Nights — Andrew · Jason · Brian" : "📚 Family Reading Dashboard";
+
+  if (activeMode === "games") {
+    document.getElementById("tabs").innerHTML = "";
+    renderGames();
+    return;
+  }
+
+  // Tabs
+  document.getElementById("tabs").innerHTML = familyMembers.map(m => `
+    <button class="tab" data-tab="${m.id}" data-active="${activeTab === m.id}">
+      <span>${m.emoji}</span><span>${m.name}</span>${m.age ? `<span class="age">(${m.age})</span>` : ""}
+    </button>
+  `).join("");
+
+  const kid = activeTab;
+  const isKid = kid === "zada" || kid === "kai";
+  const catalog = books[kid] || [];
+  const finished  = catalog.filter(b => getState(kid,b.title) === "finished");
+  const reading   = catalog.filter(b => getState(kid,b.title) === "reading");
+  const ordered   = catalog.filter(b => getState(kid,b.title) === "ordered");
+  const selected  = catalog.filter(b => getState(kid,b.title) === "selected");
+  const available = catalog.filter(b => getState(kid,b.title) === "available");
+
+  const parts = [];
+
+  // TOP 10 RECOMMENDATIONS (lead the page)
+  const top10 = available.slice(0, 10);
+  parts.push(`<section class="rec-lead"><h2 class="rec">Top ${top10.length} Recommendations</h2><div class="cards-grid">${
+    top10.length ? top10.map(b => bookCardHTML(b, kid, isKid)).join("") : '<p class="empty">All caught up on recs!</p>'
+  }</div></section>`);
+  if (available.length > 10) {
+    parts.push(`<section><h2 class="rec">More Recommendations (${available.length - 10})</h2><div class="cards-grid">${
+      available.slice(10).map(b => bookCardHTML(b, kid, isKid)).join("")
+    }</div></section>`);
+  }
+
+  // Ordered (queue)
+  if (ordered.length || isKid) {
+    let inner = "";
+    if (ordered.length) {
+      inner += `<div class="librarian"><p class="lbl">Show this to the librarian</p><ul>` +
+        ordered.map(b => `<li><span class="t">${escapeHtml(b.title)}</span> <span class="a">${escapeHtml(b.author)}</span></li>`).join("") +
+        `</ul></div>`;
+      inner += `<div class="cards-grid">${ordered.map(b => bookCardHTML(b, kid, isKid)).join("")}</div>`;
+    } else {
+      inner = `<p class="empty">No books on order</p>`;
+    }
+    parts.push(`<section><h2 class="ordered">Ordered from Library</h2>${inner}</section>`);
+  }
+
+  // Selected (shortlist)
+  if (selected.length || isKid) {
+    parts.push(sectionHTML("Selected — Ready to Order", "selected",
+      selected.map(b => bookCardHTML(b, kid, isKid)),
+      "Select books from recommendations above."));
+  }
+
+  // Currently reading
+  const currentCards = [];
+  (inProgress[kid] || []).forEach(b => {
+    const fmt = b.format && FORMAT[b.format] ? `<span class="badge ${FORMAT[b.format].cls}">${FORMAT[b.format].label}</span>` : "";
+    currentCards.push(`
+      <div class="card reading">
+        <div class="row">
+          <div><p class="title">${escapeHtml(b.title)}</p><p class="author">${escapeHtml(b.author)} &middot; ${escapeHtml(b.status)}</p></div>
+          ${isKid && fmt ? `<div>${fmt}</div>` : ""}
+        </div>
+      </div>`);
+  });
+  reading.forEach(b => currentCards.push(bookCardHTML(b, kid, isKid)));
+  parts.push(sectionHTML("Currently Reading", "reading", currentCards, "Nothing currently reading"));
+
+  // Recently finished
+  const rf = recentlyFinished[kid] || [];
+  if (rf.length) {
+    const rfCards = rf.map(b => `
+      <div class="card finished">
+        <div class="row">
+          <div><p class="title">${escapeHtml(b.title)}</p><p class="author">${escapeHtml(b.author)}</p>
+          <div class="verdictbox"><strong>${b.bounced ? "Bounced" : "Verdict"}:</strong> ${escapeHtml(b.verdict)}</div></div>
+        </div>
+      </div>`).join("");
+    parts.push(`<section><h2 class="finished">Recently Finished</h2>${rfCards}</section>`);
+  }
+
+  // Finished
+  if (finished.length) {
+    parts.push(sectionHTML("Finished", "finished", finished.map(b => bookCardHTML(b, kid, isKid)), ""));
+  }
+
+  // Favorites
+  if (favorites[kid]?.length) {
+    parts.push(`<section><h2 class="fav">All-Time Favorites</h2><div class="favlist">${favorites[kid].map(f => `<span class="fav">${escapeHtml(f)}</span>`).join("")}</div></section>`);
+  }
 
   document.getElementById("content").innerHTML = parts.join("");
 }
@@ -676,6 +802,13 @@ document.addEventListener("click", (e) => {
 });
 
 render();
+</script>
+
+<script>
+document.addEventListener('click', function(e){
+  var card = e.target.closest('.card');
+  if (card && !e.target.closest('button') && !e.target.closest('a')) card.classList.toggle('open');
+});
 </script>
 </body>
 </html>
