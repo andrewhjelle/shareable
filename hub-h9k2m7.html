@@ -39,7 +39,19 @@ a{color:var(--lip2)}a:hover{color:var(--ink)}
 .mast h1 i{font-style:normal;color:var(--lip)}
 .mast p{color:var(--cream);max-width:560px;text-shadow:0 1px 6px rgba(23,20,26,.9);font-size:15.5px}
 /* columns */
-.cols{display:grid;grid-template-columns:minmax(280px,340px) minmax(0,1fr) minmax(280px,340px);gap:20px;align-items:start;max-width:1460px;margin:0 auto;padding:0 22px 110px}
+.cols{display:grid;grid-template-columns:minmax(240px,290px) minmax(0,1fr) minmax(340px,400px);gap:18px;align-items:start;max-width:1540px;margin:0 auto;padding:16px 22px 110px}
+/* left col: density pass */
+.lcol .card{padding:14px 16px 12px}
+.lcol .card .sub{display:none}
+.lcol .card > .meta{display:none}
+.lcol .card p.sub{display:block;margin:8px 0 2px;font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.lcol .card p.sub b{color:var(--ink);font-weight:700}
+.lcol ul.tasks li{padding:6px 0}
+.lcol .t b{font-size:13.5px}
+/* right col: fewer wraps */
+.rcol .card{padding:14px 16px 12px}
+.rcol .proj li{padding:6px 0;font-size:13px;gap:8px;flex-wrap:wrap}
+.rcol .proj .when{font-size:10.5px;padding-left:6px}
 @media(max-width:1120px){.cols{grid-template-columns:minmax(280px,1fr) minmax(0,1.6fr)}.rcol{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}}
 @media(max-width:720px){.cols{grid-template-columns:1fr}.rcol{grid-template-columns:1fr}}
 .lcol{position:sticky;top:58px;display:grid;gap:18px;max-height:calc(100vh - 76px);overflow:auto;scrollbar-width:none}
@@ -181,11 +193,7 @@ details .inner ol{padding-left:18px;display:grid;gap:5px;margin:4px 0}
 <svg class="grainsvg" aria-hidden="true"><filter id="g"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2"></feTurbulence><feColorMatrix type="matrix" values="0 0 0 0 .9 0 0 0 0 .85 0 0 0 0 .78 0 0 0 .07 0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#g)"></rect></svg></div>
 
 <div class="page">
-<div class="osdbar"><span class="rec"><i></i>REC · HUB / THE WEEK</span><span class="mid">SAT · AUG 22 2026 · WK 34</span><span style="display:flex;gap:8px;align-items:center"><button class="osdbtn" id="hdone">HIDE DONE</button><button class="osdbtn" id="xall">EXPAND ALL</button><button class="osdbtn" id="call">COLLAPSE</button><span id="tc">00:00:00</span></span></div>
-
-<header class="mast" data-screen-label="Masthead" style="padding:26px 22px 6px">
-<div class="ep">SIDE A · PERSONAL WORKING HUB · LEFT = TODAY · MIDDLE = WEEK + KIDS + RECIPES + HOUSE + MEDIA · RIGHT = STANDING</div>
-</header>
+<div class="osdbar"><span></span><span></span><span style="display:flex;gap:8px;align-items:center"><button class="osdbtn" id="hdone">HIDE DONE</button><button class="osdbtn" id="xall">EXPAND ALL</button><button class="osdbtn" id="call">COLLAPSE</button></span></div>
 
 <div class="cols">
 <!-- LEFT: today -->
@@ -406,7 +414,7 @@ details .inner ol{padding-left:18px;display:grid;gap:5px;margin:4px 0}
 
 </div><script>
 (function(){
-var t0=Date.now(),tc=document.getElementById('tc');
+var tc=document.getElementById('tc');
 document.getElementById('xall').onclick=function(){document.querySelectorAll('details').forEach(function(d){d.open=true})};
 document.getElementById('call').onclick=function(){document.querySelectorAll('details').forEach(function(d){d.open=false})};
 // checkboxes + hide done (persisted)
@@ -423,7 +431,6 @@ var hd=document.getElementById('hdone');
 function setHide(on){document.body.classList.toggle('hidedone',on);hd.textContent=on?'SHOW DONE':'HIDE DONE';try{localStorage.setItem(HKEY,on?'1':'')}catch(e){}}
 hd.onclick=function(){setHide(!document.body.classList.contains('hidedone'))};
 try{if(localStorage.getItem(HKEY)==='1')setHide(true)}catch(e){}
-setInterval(function(){var s=Math.floor((Date.now()-t0)/1000);var h=String(Math.floor(s/3600)).padStart(2,'0'),m=String(Math.floor(s/60)%60).padStart(2,'0'),ss=String(s%60).padStart(2,'0');tc.textContent=h+':'+m+':'+ss},1000);
 // scroll-in: RGB-split resolve, staggered so first-paint cards animate too
 var cards=[].slice.call(document.querySelectorAll('.card'));
 if(!matchMedia('(prefers-reduced-motion:reduce)').matches){
