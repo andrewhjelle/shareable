@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Don&#x27;t Build Slop (4 Levels of AI Agent Maturity) — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/yUmS-F9IX90" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 18 min</span><span class="ln"></span></div>
+<h1 class="lede">Don&#x27;t Build Slop (4 Levels of AI Agent Maturity)</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Ara Khan &middot; Cline</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/yUmS-F9IX90" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/yUmS-F9IX90</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Coding agents</span><span class="chip hot">Context engineering</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Frontier models perform worse with more instructions: Codex&#x27;s GPT-5.3 system prompt is a third the size of its GPT-5 prompt, and the speaker&#x27;s own team rewrote their agent&#x27;s codebase from scratch multiple times to strip out accumulated prompt/logic bloat.</li><li>New frontier model APIs (Opus 4.6, Gemini, GPT-5.3) require echoing reasoning traces back in the exact expected format; get it wrong and the response still works but performance degrades silently, with no way to know.</li><li>The speaker recommends Kanban boards as the UX layer for running multiple inference-bound agents in parallel, and offloading long (50-60 minute) autonomous build-and-QA tasks to cloud agents rather than watching them run locally.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Four levels of building agents</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker breaks agent-building into four escalating levels: use an existing framework to validate an idea quickly, hand-build your own agent as a state machine once you&#x27;re serious, adopt a Kanban-based workflow for the UX of managing multiple agents, and finally ship execution to the cloud to scale across many users.</p></div>
+<div class="quote"><p>&ldquo;I want to break down this problem of building agents into like four different parts&rdquo;</p><a href="https://youtu.be/yUmS-F9IX90?t=122" target="_blank">&#9654; watch at 02:02</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Less instruction, not more, for frontier models</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker&#x27;s second rule for hand-built agents is that every addition to an agent risks making it worse; large system prompts and lots of edge-case logic tend to overwhelm frontier models rather than help them. As evidence, the Codex repo&#x27;s system prompt for GPT-5.3 is a third the size of its GPT-5 prompt, and the speaker&#x27;s own team rewrote Cline&#x27;s codebase from scratch multiple times to strip out junk accumulated from older versions.</p></div>
+<div class="quote"><p>&ldquo;every single thing you add to an agent risks making it worse&rdquo;</p><a href="https://youtu.be/yUmS-F9IX90?t=339" target="_blank">&#9654; watch at 05:39</a></div><div class="quote"><p>&ldquo;if you go through the Codex repo, the prompt for GPT-5 versus the prompt for GPT-5.3 is 1/3 of the size&rdquo;</p><a href="https://youtu.be/yUmS-F9IX90?t=370" target="_blank">&#9654; watch at 06:10</a></div><div class="quote"><p>&ldquo;we literally rewrote the entirety of client because we realized there was so much uh junk from the older older versions of client&rdquo;</p><a href="https://youtu.be/yUmS-F9IX90?t=400" target="_blank">&#9654; watch at 06:40</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Frontier API lock-in through reasoning traces</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker&#x27;s fifth rule warns that frontier labs&#x27; newer models (Opus 4.6, Gemini, GPT-5.3) expect reasoning traces to be sent back in a precise format as part of caching and the test-time compute loop; if a developer doesn&#x27;t format them correctly, the API still returns a response but with degraded performance and no visible error.</p></div>
+<div class="quote"><p>&ldquo;you want to send the reasoning traces in the exact precise format that is expected. If you don&#x27;t, the response would still work, except that the performance would be degraded, and you would have no way of knowing.&rdquo;</p><a href="https://youtu.be/yUmS-F9IX90?t=622" target="_blank">&#9654; watch at 10:22</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Kanban as the UX for inference-bound parallel agents</span><span class="ln"></span></div>
+<div class="prose"><p>Because agents are inference-bound (an agent might run for 8-10 minutes before finishing a step), the speaker argues developers naturally end up running two or three agents in parallel, which makes a Kanban board -- giving an engineering-manager-style overview of each agent&#x27;s state -- the right form factor for tracking them, a claim Claude Code&#x27;s own Kanban-style feature later validated.</p></div>
+<div class="quote"><p>&ldquo;you have at least like two or three agents running in parallel at all times because you&#x27;re inference bound&rdquo;</p><a href="https://youtu.be/yUmS-F9IX90?t=712" target="_blank">&#9654; watch at 11:52</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Cloud agents scale beyond a single session</span><span class="ln"></span></div>
+<div class="prose"><p>Cloud agents can run autonomously for extended periods, manually clicking through UI, testing settings changes, and iterating on failures without supervision; the speaker describes sending tasks that ran 50-60 minutes from his phone, letting him return to a finished, tested change.</p></div>
+<div class="quote"><p>&ldquo;the cloud agents are so good that they will actually manually do all the clicks of the Q&amp;A testing that I just described on their own&rdquo;</p><a href="https://youtu.be/yUmS-F9IX90?t=867" target="_blank">&#9654; watch at 14:27</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The claim that Kanban becomes the default UX for agent oversight is stated as a prediction backed by one data point (Claude Code shipping something similar 10 hours after the speaker&#x27;s tweet), not by broader adoption evidence -- worth treating as a signal rather than an established trend (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">recommends</td><td>The speaker breaks the problem of building agents into four parts: framework, hand-built state machine, Kanban UX, and cloud shipping.</td><td class="tt"><a href="https://youtu.be/yUmS-F9IX90?t=122" target="_blank">02:02</a></td></tr><tr><td class="st">warns</td><td>Every additional instruction, edge case, or piece of logic added to an agent risks making it worse, especially for frontier models.</td><td class="tt"><a href="https://youtu.be/yUmS-F9IX90?t=339" target="_blank">05:39</a></td></tr><tr><td class="st">asserts</td><td>The Codex repo&#x27;s system prompt for GPT-5.3 is a third the size of its prompt for GPT-5.</td><td class="tt"><a href="https://youtu.be/yUmS-F9IX90?t=370" target="_blank">06:10</a></td></tr><tr><td class="st">asserts</td><td>Cline&#x27;s own agent codebase (transcribed by ASR as &#x27;client&#x27;) has been rewritten from scratch multiple times to strip out junk accumulated from older versions.</td><td class="tt"><a href="https://youtu.be/yUmS-F9IX90?t=400" target="_blank">06:40</a></td></tr><tr><td class="st">warns</td><td>New frontier model APIs require sending reasoning traces back in the exact expected format; getting it wrong silently degrades performance instead of erroring.</td><td class="tt"><a href="https://youtu.be/yUmS-F9IX90?t=622" target="_blank">10:22</a></td></tr><tr><td class="st">recommends</td><td>Because agents are inference-bound, developers end up running multiple agents in parallel, which is why Kanban boards are the right UX for tracking them.</td><td class="tt"><a href="https://youtu.be/yUmS-F9IX90?t=712" target="_blank">11:52</a></td></tr><tr><td class="st">asserts</td><td>Cloud agents are capable enough to autonomously perform the manual clicks of QA testing a change end to end without supervision.</td><td class="tt"><a href="https://youtu.be/yUmS-F9IX90?t=867" target="_blank">14:27</a></td></tr><tr><td class="st">predicts</td><td>The speaker predicts a future where most of the UX of working with agents runs through Kanban boards (ASR-transcribed as &#x27;Can Man&#x27;) while most of the actual compute runs in the cloud.</td><td class="tt"><a href="https://youtu.be/yUmS-F9IX90?t=928" target="_blank">15:28</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "yUmS-F9IX90", "slug": "dont-build-slop-agent-maturity-levels", "title": "Don't Build Slop (4 Levels of AI Agent Maturity)", "speaker": "Ara Khan", "company": "Cline", "themes": ["agentic-engineering", "coding-agents", "context-engineering"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "recommends", "topic": "four levels of agent building", "text": "The speaker breaks the problem of building agents into four parts: framework, hand-built state machine, Kanban UX, and cloud shipping.", "quote": "I want to break down this problem of building agents into like four different parts", "t": 122}, {"id": "c2", "stance": "warns", "topic": "instruction bloat degrades agents", "text": "Every additional instruction, edge case, or piece of logic added to an agent risks making it worse, especially for frontier models.", "quote": "every single thing you add to an agent risks making it worse", "t": 339}, {"id": "c3", "stance": "asserts", "topic": "Codex prompt size shrank", "text": "The Codex repo's system prompt for GPT-5.3 is a third the size of its prompt for GPT-5.", "quote": "if you go through the Codex repo, the prompt for GPT-5 versus the prompt for GPT-5.3 is 1/3 of the size", "t": 370}, {"id": "c4", "stance": "asserts", "topic": "Cline codebase rewrites", "text": "Cline's own agent codebase (transcribed by ASR as 'client') has been rewritten from scratch multiple times to strip out junk accumulated from older versions.", "quote": "we literally rewrote the entirety of client because we realized there was so much uh junk from the older older versions of client", "t": 400}, {"id": "c5", "stance": "warns", "topic": "reasoning trace format lock-in", "text": "New frontier model APIs require sending reasoning traces back in the exact expected format; getting it wrong silently degrades performance instead of erroring.", "quote": "you want to send the reasoning traces in the exact precise format that is expected. If you don't, the response would still work, except that the performance would be degraded, and you would have no way of knowing.", "t": 622}, {"id": "c6", "stance": "recommends", "topic": "Kanban for parallel agents", "text": "Because agents are inference-bound, developers end up running multiple agents in parallel, which is why Kanban boards are the right UX for tracking them.", "quote": "you have at least like two or three agents running in parallel at all times because you're inference bound", "t": 712}, {"id": "c7", "stance": "asserts", "topic": "cloud agent autonomous QA", "text": "Cloud agents are capable enough to autonomously perform the manual clicks of QA testing a change end to end without supervision.", "quote": "the cloud agents are so good that they will actually manually do all the clicks of the Q&A testing that I just described on their own", "t": 867}, {"id": "c8", "stance": "predicts", "topic": "future split of UX and compute", "text": "The speaker predicts a future where most of the UX of working with agents runs through Kanban boards (ASR-transcribed as 'Can Man') while most of the actual compute runs in the cloud.", "quote": "there exists a future where um most of the UX of working with agents would be Can Man", "t": 928}]}</script>
+</body></html>

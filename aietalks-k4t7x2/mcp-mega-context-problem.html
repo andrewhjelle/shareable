@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>MCP = Mega Context Problem — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/YBYUvGOuotE" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 22 min</span><span class="ln"></span></div>
+<h1 class="lede">MCP = Mega Context Problem</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Matt Carey &middot; Cloudflare</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/YBYUvGOuotE" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/YBYUvGOuotE</a></span>
+</div>
+<div class="chips"><span class="chip hot">MCP & protocols</span><span class="chip hot">Context engineering</span><span class="chip hot">Security</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Cloudflare tried exposing its full API as MCP tools and blew the context window: the raw OpenAPI spec is 2.3 million tokens, about 1.1 million tokens as naive tool definitions, so it split into 16 product-based MCP servers that still had coverage gaps (e.g. 6 tools covering only 30 of a product&#x27;s endpoints against ~2,600 total API endpoints).</li><li>Cloudflare&#x27;s alternative, &#x27;code mode,&#x27; lets the model write TypeScript against a generated typed SDK instead of loading tool definitions, but MCP clients didn&#x27;t adopt it at first because running LLM-generated code without review felt too risky.</li><li>The fix is running that generated code in an isolated Workers sandbox with programmable guardrails (e.g. toggling internet access, blocking process.env), which Carey frames as a step toward &#x27;one tool called code&#x27; replacing individual tool calls.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Blowing the context window with a full API</span><span class="ln"></span></div>
+<div class="prose"><p>About a year before the talk, Cloudflare tried giving agents naive tool access to its full API. The OpenAPI spec alone is 2.3 million tokens, and converting it into tool definitions still comes to roughly 1.1 million tokens -- too large for even the biggest foundation models to use directly.</p></div>
+<div class="quote"><p>&ldquo;open API spec is 2.3 million tokens. Into tools, that&#x27;s something like 1.1 million tokens&rdquo;</p><a href="https://youtu.be/YBYUvGOuotE?t=186" target="_blank">&#9654; watch at 03:06</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Splitting into product MCP servers still has gaps</span><span class="ln"></span></div>
+<div class="prose"><p>Cloudflare&#x27;s workaround was splitting its API into around 16 separate product-based MCP servers, each with far less context but incomplete coverage -- one product suite&#x27;s server had six tools against roughly 30 total API endpoints, while Cloudflare&#x27;s full API spans about 2,600 endpoints.</p></div>
+<div class="quote"><p>&ldquo;you&#x27;ve probably seen this like uh a company that publishes 16 MCP service potentially and then users have to uh interact with the one that they want to use when they want to use it&rdquo;</p><a href="https://youtu.be/YBYUvGOuotE?t=218" target="_blank">&#9654; watch at 03:38</a></div><div class="quote"><p>&ldquo;we might have like six tools in our MCP server, but the total API maybe has like 30 endpoints. Like you&#x27;ve completely missed some coverage there&rdquo;</p><a href="https://youtu.be/YBYUvGOuotE?t=249" target="_blank">&#9654; watch at 04:09</a></div><div class="quote"><p>&ldquo;in Cloudflare we had 16 servers very very quickly. We were hovering around 2 and 1/2 thousand endpoints. I think we&#x27;re actually at like 2,600 API endpoints now&rdquo;</p><a href="https://youtu.be/YBYUvGOuotE?t=249" target="_blank">&#9654; watch at 04:09</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Tool search as a partial fix</span><span class="ln"></span></div>
+<div class="prose"><p>One alternative to splitting servers is tool search, where an agent&#x27;s query triggers keyword matching that loads roughly eight relevant tool definitions into context on demand, rather than loading everything up front.</p></div>
+<div class="quote"><p>&ldquo;it would take the user the user question, it would do some sort of keyword matching, and then it would add K equals say eight tools to context&rdquo;</p><a href="https://youtu.be/YBYUvGOuotE?t=403" target="_blank">&#9654; watch at 06:43</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Code mode: let the model write code instead</span><span class="ln"></span></div>
+<div class="prose"><p>Cloudflare&#x27;s own approach, published as a blog post, generates a typed SDK from the OpenAPI spec and lets the model write code against those types rather than calling discrete tools. Despite this being available for months, MCP clients didn&#x27;t implement it, largely because running LLM-generated code for users without review felt dangerous.</p></div>
+<div class="quote"><p>&ldquo;how can we do something where we just let the agent write code? And we let the agent write code against our API&rdquo;</p><a href="https://youtu.be/YBYUvGOuotE?t=466" target="_blank">&#9654; watch at 07:46</a></div><div class="quote"><p>&ldquo;it&#x27;s a better way of interacting with uh with APIs. Just let the model write code against the API, but they didn&#x27;t implement it. And why not?&rdquo;</p><a href="https://youtu.be/YBYUvGOuotE?t=591" target="_blank">&#9654; watch at 09:51</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Sandboxing untrusted generated code</span><span class="ln"></span></div>
+<div class="prose"><p>Cloudflare&#x27;s answer to the risk is running generated code inside an isolated dynamic Worker with programmable guardrails -- for example, toggling whether the code can reach the internet, or blocking access to process.env and secrets. Carey frames this as a preview of a broader shift where a single &#x27;code&#x27; tool call, with far more degrees of freedom than an individual tool call, replaces enumerated tool calling as models get better at writing code.</p></div>
+<div class="quote"><p>&ldquo;And this ran on the back end. It didn&#x27;t run in my browser. It ran in a dynamic worker that&#x27;s fully isolated&rdquo;</p><a href="https://youtu.be/YBYUvGOuotE?t=683" target="_blank">&#9654; watch at 11:23</a></div><div class="quote"><p>&ldquo;it&#x27;s like this worker is not permitted to access the internet via global functions. Or maybe we want it to access the internet. And now we can give it access&rdquo;</p><a href="https://youtu.be/YBYUvGOuotE?t=744" target="_blank">&#9654; watch at 12:24</a></div><div class="quote"><p>&ldquo;Instead of doing tool calls, you can have one tool called code where the model generates the code of your choice and then you run it&rdquo;</p><a href="https://youtu.be/YBYUvGOuotE?t=931" target="_blank">&#9654; watch at 15:31</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>Carey leads MCP and agents work at Cloudflare and is describing Cloudflare&#x27;s own sandboxing product (Workers) as the safety layer for this pattern, so the isolation claims are self-reported rather than independently audited (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Cloudflare&#x27;s OpenAPI spec is 2.3 million tokens, and converting it to naive tool definitions is still about 1.1 million tokens.</td><td class="tt"><a href="https://youtu.be/YBYUvGOuotE?t=186" target="_blank">03:06</a></td></tr><tr><td class="st">asserts</td><td>Companies commonly split large APIs into multiple product-based MCP servers that users must individually select.</td><td class="tt"><a href="https://youtu.be/YBYUvGOuotE?t=218" target="_blank">03:38</a></td></tr><tr><td class="st">warns</td><td>One Cloudflare product&#x27;s MCP server had six tools against roughly 30 total API endpoints for that product, leaving coverage gaps.</td><td class="tt"><a href="https://youtu.be/YBYUvGOuotE?t=249" target="_blank">04:09</a></td></tr><tr><td class="st">asserts</td><td>Cloudflare split its API into 16 MCP servers to cover roughly 2,600 total API endpoints.</td><td class="tt"><a href="https://youtu.be/YBYUvGOuotE?t=249" target="_blank">04:09</a></td></tr><tr><td class="st">warns</td><td>Despite code mode being a better way to interact with APIs, MCP clients didn&#x27;t implement it when it launched months earlier.</td><td class="tt"><a href="https://youtu.be/YBYUvGOuotE?t=591" target="_blank">09:51</a></td></tr><tr><td class="st">recommends</td><td>Instead of static tool search or a CLI, let the agent write code directly against a typed SDK generated from the API.</td><td class="tt"><a href="https://youtu.be/YBYUvGOuotE?t=466" target="_blank">07:46</a></td></tr><tr><td class="st">asserts</td><td>Tool search loads a small set of relevant tools into context via keyword matching on the user&#x27;s query.</td><td class="tt"><a href="https://youtu.be/YBYUvGOuotE?t=403" target="_blank">06:43</a></td></tr><tr><td class="st">asserts</td><td>Generated code runs on the back end in a fully isolated dynamic worker, not in the user&#x27;s browser.</td><td class="tt"><a href="https://youtu.be/YBYUvGOuotE?t=683" target="_blank">11:23</a></td></tr><tr><td class="st">asserts</td><td>The sandbox supports programmable guardrails, such as toggling whether generated code can access the internet.</td><td class="tt"><a href="https://youtu.be/YBYUvGOuotE?t=744" target="_blank">12:24</a></td></tr><tr><td class="st">predicts</td><td>Rather than discrete tool calls, agents will increasingly use a single &#x27;code&#x27; tool where the model generates and runs code with more degrees of freedom.</td><td class="tt"><a href="https://youtu.be/YBYUvGOuotE?t=931" target="_blank">15:31</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "YBYUvGOuotE", "slug": "mcp-mega-context-problem", "title": "MCP = Mega Context Problem", "speaker": "Matt Carey", "company": "Cloudflare", "themes": ["mcp-protocols", "context-engineering", "security"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "raw API spec token size", "text": "Cloudflare's OpenAPI spec is 2.3 million tokens, and converting it to naive tool definitions is still about 1.1 million tokens.", "quote": "open API spec is 2.3 million tokens. Into tools, that's something like 1.1 million tokens", "t": 186}, {"id": "c2", "stance": "asserts", "topic": "product-split MCP servers", "text": "Companies commonly split large APIs into multiple product-based MCP servers that users must individually select.", "quote": "you've probably seen this like uh a company that publishes 16 MCP service potentially and then users have to uh interact with the one that they want to use when they want to use it", "t": 218}, {"id": "c3", "stance": "warns", "topic": "incomplete tool coverage example", "text": "One Cloudflare product's MCP server had six tools against roughly 30 total API endpoints for that product, leaving coverage gaps.", "quote": "we might have like six tools in our MCP server, but the total API maybe has like 30 endpoints. Like you've completely missed some coverage there", "t": 249}, {"id": "c4", "stance": "asserts", "topic": "Cloudflare API endpoint scale", "text": "Cloudflare split its API into 16 MCP servers to cover roughly 2,600 total API endpoints.", "quote": "in Cloudflare we had 16 servers very very quickly. We were hovering around 2 and 1/2 thousand endpoints. I think we're actually at like 2,600 API endpoints now", "t": 249}, {"id": "c5", "stance": "warns", "topic": "clients didn't adopt code mode due to risk", "text": "Despite code mode being a better way to interact with APIs, MCP clients didn't implement it when it launched months earlier.", "quote": "it's a better way of interacting with uh with APIs. Just let the model write code against the API, but they didn't implement it. And why not?", "t": 591}, {"id": "c6", "stance": "recommends", "topic": "code mode concept", "text": "Instead of static tool search or a CLI, let the agent write code directly against a typed SDK generated from the API.", "quote": "how can we do something where we just let the agent write code? And we let the agent write code against our API", "t": 466}, {"id": "c7", "stance": "asserts", "topic": "tool search mechanism", "text": "Tool search loads a small set of relevant tools into context via keyword matching on the user's query.", "quote": "it would take the user the user question, it would do some sort of keyword matching, and then it would add K equals say eight tools to context", "t": 403}, {"id": "c8", "stance": "asserts", "topic": "sandboxed isolate execution", "text": "Generated code runs on the back end in a fully isolated dynamic worker, not in the user's browser.", "quote": "And this ran on the back end. It didn't run in my browser. It ran in a dynamic worker that's fully isolated", "t": 683}, {"id": "c9", "stance": "asserts", "topic": "programmable sandbox guardrails", "text": "The sandbox supports programmable guardrails, such as toggling whether generated code can access the internet.", "quote": "it's like this worker is not permitted to access the internet via global functions. Or maybe we want it to access the internet. And now we can give it access", "t": 744}, {"id": "c10", "stance": "predicts", "topic": "code as the compact plan replacing tool calls", "text": "Rather than discrete tool calls, agents will increasingly use a single 'code' tool where the model generates and runs code with more degrees of freedom.", "quote": "Instead of doing tool calls, you can have one tool called code where the model generates the code of your choice and then you run it", "t": 931}]}</script>
+</body></html>

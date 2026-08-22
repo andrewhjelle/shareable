@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>From 46% to 90%: Fine-Tuning Tiny LLMs for On-Device Agents — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/-TiET_K-E_g" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 21 min</span><span class="ln"></span></div>
+<h1 class="lede">From 46% to 90%: Fine-Tuning Tiny LLMs for On-Device Agents</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Cormac Brick &middot; Google</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/-TiET_K-E_g" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/-TiET_K-E_g</a></span>
+</div>
+<div class="chips"><span class="chip hot">Local models</span><span class="chip hot">Post-training</span><span class="chip hot">Agentic engineering</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Fine-tuning Function Gemma (270M params) on a synthetic data set raised app-intent function-calling success from 46% to over 90% for 8 of 10 functions.</li><li>On-device skills are loaded on demand via a load-skill tool call rather than stuffed into the prompt up front; an 8-skill model chains skills across a conversation reasonably well but calling multiple skills within one answer is still unreliable.</li><li>Google&#x27;s on-device runtime (formerly TensorFlow Lite) already ships inside Android OS and supports over 2.7 billion devices.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>System-level vs. app-level on-device AI</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker frames on-device AI as a choice between system gen AI (Gemini Nano via AI Core, pre-installed and free of app size cost) and app gen AI (a model bundled into the app itself via the LiteRT-LM runtime for more customization). The underlying runtime already runs inside Android OS at large scale.</p></div>
+<div class="quote"><p>&ldquo;it does uh, support over 2.7 billion devices, like lots and lots of daily invocations, and lots and lots of Android apps uh, leverage this&rdquo;</p><a href="https://youtu.be/-TiET_K-E_g?t=125" target="_blank">&#9654; watch at 02:05</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>How skills load on device</span><span class="ln"></span></div>
+<div class="prose"><p>Skill descriptions are put into the system prompt so the model knows what skills exist, but the model doesn&#x27;t see a skill&#x27;s full function details until it calls a load-skill tool for that skill on demand. With the current 4B-parameter model and about eight enabled skills, chaining skills across turns in a conversation (skill, skill, skill) works robustly, but getting the model to call multiple skills within a single answer is still being worked on and only works sometimes.</p></div>
+<div class="quote"><p>&ldquo;the model is aware of the types of skills it can use, but it doesn&#x27;t have to see all of the functions and details of the skill&rdquo;</p><a href="https://youtu.be/-TiET_K-E_g?t=466" target="_blank">&#9654; watch at 07:46</a></div><div class="quote"><p>&ldquo;by default we enable about eight skills and it&#x27;s able to choose between the eight skills reasonably well&rdquo;</p><a href="https://youtu.be/-TiET_K-E_g?t=1085" target="_blank">&#9654; watch at 18:05</a></div><div class="quote"><p>&ldquo;That&#x27;s um that works sometimes, right? And we&#x27;re still like that&#x27;s something we&#x27;re still figuring out how to make that more robust, right?&rdquo;</p><a href="https://youtu.be/-TiET_K-E_g?t=1117" target="_blank">&#9654; watch at 18:37</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>What tiny models can do today</span><span class="ln"></span></div>
+<div class="prose"><p>Apple&#x27;s FastVLM, a 500-million-parameter visual language model, runs accelerated on a Qualcomm NPU through the same stack. Function Gemma, a 270-million-parameter model published with DeepMind based on Gemma 3, is small enough to hit almost 2,000 tokens/second prefill and 140 decode even on a legacy Pixel 7.</p></div>
+<div class="quote"><p>&ldquo;this is a visual language model that&#x27;s only 500 million parameters and this is optimized and running on like a um this is running on the Qualcomm NPU&rdquo;</p><a href="https://youtu.be/-TiET_K-E_g?t=743" target="_blank">&#9654; watch at 12:23</a></div><div class="quote"><p>&ldquo;if you go all the way back to a Pixel 7, they still can process almost 2,000 tokens per second prefill and 140 decode&rdquo;</p><a href="https://youtu.be/-TiET_K-E_g?t=805" target="_blank">&#9654; watch at 13:25</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Fine-tuning turns a weak baseline into a robust one</span><span class="ln"></span></div>
+<div class="prose"><p>Out of the box, Function Gemma&#x27;s success rate on the team&#x27;s app-intent functions (like add calendar or add email) was about 46%. After generating a synthetic training data set (using Flash) and fine-tuning on it instead of relying on a system prompt, success rose to over 90% for 8 of the 10 target functions, with the remaining two lower.</p></div>
+<div class="quote"><p>&ldquo;when we took function Gemma out of the box, our success rate in that was I think 40 6% or something like that&rdquo;</p><a href="https://youtu.be/-TiET_K-E_g?t=867" target="_blank">&#9654; watch at 14:27</a></div><div class="quote"><p>&ldquo;that then got that 46% um to over like it was over 90% for eight of the 10 functions we were trying and two of the functions were a bit lower in their kind of ACs&rdquo;</p><a href="https://youtu.be/-TiET_K-E_g?t=898" target="_blank">&#9654; watch at 14:58</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The 46%-to-90% jump is specific to this team&#x27;s narrow app-intent function set, not a general claim about tiny-model reliability -- worth checking whether similar synthetic-data fine-tuning gains hold for tool-calling tasks with more than 10 functions or more ambiguous intents (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Google&#x27;s LiteRT on-device runtime is already built into Android OS and supports over 2.7 billion devices.</td><td class="tt"><a href="https://youtu.be/-TiET_K-E_g?t=125" target="_blank">02:05</a></td></tr><tr><td class="st">asserts</td><td>Function Gemma (270M params) is fast enough to hit almost 2,000 tokens/second prefill and 140 decode even on an older Pixel 7.</td><td class="tt"><a href="https://youtu.be/-TiET_K-E_g?t=805" target="_blank">13:25</a></td></tr><tr><td class="st">asserts</td><td>Function Gemma&#x27;s out-of-the-box success rate on the team&#x27;s app-intent functions was about 46%.</td><td class="tt"><a href="https://youtu.be/-TiET_K-E_g?t=867" target="_blank">14:27</a></td></tr><tr><td class="st">asserts</td><td>Fine-tuning Function Gemma on a synthetically generated data set raised success from 46% to over 90% for 8 of the 10 target functions.</td><td class="tt"><a href="https://youtu.be/-TiET_K-E_g?t=898" target="_blank">14:58</a></td></tr><tr><td class="st">asserts</td><td>The model is only told what skills exist via the prompt; full skill details and functions are loaded on demand via a load-skill tool call.</td><td class="tt"><a href="https://youtu.be/-TiET_K-E_g?t=466" target="_blank">07:46</a></td></tr><tr><td class="st">asserts</td><td>With about eight enabled skills, the on-device model chooses between them reasonably well across turns in a conversation.</td><td class="tt"><a href="https://youtu.be/-TiET_K-E_g?t=1085" target="_blank">18:05</a></td></tr><tr><td class="st">warns</td><td>Getting the on-device model to reliably call multiple skills within a single answer (rather than across turns) is still an unsolved, only-sometimes-working problem.</td><td class="tt"><a href="https://youtu.be/-TiET_K-E_g?t=1117" target="_blank">18:37</a></td></tr><tr><td class="st">asserts</td><td>Apple&#x27;s FastVLM, a 500-million-parameter visual language model, runs optimized on a Qualcomm NPU through the same on-device stack.</td><td class="tt"><a href="https://youtu.be/-TiET_K-E_g?t=743" target="_blank">12:23</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "-TiET_K-E_g", "slug": "fine-tuning-tiny-llms-on-device-agents", "title": "From 46% to 90%: Fine-Tuning Tiny LLMs for On-Device Agents", "speaker": "Cormac Brick", "company": "Google", "themes": ["local-models", "post-training", "agentic-engineering"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "on-device runtime scale", "text": "Google's LiteRT on-device runtime is already built into Android OS and supports over 2.7 billion devices.", "quote": "it does uh, support over 2.7 billion devices, like lots and lots of daily invocations, and lots and lots of Android apps uh, leverage this", "t": 125}, {"id": "c2", "stance": "asserts", "topic": "Function Gemma speed on legacy hardware", "text": "Function Gemma (270M params) is fast enough to hit almost 2,000 tokens/second prefill and 140 decode even on an older Pixel 7.", "quote": "if you go all the way back to a Pixel 7, they still can process almost 2,000 tokens per second prefill and 140 decode", "t": 805}, {"id": "c3", "stance": "asserts", "topic": "out-of-the-box function calling baseline", "text": "Function Gemma's out-of-the-box success rate on the team's app-intent functions was about 46%.", "quote": "when we took function Gemma out of the box, our success rate in that was I think 40 6% or something like that", "t": 867}, {"id": "c4", "stance": "asserts", "topic": "fine-tuning result", "text": "Fine-tuning Function Gemma on a synthetically generated data set raised success from 46% to over 90% for 8 of the 10 target functions.", "quote": "that then got that 46% um to over like it was over 90% for eight of the 10 functions we were trying and two of the functions were a bit lower in their kind of ACs", "t": 898}, {"id": "c5", "stance": "asserts", "topic": "on-demand skill loading", "text": "The model is only told what skills exist via the prompt; full skill details and functions are loaded on demand via a load-skill tool call.", "quote": "the model is aware of the types of skills it can use, but it doesn't have to see all of the functions and details of the skill", "t": 466}, {"id": "c6", "stance": "asserts", "topic": "multi-turn skill chaining reliability", "text": "With about eight enabled skills, the on-device model chooses between them reasonably well across turns in a conversation.", "quote": "by default we enable about eight skills and it's able to choose between the eight skills reasonably well", "t": 1085}, {"id": "c7", "stance": "warns", "topic": "multi-skill single-answer limitation", "text": "Getting the on-device model to reliably call multiple skills within a single answer (rather than across turns) is still an unsolved, only-sometimes-working problem.", "quote": "That's um that works sometimes, right? And we're still like that's something we're still figuring out how to make that more robust, right?", "t": 1117}, {"id": "c8", "stance": "asserts", "topic": "FastVLM on NPU", "text": "Apple's FastVLM, a 500-million-parameter visual language model, runs optimized on a Qualcomm NPU through the same on-device stack.", "quote": "this is a visual language model that's only 500 million parameters and this is optimized and running on like a um this is running on the Qualcomm NPU", "t": 743}]}</script>
+</body></html>

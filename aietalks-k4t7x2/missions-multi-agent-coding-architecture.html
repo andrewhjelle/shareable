@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>The Multi-Agent Architecture That Actually Ships — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/ow1we5PzK-o" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 18 min</span><span class="ln"></span></div>
+<h1 class="lede">The Multi-Agent Architecture That Actually Ships</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Luke Alvoeiro &middot; Factory</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/ow1we5PzK-o" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/ow1we5PzK-o</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Coding agents</span><span class="chip hot">Context engineering</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Factory&#x27;s missions system runs multi-day coding tasks using three roles (orchestrator, workers, validators) that combine delegation, creator-verifier, broadcast, and negotiation patterns.</li><li>A validation contract is written during planning, before any code, so correctness is defined independently of the implementation instead of by tests shaped after the fact.</li><li>Running features serially (not in parallel) cut error rates versus parallel multi-agent execution, because parallel agents conflicted and duplicated work.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The bottleneck is attention, not intelligence</span><span class="ln"></span></div>
+<div class="prose"><p>The talk opens with a claim that software engineering today is bottlenecked by human attention rather than model intelligence, since engineers can only supervise and review a few tasks at a time regardless of backlog size. Missions is framed as a system where a human scopes a goal and approves a plan, then the system executes for hours or days.</p></div>
+<div class="quote"><p>&ldquo;The bottleneck in software engineering nowadays is not intelligence. It&#x27;s now limited by human attention.&rdquo;</p><a href="https://youtu.be/ow1we5PzK-o?t=61" target="_blank">&#9654; watch at 01:01</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Five building blocks, missions uses four</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker proposes a taxonomy of five frontier multi-agent communication patterns: delegation, creator-verifier, direct communication, negotiation, and broadcast. Missions combines four of them (delegation, creator-verifier, broadcast, negotiation) into a three-role architecture of orchestrator, workers, and validators.</p></div>
+<div class="quote"><p>&ldquo;This is where one agent spawns another agent and the parent agent may say go figure out the database schema and then gets a response back.&rdquo;</p><a href="https://youtu.be/ow1we5PzK-o?t=124" target="_blank">&#9654; watch at 02:04</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Validation contracts, not after-the-fact tests, prevent drift</span><span class="ln"></span></div>
+<div class="prose"><p>The orchestrator writes a validation contract during planning that defines what &quot;done&quot; means before any code exists, because tests written after implementation tend to confirm the code&#x27;s own decisions rather than catch bugs. Two validators check each milestone: a scrutiny validator that runs tests/lint/type-check and spawns code-review agents, and a user-testing validator that drives the live application.</p></div>
+<div class="quote"><p>&ldquo;that validation contract defines what done sort of means before any coding is done&rdquo;</p><a href="https://youtu.be/ow1we5PzK-o?t=280" target="_blank">&#9654; watch at 04:40</a></div><div class="quote"><p>&ldquo;Tests written after implementation don&#x27;t catch bugs. They confirm decisions.&rdquo;</p><a href="https://youtu.be/ow1we5PzK-o?t=371" target="_blank">&#9654; watch at 06:11</a></div><div class="quote"><p>&ldquo;critically it spawns dedicated code review agents for each completed feature within the milestone&rdquo;</p><a href="https://youtu.be/ow1we5PzK-o?t=431" target="_blank">&#9654; watch at 07:11</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Structured handoffs and serial execution keep long runs on track</span><span class="ln"></span></div>
+<div class="prose"><p>Workers end each task with a structured handoff describing what was completed, what was left undone, and which commands were run, rather than just declaring completion. The team tried running agents in parallel for throughput but found agents conflicted and duplicated work, so missions runs features serially with parallelism only inside read-only steps; the longest mission so far ran 16 days, with a belief runs of 30 days are possible.</p></div>
+<div class="quote"><p>&ldquo;it fills out a structured handoff detailing what was completed, what was left undone, what commands were run throughout that that agent loop&rdquo;</p><a href="https://youtu.be/ow1we5PzK-o?t=494" target="_blank">&#9654; watch at 08:14</a></div><div class="quote"><p>&ldquo;Our longest mission ran for 16 days which is much longer than a full sprint and we believe that they can run for 30.&rdquo;</p><a href="https://youtu.be/ow1we5PzK-o?t=525" target="_blank">&#9654; watch at 08:45</a></div><div class="quote"><p>&ldquo;But we tried that and it doesn&#x27;t really work for tasks in the like software dev domain because agents conflict.&rdquo;</p><a href="https://youtu.be/ow1we5PzK-o?t=557" target="_blank">&#9654; watch at 09:17</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Production numbers from a sample build</span><span class="ln"></span></div>
+<div class="prose"><p>On an example project (a Slack clone), 60% of both wall-clock time and token usage went to implementation, and by the end 50% of lines of code were tests, with 90% of code covered by those tests.</p></div>
+<div class="quote"><p>&ldquo;60% of our time is spent on implementation, and 60% of our tokens as well.&rdquo;</p><a href="https://youtu.be/ow1we5PzK-o?t=777" target="_blank">&#9654; watch at 12:57</a></div><div class="quote"><p>&ldquo;You end up with with 50% of your lines of code at the very end, in the bottom right, being tests, and 90% of your uh code is covered by those tests.&rdquo;</p><a href="https://youtu.be/ow1we5PzK-o?t=777" target="_blank">&#9654; watch at 12:57</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>These are self-reported production figures from one vendor&#x27;s internal builds, without an external benchmark or comparison system shown, so the 16/30-day mission-length claim and the coverage numbers should be read as Factory&#x27;s own telemetry rather than an independently verified result (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The speaker claims software engineering is now bottlenecked by human attention/supervision capacity, not model intelligence.</td><td class="tt"><a href="https://youtu.be/ow1we5PzK-o?t=61" target="_blank">01:01</a></td></tr><tr><td class="st">asserts</td><td>Delegation, the simplest multi-agent pattern, is one agent spawning another to complete a sub-task and return a result.</td><td class="tt"><a href="https://youtu.be/ow1we5PzK-o?t=124" target="_blank">02:04</a></td></tr><tr><td class="st">asserts</td><td>The orchestrator&#x27;s plan includes a validation contract that defines what counts as done before any coding begins.</td><td class="tt"><a href="https://youtu.be/ow1we5PzK-o?t=280" target="_blank">04:40</a></td></tr><tr><td class="st">warns</td><td>Tests written after implementation confirm the code&#x27;s own decisions rather than catching real bugs.</td><td class="tt"><a href="https://youtu.be/ow1we5PzK-o?t=371" target="_blank">06:11</a></td></tr><tr><td class="st">asserts</td><td>The scrutiny validator runs the test suite and lint/type-check, and also spawns dedicated code-review agents per completed feature.</td><td class="tt"><a href="https://youtu.be/ow1we5PzK-o?t=431" target="_blank">07:11</a></td></tr><tr><td class="st">asserts</td><td>Workers must produce a structured handoff detailing completed work, unfinished work, and commands run, rather than just declaring completion.</td><td class="tt"><a href="https://youtu.be/ow1we5PzK-o?t=494" target="_blank">08:14</a></td></tr><tr><td class="st">predicts</td><td>Factory&#x27;s longest mission ran for 16 days and the team believes missions can run for up to 30 days.</td><td class="tt"><a href="https://youtu.be/ow1we5PzK-o?t=525" target="_blank">08:45</a></td></tr><tr><td class="st">warns</td><td>Running multiple agents in parallel on the same software project caused conflicts and duplicated work rather than throughput gains.</td><td class="tt"><a href="https://youtu.be/ow1we5PzK-o?t=557" target="_blank">09:17</a></td></tr><tr><td class="st">asserts</td><td>In a sample build, 60% of wall-clock time and 60% of tokens were spent on implementation.</td><td class="tt"><a href="https://youtu.be/ow1we5PzK-o?t=777" target="_blank">12:57</a></td></tr><tr><td class="st">asserts</td><td>By the end of the sample build, 50% of lines of code were tests, covering 90% of the codebase.</td><td class="tt"><a href="https://youtu.be/ow1we5PzK-o?t=777" target="_blank">12:57</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "ow1we5PzK-o", "slug": "missions-multi-agent-coding-architecture", "title": "The Multi-Agent Architecture That Actually Ships", "speaker": "Luke Alvoeiro", "company": "Factory", "themes": ["agentic-engineering", "coding-agents", "context-engineering"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "attention bottleneck", "text": "The speaker claims software engineering is now bottlenecked by human attention/supervision capacity, not model intelligence.", "quote": "The bottleneck in software engineering nowadays is not intelligence. It's now limited by human attention.", "t": 61}, {"id": "c2", "stance": "asserts", "topic": "delegation pattern", "text": "Delegation, the simplest multi-agent pattern, is one agent spawning another to complete a sub-task and return a result.", "quote": "This is where one agent spawns another agent and the parent agent may say go figure out the database schema and then gets a response back.", "t": 124}, {"id": "c3", "stance": "asserts", "topic": "validation contract", "text": "The orchestrator's plan includes a validation contract that defines what counts as done before any coding begins.", "quote": "that validation contract defines what done sort of means before any coding is done", "t": 280}, {"id": "c4", "stance": "warns", "topic": "post-hoc tests", "text": "Tests written after implementation confirm the code's own decisions rather than catching real bugs.", "quote": "Tests written after implementation don't catch bugs. They confirm decisions.", "t": 371}, {"id": "c5", "stance": "asserts", "topic": "scrutiny validator", "text": "The scrutiny validator runs the test suite and lint/type-check, and also spawns dedicated code-review agents per completed feature.", "quote": "critically it spawns dedicated code review agents for each completed feature within the milestone", "t": 431}, {"id": "c6", "stance": "asserts", "topic": "structured handoffs", "text": "Workers must produce a structured handoff detailing completed work, unfinished work, and commands run, rather than just declaring completion.", "quote": "it fills out a structured handoff detailing what was completed, what was left undone, what commands were run throughout that that agent loop", "t": 494}, {"id": "c7", "stance": "predicts", "topic": "mission duration", "text": "Factory's longest mission ran for 16 days and the team believes missions can run for up to 30 days.", "quote": "Our longest mission ran for 16 days which is much longer than a full sprint and we believe that they can run for 30.", "t": 525}, {"id": "c8", "stance": "warns", "topic": "parallel execution failure", "text": "Running multiple agents in parallel on the same software project caused conflicts and duplicated work rather than throughput gains.", "quote": "But we tried that and it doesn't really work for tasks in the like software dev domain because agents conflict.", "t": 557}, {"id": "c9", "stance": "asserts", "topic": "time/token split", "text": "In a sample build, 60% of wall-clock time and 60% of tokens were spent on implementation.", "quote": "60% of our time is spent on implementation, and 60% of our tokens as well.", "t": 777}, {"id": "c10", "stance": "asserts", "topic": "test coverage outcome", "text": "By the end of the sample build, 50% of lines of code were tests, covering 90% of the codebase.", "quote": "You end up with with 50% of your lines of code at the very end, in the bottom right, being tests, and 90% of your uh code is covered by those tests.", "t": 777}]}</script>
+</body></html>

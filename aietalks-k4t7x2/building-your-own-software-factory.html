@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Building your own software factory — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/rnDm57Py54A" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 83 min</span><span class="ln"></span></div>
+<h1 class="lede">Building your own software factory</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Eric Zakariasson &middot; Cursor</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/rnDm57Py54A" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/rnDm57Py54A</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Coding agents</span><span class="chip hot">Memory</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Cursor frames AI-assisted coding on a six-stage autonomy ladder (Dan Shapiro&#x27;s framework), from &quot;spicy autocomplete&quot; up to a &quot;dark factory&quot; where agents ship, test, and build code while a human manager only supplies intent.</li><li>Cursor&#x27;s internal practice: install rules only when agents go off the rails rather than wholesale from a rules directory, build verifiable systems so agents can check their own work, and never let agents decide safety, security, database, or payments changes -- those stay human-owned.</li><li>Cursor rebuilt its own editor (Cursor 3, no VS Code) around multi-agent orchestration, scales cloud agents to an estimated multiple thousands per day, and runs an &quot;agentic code owner&quot; that auto-approves low-risk PRs to avoid blocking engineers on human reviewers.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>From autocomplete to a &quot;dark factory&quot;</span><span class="ln"></span></div>
+<div class="prose"><p>The talk opens with Dan Shapiro&#x27;s six-stage framework for software autonomy, from an early &quot;spicy autocomplete&quot; stage up through pair-programmer and manager-of-agents stages to a final &quot;dark factory&quot; stage where the human no longer has direct insight into the code and just supplies intent and goals while agents ship, test, and build. The speaker gives throughput (running agents continuously without needing sleep or food) as one motivation for building toward this.</p></div>
+<div class="quote"><p>&ldquo;explaining like six different stages of uh autonomy uh throughout like automating software. uh Carpathia has also like previously used cursor as example of like going from tab to agent and all that&rdquo;</p><a href="https://youtu.be/rnDm57Py54A?t=95" target="_blank">&#9654; watch at 01:35</a></div><div class="quote"><p>&ldquo;the software factory which is essentially like a black box. Um Dan Shapiro calls it like the dark factory where you don&#x27;t really have an insight.&rdquo;</p><a href="https://youtu.be/rnDm57Py54A?t=187" target="_blank">&#9654; watch at 03:07</a></div><div class="quote"><p>&ldquo;throughput you probably want to create more code with like less resources. Um you can run agents 247.&rdquo;</p><a href="https://youtu.be/rnDm57Py54A?t=218" target="_blank">&#9654; watch at 03:38</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Rules should emerge from failures, not be installed wholesale</span><span class="ln"></span></div>
+<div class="prose"><p>Rather than installing every available rule for a given tech stack from a rules directory, the speaker&#x27;s internal experience and observation of users is that rules should emerge dynamically: when an agent goes off the rails on something specific, that&#x27;s the signal to write a rule for it.</p></div>
+<div class="quote"><p>&ldquo;what I found and what I&#x27;m seeing amongst our users and internally is that rules should just like emerge dynamically. Like if you&#x27;re finding agents going off the rails, you should probably create a rule for that.&rdquo;</p><a href="https://youtu.be/rnDm57Py54A?t=439" target="_blank">&#9654; watch at 07:19</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Verifiable systems let agents check their own work</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker names building verifiable systems -- ways for agents to check their own work via unit tests, integration tests, or UI tests that click around in the DOM to reproduce end-user behavior -- as the area deserving the most additional investment.</p></div>
+<div class="quote"><p>&ldquo;which I think people should be spending a lot more time is like building verifiable systems how can um the agents themselves like verify their own work&rdquo;</p><a href="https://youtu.be/rnDm57Py54A?t=596" target="_blank">&#9654; watch at 09:56</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Worker becomes manager: async at scale, but humans keep the risky decisions</span><span class="ln"></span></div>
+<div class="prose"><p>As more work moves to agents, the speaker describes a shift from synchronous pairing to asynchronous oversight, where work happens in the background and the human checks in on multiple agents rather than writing code directly. The explicit limit on this delegation: safety, security, database, and payments/authentication decisions should stay human-decided rather than being outsourced to agents.</p></div>
+<div class="quote"><p>&ldquo;going from sync to async because most of the work is going to happen in the background and you can still tap in and see what&#x27;s going on uh for different agents&rdquo;</p><a href="https://youtu.be/rnDm57Py54A?t=1037" target="_blank">&#9654; watch at 17:17</a></div><div class="quote"><p>&ldquo;don&#x27;t outsource important decisions. Like make sure you&#x27;re staying in the loop for important decisions. Um whether this is like uh safety or security or databases or payments and authentication&rdquo;</p><a href="https://youtu.be/rnDm57Py54A?t=1879" target="_blank">&#9654; watch at 31:19</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>What this looks like in practice at Cursor</span><span class="ln"></span></div>
+<div class="prose"><p>Cursor rebuilt its editor from scratch as Cursor 3, dropping the VS Code base in favor of an agent-first, multi-agent-orchestration interface. The speaker estimates the company runs cloud agents at a scale of multiple thousands per day once teams have isolated VM environments set up, and describes an internally built &quot;agentic code owner&quot; that assesses PR risk level and auto-approves low-risk changes to avoid blocking engineers on human review.</p></div>
+<div class="quote"><p>&ldquo;this is cursor uh three. Uh we launched this a couple of weeks ago, and it&#x27;s a complete rewrite of cursor. There&#x27;s no VS code anymore.&rdquo;</p><a href="https://youtu.be/rnDm57Py54A?t=628" target="_blank">&#9654; watch at 10:28</a></div><div class="quote"><p>&ldquo;you can scale this to like 100 or a thousand agents. I&#x27;m not sure how many we are running today, but I bet it&#x27;s like multiple thousands a day.&rdquo;</p><a href="https://youtu.be/rnDm57Py54A?t=1291" target="_blank">&#9654; watch at 21:31</a></div><div class="quote"><p>&ldquo;we started doing was building this agentic code owner thing and what it essentially does is looking at PRs and checking like first of all what&#x27;s the risk of this?&rdquo;</p><a href="https://youtu.be/rnDm57Py54A?t=1693" target="_blank">&#9654; watch at 28:13</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The gap between the six-stage autonomy ladder and Cursor&#x27;s own admission that most teams sit at level two or three, with Cursor itself only partly at level four, is a useful calibration point against &quot;dark factory&quot; marketing language elsewhere in the ecosystem (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Dan Shapiro&#x27;s blog post describes six stages of autonomy for automating software, from an early autocomplete stage upward.</td><td class="tt"><a href="https://youtu.be/rnDm57Py54A?t=95" target="_blank">01:35</a></td></tr><tr><td class="st">asserts</td><td>The final stage, the &quot;dark factory,&quot; is a black box where the human manager has no direct insight into the code, only providing intent and goals.</td><td class="tt"><a href="https://youtu.be/rnDm57Py54A?t=187" target="_blank">03:07</a></td></tr><tr><td class="st">asserts</td><td>A factory increases throughput because agents can run continuously without needing sleep or food, unlike human developers.</td><td class="tt"><a href="https://youtu.be/rnDm57Py54A?t=218" target="_blank">03:38</a></td></tr><tr><td class="st">recommends</td><td>Rules should emerge dynamically when agents go off the rails on something specific, rather than being installed wholesale for a given tech stack.</td><td class="tt"><a href="https://youtu.be/rnDm57Py54A?t=439" target="_blank">07:19</a></td></tr><tr><td class="st">recommends</td><td>Building verifiable systems so agents can check their own work via unit, integration, or UI tests deserves the most additional investment.</td><td class="tt"><a href="https://youtu.be/rnDm57Py54A?t=596" target="_blank">09:56</a></td></tr><tr><td class="st">asserts</td><td>As more work moves to agents, developers shift from synchronous pairing to asynchronous oversight of background agent work.</td><td class="tt"><a href="https://youtu.be/rnDm57Py54A?t=1037" target="_blank">17:17</a></td></tr><tr><td class="st">warns</td><td>Safety, security, database, and payments/authentication decisions should not be outsourced to agents and should remain human-decided.</td><td class="tt"><a href="https://youtu.be/rnDm57Py54A?t=1879" target="_blank">31:19</a></td></tr><tr><td class="st">asserts</td><td>Cursor 3 is a complete rewrite of the editor dropping VS Code, launched a couple of weeks before the talk.</td><td class="tt"><a href="https://youtu.be/rnDm57Py54A?t=628" target="_blank">10:28</a></td></tr><tr><td class="st">asserts</td><td>Once an isolated VM environment is set up, cloud agents can scale to an estimated multiple thousands running per day.</td><td class="tt"><a href="https://youtu.be/rnDm57Py54A?t=1291" target="_blank">21:31</a></td></tr><tr><td class="st">asserts</td><td>Cursor built an agentic code owner that assesses PR risk level to auto-approve low-risk changes rather than blocking on human review.</td><td class="tt"><a href="https://youtu.be/rnDm57Py54A?t=1693" target="_blank">28:13</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "rnDm57Py54A", "slug": "building-your-own-software-factory", "title": "Building your own software factory", "speaker": "Eric Zakariasson", "company": "Cursor", "themes": ["agentic-engineering", "coding-agents", "memory"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "levels of autonomy framework", "text": "Dan Shapiro's blog post describes six stages of autonomy for automating software, from an early autocomplete stage upward.", "quote": "explaining like six different stages of uh autonomy uh throughout like automating software. uh Carpathia has also like previously used cursor as example of like going from tab to agent and all that", "t": 95}, {"id": "c2", "stance": "asserts", "topic": "dark factory definition", "text": "The final stage, the \"dark factory,\" is a black box where the human manager has no direct insight into the code, only providing intent and goals.", "quote": "the software factory which is essentially like a black box. Um Dan Shapiro calls it like the dark factory where you don't really have an insight.", "t": 187}, {"id": "c3", "stance": "asserts", "topic": "motivation for building a factory", "text": "A factory increases throughput because agents can run continuously without needing sleep or food, unlike human developers.", "quote": "throughput you probably want to create more code with like less resources. Um you can run agents 247.", "t": 218}, {"id": "c4", "stance": "recommends", "topic": "rules should emerge dynamically", "text": "Rules should emerge dynamically when agents go off the rails on something specific, rather than being installed wholesale for a given tech stack.", "quote": "what I found and what I'm seeing amongst our users and internally is that rules should just like emerge dynamically. Like if you're finding agents going off the rails, you should probably create a rule for that.", "t": 439}, {"id": "c5", "stance": "recommends", "topic": "verifiable systems for agent self-checking", "text": "Building verifiable systems so agents can check their own work via unit, integration, or UI tests deserves the most additional investment.", "quote": "which I think people should be spending a lot more time is like building verifiable systems how can um the agents themselves like verify their own work", "t": 596}, {"id": "c6", "stance": "asserts", "topic": "shift from sync to async oversight", "text": "As more work moves to agents, developers shift from synchronous pairing to asynchronous oversight of background agent work.", "quote": "going from sync to async because most of the work is going to happen in the background and you can still tap in and see what's going on uh for different agents", "t": 1037}, {"id": "c7", "stance": "warns", "topic": "humans keep high-stakes decisions", "text": "Safety, security, database, and payments/authentication decisions should not be outsourced to agents and should remain human-decided.", "quote": "don't outsource important decisions. Like make sure you're staying in the loop for important decisions. Um whether this is like uh safety or security or databases or payments and authentication", "t": 1879}, {"id": "c8", "stance": "asserts", "topic": "Cursor 3 rewrite", "text": "Cursor 3 is a complete rewrite of the editor dropping VS Code, launched a couple of weeks before the talk.", "quote": "this is cursor uh three. Uh we launched this a couple of weeks ago, and it's a complete rewrite of cursor. There's no VS code anymore.", "t": 628}, {"id": "c9", "stance": "asserts", "topic": "cloud agent scale", "text": "Once an isolated VM environment is set up, cloud agents can scale to an estimated multiple thousands running per day.", "quote": "you can scale this to like 100 or a thousand agents. I'm not sure how many we are running today, but I bet it's like multiple thousands a day.", "t": 1291}, {"id": "c10", "stance": "asserts", "topic": "agentic code owner for low-risk PRs", "text": "Cursor built an agentic code owner that assesses PR risk level to auto-approve low-risk changes rather than blocking on human review.", "quote": "we started doing was building this agentic code owner thing and what it essentially does is looking at PRs and checking like first of all what's the risk of this?", "t": 1693}]}</script>
+</body></html>

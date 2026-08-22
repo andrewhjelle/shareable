@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Self-Training Agents: Hermes Agent, HF Traces, Skills, MCP &amp; Finetuning — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/OV56RddyFuU" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 19 min</span><span class="ln"></span></div>
+<h1 class="lede">Self-Training Agents: Hermes Agent, HF Traces, Skills, MCP &amp; Finetuning</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Merve Noyan &middot; Hugging Face</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/OV56RddyFuU" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/OV56RddyFuU</a></span>
+</div>
+<div class="chips"><span class="chip hot">Open source</span><span class="chip hot">Local models</span><span class="chip hot">Post-training</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Hugging Face skills let an agent vibe-train or fine-tune a model end to end -- it calculates required VRAM, asks about instance size and validation split, then launches the job on HF infra.</li><li>A new &#x27;traces&#x27; dataset repository type stores Codex, Claude Code, or Pi agent sessions in a parsed, explorable viewer, which can later be used to train a model.</li><li>The speaker recommends Hermes agent (a local or HF-inference-provider-backed coding/ops agent) paired with the open model GLM 5.1, and used it to OCR 30,000 papers via a jobs skill.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Open weights as an operating premise</span><span class="ln"></span></div>
+<div class="prose"><p>The talk frames open source as differential for machine learning: open-weight models can be shrunk, quantized, and fine-tuned, and deploying them to edge devices or browsers keeps end-user data local. The speaker ties this to the recent, publicly visible Claude performance degradation as an example of why closed-model behavior can change without users knowing, and cites GLM 5.1 as an open model she uses in her own coding setup.</p></div>
+<div class="quote"><p>&ldquo;it&#x27;s absolute guaranteed privacy for your end user because you can deploy it to edge devices, browsers without the data going somewhere else&rdquo;</p><a href="https://youtu.be/OV56RddyFuU?t=94" target="_blank">&#9654; watch at 01:34</a></div><div class="quote"><p>&ldquo;you see for instance the latest GLM 5.1 is absolutely crashing it and I&#x27;m actually using it in my coding setup&rdquo;</p><a href="https://youtu.be/OV56RddyFuU?t=125" target="_blank">&#9654; watch at 02:05</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Vision capabilities and local serving are commoditizing</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker predicts labs will increasingly ship vision capabilities in open models on day zero, citing Gemini 4, Qwen 3.5, and Chimera 2.5 as recent vision-language releases. Running these locally now takes a few lines of code via vLLM, MLX, or llama.cpp/llama-server, and the Hub&#x27;s GGUF hardware-compatibility data shows a quantized Gemma model fitting inside a 24GB L4 GPU at 4-bit.</p></div>
+<div class="quote"><p>&ldquo;So I foresee that all of these models will be over time released day zero with vision capabilities.&rdquo;</p><a href="https://youtu.be/OV56RddyFuU?t=219" target="_blank">&#9654; watch at 03:39</a></div><div class="quote"><p>&ldquo;the Gemma for larger model if you quantize it to four bit it fits inside an L4 GPU with the 24 gigabytes of VRAM&rdquo;</p><a href="https://youtu.be/OV56RddyFuU?t=662" target="_blank">&#9654; watch at 11:02</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Hermes agent and traces</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker singles out Hermes agent, usable locally or via Hugging Face inference providers, as her preferred agent to pair with open models, recommending GLM 5.1 specifically. Separately, Hugging Face Hub added a &#x27;traces&#x27; dataset repository type that stores parsed Codex, Claude Code, or Pi agent sessions, viewable in the dataset viewer and usable later for training.</p></div>
+<div class="quote"><p>&ldquo;One of my most favorite things these days is Hermes agent, and I will just die on this hill.&rdquo;</p><a href="https://youtu.be/OV56RddyFuU?t=440" target="_blank">&#9654; watch at 07:20</a></div><div class="quote"><p>&ldquo;Hugging Face Hub now has a new data set repository type called traces, and this is basically all of your uh code X, uh cloud code, or pie traces they hosted&rdquo;</p><a href="https://youtu.be/OV56RddyFuU?t=534" target="_blank">&#9654; watch at 08:54</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Skills that train and fine-tune models</span><span class="ln"></span></div>
+<div class="prose"><p>Hugging Face skills let an agent &#x27;vibe train&#x27; a model on a chosen dataset with just a natural-language instruction. In a demo, asking Claude Code to fine-tune Qwen-2-VL on a vision-language dataset triggered the agent to ask about instance choice and validation split, then calculate the VRAM required for the given batch size before launching the job on HF infra.</p></div>
+<div class="quote"><p>&ldquo;there is skills which allow you to even vibe train models.&rdquo;</p><a href="https://youtu.be/OV56RddyFuU?t=346" target="_blank">&#9654; watch at 05:46</a></div><div class="quote"><p>&ldquo;The model actually, like in the back end, the agent actually uh, calculates the amount of VRAM required to run&rdquo;</p><a href="https://youtu.be/OV56RddyFuU?t=819" target="_blank">&#9654; watch at 13:39</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Applying it: OCR at scale</span><span class="ln"></span></div>
+<div class="prose"><p>As a worked example, a colleague&#x27;s project OCR&#x27;d 30,000 Hugging Face papers using open OCR models run as jobs, all orchestrated through prompting: picking a benchmark-ranked OCR model, having the agent write the processing script, and having a skill handle instance sizing and cost estimation.</p></div>
+<div class="quote"><p>&ldquo;So, we OCR 30 30,000 papers uh using Codex open OCR models and jobs all through prompting, which is a bit crazy.&rdquo;</p><a href="https://youtu.be/OV56RddyFuU?t=1009" target="_blank">&#9654; watch at 16:49</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The through-line across the skills demoed (vibe-training, OCR-model selection, VRAM sizing) is that Hugging Face is positioning its skills as the layer that absorbs infra-selection judgment calls a practitioner used to make by hand -- worth checking how these skills behave when the recommended defaults are wrong, since the talk only shows success paths (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Open-weight models guarantee end-user privacy because they can be deployed to edge devices or browsers without sending data elsewhere.</td><td class="tt"><a href="https://youtu.be/OV56RddyFuU?t=94" target="_blank">01:34</a></td></tr><tr><td class="st">asserts</td><td>The open model GLM 5.1 performs strongly enough that the speaker uses it in her own coding setup.</td><td class="tt"><a href="https://youtu.be/OV56RddyFuU?t=125" target="_blank">02:05</a></td></tr><tr><td class="st">predicts</td><td>The speaker expects labs to increasingly release open models with vision capabilities built in from day zero.</td><td class="tt"><a href="https://youtu.be/OV56RddyFuU?t=219" target="_blank">03:39</a></td></tr><tr><td class="st">recommends</td><td>The speaker names Hermes agent as her favorite current agent tool, usable locally or via HF inference providers.</td><td class="tt"><a href="https://youtu.be/OV56RddyFuU?t=440" target="_blank">07:20</a></td></tr><tr><td class="st">asserts</td><td>Hugging Face Hub added a &#x27;traces&#x27; dataset repository type that stores Codex, Claude Code, or Pi agent sessions for viewing and later training.</td><td class="tt"><a href="https://youtu.be/OV56RddyFuU?t=534" target="_blank">08:54</a></td></tr><tr><td class="st">asserts</td><td>Hugging Face skills let a user tell an agent to train a model on a dataset with a single instruction.</td><td class="tt"><a href="https://youtu.be/OV56RddyFuU?t=346" target="_blank">05:46</a></td></tr><tr><td class="st">asserts</td><td>When asked to fine-tune a model, the agent calculates the VRAM required for the run in the backend.</td><td class="tt"><a href="https://youtu.be/OV56RddyFuU?t=819" target="_blank">13:39</a></td></tr><tr><td class="st">asserts</td><td>A Hugging Face colleague OCR&#x27;d 30,000 papers using open OCR models run as jobs, orchestrated entirely through prompting.</td><td class="tt"><a href="https://youtu.be/OV56RddyFuU?t=1009" target="_blank">16:49</a></td></tr><tr><td class="st">asserts</td><td>A 4-bit quantized Gemma large model fits inside a 24GB-VRAM L4 GPU, per the Hub&#x27;s GGUF hardware-compatibility data.</td><td class="tt"><a href="https://youtu.be/OV56RddyFuU?t=662" target="_blank">11:02</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "OV56RddyFuU", "slug": "hf-hermes-agent-traces-skills-finetuning", "title": "Self-Training Agents: Hermes Agent, HF Traces, Skills, MCP & Finetuning", "speaker": "Merve Noyan", "company": "Hugging Face", "themes": ["open-source", "local-models", "post-training"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "open weights privacy benefit", "text": "Open-weight models guarantee end-user privacy because they can be deployed to edge devices or browsers without sending data elsewhere.", "quote": "it's absolute guaranteed privacy for your end user because you can deploy it to edge devices, browsers without the data going somewhere else", "t": 94}, {"id": "c2", "stance": "asserts", "topic": "open model performance", "text": "The open model GLM 5.1 performs strongly enough that the speaker uses it in her own coding setup.", "quote": "you see for instance the latest GLM 5.1 is absolutely crashing it and I'm actually using it in my coding setup", "t": 125}, {"id": "c3", "stance": "predicts", "topic": "day-zero vision capabilities", "text": "The speaker expects labs to increasingly release open models with vision capabilities built in from day zero.", "quote": "So I foresee that all of these models will be over time released day zero with vision capabilities.", "t": 219}, {"id": "c4", "stance": "recommends", "topic": "Hermes agent recommendation", "text": "The speaker names Hermes agent as her favorite current agent tool, usable locally or via HF inference providers.", "quote": "One of my most favorite things these days is Hermes agent, and I will just die on this hill.", "t": 440}, {"id": "c5", "stance": "asserts", "topic": "HF traces dataset type", "text": "Hugging Face Hub added a 'traces' dataset repository type that stores Codex, Claude Code, or Pi agent sessions for viewing and later training.", "quote": "Hugging Face Hub now has a new data set repository type called traces, and this is basically all of your uh code X, uh cloud code, or pie traces they hosted", "t": 534}, {"id": "c6", "stance": "asserts", "topic": "vibe training via skills", "text": "Hugging Face skills let a user tell an agent to train a model on a dataset with a single instruction.", "quote": "there is skills which allow you to even vibe train models.", "t": 346}, {"id": "c7", "stance": "asserts", "topic": "agent auto-calculates VRAM for fine-tuning", "text": "When asked to fine-tune a model, the agent calculates the VRAM required for the run in the backend.", "quote": "The model actually, like in the back end, the agent actually uh, calculates the amount of VRAM required to run", "t": 819}, {"id": "c8", "stance": "asserts", "topic": "OCR pipeline at scale via jobs skill", "text": "A Hugging Face colleague OCR'd 30,000 papers using open OCR models run as jobs, orchestrated entirely through prompting.", "quote": "So, we OCR 30 30,000 papers uh using Codex open OCR models and jobs all through prompting, which is a bit crazy.", "t": 1009}, {"id": "c9", "stance": "asserts", "topic": "quantized model VRAM fit example", "text": "A 4-bit quantized Gemma large model fits inside a 24GB-VRAM L4 GPU, per the Hub's GGUF hardware-compatibility data.", "quote": "the Gemma for larger model if you quantize it to four bit it fits inside an L4 GPU with the 24 gigabytes of VRAM", "t": 662}]}</script>
+</body></html>

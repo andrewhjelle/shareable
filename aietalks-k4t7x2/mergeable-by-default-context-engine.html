@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Mergeable by default: Building the context engine to save time and tokens — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/5ID22ACI7IM" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 101 min</span><span class="ln"></span></div>
+<h1 class="lede">Mergeable by default: Building the context engine to save time and tokens</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Peter Werry &middot; Unblocked</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/5ID22ACI7IM" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/5ID22ACI7IM</a></span>
+</div>
+<div class="chips"><span class="chip hot">Context engineering</span><span class="chip hot">Agentic engineering</span><span class="chip hot">MCP & protocols</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Naive RAG causes &#x27;satisfaction of search&#x27;: agents stop once they find something that looks like an answer, risking missed conflicting or more important information elsewhere, similar to a radiology diagnostic bias (c1)</li><li>On a benchmark task (implementing Anthropic&#x27;s adaptive thinking mode), Unblocked&#x27;s context engine cut a 2.5-hour, 21-million-token agent run to 25 minutes and 10 million tokens; roughly 90% of agent time went to context collection rather than code writing, and output tokens -- not input tokens -- turned out to be the real performance drag (c2, c8, c7)</li><li>Two hard-won lessons: surface conflicts the engine can&#x27;t resolve instead of hiding them, and never cache/reuse a past answer, since code, docs, and reasoning change constantly (c3, c4)</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Why naive RAG and bigger context windows aren&#x27;t enough</span><span class="ln"></span></div>
+<div class="prose"><p>The talk names three myths: that naive RAG over docs is a context engine, that wiring up more MCP servers solves the problem, and that a bigger context window will fix it. The &#x27;satisfaction of search&#x27; term, borrowed from radiology, describes agents stopping once they find a plausible-looking answer -- like a dangerous missed diagnosis -- rather than continuing to search for the real, possibly-buried information.</p></div>
+<div class="quote"><p>&ldquo;that&#x27;s that&#x27;s kind of like a dangerous thing medically, because uh there might be other indicators for things like cancer that get missed&rdquo;</p><a href="https://youtu.be/5ID22ACI7IM?t=847" target="_blank">&#9654; watch at 14:07</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Benchmark: 25 minutes vs. 2.5 hours</span><span class="ln"></span></div>
+<div class="prose"><p>On an ambitious task (implementing Anthropic&#x27;s new adaptive thinking mode across a codebase), an agent without the context engine took 2.5 hours and 21 million tokens, largely because incorrect first attempts required multiple correction loops. With the context engine active it took 25 minutes and 10 million tokens. The speaker separately notes that roughly 90% of an agent&#x27;s time goes to context collection rather than code writing, and that output tokens, not input tokens, are the bigger drag on performance.</p></div>
+<div class="quote"><p>&ldquo;without um the context engine, it took 2 and 1/2 hours to finish this task with 21 million tokens, which is a lot of tokens. Um but with the context engine, it took only 25 minutes and 10 million tokens&rdquo;</p><a href="https://youtu.be/5ID22ACI7IM?t=1374" target="_blank">&#9654; watch at 22:54</a></div><div class="quote"><p>&ldquo;agent context collection is probably close to that number. It&#x27;s like 90%&rdquo;</p><a href="https://youtu.be/5ID22ACI7IM?t=5422" target="_blank">&#9654; watch at 90:22</a></div><div class="quote"><p>&ldquo;when it writes the code that output tokens are, by the way, the the thing that drags down um the the performance. Everyone used to think it was input tokens&rdquo;</p><a href="https://youtu.be/5ID22ACI7IM?t=5453" target="_blank">&#9654; watch at 90:53</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Hard-won lessons: surface conflicts, never cache answers</span><span class="ln"></span></div>
+<div class="prose"><p>Unblocked&#x27;s team initially resolved conflicting information using naive strategies and hid the cases it couldn&#x27;t resolve, which they now consider a mistake -- unresolved conflicts should be surfaced and learned from. They also warn against caching a context engine&#x27;s answer to reuse for similar future questions, since code, docs, and the reasons behind decisions change constantly.</p></div>
+<div class="quote"><p>&ldquo;we hid conflicts instead of surfacing them. So, um by con- by hiding conflicts, I don&#x27;t mean that we just ignored the conflicts&rdquo;</p><a href="https://youtu.be/5ID22ACI7IM?t=1406" target="_blank">&#9654; watch at 23:26</a></div><div class="quote"><p>&ldquo;when when a context engine supplies an answer, um do not cache the answer and try to serve that same answer up again uh to a similar question&rdquo;</p><a href="https://youtu.be/5ID22ACI7IM?t=1467" target="_blank">&#9654; watch at 24:27</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Access control has to flow up to answers</span><span class="ln"></span></div>
+<div class="prose"><p>Because organizations have private Slack channels and repositories with restricted access, Unblocked&#x27;s context engine only surfaces private-channel information to a user if that user already has access to it, and the resulting answers stay private to them.</p></div>
+<div class="quote"><p>&ldquo;when when Unblocked answers questions, uh it will use private channel information, but it won&#x27;t it it will only use that information if the person that&#x27;s asking the question has access to it&rdquo;</p><a href="https://youtu.be/5ID22ACI7IM?t=1032" target="_blank">&#9654; watch at 17:12</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Where the context engine pays off most</span><span class="ln"></span></div>
+<div class="prose"><p>The speaker says the biggest return comes from using the context engine during the planning phase of a task, before code is written, alongside use cases like code review, ticket enrichment, triage, and incident management.</p></div>
+<div class="quote"><p>&ldquo;definitely and especially during the planning phase, okay? This is where you get the biggest bang for buck unquestionably&rdquo;</p><a href="https://youtu.be/5ID22ACI7IM?t=1532" target="_blank">&#9654; watch at 25:32</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The speaker is explicit that some benchmark numbers are Claude-generated summaries and should be trusted for &#x27;vibe&#x27; rather than precision, and the 90% context-collection figure is offered as personal experience rather than a controlled measurement -- worth treating both as directional rather than rigorous (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">warns</td><td>Agents that stop searching once they find a plausible answer risk missing more important information elsewhere, echoing a radiology bias where doctors stop looking after finding one explanation.</td><td class="tt"><a href="https://youtu.be/5ID22ACI7IM?t=847" target="_blank">14:07</a></td></tr><tr><td class="st">asserts</td><td>A task took 2.5 hours and 21 million tokens without the context engine versus 25 minutes and 10 million tokens with it.</td><td class="tt"><a href="https://youtu.be/5ID22ACI7IM?t=1374" target="_blank">22:54</a></td></tr><tr><td class="st">warns</td><td>The team initially hid unresolved data conflicts instead of surfacing them, which they now flag as a mistake.</td><td class="tt"><a href="https://youtu.be/5ID22ACI7IM?t=1406" target="_blank">23:26</a></td></tr><tr><td class="st">warns</td><td>A context engine should never cache and reuse a past answer for a similar question, since code, docs, and reasons change constantly.</td><td class="tt"><a href="https://youtu.be/5ID22ACI7IM?t=1467" target="_blank">24:27</a></td></tr><tr><td class="st">asserts</td><td>The context engine only uses private Slack channel information in an answer if the person asking already has access to that channel.</td><td class="tt"><a href="https://youtu.be/5ID22ACI7IM?t=1032" target="_blank">17:12</a></td></tr><tr><td class="st">recommends</td><td>The biggest return from a context engine comes from using it during the planning phase of a task.</td><td class="tt"><a href="https://youtu.be/5ID22ACI7IM?t=1532" target="_blank">25:32</a></td></tr><tr><td class="st">asserts</td><td>Output tokens, not input tokens, are the main factor that drags down agent performance.</td><td class="tt"><a href="https://youtu.be/5ID22ACI7IM?t=5453" target="_blank">90:53</a></td></tr><tr><td class="st">asserts</td><td>Roughly 90% of an agent&#x27;s task time goes to context collection rather than the actual code-writing step.</td><td class="tt"><a href="https://youtu.be/5ID22ACI7IM?t=5422" target="_blank">90:22</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "5ID22ACI7IM", "slug": "mergeable-by-default-context-engine", "title": "Mergeable by default: Building the context engine to save time and tokens", "speaker": "Peter Werry", "company": "Unblocked", "themes": ["context-engineering", "agentic-engineering", "mcp-protocols"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "warns", "topic": "satisfaction of search", "text": "Agents that stop searching once they find a plausible answer risk missing more important information elsewhere, echoing a radiology bias where doctors stop looking after finding one explanation.", "quote": "that's that's kind of like a dangerous thing medically, because uh there might be other indicators for things like cancer that get missed", "t": 847}, {"id": "c2", "stance": "asserts", "topic": "benchmark time/token savings", "text": "A task took 2.5 hours and 21 million tokens without the context engine versus 25 minutes and 10 million tokens with it.", "quote": "without um the context engine, it took 2 and 1/2 hours to finish this task with 21 million tokens, which is a lot of tokens. Um but with the context engine, it took only 25 minutes and 10 million tokens", "t": 1374}, {"id": "c3", "stance": "warns", "topic": "hiding vs surfacing conflicts", "text": "The team initially hid unresolved data conflicts instead of surfacing them, which they now flag as a mistake.", "quote": "we hid conflicts instead of surfacing them. So, um by con- by hiding conflicts, I don't mean that we just ignored the conflicts", "t": 1406}, {"id": "c4", "stance": "warns", "topic": "never cache answers", "text": "A context engine should never cache and reuse a past answer for a similar question, since code, docs, and reasons change constantly.", "quote": "when when a context engine supplies an answer, um do not cache the answer and try to serve that same answer up again uh to a similar question", "t": 1467}, {"id": "c5", "stance": "asserts", "topic": "access-gated answers", "text": "The context engine only uses private Slack channel information in an answer if the person asking already has access to that channel.", "quote": "when when Unblocked answers questions, uh it will use private channel information, but it won't it it will only use that information if the person that's asking the question has access to it", "t": 1032}, {"id": "c6", "stance": "recommends", "topic": "planning-phase ROI", "text": "The biggest return from a context engine comes from using it during the planning phase of a task.", "quote": "definitely and especially during the planning phase, okay? This is where you get the biggest bang for buck unquestionably", "t": 1532}, {"id": "c7", "stance": "asserts", "topic": "output tokens drive latency", "text": "Output tokens, not input tokens, are the main factor that drags down agent performance.", "quote": "when it writes the code that output tokens are, by the way, the the thing that drags down um the the performance. Everyone used to think it was input tokens", "t": 5453}, {"id": "c8", "stance": "asserts", "topic": "time spent on context vs execution", "text": "Roughly 90% of an agent's task time goes to context collection rather than the actual code-writing step.", "quote": "agent context collection is probably close to that number. It's like 90%", "t": 5422}]}</script>
+</body></html>

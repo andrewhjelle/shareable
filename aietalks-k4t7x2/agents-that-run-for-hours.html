@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Anthropic Workshop: Build Agents That Run for Hours — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/mR-WAvEPRwE" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 75 min</span><span class="ln"></span></div>
+<h1 class="lede">Anthropic Workshop: Build Agents That Run for Hours</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Ash Prabaker &amp; Andrew Wilson &middot; Anthropic</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/mR-WAvEPRwE" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/mR-WAvEPRwE</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Coding agents</span><span class="chip hot">Context engineering</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>A single agent judging its own output is unreliable (models are sycophantic about their own half-finished features), so the team splits work into a generator and a separately-tuned, harsh evaluator that actually drives the app with Playwright instead of just reading diffs.</li><li>The generator and evaluator negotiate a concrete test contract (27 criteria in one example) before building starts, and design quality is graded against a written four-part rubric -- design, originality, craft, functionality -- weighted toward design and originality.</li><li>On the same &#x27;build a retro game maker&#x27; prompt, a single-agent solo loop shipped a game where the arrow and space keys did nothing, while the full generator-evaluator harness produced a working game for about $200 and 6 hours of runtime.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Why agents struggle to run for hours</span><span class="ln"></span></div>
+<div class="prose"><p>Beyond finite context windows, the speakers point to context rot (coherence degrading deeper into a session) and to models being bad judges of their own output: a model may look at a half-implemented feature and decide it looks done, or build a UI button with no working backend behind it.</p></div>
+<div class="quote"><p>&ldquo;as you&#x27;re working through a context window, there&#x27;s this notion of context rot. So, uh, there&#x27;s less coherence as you&#x27;re you&#x27;re getting deeper into that session&rdquo;</p><a href="https://youtu.be/mR-WAvEPRwE?t=155" target="_blank">&#9654; watch at 02:35</a></div><div class="quote"><p>&ldquo;it might look at a feature and see that it&#x27;s sort of half half-baked or a little bit implemented and say, Yeah, okay, uh, that looks done&rdquo;</p><a href="https://youtu.be/mR-WAvEPRwE?t=218" target="_blank">&#9654; watch at 03:38</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Models have gotten much better at running long, unassisted</span><span class="ln"></span></div>
+<div class="prose"><p>On the internal &#x27;meter chart&#x27; that tracks how long an agent can run unsupervised while completing 50% of tasks with a minimal scaffold, Opus 4.6 jumped to roughly 12 hours, up from about 4 hours with the prior model generation using the same simple harness.</p></div>
+<div class="quote"><p>&ldquo;this was a jump from about 4 hours up to 12 hours with sort of that very simple harness&rdquo;</p><a href="https://youtu.be/mR-WAvEPRwE?t=874" target="_blank">&#9654; watch at 14:34</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Replacing self-evaluation with an adversarial generator-evaluator loop</span><span class="ln"></span></div>
+<div class="prose"><p>Modeled loosely on GANs, the team splits the builder and the checker into separate context windows and roles: the evaluator doesn&#x27;t just read diffs, it opens the live app in Playwright, clicks around, and tries things before handing a critique back to the generator. The key justification is that tuning a standalone critic to be harsh is tractable, while tuning a builder to be self-critical about its own work is not.</p></div>
+<div class="quote"><p>&ldquo;The evaluator here isn&#x27;t just reading diffs, but it&#x27;s actually using playwright, um, to open live pages, click around, try things out&rdquo;</p><a href="https://youtu.be/mR-WAvEPRwE?t=1122" target="_blank">&#9654; watch at 18:42</a></div><div class="quote"><p>&ldquo;tuning a standalone critic, um, to be harsh is actually very tractable, but tuning a builder to be somewhat self-critical, um, is is not&rdquo;</p><a href="https://youtu.be/mR-WAvEPRwE?t=1185" target="_blank">&#9654; watch at 19:45</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Grading subjective quality with an explicit rubric and contract</span><span class="ln"></span></div>
+<div class="prose"><p>To grade fuzzy qualities like design taste, the team writes down a four-criteria rubric -- design, originality, craft, and functionality -- weighted toward design and originality, and calibrates it with reference-site examples. Before building starts, the generator and evaluator negotiate a concrete contract of testable assertions; for one app this reached 27 separate contract criteria, which the speakers say is the level of granularity needed to make evaluator findings actionable rather than vague.</p></div>
+<div class="quote"><p>&ldquo;the way we do this at least is with kind of creating a rubric with four criteria, uh design, originality, craft, and functionality&rdquo;</p><a href="https://youtu.be/mR-WAvEPRwE?t=1278" target="_blank">&#9654; watch at 21:18</a></div><div class="quote"><p>&ldquo;it was decided that there were 27 contract criteria. That&#x27;s the level of granularity which we found, you know, that you really need to make findings kind of actionable&rdquo;</p><a href="https://youtu.be/mR-WAvEPRwE?t=1926" target="_blank">&#9654; watch at 32:06</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Case study: retro game maker, solo loop vs. full harness</span><span class="ln"></span></div>
+<div class="prose"><p>Run with the same prompt and model, a solo agent loop produced a game that looked finished but where pressing the arrow key or space key did nothing, because the agent had no way to test what playing the game actually meant. The full generator-evaluator harness, run for about $200 and 6 hours, produced a playable game with working controls, physics, and an in-app AI level-design assistant the planner invented from a vague spec line.</p></div>
+<div class="quote"><p>&ldquo;Pressing the arrow key does nothing. Pressing a space key did nothing.&rdquo;</p><a href="https://youtu.be/mR-WAvEPRwE?t=1681" target="_blank">&#9654; watch at 28:01</a></div><div class="quote"><p>&ldquo;this was about, yeah, 200 bucks, 6 hours&rdquo;</p><a href="https://youtu.be/mR-WAvEPRwE?t=1742" target="_blank">&#9654; watch at 29:02</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The $200/6-hour cost for one working app is a useful anchor for weighing this harness against simpler approaches, but it&#x27;s a single example rather than a benchmark across task types -- the speakers themselves note the pattern is opinionated toward their stack (React/Postgres/Node) and would need re-tuning for a different one (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>On the meter chart tracking unsupervised task-completion time with a minimal scaffold, Opus 4.6 jumped from about 4 hours to about 12 hours.</td><td class="tt"><a href="https://youtu.be/mR-WAvEPRwE?t=874" target="_blank">14:34</a></td></tr><tr><td class="st">warns</td><td>As an agent works deeper into a context window, there is less coherence, a phenomenon the speakers call context rot.</td><td class="tt"><a href="https://youtu.be/mR-WAvEPRwE?t=155" target="_blank">02:35</a></td></tr><tr><td class="st">warns</td><td>Models tend to look at a half-implemented feature and judge it as done rather than catching that it&#x27;s incomplete.</td><td class="tt"><a href="https://youtu.be/mR-WAvEPRwE?t=218" target="_blank">03:38</a></td></tr><tr><td class="st">recommends</td><td>The evaluator agent doesn&#x27;t just read code diffs -- it opens the live app in Playwright, clicks around, and tries things before critiquing.</td><td class="tt"><a href="https://youtu.be/mR-WAvEPRwE?t=1122" target="_blank">18:42</a></td></tr><tr><td class="st">asserts</td><td>Tuning a standalone critic model to be harsh is tractable, but tuning a builder model to be self-critical about its own work is not.</td><td class="tt"><a href="https://youtu.be/mR-WAvEPRwE?t=1185" target="_blank">19:45</a></td></tr><tr><td class="st">recommends</td><td>The team grades design taste against a written four-criteria rubric -- design, originality, craft, and functionality -- weighted toward design and originality.</td><td class="tt"><a href="https://youtu.be/mR-WAvEPRwE?t=1278" target="_blank">21:18</a></td></tr><tr><td class="st">asserts</td><td>For one app, the generator and evaluator negotiated 27 separate contract criteria, which the team found to be the level of granularity needed to make findings actionable.</td><td class="tt"><a href="https://youtu.be/mR-WAvEPRwE?t=1926" target="_blank">32:06</a></td></tr><tr><td class="st">asserts</td><td>The full generator-evaluator-planner harness run that produced a working retro game maker cost about $200 and took about 6 hours.</td><td class="tt"><a href="https://youtu.be/mR-WAvEPRwE?t=1742" target="_blank">29:02</a></td></tr><tr><td class="st">warns</td><td>The same prompt run through a single-agent solo loop produced a game that looked finished but had non-functional controls: pressing the arrow key or space key did nothing.</td><td class="tt"><a href="https://youtu.be/mR-WAvEPRwE?t=1681" target="_blank">28:01</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "mR-WAvEPRwE", "slug": "agents-that-run-for-hours", "title": "Anthropic Workshop: Build Agents That Run for Hours", "speaker": "Ash Prabaker & Andrew Wilson", "company": "Anthropic", "themes": ["agentic-engineering", "coding-agents", "context-engineering"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "meter chart jump for Opus 4.6", "text": "On the meter chart tracking unsupervised task-completion time with a minimal scaffold, Opus 4.6 jumped from about 4 hours to about 12 hours.", "quote": "this was a jump from about 4 hours up to 12 hours with sort of that very simple harness", "t": 874}, {"id": "c2", "stance": "warns", "topic": "context rot", "text": "As an agent works deeper into a context window, there is less coherence, a phenomenon the speakers call context rot.", "quote": "as you're working through a context window, there's this notion of context rot. So, uh, there's less coherence as you're you're getting deeper into that session", "t": 155}, {"id": "c3", "stance": "warns", "topic": "models judge their own output poorly", "text": "Models tend to look at a half-implemented feature and judge it as done rather than catching that it's incomplete.", "quote": "it might look at a feature and see that it's sort of half half-baked or a little bit implemented and say, Yeah, okay, uh, that looks done", "t": 218}, {"id": "c4", "stance": "recommends", "topic": "evaluator actually drives the app", "text": "The evaluator agent doesn't just read code diffs -- it opens the live app in Playwright, clicks around, and tries things before critiquing.", "quote": "The evaluator here isn't just reading diffs, but it's actually using playwright, um, to open live pages, click around, try things out", "t": 1122}, {"id": "c5", "stance": "asserts", "topic": "critic vs. builder tunability", "text": "Tuning a standalone critic model to be harsh is tractable, but tuning a builder model to be self-critical about its own work is not.", "quote": "tuning a standalone critic, um, to be harsh is actually very tractable, but tuning a builder to be somewhat self-critical, um, is is not", "t": 1185}, {"id": "c6", "stance": "recommends", "topic": "four-criteria design rubric", "text": "The team grades design taste against a written four-criteria rubric -- design, originality, craft, and functionality -- weighted toward design and originality.", "quote": "the way we do this at least is with kind of creating a rubric with four criteria, uh design, originality, craft, and functionality", "t": 1278}, {"id": "c7", "stance": "asserts", "topic": "contract granularity", "text": "For one app, the generator and evaluator negotiated 27 separate contract criteria, which the team found to be the level of granularity needed to make findings actionable.", "quote": "it was decided that there were 27 contract criteria. That's the level of granularity which we found, you know, that you really need to make findings kind of actionable", "t": 1926}, {"id": "c8", "stance": "asserts", "topic": "harness run cost", "text": "The full generator-evaluator-planner harness run that produced a working retro game maker cost about $200 and took about 6 hours.", "quote": "this was about, yeah, 200 bucks, 6 hours", "t": 1742}, {"id": "c9", "stance": "warns", "topic": "solo loop failure", "text": "The same prompt run through a single-agent solo loop produced a game that looked finished but had non-functional controls: pressing the arrow key or space key did nothing.", "quote": "Pressing the arrow key does nothing. Pressing a space key did nothing.", "t": 1681}]}</script>
+</body></html>

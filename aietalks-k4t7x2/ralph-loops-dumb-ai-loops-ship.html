@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Ralph Loops: Build Dumb AI Loops That Ship — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/2TLXsxkz0zI" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 108 min</span><span class="ln"></span></div>
+<h1 class="lede">Ralph Loops: Build Dumb AI Loops That Ship</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Chris Parsons &middot; Cherrypick</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/2TLXsxkz0zI" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/2TLXsxkz0zI</a></span>
+</div>
+<div class="chips"><span class="chip hot">Agentic engineering</span><span class="chip hot">Security</span><span class="chip hot">Coding agents</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Ralph loops (named for Ralph Wiggum, who keeps trying the same thing until it works) replace complex multi-step orchestration tools like N8N with a simple prompt-tool-repeat loop, on the premise that any coding agent, including Claude Code, is already fundamentally running on a loop.</li><li>Newer models (GPT-5.1+, Claude Opus/Sonnet 4.6+) need far fewer repeated &quot;try again&quot; prompts because they more reliably recognize when a task is actually finished, unlike the models Ralph loops were originally built around.</li><li>Running these loops autonomously requires explicit guardrails: the &quot;lethal trifecta&quot; (untrusted tokens plus internet access plus secret data means you will lose that data), a warning that OpenClaw is insecure by default, a &quot;reversible without embarrassment&quot; rule for unsupervised actions, and sub-agent validation to counter the confirmation bias of an agent reviewing its own work in the same context.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>What a Ralph loop is, and where the name comes from</span><span class="ln"></span></div>
+<div class="prose"><p>Parsons traces the term to Ralph Wiggum from The Simpsons, who repeats the same action until it works; a Ralph loop is simply giving an AI the same prompt again after it finishes, which surfaces things it missed the first time. He argues this works because any coding agent is already fundamentally a loop: it reads context, calls a tool, and repeats until it decides it&#x27;s done.</p></div>
+<div class="quote"><p>&ldquo;It&#x27;s called a Ralph loop because of Ralph Wiggum, which is a Simpsons character, who basically says um the uh he just tries the same thing over and over and over again, and eventually it works&rdquo;</p><a href="https://youtu.be/2TLXsxkz0zI?t=530" target="_blank">&#9654; watch at 08:50</a></div><div class="quote"><p>&ldquo;Claude code fundamentally is running on a loop, isn&#x27;t it? It just reads the skill, calls a tool, goes back to the beginning, reads the skill again, calls a tool, calls a tool&rdquo;</p><a href="https://youtu.be/2TLXsxkz0zI?t=374" target="_blank">&#9654; watch at 06:14</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Moving away from complex orchestration</span><span class="ln"></span></div>
+<div class="prose"><p>Before adopting loops, Parsons ran his newsletter production through a large N8N workflow that took about a week to build and broke most Mondays. He found it brittle at that level of complexity and got little value from the effort of maintaining it, compared to giving the same task to a Claude Code skill that runs in a loop.</p></div>
+<div class="quote"><p>&ldquo;But it was so brittle to use at this kind of level of complexity, and I didn&#x27;t get a huge amount of value out of it&rdquo;</p><a href="https://youtu.be/2TLXsxkz0zI?t=281" target="_blank">&#9654; watch at 04:41</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Newer models loop less blindly</span><span class="ln"></span></div>
+<div class="prose"><p>Parsons notes that a year earlier, re-running the same prompt reliably surfaced something the model had missed. With current models (GPT-5.1 onward, Claude Opus/Sonnet 4.6 onward) that gap has narrowed: the model more often correctly recognizes a task is already finished, reducing the value of naive repeated retries.</p></div>
+<div class="quote"><p>&ldquo;a year ago, this would have been really important step because it would have definitely missed something. Um whereas now it&#x27;s like I&#x27;ve you&#x27;ve already done it. It&#x27;s fine, right?&rdquo;</p><a href="https://youtu.be/2TLXsxkz0zI?t=938" target="_blank">&#9654; watch at 15:38</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Security guardrails: the lethal trifecta and insecure defaults</span><span class="ln"></span></div>
+<div class="prose"><p>Citing Simon Willison&#x27;s &quot;lethal trifecta,&quot; Parsons defines the risk as the combination of untrusted tokens, internet access, and access to secret data you don&#x27;t want to lose -- if all three combine in the same context, you will lose that data. He separately flags that OpenClaw is insecure by default, despite ongoing work to harden it, and says permission scope has to be set deliberately rather than left wide open.</p></div>
+<div class="quote"><p>&ldquo;It&#x27;s um an idea that if you have untrusted tokens, uh internet access, and access to secret important data you don&#x27;t want to lose, you&#x27;re going to lose that data, basically&rdquo;</p><a href="https://youtu.be/2TLXsxkz0zI?t=3245" target="_blank">&#9654; watch at 54:05</a></div><div class="quote"><p>&ldquo;kind of be thoughtful about how much power and permission you&#x27;re giving to your agents, especially if you&#x27;re using something like Open Claw, which is uh unfortunately insecure by default&rdquo;</p><a href="https://youtu.be/2TLXsxkz0zI?t=3277" target="_blank">&#9654; watch at 54:37</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Operating rules: validation, autonomy limits, and bottlenecks</span><span class="ln"></span></div>
+<div class="prose"><p>Parsons describes using a separate sub-agent, rather than the same context, to validate a loop&#x27;s own output, because an agent reviewing itself in the same context tends toward confirmation bias and rates its own work as fine. For unsupervised actions he applies one rule -- is this reversible without embarrassment to me -- and if not, the agent stops and reports instead of acting. He argues token cost isn&#x27;t worth optimizing against right now, and frames team-level slowdowns from AI adoption through theory of constraints: fix the one real bottleneck (often review or release process) before anything else.</p></div>
+<div class="quote"><p>&ldquo;there&#x27;s definitely uh confirmation bias going on with agents where they&#x27;re like, &quot;Oh, yeah, of course I wrote it fine. It was fine. I checked it a minute ago.&quot;&rdquo;</p><a href="https://youtu.be/2TLXsxkz0zI?t=3340" target="_blank">&#9654; watch at 55:40</a></div><div class="quote"><p>&ldquo;My basic rule is, is this reversible without embarrassment to me? And, um, if the answer is no, don&#x27;t do it&rdquo;</p><a href="https://youtu.be/2TLXsxkz0zI?t=4027" target="_blank">&#9654; watch at 67:07</a></div><div class="quote"><p>&ldquo;No, just burn the tokens. They&#x27;re not that expensive. Depends what you&#x27;re doing&rdquo;</p><a href="https://youtu.be/2TLXsxkz0zI?t=4834" target="_blank">&#9654; watch at 80:34</a></div><div class="quote"><p>&ldquo;There&#x27;s a whole uh separate thing called uh theory of constraints, which I haven&#x27;t talked about at all, which is the idea that within any team in any system, there is always a bottleneck&rdquo;</p><a href="https://youtu.be/2TLXsxkz0zI?t=5696" target="_blank">&#9654; watch at 94:56</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>This is a workshop with substantial audience Q&amp;A rather than a scripted talk, so several of these points (sub-agent validation, the autonomy rule) come from Parsons describing his own personal/consulting setup rather than a documented or benchmarked practice (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The term &quot;Ralph loop&quot; comes from Ralph Wiggum, a Simpsons character who repeats the same action until it eventually works.</td><td class="tt"><a href="https://youtu.be/2TLXsxkz0zI?t=530" target="_blank">08:50</a></td></tr><tr><td class="st">warns</td><td>A complex N8N-based orchestration workflow for newsletter production was brittle at scale and provided little value relative to the maintenance effort.</td><td class="tt"><a href="https://youtu.be/2TLXsxkz0zI?t=281" target="_blank">04:41</a></td></tr><tr><td class="st">asserts</td><td>Claude Code is fundamentally running on a loop: read context, call a tool, repeat, until it decides the task is done.</td><td class="tt"><a href="https://youtu.be/2TLXsxkz0zI?t=374" target="_blank">06:14</a></td></tr><tr><td class="st">asserts</td><td>A year ago, re-running the same prompt reliably surfaced something the model had missed; with current models it more often correctly recognizes the task is already finished.</td><td class="tt"><a href="https://youtu.be/2TLXsxkz0zI?t=938" target="_blank">15:38</a></td></tr><tr><td class="st">warns</td><td>The combination of untrusted tokens, internet access, and access to important secret data means you will lose that data.</td><td class="tt"><a href="https://youtu.be/2TLXsxkz0zI?t=3245" target="_blank">54:05</a></td></tr><tr><td class="st">warns</td><td>OpenClaw is insecure by default, despite ongoing hardening work, so agent permissions need deliberate scoping.</td><td class="tt"><a href="https://youtu.be/2TLXsxkz0zI?t=3277" target="_blank">54:37</a></td></tr><tr><td class="st">recommends</td><td>Using a separate sub-agent for validation surfaces more problems than letting an agent review its own work in the same context, which shows confirmation bias.</td><td class="tt"><a href="https://youtu.be/2TLXsxkz0zI?t=3340" target="_blank">55:40</a></td></tr><tr><td class="st">recommends</td><td>The rule for unsupervised agent action is whether it&#x27;s reversible without embarrassment; if not, the agent should stop and report instead of acting.</td><td class="tt"><a href="https://youtu.be/2TLXsxkz0zI?t=4027" target="_blank">67:07</a></td></tr><tr><td class="st">recommends</td><td>Token cost isn&#x27;t worth optimizing against right now; it&#x27;s better to optimize for freeing up your own time.</td><td class="tt"><a href="https://youtu.be/2TLXsxkz0zI?t=4834" target="_blank">80:34</a></td></tr><tr><td class="st">asserts</td><td>Team slowdowns from adopting AI loops come from theory of constraints: there&#x27;s always one real bottleneck, and fixing anything else first is close to pointless.</td><td class="tt"><a href="https://youtu.be/2TLXsxkz0zI?t=5696" target="_blank">94:56</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "2TLXsxkz0zI", "slug": "ralph-loops-dumb-ai-loops-ship", "title": "Ralph Loops: Build Dumb AI Loops That Ship", "speaker": "Chris Parsons", "company": "Cherrypick", "themes": ["agentic-engineering", "security", "coding-agents"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "Ralph loop name origin", "text": "The term \"Ralph loop\" comes from Ralph Wiggum, a Simpsons character who repeats the same action until it eventually works.", "quote": "It's called a Ralph loop because of Ralph Wiggum, which is a Simpsons character, who basically says um the uh he just tries the same thing over and over and over again, and eventually it works", "t": 530}, {"id": "c2", "stance": "warns", "topic": "N8N workflow complexity was brittle", "text": "A complex N8N-based orchestration workflow for newsletter production was brittle at scale and provided little value relative to the maintenance effort.", "quote": "But it was so brittle to use at this kind of level of complexity, and I didn't get a huge amount of value out of it", "t": 281}, {"id": "c3", "stance": "asserts", "topic": "coding agents are fundamentally loops", "text": "Claude Code is fundamentally running on a loop: read context, call a tool, repeat, until it decides the task is done.", "quote": "Claude code fundamentally is running on a loop, isn't it? It just reads the skill, calls a tool, goes back to the beginning, reads the skill again, calls a tool, calls a tool", "t": 374}, {"id": "c4", "stance": "asserts", "topic": "newer models need fewer retries", "text": "A year ago, re-running the same prompt reliably surfaced something the model had missed; with current models it more often correctly recognizes the task is already finished.", "quote": "a year ago, this would have been really important step because it would have definitely missed something. Um whereas now it's like I've you've already done it. It's fine, right?", "t": 938}, {"id": "c5", "stance": "warns", "topic": "lethal trifecta", "text": "The combination of untrusted tokens, internet access, and access to important secret data means you will lose that data.", "quote": "It's um an idea that if you have untrusted tokens, uh internet access, and access to secret important data you don't want to lose, you're going to lose that data, basically", "t": 3245}, {"id": "c6", "stance": "warns", "topic": "OpenClaw insecure by default", "text": "OpenClaw is insecure by default, despite ongoing hardening work, so agent permissions need deliberate scoping.", "quote": "kind of be thoughtful about how much power and permission you're giving to your agents, especially if you're using something like Open Claw, which is uh unfortunately insecure by default", "t": 3277}, {"id": "c7", "stance": "recommends", "topic": "sub-agent validation vs confirmation bias", "text": "Using a separate sub-agent for validation surfaces more problems than letting an agent review its own work in the same context, which shows confirmation bias.", "quote": "there's definitely uh confirmation bias going on with agents where they're like, \"Oh, yeah, of course I wrote it fine. It was fine. I checked it a minute ago.\"", "t": 3340}, {"id": "c8", "stance": "recommends", "topic": "reversible-without-embarrassment autonomy rule", "text": "The rule for unsupervised agent action is whether it's reversible without embarrassment; if not, the agent should stop and report instead of acting.", "quote": "My basic rule is, is this reversible without embarrassment to me? And, um, if the answer is no, don't do it", "t": 4027}, {"id": "c9", "stance": "recommends", "topic": "optimize time, not token cost", "text": "Token cost isn't worth optimizing against right now; it's better to optimize for freeing up your own time.", "quote": "No, just burn the tokens. They're not that expensive. Depends what you're doing", "t": 4834}, {"id": "c10", "stance": "asserts", "topic": "theory of constraints applied to AI adoption", "text": "Team slowdowns from adopting AI loops come from theory of constraints: there's always one real bottleneck, and fixing anything else first is close to pointless.", "quote": "There's a whole uh separate thing called uh theory of constraints, which I haven't talked about at all, which is the idea that within any team in any system, there is always a bottleneck", "t": 5696}]}</script>
+</body></html>

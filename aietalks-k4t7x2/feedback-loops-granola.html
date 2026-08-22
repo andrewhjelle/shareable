@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Feedback Loops are All You Need — Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/ON5LIT0M4do" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 10 min</span><span class="ln"></span></div>
+<h1 class="lede">Feedback Loops are All You Need</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Mehedi Hassan &middot; Granola</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/ON5LIT0M4do" target="_blank" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/ON5LIT0M4do</a></span>
+</div>
+<div class="chips"><span class="chip hot">Product & UX</span><span class="chip hot">Context engineering</span><span class="chip hot">Coding agents</span></div>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>A one-shot chat feature broke immediately in production: web search was too slow, follow-up emails didn&#x27;t match the user&#x27;s voice, and one prompt couldn&#x27;t serve every persona (sales vs. engineering vs. HR).</li><li>Vendor web search adds token cost that bubbles up per query and can silently degrade overnight when a provider ships an update outside your control, so Granola built its own tracing tool for full visibility into tool calls.</li><li>Converting the Electron app&#x27;s front end into a web shell let every PR get a preview link so LLM agents like Cursor can self-test and screenshot changes, which the talk frames as building a feedback loop rather than one-shotting better.</li></ul></div>
+</section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Generic chat features break fast in production</span><span class="ln"></span></div>
+<div class="prose"><p>Granola&#x27;s product philosophy is best-in-class meeting notes that stay out of the user&#x27;s way. When the speaker one-shotted a chat feature onto that product and shipped it, users immediately hit problems: web search was too slow, follow-up emails didn&#x27;t read like the user&#x27;s own writing, and the same prompt gave sales, engineering, and HR users answers tuned for the wrong role.</p></div>
+<div class="quote"><p>&ldquo;We have the best-in-class meeting notes no matter what role you&#x27;re in and it doesn&#x27;t get in your way.&rdquo;</p><a href="https://youtu.be/ON5LIT0M4do?t=94" target="_blank">&#9654; watch at 01:34</a></div><div class="quote"><p>&ldquo;Web search is too slow. It&#x27;s not writing follow-up emails how I normally write my emails.&rdquo;</p><a href="https://youtu.be/ON5LIT0M4do?t=126" target="_blank">&#9654; watch at 02:06</a></div><div class="quote"><p>&ldquo;Someone in sales might expect more of a deal focus. Someone in engineering might expect like action items, blockers, or like linear tickets.&rdquo;</p><a href="https://youtu.be/ON5LIT0M4do?t=247" target="_blank">&#9654; watch at 04:07</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Vendor web search is riskier than it looks</span><span class="ln"></span></div>
+<div class="prose"><p>Adding a web search tool looks like one line of code, but token usage and cost bubble up fast on complex queries and can blow up context, making per-chat cost infeasible at millions of users. The provider is also outside Granola&#x27;s control: an overnight model update degraded web search quality with no visibility into why, leaving switching providers as the only lever.</p></div>
+<div class="quote"><p>&ldquo;the token usage and token cost can bubble up quite a lot, especially for complex queries. It&#x27;s going to blow up your context.&rdquo;</p><a href="https://youtu.be/ON5LIT0M4do?t=186" target="_blank">&#9654; watch at 03:06</a></div><div class="quote"><p>&ldquo;shipped an update and for some reason web search degraded and it was completely out of our control.&rdquo;</p><a href="https://youtu.be/ON5LIT0M4do?t=217" target="_blank">&#9654; watch at 03:37</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Building in-house tracing to open the black box</span><span class="ln"></span></div>
+<div class="prose"><p>Rather than buy a SaaS observability product, Granola built its own tracing tooling, using LLMs to build it quickly, to get full visibility into every tool call from start to finish -- which tools fired, why, and at what cost. The UI was built to serve product, data, and CX staff, not just engineers, so people can diagnose failures without writing complex queries against raw logs.</p></div>
+<div class="quote"><p>&ldquo;we started building our own tracing tools. And obviously, thanks to LLMs, you can actually one-shot these things.&rdquo;</p><a href="https://youtu.be/ON5LIT0M4do?t=278" target="_blank">&#9654; watch at 04:38</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Turning a desktop app into a testable web shell</span><span class="ln"></span></div>
+<div class="prose"><p>Because Granola is an Electron desktop app that can only run one instance at a time, testing multiple feature variants in parallel created friction. The team turned the Electron front end into a web shell deployed online, so every pull request gets a preview link, and coding agents like Cursor now test changes and upload screenshots to the PR automatically.</p></div>
+<div class="quote"><p>&ldquo;we took our Electron app and we turned the front-end of the Electron app into a web shell. And this was deployed online.&rdquo;</p><a href="https://youtu.be/ON5LIT0M4do?t=432" target="_blank">&#9654; watch at 07:12</a></div><div class="quote"><p>&ldquo;because LLMs can now self-verify their work, these guys are now like once we open a PR, Cursor goes and tests it, uploads a screenshot into our PRs, which speeds up the testing so much more.&rdquo;</p><a href="https://youtu.be/ON5LIT0M4do?t=464" target="_blank">&#9654; watch at 07:44</a></div>
+
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>The thesis: feedback loops, not one-shotting</span><span class="ln"></span></div>
+<div class="prose"><p>The talk&#x27;s closing argument is that the fix for an LLM feature that misbehaves isn&#x27;t trying to one-shot a better prompt -- it&#x27;s building a feedback loop, described as feeling like playing tennis with the LLM, so the shipped product reflects many tested iterations rather than a single untested guess.</p></div>
+<div class="quote"><p>&ldquo;the answer isn&#x27;t to one-shot better. It&#x27;s about figuring out how you can make that feedback loop where it kind of feels like playing a tennis game with LLM.&rdquo;</p><a href="https://youtu.be/ON5LIT0M4do?t=526" target="_blank">&#9654; watch at 08:46</a></div>
+
+</section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The vendor web-search failure the speaker describes -- an overnight model update degrading quality with zero visibility -- reads as a recurring risk of building on tool-use features owned by a model provider rather than the app team; worth watching whether more teams build in-house tracing for this reason alone (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Granola&#x27;s product philosophy since day one has been best-in-class meeting notes that don&#x27;t get in the user&#x27;s way, for any role.</td><td class="tt"><a href="https://youtu.be/ON5LIT0M4do?t=94" target="_blank">01:34</a></td></tr><tr><td class="st">warns</td><td>A one-shotted chat feature immediately surfaced problems once real users tried it, including slow web search and emails that didn&#x27;t match the user&#x27;s voice.</td><td class="tt"><a href="https://youtu.be/ON5LIT0M4do?t=126" target="_blank">02:06</a></td></tr><tr><td class="st">warns</td><td>Adding a web search tool causes token usage and cost to bubble up on complex queries and can blow up the context window.</td><td class="tt"><a href="https://youtu.be/ON5LIT0M4do?t=186" target="_blank">03:06</a></td></tr><tr><td class="st">warns</td><td>A model provider shipped an overnight update that degraded web search quality with no visibility into why, outside Granola&#x27;s control.</td><td class="tt"><a href="https://youtu.be/ON5LIT0M4do?t=217" target="_blank">03:37</a></td></tr><tr><td class="st">asserts</td><td>A single prompt can&#x27;t serve every user persona, since sales, engineering, and HR expect very different outputs from the same summary feature.</td><td class="tt"><a href="https://youtu.be/ON5LIT0M4do?t=247" target="_blank">04:07</a></td></tr><tr><td class="st">recommends</td><td>Granola built its own tracing tools using LLMs to get full visibility into tool calls from start to finish, rather than relying on a SaaS provider.</td><td class="tt"><a href="https://youtu.be/ON5LIT0M4do?t=278" target="_blank">04:38</a></td></tr><tr><td class="st">asserts</td><td>The team converted the Electron app&#x27;s front end into a deployed web shell so pull requests generate preview links for testing.</td><td class="tt"><a href="https://youtu.be/ON5LIT0M4do?t=432" target="_blank">07:12</a></td></tr><tr><td class="st">asserts</td><td>Because LLMs can now self-verify their work, an agent like Cursor tests a pull request and uploads a screenshot automatically once it&#x27;s opened.</td><td class="tt"><a href="https://youtu.be/ON5LIT0M4do?t=464" target="_blank">07:44</a></td></tr><tr><td class="st">recommends</td><td>The fix for a misbehaving LLM feature is building a feedback loop rather than trying to one-shot a better prompt.</td><td class="tt"><a href="https://youtu.be/ON5LIT0M4do?t=526" target="_blank">08:46</a></td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+<div class="frame"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "ON5LIT0M4do", "slug": "feedback-loops-granola", "title": "Feedback Loops are All You Need", "speaker": "Mehedi Hassan", "company": "Granola", "themes": ["product-ux", "context-engineering", "coding-agents"], "tier": "transcript-brief", "claims": [{"id": "c1", "stance": "asserts", "topic": "product philosophy", "text": "Granola's product philosophy since day one has been best-in-class meeting notes that don't get in the user's way, for any role.", "quote": "We have the best-in-class meeting notes no matter what role you're in and it doesn't get in your way.", "t": 94}, {"id": "c2", "stance": "warns", "topic": "one-shot chat feature failures", "text": "A one-shotted chat feature immediately surfaced problems once real users tried it, including slow web search and emails that didn't match the user's voice.", "quote": "Web search is too slow. It's not writing follow-up emails how I normally write my emails.", "t": 126}, {"id": "c3", "stance": "warns", "topic": "web search token cost", "text": "Adding a web search tool causes token usage and cost to bubble up on complex queries and can blow up the context window.", "quote": "the token usage and token cost can bubble up quite a lot, especially for complex queries. It's going to blow up your context.", "t": 186}, {"id": "c4", "stance": "warns", "topic": "vendor control of web search", "text": "A model provider shipped an overnight update that degraded web search quality with no visibility into why, outside Granola's control.", "quote": "shipped an update and for some reason web search degraded and it was completely out of our control.", "t": 217}, {"id": "c5", "stance": "asserts", "topic": "one prompt can't serve every persona", "text": "A single prompt can't serve every user persona, since sales, engineering, and HR expect very different outputs from the same summary feature.", "quote": "Someone in sales might expect more of a deal focus. Someone in engineering might expect like action items, blockers, or like linear tickets.", "t": 247}, {"id": "c6", "stance": "recommends", "topic": "in-house tracing tooling", "text": "Granola built its own tracing tools using LLMs to get full visibility into tool calls from start to finish, rather than relying on a SaaS provider.", "quote": "we started building our own tracing tools. And obviously, thanks to LLMs, you can actually one-shot these things.", "t": 278}, {"id": "c7", "stance": "asserts", "topic": "Electron to web shell", "text": "The team converted the Electron app's front end into a deployed web shell so pull requests generate preview links for testing.", "quote": "we took our Electron app and we turned the front-end of the Electron app into a web shell. And this was deployed online.", "t": 432}, {"id": "c8", "stance": "asserts", "topic": "coding agents self-test PRs", "text": "Because LLMs can now self-verify their work, an agent like Cursor tests a pull request and uploads a screenshot automatically once it's opened.", "quote": "because LLMs can now self-verify their work, these guys are now like once we open a PR, Cursor goes and tests it, uploads a screenshot into our PRs, which speeds up the testing so much more.", "t": 464}, {"id": "c9", "stance": "recommends", "topic": "feedback loops over one-shotting", "text": "The fix for a misbehaving LLM feature is building a feedback loop rather than trying to one-shot a better prompt.", "quote": "the answer isn't to one-shot better. It's about figuring out how you can make that feedback loop where it kind of feels like playing a tennis game with LLM.", "t": 526}]}</script>
+</body></html>
