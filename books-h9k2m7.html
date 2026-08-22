@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Family Reading Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #0f172a; --panel: #1e293b; --panel-2: #273449; --border: #334155;
+    --ink: #f1f5f9; --ink-dim: #94a3b8; --ink-mute: #64748b;
+    --zada: #a855f7; --kai: #06b6d4; --andrew: #f59e0b; --debbie: #f43f5e;
+    --green: #22c55e; --blue: #3b82f6; --yellow: #eab308; --purple: #a855f7;
+    --pink: #ec4899; --violet: #7c3aed; --emerald: #059669;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  a { color: inherit; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 80px; }
+  h1 { font-size: 24px; margin: 4px 0 20px; text-align: center; font-weight: 800;
+    background: linear-gradient(90deg, #facc15, #f472b6, #22d3ee);
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .subtitle { text-align: center; color: var(--ink-mute); font-size: 12px; margin: -12px 0 20px; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 24px; }
+  .tab { border: 0; cursor: pointer; padding: 8px 14px; border-radius: 999px;
+    background: #334155; color: var(--ink); font-size: 14px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px; transition: all .15s ease; }
+  .tab:hover { background: #475569; }
+  .tab .age { opacity: .65; font-size: 11px; }
+  .tab[data-active="true"] { box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+  .tab[data-tab="zada"][data-active="true"]   { background: var(--zada); }
+  .tab[data-tab="kai"][data-active="true"]    { background: var(--kai); }
+  .tab[data-tab="andrew"][data-active="true"] { background: var(--andrew); }
+  .tab[data-tab="debbie"][data-active="true"] { background: var(--debbie); }
+  .tab[data-modebtn="reading"][data-active="true"] { background: #2563eb; }
+  .tab[data-modebtn="games"][data-active="true"]   { background: #16a34a; }
+  .modebar { margin-bottom: 18px; }
+  .badge.cp   { background: #047857; }
+  .badge.free { background: #b45309; }
+  .badge.warn { background: #7f1d1d; }
+  .crewbox { background: var(--panel-2); border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px; margin-bottom: 22px; font-size: 13.5px; }
+  .crewbox .who { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  .crewbox .who span { background: #334155; padding: 4px 10px; border-radius: 999px; font-size: 12px; }
+  .crewbox .rule { color: var(--ink-dim); }
+  .deadlist { color: var(--ink-mute); font-size: 12.5px; line-height: 1.6; }
+  .deadlist strong { color: var(--ink-dim); }
+  section { margin-bottom: 26px; }
+  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .04em;
+    margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  h2 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  h2.reading { color: #4ade80; } h2.reading .dot { background: #4ade80; }
+  h2.finished { color: #a78bfa; }
+  h2.ordered { color: #60a5fa; }
+  h2.selected { color: #facc15; }
+  h2.rec { color: #c084fc; }
+  h2.fav { color: #fb923c; }
+  .empty { color: var(--ink-mute); font-size: 13px; font-style: italic; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px; margin-bottom: 10px; }
+  .card.reading { border-color: #14532d; }
+  .card.finished { border-color: #4c1d95; }
+  .card .row { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; }
+  .card .title { font-weight: 700; line-height: 1.25; margin: 0; }
+  .card .author { color: var(--ink-dim); font-size: 13px; margin: 2px 0 0; }
+  .card .pitch { font-size: 13.5px; color: #cbd5e1; margin: 8px 0 0; }
+  .card .meta { color: var(--ink-mute); font-size: 12px; margin-top: 4px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 0; }
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 6px; background: #475569; color: var(--ink); }
+  .badge.novel   { background: var(--emerald); }
+  .badge.graphic { background: var(--violet); }
+  .badge.manga   { background: var(--pink); }
+  .badge.movie   { background: #1d4ed8; }
+  .badge.edgy    { background: #b91c1c; }
+  .badge.audio   { background: #c2410c; }
+  .badge.match   { background: #b45309; }
+  .badge.verdict { background: #4c1d95; }
+  .badge.bounced { background: #7f1d1d; }
+  .btn { border: 0; cursor: pointer; font-weight: 600; font-size: 12px;
+    padding: 8px 12px; border-radius: 10px; color: white; white-space: nowrap; }
+  .btn:hover { opacity: .9; }
+  .btn.available { background: #ca8a04; }
+  .btn.selected  { background: #2563eb; }
+  .btn.ordered   { background: #16a34a; }
+  .btn.reading   { background: #9333ea; }
+  .btn.finished  { background: #475569; }
+  .stars { display: inline-flex; gap: 2px; margin-top: 8px; align-items: center; }
+  .stars .lbl { font-size: 11px; color: var(--ink-mute); margin-right: 6px; }
+  .star { background: none; border: 0; color: #475569; font-size: 18px; cursor: pointer; padding: 0 1px; }
+  .star.on { color: #facc15; }
+  .librarian { background: white; color: #0f172a; border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+  .librarian .lbl { text-align: center; font-weight: 700; font-size: 13px; margin: 0 0 8px; }
+  .librarian ul { margin: 0; padding: 0; list-style: none; }
+  .librarian li { padding: 8px 0; border-top: 1px solid #e2e8f0; }
+  .librarian li:first-child { border-top: 0; }
+  .librarian .t { font-weight: 600; }
+  .librarian .a { color: #64748b; font-size: 13px; }
+  .favlist { display: flex; flex-wrap: wrap; gap: 8px; }
+  .favlist .fav { background: #422006; color: #fdba74; border: 1px solid #7c2d12;
+    padding: 4px 10px; border-radius: 999px; font-size: 12px; }
+  .verdictbox { background: #1e1b4b; border: 1px solid #4338ca; border-radius: 10px;
+    padding: 10px 12px; margin-top: 6px; font-size: 13px; color: #c7d2fe; }
+  .verdictbox strong { color: #e0e7ff; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div style="text-align:center;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#94a3b8;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #e2e8f0;">
+    <a href="hub-h9k2m7.html" style="color:#475569;text-decoration:none;margin:0 8px;border-bottom:1px solid transparent">&larr; Hub</a>
+    <span style="color:#cbd5e1">&middot;</span>
+    <a href="movies-h9k2m7.html" style="color:#475569;text-decoration:none;margin:0 8px">Movies</a>
+    <span style="color:#cbd5e1">&middot;</span>
+    <span style="color:#94a3b8">Books (this page)</span>
+  </div>
+  <h1 id="pageTitle">📚 Family Reading Dashboard</h1>
+  <div class="subtitle" id="lastUpdated"></div>
+
+  <div class="tabs modebar" id="modeToggle"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="content"></div>
+</div>
+
+<script>
+/* ============================================================
+   DATA — edit here to add/remove books.
+   ============================================================ */
+
+const LAST_UPDATED = "2026-07-22";
+
+const familyMembers = [
+  { id: "zada",   name: "Zada",   age: 7,  emoji: "🌙" },
+  { id: "kai",    name: "Kai",    age: 11, emoji: "⚡" },
+  { id: "andrew", name: "Andrew",         emoji: "📚" },
+  { id: "debbie", name: "Debbie",         emoji: "📖" },
+];
+
+/* Currently reading — static (not part of the recommendation flow). */
+const inProgress = {
+  andrew: [
+    { title: "A Drop of Corruption", author: "Robert Jackson Bennett", status: "Solo read — straight in after book 1 (Jul 2026)" },
+    { title: "The Name of the Rose", author: "Umberto Eco",   status: "Currently enjoying" },
+    { title: "Lord of Light",        author: "Roger Zelazny", status: "In progress" },
+  ],
+  debbie: [
+    { title: "Babel", author: "R.F. Kuang", status: "Was slow, now loving it" },
+  ],
+  zada: [
+    { title: "Amulet series",         author: "Kazu Kibuishi", status: "Currently reading",  format: "graphic" },
+    { title: "Click/Act/Camp series", author: "Kayla Miller",  status: "Working through",    format: "graphic" },
+  ],
+  kai: [
+    { title: "The Lightning Thief", author: "Rick Riordan", status: "Class reading group", format: "novel" },
+    { title: "Coraline",            author: "Neil Gaiman",  status: "Currently reading",   format: "novel" },
+  ],
+};
+
+/* Recently finished — with dated verdicts. */
+const recentlyFinished = {
+  andrew: [
+    { title: "The Tainted Cup",      author: "Robert Jackson Bennett", verdict: "Finished 2026-07 — really enjoyed. Went straight into the sequel. Solo lane (procedural, not couple-gothic)." },
+    { title: "Rebecca",              author: "Daphne du Maurier",  verdict: "Finished 2026-07 — really enjoyed. Gothic 93% match confirmed." },
+    { title: "Jane Eyre",            author: "Charlotte Brontë",   verdict: "Read — loved it. Standing house favorite. Year-1 Gothic." },
+    { title: "Count of Monte Cristo", author: "Alexandre Dumas",   verdict: "Bounced 2026-07. Third-person plot-machine — not their lane. They need first-person confessional voice + gothic secret.", bounced: true },
+  ],
+  debbie: [],
+  zada: [],
+  kai: [],
+};
+
+/* Favorites — reference chips. */
+const favorites = {
+  andrew: ["The Magus", "Dungeon Crawler Carl", "Murderbot Diaries", "Circe", "Shadow of the Wind", "Jane Eyre (couple)"],
+  debbie: ["Severance", "Born a Crime", "Bossypants", "Tana French thrillers", "Jane Eyre (couple)"],
+  zada:   ["Wednesday", "Hugo Cabret", "Babysitters Club", "Amulet series"],
+  kai:    ["Harry Potter", "Hunger Games", "Spy x Family", "Dr. Stone", "Kaiju No. 8"],
+};
+
+/* Recommendation catalog. State machine: available → selected → ordered → reading → finished. */
+const books = {
+  zada: [
+    { title: "Harry Potter and the Sorcerer's Stone", author: "J.K. Rowling", format: "novel", movieReward: true,
+      tags: ["Magic School","Friendship","Friends Reading It"],
+      pitch: "A boy discovers he's a wizard and goes to a magical school full of secrets, monsters, and adventure. Your friends are probably reading it too!", pages: "309 pages" },
+    { title: "The Graveyard Book", author: "Neil Gaiman", format: "novel",
+      tags: ["Spooky-Sweet","Ghosts","You Asked For This!"],
+      pitch: "A boy is raised by ghosts in a graveyard. It's spooky but also sweet and funny. The author reads the audiobook himself!", pages: "312 pages" },
+    { title: "Coraline", author: "Neil Gaiman", format: "novel", movieReward: true,
+      tags: ["Creepy","Brave Girl","Short"],
+      pitch: "A girl finds a secret door to another world where everything seems perfect... but something is VERY wrong!", pages: "162 pages" },
+    { title: "Matilda", author: "Roald Dahl", format: "novel", movieReward: true,
+      tags: ["Funny","Magic Powers","Smart Girl"],
+      pitch: "A super-smart girl with terrible parents discovers she has magical powers!", pages: "240 pages" },
+    { title: "Witch Boy", author: "Molly Knox Ostertag", format: "graphic",
+      tags: ["Magic Family","Be Yourself","Beautiful Art"],
+      pitch: "In his family, boys become shapeshifters and girls become witches. But Aster wants to be a witch!", pages: "224 pages" },
+    { title: "Sheets", author: "Brenna Thummler", format: "graphic",
+      tags: ["Ghost Friend","Wednesday Vibes","Gorgeous Art"],
+      pitch: "A girl running her family's laundromat meets a ghost who becomes her friend. Beautiful art!", pages: "240 pages" },
+    { title: "Wings of Fire: The Dragonet Prophecy", author: "Tui T. Sutherland", format: "graphic",
+      tags: ["Dragons!","Adventure","Prophecy"],
+      pitch: "Five young dragons are destined to end a war — but first they have to escape!", pages: "224 pages" },
+    { title: "Spy x Family Vol. 1", author: "Tatsuya Endo", format: "manga",
+      tags: ["Super Funny","Secret Identities","Zada Loved It"],
+      pitch: "A spy's fake daughter can READ MINDS and his fake wife is an ASSASSIN! Super funny!", pages: "220 pages" },
+    { title: "Saiki K Vol. 1", author: "Shūichi Asō", format: "manga",
+      tags: ["Comedy","Psychic Powers","Family Watches It"],
+      pitch: "A pink-haired psychic just wants to be normal but his powers keep making his life weird. Same energy as the anime.", pages: "192 pages" },
+  ],
+  kai: [
+    { title: "Lockwood & Co: The Screaming Staircase", author: "Jonathan Stroud", format: "novel", movieReward: true, transgressive: true,
+      tags: ["Stranger Things Vibes","Ghost Hunters","Teens on Their Own"],
+      pitch: "Ghosts are REAL and deadly. Only kids can see them. Three teens run their own ghost-hunting agency!", pages: "400 pages", seriesInfo: "5 books in series" },
+    { title: "The Maze Runner", author: "James Dashner", format: "novel", movieReward: true, transgressive: true,
+      tags: ["No Memory","Deadly Maze","Non-Stop Action"],
+      pitch: "You wake up in a maze with no memory. Monsters come out at night. Solve the maze or die!", pages: "374 pages", seriesInfo: "3 books + movies" },
+    { title: "Miss Peregrine's Home for Peculiar Children", author: "Ransom Riggs", format: "novel", movieReward: true, transgressive: true,
+      tags: ["Creepy Photos Inside","Superpowers","Tim Burton Movie"],
+      pitch: "A hidden world of kids with strange powers — with real creepy vintage photographs!", pages: "352 pages", seriesInfo: "6 books in series" },
+    { title: "Hatchet", author: "Gary Paulsen", format: "novel",
+      tags: ["Survival","Alone in Wilderness","Short & Intense"],
+      pitch: "A 13-year-old survives a plane crash in the wilderness with only a hatchet. Stay alive ALONE.", pages: "195 pages" },
+    { title: "The Outsiders", author: "S.E. Hinton", format: "novel", movieReward: true, transgressive: true,
+      tags: ["Gang Rivalry","Written by a Teen","Classic"],
+      pitch: "Greasers vs. rich kids. Gang fights, loyalty, growing up hard. The author was only 16!", pages: "192 pages" },
+    { title: "Scythe", author: "Neal Shusterman", format: "novel", transgressive: true,
+      tags: ["Future Death Sport","Only One Survives","Dark"],
+      pitch: "In the future, nobody dies... except when Scythes choose to end you!", pages: "435 pages", seriesInfo: "3 books in series" },
+    { title: "Alex Rider: Stormbreaker", author: "Anthony Horowitz", format: "novel", movieReward: true, transgressive: true,
+      tags: ["Teen Spy","James Bond Vibes","Gadgets"],
+      pitch: "A 14-year-old discovers his uncle was a SPY — and now the government wants HIM!", pages: "192 pages", seriesInfo: "12+ books" },
+    { title: "Skulduggery Pleasant", author: "Derek Landy", format: "novel", transgressive: true,
+      tags: ["Skeleton Detective","Dark & Funny","Magic Battles"],
+      pitch: "A skeleton detective in a suit teams up with a 12-year-old girl to fight evil sorcerers!", pages: "400 pages", seriesInfo: "15+ books" },
+  ],
+
+  /* Andrew — refreshed post-Rebecca. Ordered by taste-DNA fit given
+     Jane Eyre/Rebecca = the standing bar (first-person confessional gothic). */
+  andrew: [
+    { title: "My Cousin Rachel", author: "Daphne du Maurier",
+      tags: ["Same Author as Rebecca","Gothic","Unreliable Narrator","Couple Read"],
+      pitch: "Du Maurier again. First-person narrator obsessed with a woman who may or may not be a murderer. Rebecca's DNA, wound tighter.", match: "96%" },
+    { title: "The Woman in White", author: "Wilkie Collins",
+      tags: ["Victorian Gothic","Multi-Narrator","Sensation Novel","Couple Read"],
+      pitch: "Founder of the sensation novel. Nested first-person testimonies, gaslit heroine, secret asylum. Jane Eyre-era pacing.", match: "94%" },
+    { title: "The Tenant of Wildfell Hall", author: "Anne Brontë",
+      tags: ["Brontë Sister","Diary Format","Dark & Modern"],
+      pitch: "The third Brontë, wrongly the least famous. Diary-inside-a-frame about a woman escaping an abusive marriage — shockingly modern.", match: "93%" },
+    { title: "Wide Sargasso Sea", author: "Jean Rhys",
+      tags: ["Jane Eyre Companion","Caribbean Gothic","Bertha's Story","Short"],
+      pitch: "The mad wife in the attic — her story. Caribbean gothic, first-person, gorgeously written. Reads with Jane Eyre.", match: "93%" },
+    { title: "The Picture of Dorian Gray", author: "Oscar Wilde",
+      tags: ["Aestheticism","Corruption","Voice-Driven","Short"],
+      pitch: "The one classic he might already know the shape of. Wilde's voice on every page. Short.", match: "90%" },
+    { title: "Dracula", author: "Bram Stoker",
+      tags: ["Epistolary Gothic","Founding Text","Great on Audio"],
+      pitch: "Letters, journals, telegrams. The multi-voice horror OG. Audio adaptations are excellent.", match: "89%" },
+    { title: "The Thirteenth Tale", author: "Diane Setterfield",
+      tags: ["Modern Gothic","Books-About-Books","Couple Read"],
+      pitch: "Biographer takes on a reclusive novelist with a secret. Shadow of the Wind meets Rebecca. Explicit couple pick.", match: "92%" },
+    { title: "We Have Always Lived in the Castle", author: "Shirley Jackson",
+      tags: ["Voice Machine","Unreliable Narrator","Short"],
+      pitch: "Shirley Jackson's shortest and best. Merricat's voice from line one is the whole point.", match: "91%" },
+    { title: "Mexican Gothic", author: "Silvia Moreno-Garcia",
+      tags: ["Contemporary Gothic","Atmospheric","Couple Read"],
+      pitch: "1950s Mexico, decaying English mansion, dread. Modern take on the tradition.", match: "88%" },
+    { title: "A Gentleman in Moscow", author: "Amor Towles",
+      tags: ["Witty & Charming","Atmospheric","Easy Listen"],
+      pitch: "Count under house arrest. Wit + surprising momentum. Great crossover with Debbie.", match: "95%" },
+    { title: "The Wager", author: "David Grann",
+      tags: ["True Survival","Riveting","Killers of Flower Moon Author"],
+      pitch: "1740s shipwreck survival. Narrative non-fiction that reads like a thriller.", match: "94%" },
+    { title: "Wuthering Heights", author: "Emily Brontë",
+      tags: ["Year-1 Solo","Gothic Essential","Frame Narrator"],
+      pitch: "Darker, wilder, more savage than Jane Eyre. Heathcliff is unforgettable. Solo read, not couple.", match: "90%" },
+    { title: "Piranesi", author: "Susanna Clarke",
+      tags: ["Short & Strange","Dreamlike","Palate Cleanser"],
+      pitch: "Short, dreamlike, strange. Perfect between big reads.", match: "90%" },
+    { title: "The Historian", author: "Elizabeth Kostova",
+      tags: ["Dracula Adjacent","European Libraries","Name of the Rose Vibes"],
+      pitch: "Dracula-adjacent literary mystery across Europe.", match: "88%" },
+  ],
+
+  debbie: [
+    { title: "My Cousin Rachel", author: "Daphne du Maurier", audiobook: true,
+      tags: ["Same as Rebecca","Couple Read","Unreliable Narrator"],
+      pitch: "Rebecca author's other big one. Explicit couple pick after Rebecca landed.", match: "96%" },
+    { title: "The Thirteenth Tale", author: "Diane Setterfield", audiobook: true,
+      tags: ["Modern Gothic","Books-About-Books","Couple Read"],
+      pitch: "Biographer + reclusive novelist + secret. Rebecca energy, more contemporary voice.", match: "94%" },
+    { title: "Yellowface", author: "R.F. Kuang", audiobook: true,
+      tags: ["Post-Babel Pick","Sharp Satire","Publishing Drama"],
+      pitch: "Satirical thriller about publishing, race, appropriation. Biting, fast.", match: "96%" },
+    { title: "The Likeness", author: "Tana French", audiobook: true,
+      tags: ["Dublin Murder Squad","Doppelgänger Mystery","Undercover"],
+      pitch: "Dublin Murder Squad. Undercover with doppelgänger vibes.", match: "94%" },
+    { title: "I'm Glad My Mom Died", author: "Jennette McCurdy", audiobook: true,
+      tags: ["Comedian Memoir","Devastating & Funny","She Narrates"],
+      pitch: "Comedian memoir but devastating. She narrates.", match: "93%" },
+    { title: "Such a Fun Age", author: "Kiley Reid", audiobook: true,
+      tags: ["Race & Class","Sharp & Uncomfortable","Severance Energy"],
+      pitch: "Sharp, funny — race and class in modern America.", match: "91%" },
+    { title: "The Fifth Season", author: "N.K. Jemisin",
+      tags: ["Won 3 Hugos","Systemic Oppression","Fantasy with Teeth"],
+      pitch: "Fantasy with systemic oppression at its core. Won 3 Hugos.", match: "89%" },
+  ],
+};
+
+/* ============================================================
+   GAME NIGHTS — Andrew + Jason + Brian
+   Platform rule: Andrew = PC only · Brian = PS5 + PC · Jason = Xbox
+   (maybe a PS5 somewhere). Safe zone = FULL PC/Xbox/PS5 crossplay.
+   Jason: no fantasy.
+   ============================================================ */
+
+const crew = [
+  { name: "Andrew", platforms: "PC only" },
+  { name: "Brian",  platforms: "PS5 + PC" },
+  { name: "Jason",  platforms: "Xbox + VR headset + probably a PC (Darktide? Fireteam?) — confirm" },
+];
+const crewRule = "Everything below is PvE co-op with crossplay covering this exact crew — nobody has to buy hardware, nobody gets hunted by sweatlords. Jason rule: hangout games or space/future settings ONLY (no fantasy, no modern-day tactical, no pirates — Remnant field-tested this). Voice: Discord runs natively on Xbox, PS5, and PC. Phasmophobia is the one game here with VRChat-grade proximity voice built in.";
+
+/* Already played together. */
+const gamesPlayed = [
+  { title: "Space Marine 2", note: "The benchmark. Co-op ops + PvE horde, full crossplay. Still getting content updates." },
+  { title: "Helldivers 2",   note: "Pure PvE and the Xbox version (Aug 2025) means all three of you can squad with full crossplay now. The #1 pick for the next PvE night — you already own it and like it." },
+  { title: "GTA Online",     note: "No PC-to-console crossplay — this one only works if you're all on the same platform family. GTA VI (Nov 2026) crossplay still unannounced.", warn: true },
+  { title: "Borderlands 3", note: "Played and enjoyed — which makes Borderlands 4 the closest thing to a guaranteed hit on the recommended list. Same co-op campaign loop, full crossplay from day one this time." },
+  { title: "Aliens: Fireteam Elite", note: "Played on PC (we think) and enjoyed. Full crossplay since Jul 2022, so a revisit works from any platform mix — and there are DLC classes/missions if you never finished. A sequel is reportedly in the works; crossplay for it unconfirmed." },
+  { title: "VRChat",         note: "The hangout lane. Works because Jason joins in VR from his headset while PC players use desktop mode (no headset needed) — VR and desktop share the same worlds and voice. Free, and the audio bar everything else gets measured against." },
+];
+
+/* Recommendations — Jason filter: hangout OR space/future only.
+   State machine: available → shortlist → playing → played. */
+const games = [
+  { title: "Borderlands 4", price: "Jason owns it · Andrew waiting on sale", players: "4-player co-op",
+    tags: ["PvE","Space/Future ✓","You Loved BL3","Safest Bet"],
+    pitch: "The crew loved BL3 and Jason already owns this one. Andrew: grab it on sale (watch Steam sales — it's hit ~$45). Brian needs a copy too. Same co-op campaign loop as BL3, bigger, full crossplay from day one. The closest thing to a guaranteed hit here." },
+  { title: "Warhammer 40K: Darktide", price: "$40 (Brian only)", players: "4-player co-op",
+    tags: ["PvE","Space/Future ✓","2 of 3 Already Own It","Space Marine 2 Energy"],
+    pitch: "Andrew + Jason already own it (Jason's copy may be PC — irrelevant, crossplay is full, everyone lands in the same lobby). Brian is the only buy: $40 on PS5 or PC, or included with PC Game Pass. Cheapest real next step after Helldivers." },
+  { title: "Killing Floor 3", price: "$40", players: "6-player co-op",
+    tags: ["PvE","Future-ish (Set 2091)","Horde Shooter","Wave Defense"],
+    pitch: "Pure wave-defense horde shooting in a 2091 cyberpunk setting. Turn brain off, hold the line. Full crossplay at launch (Jul 2025)." },
+  { title: "No Man's Sky", price: "$60 (often ~$30)", players: "Co-op universe",
+    tags: ["PvE","Space/Future ✓","Hangout-Chill","Base Building"],
+    pitch: "The chill-night option: explore the galaxy, build a base together, low stakes. Space AND hangout — double Jason-approved. Full crossplay." },
+  { title: "Overcooked! All You Can Eat", price: "$40 (often ~$15)", players: "4-player co-op",
+    tags: ["Hangout ✓","Chaotic Kitchen Co-op","Friendship Stress Test"],
+    pitch: "Cooperative kitchen chaos — the classic scream-at-each-other-laughing game. The All You Can Eat edition has full crossplay across PC/PS5/Xbox." },
+  { title: "Phasmophobia", price: "$20", players: "4-player co-op",
+    tags: ["Hangout-ish","Built-in Proximity Voice","Jason-Check: Paranormal ≠ Space"],
+    pitch: "The VRChat-audio itch, scratched: real in-game proximity voice — whisper in a dark hallway and the ghost hears you too. Not space/future, but its comedy-through-fear loop is closer to a hangout game than a shooter. Ask Jason before buying." },
+];
+
+/* Ruled out — platform walls or PvP. Kept so nobody re-litigates them. */
+const gamesDead = [
+  { title: "Remnant", why: "Played it — Jason didn't like it. Confirmed the rule: nothing soulslike or dark-fantasy." },
+  { title: "Warframe", why: "Tried it — never truly clicked. The free-to-play grind needs a wiki guy nobody wanted to be. Not worth a third attempt." },
+  { title: "Ready or Not / Payday 3", why: "Cut by the Jason filter — modern-day tactical/crime, not hangout or space/future. (GTA Online worked because it was a hangout sandbox, not a mission grind.)" },
+  { title: "Sea of Thieves", why: "Cut by the Jason filter — pirates are the wrong century entirely." },
+  { title: "Destiny 2", why: "Jason and Brian played it; Andrew couldn't get into it. Two of three isn't a crew game." },
+  { title: "Halo Infinite", why: "Andrew owns it, but the ship has sailed — the moment passed. Parked, not deleted, since it costs nothing to revisit." },
+  { title: "Among Us", why: "Needs 5+ players for real paranoia — a bigger-group game, not a trio game." },
+  { title: "Jackbox Party Pack", why: "DEEP BACKLOG — not ruled out, just not soon. The one-copy-plus-phones trick still makes it the cheapest experiment whenever a hangout night needs a game." },
+  { title: "ARC Raiders", why: "PvPvE — other player squads hunt you in every raid. Great game, wrong vibe for a PvE crew." },
+  { title: "Battlefield 6 / Warzone / Rocket League", why: "Parked — PvP, not the vibe right now." },
+  { title: "Grounded", why: "Andrew likes it, but survival-building probably isn't Jason's wheelhouse. Parked for this crew — could be a different-friends or family game." },
+  { title: "Deep Rock Galactic", why: "The perfect PvE game on paper, but Steam PC can't join consoles (only Microsoft Store PC ↔ Xbox). Verified 2026-07." },
+  { title: "Lethal Company / R.E.P.O. / Content Warning", why: "The proximity-voice co-op hits are all PC only." },
+  { title: "Hell Let Loose", why: "Console-to-console crossplay only — PC is walled off." },
+];
+
+const GAME_NEXT = {
+  available: { next: "shortlist", label: "Shortlist",   cls: "available" },
+  shortlist: { next: "playing",   label: "We Got It",   cls: "selected"  },
+  playing:   { next: "played",    label: "Mark Played", cls: "reading"   },
+  played:    { next: "available", label: "Reset",       cls: "finished"  },
+};
+
+/* ============================================================
+   RENDERER
+   ============================================================ */
+
+const FORMAT = {
+  novel:   { label: "📖 Chapter Book",  cls: "novel"   },
+  graphic: { label: "🎨 Graphic Novel", cls: "graphic" },
+  manga:   { label: "🇯🇵 Manga",        cls: "manga"   },
+};
+
+const NEXT_STATE = {
+  available: { next: "selected", label: "Select",        cls: "available" },
+  selected:  { next: "ordered",  label: "Mark Ordered",  cls: "selected"  },
+  ordered:   { next: "reading",  label: "Start Reading", cls: "ordered"   },
+  reading:   { next: "finished", label: "Finished!",     cls: "reading"   },
+  finished:  { next: "available",label: "Reset",         cls: "finished"  },
+};
+
+const STATE_KEY  = "familyBookStates";
+const RATING_KEY = "familyBookRatings";
+
+let activeMode  = localStorage.getItem("familyMode") || "reading";
+let activeTab   = localStorage.getItem("familyActiveTab") || "andrew";
+let bookStates  = JSON.parse(localStorage.getItem(STATE_KEY)  || "{}");
+let bookRatings = JSON.parse(localStorage.getItem(RATING_KEY) || "{}");
+
+function save() {
+  localStorage.setItem(STATE_KEY,  JSON.stringify(bookStates));
+  localStorage.setItem(RATING_KEY, JSON.stringify(bookRatings));
+  localStorage.setItem("familyActiveTab", activeTab);
+  localStorage.setItem("familyMode", activeMode);
+}
+
+function bookKey(kid, title)      { return kid + "|" + title; }
+function getState(kid, title)     { return bookStates[bookKey(kid,title)]  || "available"; }
+function setState(kid, title, s)  { bookStates[bookKey(kid,title)]  = s; save(); render(); }
+function getRating(kid, title)    { return bookRatings[bookKey(kid,title)] || 0; }
+function setRating(kid, title, r) {
+  const cur = getRating(kid, title);
+  bookRatings[bookKey(kid,title)] = (r === cur ? 0 : r);
+  save(); render();
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+function badgeHTML(book, isKid) {
+  const b = [];
+  if (isKid && book.format && FORMAT[book.format]) {
+    b.push(`<span class="badge ${FORMAT[book.format].cls}">${FORMAT[book.format].label}</span>`);
+  }
+  if (book.movieReward)  b.push(`<span class="badge movie">🎬 Movie!</span>`);
+  if (book.transgressive) b.push(`<span class="badge edgy">🔥 Edgy</span>`);
+  if (book.audiobook)    b.push(`<span class="badge audio">🎧 Audiobook</span>`);
+  if (book.match)        b.push(`<span class="badge match">${escapeHtml(book.match)}</span>`);
+  (book.tags || []).forEach(t => b.push(`<span class="badge">${escapeHtml(t)}</span>`));
+  return `<div class="badges">${b.join("")}</div>`;
+}
+
+function starsHTML(kid, title) {
+  const r = getRating(kid, title);
+  let out = `<div class="stars"><span class="lbl">Rate it:</span>`;
+  for (let i = 1; i <= 5; i++) {
+    out += `<button class="star ${i <= r ? "on" : ""}" data-star="${i}" data-kid="${kid}" data-title="${escapeHtml(title)}">★</button>`;
+  }
+  out += `</div>`;
+  return out;
+}
+
+function bookCardHTML(book, kid, isKid) {
+  const state = getState(kid, book.title);
+  const conf  = NEXT_STATE[state];
+  const showBtn = isKid;
+  return `
+    <div class="card ${state}">
+      <div class="row">
+        <div style="flex:1; min-width:0;">
+          <p class="title">${escapeHtml(book.title)}</p>
+          <p class="author">${escapeHtml(book.author)}</p>
+          ${badgeHTML(book, isKid)}
+          ${book.pitch ? `<p class="pitch">${escapeHtml(book.pitch)}</p>` : ""}
+          ${(book.pages || book.seriesInfo) ? `<div class="meta">${escapeHtml(book.pages||"")}${book.seriesInfo ? " • " + escapeHtml(book.seriesInfo) : ""}</div>` : ""}
+          ${state === "finished" ? starsHTML(kid, book.title) : ""}
+        </div>
+        ${showBtn ? `<button class="btn ${conf.cls}" data-advance data-kid="${kid}" data-title="${escapeHtml(book.title)}" data-next="${conf.next}">${conf.label}</button>` : ""}
+      </div>
+    </div>`;
+}
+
+function sectionHTML(title, kls, cards, empty) {
+  return `
+    <section>
+      <h2 class="${kls}"><span class="dot"></span>${title}</h2>
+      ${cards.length ? cards.join("") : `<p class="empty">${empty}</p>`}
+    </section>`;
+}
+
+function gameCardHTML(g) {
+  const state = getState("games", g.title);
+  const conf  = GAME_NEXT[state];
+  const badges = [
+    `<span class="badge cp">🔀 Full Crossplay</span>`,
+    g.price === "Free" ? `<span class="badge free">Free</span>` : `<span class="badge match">${escapeHtml(g.price)}</span>`,
+    `<span class="badge">${escapeHtml(g.players)}</span>`,
+    ...(g.tags || []).map(t => `<span class="badge">${escapeHtml(t)}</span>`),
+  ].join("");
+  return `
+    <div class="card ${state}">
+      <div class="row">
+        <div style="flex:1; min-width:0;">
+          <p class="title">${escapeHtml(g.title)}</p>
+          <div class="badges">${badges}</div>
+          <p class="pitch">${escapeHtml(g.pitch)}</p>
+          ${state === "played" ? starsHTML("games", g.title) : ""}
+        </div>
+        <button class="btn ${conf.cls}" data-advance data-kid="games" data-title="${escapeHtml(g.title)}" data-next="${conf.next}">${conf.label}</button>
+      </div>
+    </div>`;
+}
+
+function renderGames() {
+  const byState = s => games.filter(g => getState("games", g.title) === s);
+  const playing = byState("playing"), shortlist = byState("shortlist"),
+        avail = byState("available"), done = byState("played");
+  const parts = [];
+
+  parts.push(`
+    <div class="crewbox">
+      <div class="who">${crew.map(c => `<span><strong>${escapeHtml(c.name)}</strong> · ${escapeHtml(c.platforms)}</span>`).join("")}</div>
+      <div class="rule">${escapeHtml(crewRule)}</div>
+    </div>`);
+
+  if (playing.length)
+    parts.push(sectionHTML("Currently Playing", "reading", playing.map(gameCardHTML), ""));
+
+  parts.push(`
+    <section>
+      <h2 class="finished">Played Together</h2>
+      ${gamesPlayed.map(g => `
+        <div class="card finished">
+          <p class="title">${escapeHtml(g.title)}</p>
+          <div class="verdictbox">${g.warn ? "<strong>Heads up:</strong> " : ""}${escapeHtml(g.note)}</div>
+        </div>`).join("")}
+    </section>`);
+
+  parts.push(sectionHTML("✓ Shortlist — Next Game Night", "selected",
+    shortlist.map(gameCardHTML), "Shortlist games from the recommendations below."));
+
+  parts.push(sectionHTML("🎯 Recommended", "rec", avail.map(gameCardHTML), "All shortlisted or played!"));
+
+  if (done.length)
+    parts.push(sectionHTML("⭐ Finished", "finished", done.map(gameCardHTML), ""));
+
+  parts.push(`
+    <section>
+      <h2 class="fav">🚫 Ruled Out / Parked</h2>
+      <div class="deadlist">${gamesDead.map(d => `<div><strong>${escapeHtml(d.title)}</strong> — ${escapeHtml(d.why)}</div>`).join("")}</div>
+    </section>`);
+
+  document.getElementById("content").innerHTML = parts.join("");
+}
+
+function render() {
+  document.getElementById("lastUpdated").textContent = "Last updated: " + LAST_UPDATED;
+
+  document.getElementById("modeToggle").innerHTML = `
+    <button class="tab" data-modebtn="reading" data-active="${activeMode === "reading"}">📚 Reading</button>
+    <button class="tab" data-modebtn="games"   data-active="${activeMode === "games"}">🎮 Game Nights</button>`;
+  document.getElementById("pageTitle").textContent =
+    activeMode === "games" ? "🎮 Game Nights — Andrew · Jason · Brian" : "📚 Family Reading Dashboard";
+
+  if (activeMode === "games") {
+    document.getElementById("tabs").innerHTML = "";
+    renderGames();
+    return;
+  }
+
+  // Tabs
+  document.getElementById("tabs").innerHTML = familyMembers.map(m => `
+    <button class="tab" data-tab="${m.id}" data-active="${activeTab === m.id}">
+      <span>${m.emoji}</span><span>${m.name}</span>${m.age ? `<span class="age">(${m.age})</span>` : ""}
+    </button>
+  `).join("");
+
+  const kid = activeTab;
+  const isKid = kid === "zada" || kid === "kai";
+  const catalog = books[kid] || [];
+  const finished  = catalog.filter(b => getState(kid,b.title) === "finished");
+  const reading   = catalog.filter(b => getState(kid,b.title) === "reading");
+  const ordered   = catalog.filter(b => getState(kid,b.title) === "ordered");
+  const selected  = catalog.filter(b => getState(kid,b.title) === "selected");
+  const available = catalog.filter(b => getState(kid,b.title) === "available");
+
+  const parts = [];
+
+  // Currently Reading
+  const currentCards = [];
+  (inProgress[kid] || []).forEach(b => {
+    const fmt = b.format && FORMAT[b.format] ? `<span class="badge ${FORMAT[b.format].cls}">${FORMAT[b.format].label}</span>` : "";
+    currentCards.push(`
+      <div class="card reading">
+        <div class="row">
+          <div>
+            <p class="title">${escapeHtml(b.title)}</p>
+            <p class="author">${escapeHtml(b.author)} • ${escapeHtml(b.status)}</p>
+          </div>
+          ${isKid && fmt ? `<div>${fmt}</div>` : ""}
+        </div>
+      </div>`);
+  });
+  reading.forEach(b => currentCards.push(bookCardHTML(b, kid, isKid)));
+  parts.push(sectionHTML("Currently Reading", "reading", currentCards, "Nothing currently reading"));
+
+  // Recently Finished (verdicts)
+  const rf = recentlyFinished[kid] || [];
+  if (rf.length) {
+    const rfCards = rf.map(b => `
+      <div class="card finished">
+        <div class="row">
+          <div style="flex:1;">
+            <p class="title">${escapeHtml(b.title)}</p>
+            <p class="author">${escapeHtml(b.author)}</p>
+            <div class="verdictbox"><strong>${b.bounced ? "Bounced" : "Verdict"}:</strong> ${escapeHtml(b.verdict)}</div>
+          </div>
+        </div>
+      </div>`).join("");
+    parts.push(`
+      <section>
+        <h2 class="finished">Recently Finished</h2>
+        ${rfCards}
+      </section>`);
+  }
+
+  // Ordered
+  if (ordered.length || isKid) {
+    let inner = "";
+    if (ordered.length) {
+      inner += `<div class="librarian"><p class="lbl">📋 Show this to the librarian!</p><ul>` +
+        ordered.map(b => `<li><span class="t">${escapeHtml(b.title)}</span><br><span class="a">${escapeHtml(b.author)}</span></li>`).join("") +
+        `</ul></div>`;
+      inner += ordered.map(b => bookCardHTML(b, kid, isKid)).join("");
+    } else {
+      inner = `<p class="empty">No books on order</p>`;
+    }
+    parts.push(`<section><h2 class="ordered">📋 Ordered from Library</h2>${inner}</section>`);
+  }
+
+  // Selected
+  if (selected.length || isKid) {
+    parts.push(sectionHTML("✓ Selected — Ready to Order", "selected",
+      selected.map(b => bookCardHTML(b, kid, isKid)),
+      "Select books from recommendations below!"));
+  }
+
+  // Recommended
+  parts.push(sectionHTML("🎯 Recommended", "rec",
+    available.map(b => bookCardHTML(b, kid, isKid)),
+    "All recommendations selected or finished!"));
+
+  // Finished (catalog-side, with ratings)
+  if (finished.length) {
+    parts.push(sectionHTML("⭐ Finished", "finished",
+      finished.map(b => bookCardHTML(b, kid, isKid)), ""));
+  }
+
+  // Favorites chips
+  if (favorites[kid]?.length) {
+    parts.push(`
+      <section>
+        <h2 class="fav">🔥 All-Time Favorites</h2>
+        <div class="favlist">${favorites[kid].map(f => `<span class="fav">${escapeHtml(f)}</span>`).join("")}</div>
+      </section>`);
+  }
+
+  document.getElementById("content").innerHTML = parts.join("");
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+
+document.addEventListener("click", (e) => {
+  const modeBtn = e.target.closest("[data-modebtn]");
+  if (modeBtn) { activeMode = modeBtn.dataset.modebtn; save(); render(); return; }
+
+  const tab = e.target.closest(".tab");
+  if (tab && tab.dataset.tab) { activeTab = tab.dataset.tab; save(); render(); return; }
+
+  const adv = e.target.closest("[data-advance]");
+  if (adv) { setState(adv.dataset.kid, adv.dataset.title, adv.dataset.next); return; }
+
+  const star = e.target.closest(".star");
+  if (star) { setRating(star.dataset.kid, star.dataset.title, +star.dataset.star); return; }
+});
+
+render();
+</script>
+</body>
+</html>

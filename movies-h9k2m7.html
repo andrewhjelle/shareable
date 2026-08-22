@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex, nofollow">
+<title>Movies</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300..700&family=Geist:wght@300..700&family=Geist+Mono:wght@400..700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --paper:#F8F4EB; --paper-2:#EFE9D7; --paper-3:#FBF8F0; --paper-card:#FFFEFB;
+  --ink:#14121E; --ink-2:#2A241D; --ink-3:#4F4639; --ink-4:#807565; --ink-5:#B8B0A2;
+  --rule-soft:rgba(20,17,13,0.16); --rule-faint:rgba(20,17,13,0.07);
+  --mark:#E84478; --mark-bg:rgba(232,68,120,0.08);
+  --cobalt:#0B2545; --sage:#6E8B5C; --amber:#F5C03D;
+  --zada:#a855f7; --kai:#06b6d4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter Tight',sans-serif;font-size:13.5px;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;line-height:1.45}
+::selection{background:var(--mark);color:var(--paper)}
+a{color:inherit;text-decoration:none;border-bottom:1px solid var(--rule-soft)}
+a:hover{border-bottom-color:var(--mark);color:var(--mark)}
+
+/* masthead */
+.mh{position:sticky;top:0;z-index:100;background:var(--paper-card);border-bottom:1px solid var(--rule-soft)}
+.mh-in{max-width:1200px;margin:0 auto;padding:10px 22px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:20px}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand .mark{font-family:'Geist',sans-serif;font-weight:700;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--mark)}
+.brand .name{font-family:'Instrument Serif',serif;font-style:italic;font-size:20px}
+.dateline{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);text-align:center}
+.dateline strong{color:var(--ink)}
+.mh-actions{display:flex;gap:6px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.10em;text-transform:uppercase}
+.mh-actions a{background:transparent;border:1px solid var(--rule-soft);padding:5px 10px;color:var(--ink-3);font-family:inherit;font-size:inherit;letter-spacing:inherit;transition:all .15s}
+.mh-actions a:hover{border-color:var(--ink);color:var(--ink)}
+
+.main{max-width:1200px;margin:0 auto;padding:18px 22px 80px;display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:900px){.main{grid-template-columns:1.4fr 1fr}}
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+
+.card{background:var(--paper-card);border:1px solid var(--rule-soft);padding:16px 20px}
+.sec{display:flex;align-items:center;gap:10px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.20em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--rule-soft)}
+.sec .num{font-weight:700;color:var(--mark)}
+.sec .rule{flex:1;height:1px;background:var(--rule-faint)}
+h2{font-family:'Instrument Serif',serif;font-size:24px;line-height:1.08;letter-spacing:-.015em;margin-bottom:2px}
+h2 em{font-style:italic;color:var(--mark)}
+.subhead{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.10em;text-transform:uppercase;color:var(--ink-4);margin-bottom:10px}
+
+/* shortlist cards (family night picks) */
+.pick{padding:12px 0;border-bottom:1px solid var(--rule-faint)}
+.pick:last-child{border-bottom:none}
+.pick-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:3px}
+.pick .title{font-family:'Instrument Serif',serif;font-size:19px;line-height:1.15;color:var(--ink);font-weight:500}
+.pick .meta{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.10em;text-transform:uppercase;color:var(--ink-4)}
+.pick .stream{color:var(--cobalt);font-weight:700}
+.pick .why{font-size:13px;color:var(--ink-3);margin-top:4px;line-height:1.5}
+.badge{display:inline-block;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.10em;text-transform:uppercase;padding:1px 6px;border:1px solid var(--rule-soft);color:var(--ink-3);margin-left:4px}
+.badge.hot{background:var(--mark);color:var(--paper);border-color:var(--mark)}
+.badge.kai{background:rgba(6,182,212,.12);color:var(--kai);border-color:rgba(6,182,212,.4)}
+.badge.zada{background:rgba(168,85,247,.12);color:var(--zada);border-color:rgba(168,85,247,.4)}
+.badge.new{background:var(--amber);color:var(--ink);border-color:var(--amber)}
+
+/* ranked list rows */
+.rank{list-style:none}
+.rank li{display:grid;grid-template-columns:26px 1fr;gap:10px;padding:6px 0;border-bottom:1px solid var(--rule-faint);align-items:baseline}
+.rank li:last-child{border-bottom:none}
+.rank .n{font-family:'Geist Mono',monospace;font-size:10.5px;font-weight:700;color:var(--mark);letter-spacing:.06em;padding-top:3px}
+.rank .row{min-width:0}
+.rank .rtitle{font-weight:500;font-size:13.5px;color:var(--ink);line-height:1.35}
+.rank .rmeta{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.10em;text-transform:uppercase;color:var(--ink-4);margin-top:2px}
+.rank .rmeta .st{color:var(--cobalt)}
+.rank .rmeta .who{color:var(--ink-3)}
+.rank .rwhy{display:none;font-size:12.5px;color:var(--ink-3);margin-top:5px;line-height:1.5;padding:8px 10px;background:var(--paper-3);border-left:2px solid var(--mark)}
+.rank li.open .rwhy{display:block}
+.rank .row{cursor:pointer}
+.rank .row:hover .rtitle{color:var(--mark)}
+.rank .rtitle::after{content:' \203A';color:var(--ink-5);font-weight:400;margin-left:2px}
+.rank li.open .rtitle::after{content:' \2304';color:var(--mark)}
+
+/* watched */
+.watched{list-style:none;display:grid;grid-template-columns:1fr;gap:0}
+.watched li{display:grid;grid-template-columns:1fr auto;gap:10px;padding:5px 0;border-bottom:1px solid var(--rule-faint);align-items:baseline;font-size:13px}
+.watched li:last-child{border-bottom:none}
+.watched .w-title{color:var(--ink-2)}
+.watched .w-v{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4);white-space:nowrap}
+.watched .w-v.fav{color:var(--mark);font-weight:700}
+.watched .w-v.loved{color:var(--mark);font-weight:700}
+.watched .w-v.liked{color:var(--sage)}
+.watched .w-v.meh{color:var(--ink-4)}
+.watched .w-v.skip{color:var(--ink-4);text-decoration:line-through}
+
+/* backlog */
+.back{column-count:2;column-gap:24px;font-size:12.5px;color:var(--ink-3);line-height:1.7}
+@media(min-width:640px){.back{column-count:3}}
+.back div{break-inside:avoid;padding:1px 0}
+
+.blurb{font-size:13px;color:var(--ink-3);line-height:1.55}
+.blurb b{color:var(--ink);font-weight:600}
+
+.footer-links{max-width:1200px;margin:0 auto;padding:16px 22px 60px;border-top:1px solid var(--rule-soft);color:var(--ink-4);font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.10em;text-transform:uppercase;display:flex;gap:16px;flex-wrap:wrap}
+.footer-links a{border-bottom:1px solid var(--rule-faint);color:var(--ink-3)}
+</style>
+</head>
+<body>
+
+<header class="mh">
+  <div class="mh-in">
+    <div class="brand"><span class="mark">Hub</span><span class="name">movies</span></div>
+    <div class="dateline">Family movie index &middot; <strong>Aug 22, 2026</strong></div>
+    <div class="mh-actions"><a href="hub-h9k2m7.html">&larr; Hub</a> <a href="#backlog">Backlog</a></div>
+  </div>
+</header>
+
+<main class="main">
+
+<div class="col">
+
+  <!-- FAMILY NIGHT SHORTLIST -->
+  <div class="card">
+    <div class="sec"><span class="num">Tonight</span><span class="rule"></span><span>Family-night shortlist &middot; pick in 2 min</span></div>
+    <h2>Safe bets that <em>work for both kids</em></h2>
+    <div class="subhead">Streaming checked mid-2026 &middot; verify before starting</div>
+
+    <div class="pick">
+      <div class="pick-head"><div class="title">Percy Jackson and the Olympians (S1)</div><span class="badge hot">#1 queue</span><span class="badge kai">Kai lead</span></div>
+      <div class="meta">Series &middot; 2023 &middot; <span class="stream">Disney+</span></div>
+      <div class="why">Kai&rsquo;s on book 3 &mdash; show is behind his reading, zero spoilers. The read-then-watch flagship.</div>
+    </div>
+
+    <div class="pick">
+      <div class="pick-head"><div class="title">Stardust</div><span class="badge">Princess Bride energy</span></div>
+      <div class="meta">Movie &middot; 2007 &middot; <span class="stream">Netflix</span></div>
+      <div class="why">The closest living relative of The Princess Bride (Zada&rsquo;s favorite). Untried &mdash; confirmed as a strong bet.</div>
+    </div>
+
+    <div class="pick">
+      <div class="pick-head"><div class="title">Enola Holmes 2</div><span class="badge hot">Sequel to a hit</span></div>
+      <div class="meta">Movie &middot; 2022 &middot; <span class="stream">Netflix</span></div>
+      <div class="why">You liked the first. Direct sequel is the lowest-risk pick on the whole list.</div>
+    </div>
+
+    <div class="pick">
+      <div class="pick-head"><div class="title">Sky High</div><span class="badge">Untried, high-fit</span></div>
+      <div class="meta">Movie &middot; 2005 &middot; <span class="stream">Disney+</span></div>
+      <div class="why">Superhero-school comedy in the School of Rock lane (favorite). Both ages, both engaged.</div>
+    </div>
+
+    <div class="pick">
+      <div class="pick-head"><div class="title">Castle in the Sky</div><span class="badge">Ghibli gap</span></div>
+      <div class="meta">Movie &middot; 1986 &middot; <span class="stream">HBO Max</span></div>
+      <div class="why">Four Ghibli favorites in this house and nobody&rsquo;s seen this one. Adventure-first Miyazaki.</div>
+    </div>
+
+    <div class="pick">
+      <div class="pick-head"><div class="title">Back to the Future</div><span class="badge">Gated on Debbie</span></div>
+      <div class="meta">Movie &middot; 1985 &middot; <span class="stream">Netflix</span></div>
+      <div class="why">Best grown-up movie kids love. It&rsquo;s a Debbie favorite &mdash; wait for her to be home.</div>
+    </div>
+
+    <div class="pick">
+      <div class="pick-head"><div class="title">Galaxy Quest</div><span class="badge">Save for family night</span></div>
+      <div class="meta">Movie &middot; 1999 &middot; <span class="stream">Rent ~$4 / Kanopy free w/ library card</span></div>
+      <div class="why">Princess Bride energy: loving parody that&rsquo;s also a real adventure. Worth the $4 rental for the right night.</div>
+    </div>
+  </div>
+
+  <!-- RANKED QUEUE -->
+  <div class="card">
+    <div class="sec"><span class="num">Queue</span><span class="rule"></span><span>Ranked 1&ndash;28 &middot; tap a row for why</span></div>
+    <h2>The <em>ordered</em> queue</h2>
+    <div class="subhead">From Claude&rsquo;s Jun 9, 2026 pass &middot; refresh streaming quarterly</div>
+    <ol class="rank">
+      <li onclick="tog(this)"><span class="n">1</span><div class="row"><div class="rtitle">Percy Jackson and the Olympians (S1)</div><div class="rmeta">Series &middot; 2023 &middot; <span class="who">All &middot; Kai lead</span> &middot; <span class="st">Disney+</span></div><div class="rwhy">Kai&rsquo;s on book 3 &mdash; show is behind his reading, zero spoilers. The read-then-watch flagship.</div></div></li>
+      <li onclick="tog(this)"><span class="n">2</span><div class="row"><div class="rtitle">A Series of Unfortunate Events</div><div class="rmeta">Series &middot; 2017 &middot; <span class="who">All &middot; Zada lead</span> &middot; <span class="st">Netflix</span></div><div class="rwhy">Wednesday/Addams register: gothic, funny, kids outsmart absurd adults. 3 seasons. Books ladder next.</div></div></li>
+      <li onclick="tog(this)"><span class="n">3</span><div class="row"><div class="rtitle">Enola Holmes 2</div><div class="rmeta">Movie &middot; 2022 &middot; <span class="who">All</span> &middot; <span class="st">Netflix</span></div><div class="rwhy">Direct sequel to a confirmed hit.</div></div></li>
+      <li onclick="tog(this)"><span class="n">4</span><div class="row"><div class="rtitle">Stardust</div><div class="rmeta">Movie &middot; 2007 &middot; <span class="who">All</span> &middot; <span class="st">Netflix</span></div><div class="rwhy">The closest living relative of The Princess Bride. Untried &mdash; confirmed.</div></div></li>
+      <li onclick="tog(this)"><span class="n">5</span><div class="row"><div class="rtitle">Castle in the Sky</div><div class="rmeta">Movie &middot; 1986 &middot; <span class="who">All</span> &middot; <span class="st">HBO Max</span></div><div class="rwhy">The Ghibli adventure gap &mdash; 4 Ghibli favorites in this house and nobody&rsquo;s seen it.</div></div></li>
+      <li onclick="tog(this)"><span class="n">6</span><div class="row"><div class="rtitle">My Neighbor Totoro</div><div class="rmeta">Movie &middot; 1988 &middot; <span class="who">Zada esp.</span> &middot; <span class="st">Netflix / Max / Hulu</span></div><div class="rwhy">The other Ghibli gap. Pure comfort.</div></div></li>
+      <li onclick="tog(this)"><span class="n">7</span><div class="row"><div class="rtitle">Sky High</div><div class="rmeta">Movie &middot; 2005 &middot; <span class="who">All</span> &middot; <span class="st">Disney+</span></div><div class="rwhy">Superhero-school comedy, School of Rock energy. Untried &mdash; confirmed.</div></div></li>
+      <li onclick="tog(this)"><span class="n">8</span><div class="row"><div class="rtitle">Zathura: A Space Adventure</div><div class="rmeta">Movie &middot; 2005 &middot; <span class="who">All</span> &middot; <span class="st">Netflix</span></div><div class="rwhy">Jumanji&rsquo;s space-sibling, same author. Untried &mdash; confirmed.</div></div></li>
+      <li onclick="tog(this)"><span class="n">9</span><div class="row"><div class="rtitle">How to Train Your Dragon (2010)</div><div class="rmeta">Movie &middot; 2010 &middot; <span class="who">All</span> &middot; <span class="st">Netflix</span></div><div class="rwhy">Same director as The Wild Robot. Original &gt; remake; trilogy runway.</div></div></li>
+      <li onclick="tog(this)"><span class="n">10</span><div class="row"><div class="rtitle">Ghostbusters: Afterlife</div><div class="rmeta">Movie &middot; 2021 &middot; <span class="who">All</span> &middot; <span class="st">Hulu / Disney+</span></div><div class="rwhy">They liked the original; this adds kid leads + modern pacing.</div></div></li>
+      <li onclick="tog(this)"><span class="n">11</span><div class="row"><div class="rtitle">Galaxy Quest</div><div class="rmeta">Movie &middot; 1999 &middot; <span class="who">All</span> &middot; <span class="st">Rent ~$4 / Kanopy free</span></div><div class="rwhy">Princess Bride-energy: loving parody that&rsquo;s also a real adventure. Save for family night.</div></div></li>
+      <li onclick="tog(this)"><span class="n">12</span><div class="row"><div class="rtitle">Back to the Future</div><div class="rmeta">Movie &middot; 1985 &middot; <span class="who">All &middot; wait for Debbie</span> &middot; <span class="st">Netflix</span></div><div class="rwhy">Best grown-up movie kids love. Fast + funny beats the 80s-pacing risk. Debbie favorite &mdash; watch together.</div></div></li>
+      <li onclick="tog(this)"><span class="n">13</span><div class="row"><div class="rtitle">Free Guy</div><div class="rmeta">Movie &middot; 2021 &middot; <span class="who">Kai lead</span> &middot; <span class="st">Netflix / Disney+</span></div><div class="rwhy">Video-game comedy &mdash; Kai bullseye, Zada laughs along.</div></div></li>
+      <li onclick="tog(this)"><span class="n">14</span><div class="row"><div class="rtitle">The Goonies</div><div class="rmeta">Movie &middot; 1985 &middot; <span class="who">All</span> &middot; <span class="st">Netflix / Max</span></div><div class="rwhy">Kid-crew treasure hunt. Mild 80s-pacing risk (the Karate Kid &rsquo;84 lesson).</div></div></li>
+      <li onclick="tog(this)"><span class="n">15</span><div class="row"><div class="rtitle">The Sandlot</div><div class="rmeta">Movie &middot; 1993 &middot; <span class="who">All</span> &middot; <span class="st">Disney+</span></div><div class="rwhy">Summer baseball kid-crew &mdash; perfect for warm-months rotation.</div></div></li>
+      <li onclick="tog(this)"><span class="n">16</span><div class="row"><div class="rtitle">Jumanji (1995)</div><div class="rmeta">Movie &middot; 1995 &middot; <span class="who">All</span> &middot; <span class="st">Netflix</span></div><div class="rwhy">They loved the 2017 one.</div></div></li>
+      <li onclick="tog(this)"><span class="n">17</span><div class="row"><div class="rtitle">Cobra Kai</div><div class="rmeta">Series &middot; 2018 &middot; <span class="who">Kai (+Dad)</span> &middot; <span class="st">Netflix</span></div><div class="rwhy">Karate Kid universe continued (they liked 2010 + Legends). TV-14 &mdash; Zada optional.</div></div></li>
+      <li onclick="tog(this)"><span class="n">18</span><div class="row"><div class="rtitle">Big</div><div class="rmeta">Movie &middot; 1988 &middot; <span class="who">All</span> &middot; <span class="st">Disney+</span></div><div class="rwhy">The Hanks thread from Gump. Kid in a grown-up world.</div></div></li>
+      <li onclick="tog(this)"><span class="n">19</span><div class="row"><div class="rtitle">Apollo 13</div><div class="rmeta">Movie &middot; 1995 &middot; <span class="who">All</span> &middot; <span class="st">Rent ~$4</span></div><div class="rwhy">Hanks true story &mdash; the Gump real-America lane. Only rent-only item in the top 20.</div></div></li>
+      <li onclick="tog(this)"><span class="n">20</span><div class="row"><div class="rtitle">Holes</div><div class="rmeta">Movie &middot; 2003 &middot; <span class="who">All</span> &middot; <span class="st">Disney+</span></div><div class="rwhy">Book-club classic; lands perfectly at 11.</div></div></li>
+      <li onclick="tog(this)"><span class="n">21</span><div class="row"><div class="rtitle">Secondhand Lions</div><div class="rmeta">Movie &middot; 2003 &middot; <span class="who">All</span> &middot; <span class="st">Netflix</span></div><div class="rwhy">The most underrated Gump-warmth movie.</div></div></li>
+      <li onclick="tog(this)"><span class="n">22</span><div class="row"><div class="rtitle">Hugo</div><div class="rmeta">Movie &middot; 2011 &middot; <span class="who">All</span> &middot; <span class="st">Paramount+</span></div><div class="rwhy">Gorgeous &mdash; but slower pacing, fair warning.</div></div></li>
+      <li onclick="tog(this)"><span class="n">23</span><div class="row"><div class="rtitle">Marcel the Shell with Shoes On</div><div class="rmeta">Movie &middot; 2022 &middot; <span class="who">All</span> &middot; <span class="st">Netflix</span></div><div class="rwhy">Wild Robot-tender.</div></div></li>
+      <li onclick="tog(this)"><span class="n">24</span><div class="row"><div class="rtitle">Chronicles of Narnia: LWW</div><div class="rmeta">Movie &middot; 2005 &middot; <span class="who">All</span> &middot; <span class="st">Disney+ / Netflix</span></div><div class="rwhy">Oz/fantasy lane.</div></div></li>
+      <li onclick="tog(this)"><span class="n">25</span><div class="row"><div class="rtitle">Chicken Run: Dawn of the Nugget</div><div class="rmeta">Movie &middot; 2023 &middot; <span class="who">Zada esp.</span> &middot; <span class="st">Netflix</span></div><div class="rwhy">Aardman lane confirmed 2x (W&amp;G + Chicken Run). Direct sequel &mdash; heist structure, modern pacing.</div></div></li>
+      <li onclick="tog(this)"><span class="n">26</span><div class="row"><div class="rtitle">The NeverEnding Story</div><div class="rmeta">Movie &middot; 1984 &middot; <span class="who">All</span> &middot; <span class="st">HBO Max</span></div><div class="rwhy">Oz-fantasy lane but 80s pacing = the lane that has burned us. Medium confidence.</div></div></li>
+      <li onclick="tog(this)"><span class="n">27</span><div class="row"><div class="rtitle">Wolfwalkers</div><div class="rmeta">Movie &middot; 2020 &middot; <span class="who">All</span> &middot; <span class="st">Apple TV+ only</span></div><div class="rwhy">Ghibli-household catnip &mdash; but needs a service you don&rsquo;t have.</div></div></li>
+      <li onclick="tog(this)"><span class="n">28</span><div class="row"><div class="rtitle">Coraline &mdash; GATED</div><div class="rmeta">Movie &middot; 2009 &middot; <span class="who">Zada</span> &middot; <span class="st">Netflix</span></div><div class="rwhy">After Zada reads the book (your rule &mdash; keep it).</div></div></li>
+    </ol>
+  </div>
+
+  <!-- ANIME LANE -->
+  <div class="card">
+    <div class="sec"><span class="num">Anime</span><span class="rule"></span><span>Comedy-anime lane &middot; opened 7/7</span></div>
+    <h2>Currently <em>running</em></h2>
+    <ul class="watched">
+      <li><span class="w-title">Cells at Work! (S1&rarr;S2 &ldquo;Cells at Work!!&rdquo;) &middot; Crunchyroll &middot; <b>SKIP the Code Black spinoff</b></span><span class="w-v loved">Really like</span></li>
+      <li><span class="w-title">Mashle: Magic and Muscles &middot; Crunchyroll</span><span class="w-v loved">Really like</span></li>
+      <li><span class="w-title">Spy x Family (Zada leads, Kai rides along) &middot; Crunchyroll</span><span class="w-v fav">Zada LOVES</span></li>
+      <li><span class="w-title">The Disastrous Life of Saiki K.</span><span class="w-v liked">Liked</span></li>
+    </ul>
+    <p class="blurb" style="margin-top:8px"><b>Queued in this lane:</b> Spy x Family Code: White (movie), Dr. Stone, Nichijou, Ranking of Kings, One Punch Man (preview E1 first), Polar Bear Cafe, My Neighbor Seki (subs only on CR).</p>
+  </div>
+
+</div>
+
+<div class="col">
+
+  <!-- LOVED / FAVORITES -->
+  <div class="card">
+    <div class="sec"><span class="num">Loved</span><span class="rule"></span><span>House favorites</span></div>
+    <h2>The <em>keepers</em></h2>
+    <ul class="watched">
+      <li><span class="w-title">Avatar: The Last Airbender</span><span class="w-v loved">LOVED</span></li>
+      <li><span class="w-title">The Princess Bride</span><span class="w-v fav">Fav (Zada)</span></li>
+      <li><span class="w-title">The Parent Trap (1998)</span><span class="w-v loved">LOVED (7/7)</span></li>
+      <li><span class="w-title">What About Bob?</span><span class="w-v fav">Fav</span></li>
+      <li><span class="w-title">Charlie &amp; the Chocolate Factory (2005)</span><span class="w-v fav">Fav</span></li>
+      <li><span class="w-title">Home Alone 1 &amp; 2</span><span class="w-v fav">Favs</span></li>
+      <li><span class="w-title">Spirited Away</span><span class="w-v fav">Fav</span></li>
+      <li><span class="w-title">Ponyo</span><span class="w-v fav">Fav</span></li>
+      <li><span class="w-title">Kiki&rsquo;s Delivery Service</span><span class="w-v fav">Fav</span></li>
+      <li><span class="w-title">Howl&rsquo;s Moving Castle</span><span class="w-v fav">Fav</span></li>
+      <li><span class="w-title">Mousehunt</span><span class="w-v fav">Fav</span></li>
+      <li><span class="w-title">Pink Panther</span><span class="w-v fav">Fav</span></li>
+      <li><span class="w-title">School of Rock</span><span class="w-v fav">Fav</span></li>
+      <li><span class="w-title">Frozen</span><span class="w-v fav">Fav</span></li>
+      <li><span class="w-title">Matilda (1996)</span><span class="w-v fav">Zada loved</span></li>
+      <li><span class="w-title">Wizard of Oz</span><span class="w-v loved">Loved</span></li>
+      <li><span class="w-title">Wednesday (series)</span><span class="w-v fav">Zada loves</span></li>
+      <li><span class="w-title">Hunger Games</span><span class="w-v fav">Fav (Kai)</span></li>
+    </ul>
+  </div>
+
+  <!-- LIKED -->
+  <div class="card">
+    <div class="sec"><span class="num">Liked</span><span class="rule"></span><span>Solid, not top-shelf</span></div>
+    <h2>Good <em>watches</em></h2>
+    <ul class="watched">
+      <li><span class="w-title">Princess Mononoke</span><span class="w-v liked">Liked</span></li>
+      <li><span class="w-title">The Wild Robot</span><span class="w-v liked">Liked</span></li>
+      <li><span class="w-title">One Piece (Live Action)</span><span class="w-v liked">Really liked</span></li>
+      <li><span class="w-title">Forrest Gump</span><span class="w-v liked">Really liked</span></li>
+      <li><span class="w-title">Groundhog Day</span><span class="w-v liked">Liked</span></li>
+      <li><span class="w-title">Cool Runnings</span><span class="w-v liked">Liked</span></li>
+      <li><span class="w-title">Ghostbusters (1984)</span><span class="w-v liked">Liked</span></li>
+      <li><span class="w-title">Jurassic Park</span><span class="w-v liked">Liked</span></li>
+      <li><span class="w-title">Enola Holmes (1)</span><span class="w-v liked">Liked &mdash; sequel queued #3</span></li>
+      <li><span class="w-title">Jumanji: Welcome to the Jungle (2017)</span><span class="w-v liked">Liked</span></li>
+      <li><span class="w-title">Jungle Cruise</span><span class="w-v liked">Liked (May 2026)</span></li>
+      <li><span class="w-title">The Karate Kid (2010, Jaden Smith)</span><span class="w-v liked">Liked</span></li>
+      <li><span class="w-title">Karate Kid: Legends (2025)</span><span class="w-v liked">Liked</span></li>
+      <li><span class="w-title">The Mighty Ducks</span><span class="w-v liked">Really liked</span></li>
+      <li><span class="w-title">The Addams Family (1991) + Values</span><span class="w-v liked">Liked</span></li>
+      <li><span class="w-title">Beetlejuice</span><span class="w-v liked">Liked</span></li>
+      <li><span class="w-title">The Sheep Detectives (theater ~Jul 2026)</span><span class="w-v liked">Enjoyed</span></li>
+      <li><span class="w-title">Wallace &amp; Gromit: Vengeance Most Fowl</span><span class="w-v liked">Liked (Zada day 7/7)</span></li>
+      <li><span class="w-title">Chicken Run &middot; Shaun the Sheep (Aardman 3x)</span><span class="w-v liked">Liked (7/7)</span></li>
+    </ul>
+  </div>
+
+  <!-- SKIP / MEH -->
+  <div class="card">
+    <div class="sec"><span class="num">Skip</span><span class="rule"></span><span>Don&rsquo;t repeat this lane</span></div>
+    <ul class="watched">
+      <li><span class="w-title">Spider-Verse 1 &amp; 2</span><span class="w-v skip">Not fans &mdash; skip lane</span></li>
+      <li><span class="w-title">The Karate Kid (1984)</span><span class="w-v meh">Not great (80s pacing)</span></li>
+      <li><span class="w-title">Pirates of the Caribbean</span><span class="w-v meh">Meh</span></li>
+      <li><span class="w-title">Willy Wonka (1971)</span><span class="w-v meh">Nah</span></li>
+      <li><span class="w-title">Man Who Knew Too Little</span><span class="w-v meh">Not so good</span></li>
+      <li><span class="w-title">Karate Kid Part III</span><span class="w-v meh">Okay</span></li>
+      <li><span class="w-title">Paddington 2</span><span class="w-v skip">Your tag: skip</span></li>
+    </ul>
+  </div>
+
+  <!-- BOOK REWARD LANE -->
+  <div class="card">
+    <div class="sec"><span class="num">Read-then-watch</span><span class="rule"></span><span>Book-first pairings</span></div>
+    <p class="blurb"><b>Coraline</b> (Zada &mdash; gated on book), <b>Percy Jackson</b> (Kai &mdash; on book 3), <b>Matilda</b>, <b>Hatchet</b> &rarr; movie unlock. Full pairings on the <a href="books-h9k2m7.html">books page</a>.</p>
+  </div>
+
+</div>
+</main>
+
+<!-- BACKLOG -->
+<div class="main" style="grid-template-columns:1fr;padding-top:0" id="backlog">
+  <div class="card">
+    <div class="sec"><span class="num">Backlog</span><span class="rule"></span><span>Unranked pool &middot; from the original list</span></div>
+    <h2>Everything else <em>on the shelf</em></h2>
+    <div class="subhead">Pulled from the sheet; some marked for a grade level or a specific kid</div>
+    <div class="back">
+      <div>12 Angry Men</div><div>The 400 Blows (5th grade?)</div><div>A Christmas Story</div><div>A Quiet Place</div><div>Akeelah and the Bee</div><div>Alice in Wonderland</div><div>Amelie</div><div>Anne of Green Gables (Zada)</div><div>Babe (1995)</div><div>Barbie</div><div>Bend It Like Beckham</div><div>Black Panther</div><div>The Breakfast Club</div><div>Bridge to Terabithia</div><div>Casablanca</div><div>Cinema Paradiso</div><div>City Lights</div><div>Close Encounters of the 3rd Kind</div><div>Clue</div><div>Crouching Tiger Hidden Dragon</div><div>Dante&rsquo;s Peak</div><div>Dead Poets Society (discuss-first)</div><div>Do the Right Thing</div><div>Donnie Darko</div><div>Duck Soup</div><div>Dune</div><div>E.T.</div><div>Edward Scissorhands</div><div>Eighth Grade (5th grade?)</div><div>Ella Enchanted</div><div>Enchanted</div><div>Eternal Sunshine of the Spotless Mind</div><div>Facing the Giants</div><div>Ferris Bueller&rsquo;s Day Off</div><div>Freaky Friday (2003)</div><div>Guardians of the Galaxy</div><div>Hairspray (2007)</div><div>Hook (1991)</div><div>Hot Fuzz</div><div>How to Eat Fried Worms</div><div>Hunter x Hunter (Kai)</div><div>Indiana Jones: Temple of Doom (flags)</div><div>Inside Out</div><div>Interstellar</div><div>It&rsquo;s a Wonderful Life</div><div>James and the Giant Peach</div><div>Jaws</div><div>Journey to the Center of the Earth</div><div>La La Land</div><div>Labyrinth</div><div>Lady Bird</div><div>Lawrence of Arabia</div><div>Legend</div><div>Long Way North (Now tag)</div><div>Mad Hot Ballroom (Kai)</div><div>March of the Penguins</div><div>Mean Girls</div><div>Modern Times</div><div>Mr. Magorium&rsquo;s Wonder Emporium</div><div>Newsies</div><div>Night at the Museum</div><div>Nim&rsquo;s Island</div><div>Once Upon a Time in the West</div><div>Pan&rsquo;s Labyrinth</div><div>Police Story</div><div>Queen of Katwe</div><div>Remember the Titans</div><div>Rudy</div><div>Rush Hour</div><div>Searching for Bobby Fischer</div><div>Seven Samurai</div><div>Shaun of the Dead</div><div>Simon Birch</div><div>Singin&rsquo; in the Rain</div><div>Sound of Music</div><div>Spy Kids (Kai)</div><div>Stand By Me (R)</div><div>Swiss Family Robinson</div><div>Tangled</div><div>The Adventures of Baron Munchausen</div><div>The Babysitter&rsquo;s Club</div><div>The Bad Kids (6th grade?)</div><div>The Black Stallion (Now tag)</div><div>The Explorers</div><div>The Good the Bad and the Ugly</div><div>The Matrix</div><div>The Outsiders</div><div>The Perfect Game</div><div>The Secret Garden</div><div>The Sting</div><div>The Thing</div><div>The Truman Show</div><div>Thor: Ragnarok</div><div>Time Bandits</div><div>Top Gun</div><div>Up</div><div>Vertigo</div><div>Whale Rider</div><div>Willow</div><div>Wonder</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-links">
+  <a href="hub-h9k2m7.html">Hub</a>
+  <a href="books-h9k2m7.html">Books</a>
+  <a href="recipes.html">Recipes</a>
+  <a href="butter-chicken-steps.html">Butter chicken</a>
+  <a href="family-guide-4bddbc.html">Family guide</a>
+</div>
+
+<script>
+function tog(li){
+  li.classList.toggle('open');
+  try{localStorage.setItem('mv_'+li.querySelector('.n').textContent, li.classList.contains('open')?'1':'0')}catch(e){}
+}
+document.querySelectorAll('.rank li').forEach(li=>{
+  try{if(localStorage.getItem('mv_'+li.querySelector('.n').textContent)==='1') li.classList.add('open')}catch(e){}
+});
+</script>
+</body>
+</html>
