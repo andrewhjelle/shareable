@@ -77,12 +77,12 @@ ul.tasks li.task:first-child{border-top:0}
 .task .title{font-weight:700;line-height:1.35}
 .task.done .title{text-decoration:line-through;opacity:.5}
 .task.done .details,.task.done .meta{display:none}
-body.hidedone .task.done{display:none}
+body.hide-done .task.done{display:none}
 .meta{margin-top:2px}
 .when{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--lip2)}
 .who{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-left:8px}
 .details{display:none;margin-top:8px;padding:10px 14px;background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px;font-size:13.5px;color:var(--ink)}
-.details.open{display:block;animation:insert .35s ease}
+.task.open .details{display:block;animation:insert .35s ease}
 @keyframes insert{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .details ol,.details ul{padding-left:18px;display:grid;gap:5px;margin:6px 0}
 .details b{color:var(--lip2)}
@@ -168,6 +168,7 @@ body.hidedone .task.done{display:none}
       <button id="btn-hide" onclick="toggleHideDone()">Hide done</button>
       <button onclick="expandAll(true)">Expand</button>
       <button onclick="expandAll(false)">Collapse</button>
+      <button id="btn-sync" onclick="openSync()">Sync</button>
     </div>
   </div>
 </header>
@@ -401,50 +402,233 @@ body.hidedone .task.done{display:none}
 </div>
 
 <script>
-const K = 'hub_v3_';
-function loadState() {
+/* ============ HUB STATE + CROSS-DEVICE SYNC ============ */
+const LS = 'hub_v3_';
+const SYNC_URL_KEY = 'hub_sync_url';
+const SYNC_TOKEN_KEY = 'hub_sync_token';
+const SYNC_NS = 'hub';
+let syncTimer = null;
+
+function getSync() {
+  return {
+    url: localStorage.getItem(SYNC_URL_KEY) || '',
+    token: localStorage.getItem(SYNC_TOKEN_KEY) || '',
+  };
+}
+
+function setSyncBadge(state) {
+  // state: 'off' | 'ok' | 'err' | 'sync'
+  const btn = document.getElementById('btn-sync');
+  if (!btn) return;
+  const map = { off: 'Sync', ok: 'Sync ok', err: 'Sync err', sync: 'Sync...' };
+  btn.textContent = map[state] || 'Sync';
+  btn.classList.toggle('on', state === 'ok' || state === 'sync');
+  btn.style.borderColor = state === 'err' ? '#cf4a2e' : '';
+}
+
+function collectState() {
+  const done = [];
+  const open = [];
   document.querySelectorAll('.task[data-key]').forEach(t => {
-    const key = t.dataset.key;
-    if (localStorage.getItem(K + 'done_' + key) === '1') {
-      t.classList.add('done');
-      t.querySelector('.box').classList.add('done');
-    }
-    if (localStorage.getItem(K + 'open_' + key) === '1') t.classList.add('open');
+    const k = t.dataset.key;
+    if (t.classList.contains('done')) done.push(k);
+    if (t.classList.contains('open')) open.push(k);
   });
-  if (localStorage.getItem(K + 'hide_done') === '1') {
-    document.body.classList.add('hide-done');
-    document.getElementById('btn-hide').classList.add('on');
+  return {
+    done, open,
+    hidedone: document.body.classList.contains('hide-done'),
+  };
+}
+
+function applyState(s) {
+  if (!s) return;
+  const doneSet = new Set(s.done || []);
+  const openSet = new Set(s.open || []);
+  document.querySelectorAll('.task[data-key]').forEach(t => {
+    const k = t.dataset.key;
+    const isDone = doneSet.has(k);
+    const isOpen = openSet.has(k);
+    t.classList.toggle('done', isDone);
+    const box = t.querySelector('.box');
+    if (box) box.classList.toggle('done', isDone);
+    t.classList.toggle('open', isOpen);
+  });
+  const hd = !!s.hidedone;
+  document.body.classList.toggle('hide-done', hd);
+  const bh = document.getElementById('btn-hide');
+  if (bh) bh.classList.toggle('on', hd);
+}
+
+function saveLocal() {
+  const s = collectState();
+  localStorage.setItem(LS + 'state', JSON.stringify(s));
+}
+
+function loadLocal() {
+  const raw = localStorage.getItem(LS + 'state');
+  if (raw) {
+    try { applyState(JSON.parse(raw)); return true; } catch(e) {}
+  }
+  // migrate from old per-key keys if present
+  const migrated = { done: [], open: [], hidedone: false };
+  document.querySelectorAll('.task[data-key]').forEach(t => {
+    const k = t.dataset.key;
+    if (localStorage.getItem(LS + 'done_' + k) === '1') migrated.done.push(k);
+    if (localStorage.getItem(LS + 'open_' + k) === '1') migrated.open.push(k);
+  });
+  migrated.hidedone = localStorage.getItem(LS + 'hide_done') === '1';
+  if (migrated.done.length || migrated.open.length || migrated.hidedone) {
+    applyState(migrated);
+    saveLocal();
+    return true;
+  }
+  return false;
+}
+
+async function pullRemote() {
+  const { url, token } = getSync();
+  if (!url || !token) { setSyncBadge('off'); return; }
+  setSyncBadge('sync');
+  try {
+    const r = await fetch(url.replace(/\/$/, '') + '/state?ns=' + SYNC_NS, {
+      headers: { 'Authorization': 'Bearer ' + token },
+    });
+    if (!r.ok) { setSyncBadge('err'); console.warn('pull', r.status); return; }
+    const s = await r.json();
+    // If server is newer than local, apply. Otherwise skip.
+    const localRaw = localStorage.getItem(LS + 'state_updated') || '0';
+    const localUpd = parseInt(localRaw, 10) || 0;
+    if ((s.updated || 0) > localUpd) {
+      applyState(s);
+      saveLocal();
+      localStorage.setItem(LS + 'state_updated', String(s.updated || Date.now()));
+    }
+    setSyncBadge('ok');
+  } catch (e) {
+    setSyncBadge('err'); console.warn('pull err', e);
   }
 }
+
+async function pushRemote() {
+  const { url, token } = getSync();
+  if (!url || !token) return;
+  setSyncBadge('sync');
+  try {
+    const s = collectState();
+    const r = await fetch(url.replace(/\/$/, '') + '/state?ns=' + SYNC_NS, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(s),
+    });
+    if (!r.ok) { setSyncBadge('err'); return; }
+    const saved = await r.json();
+    localStorage.setItem(LS + 'state_updated', String(saved.updated || Date.now()));
+    setSyncBadge('ok');
+  } catch (e) {
+    setSyncBadge('err');
+  }
+}
+
+function scheduleSync() {
+  saveLocal();
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(pushRemote, 800); // debounce
+}
+
 function toggleTask(ev) {
   ev.stopPropagation();
   const task = ev.currentTarget.closest('.task');
-  const key = task.dataset.key;
   task.classList.toggle('done');
   ev.currentTarget.classList.toggle('done');
-  if (key) localStorage.setItem(K + 'done_' + key, task.classList.contains('done') ? '1' : '0');
+  scheduleSync();
 }
+
 function toggleDetails(ev) {
   const task = ev.currentTarget.closest('.task');
-  const key = task.dataset.key;
   task.classList.toggle('open');
-  if (key) localStorage.setItem(K + 'open_' + key, task.classList.contains('open') ? '1' : '0');
+  scheduleSync();
 }
+
 function toggleHideDone() {
   const on = document.body.classList.toggle('hide-done');
   document.getElementById('btn-hide').classList.toggle('on', on);
-  localStorage.setItem(K + 'hide_done', on ? '1' : '0');
+  scheduleSync();
 }
+
 function expandAll(open) {
   document.querySelectorAll('.task').forEach(t => {
     if (!t.querySelector('.details')) return;
     if (open) t.classList.add('open'); else t.classList.remove('open');
-    const key = t.dataset.key;
-    if (key) localStorage.setItem(K + 'open_' + key, open ? '1' : '0');
   });
+  scheduleSync();
 }
-loadState();
+
+/* Sync settings modal */
+function openSync() {
+  const { url, token } = getSync();
+  const modal = document.getElementById('sync-modal');
+  document.getElementById('sync-url').value = url;
+  document.getElementById('sync-token').value = token;
+  modal.classList.add('open');
+}
+function closeSync() {
+  document.getElementById('sync-modal').classList.remove('open');
+}
+function saveSync() {
+  const url = document.getElementById('sync-url').value.trim();
+  const token = document.getElementById('sync-token').value.trim();
+  localStorage.setItem(SYNC_URL_KEY, url);
+  localStorage.setItem(SYNC_TOKEN_KEY, token);
+  closeSync();
+  pullRemote();
+}
+function clearSync() {
+  localStorage.removeItem(SYNC_URL_KEY);
+  localStorage.removeItem(SYNC_TOKEN_KEY);
+  closeSync();
+  setSyncBadge('off');
+}
+
+/* Init: local first (instant paint) then remote (may overwrite) */
+loadLocal();
+pullRemote();
+
+/* Poll every 15s so other devices' changes show up */
+setInterval(pullRemote, 15000);
+
+/* Also pull when tab regains focus */
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) pullRemote();
+});
 </script>
+
+<!-- Sync settings modal -->
+<div id="sync-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(23,20,26,.75);align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--cream);color:var(--ink);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:22px;max-width:520px;width:100%;box-shadow:5px 6px 0 rgba(33,29,32,.85);position:relative">
+    <h3 style="font-family:'Anton',sans-serif;font-size:22px;text-transform:uppercase;transform:skewX(-5deg);color:var(--ink);margin-bottom:6px">CROSS-DEVICE <i style="font-style:normal;color:var(--lip2)">SYNC</i></h3>
+    <p style="font-family:'DotGothic16',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-bottom:14px">Cloudflare Worker + KV &middot; paste once per device</p>
+    <label style="display:block;margin-bottom:10px;font-size:13px">
+      <div style="font-family:'DotGothic16',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--lip2);margin-bottom:3px">Worker URL</div>
+      <input id="sync-url" type="url" placeholder="https://hub-sync.YOURSUB.workers.dev" style="width:100%;padding:8px 10px;border:1.5px solid var(--ink);border-radius:2px 5px 2px 5px;background:var(--cream2);font-family:'DotGothic16',monospace;font-size:12px;color:var(--ink)">
+    </label>
+    <label style="display:block;margin-bottom:14px;font-size:13px">
+      <div style="font-family:'DotGothic16',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--lip2);margin-bottom:3px">HUB_SECRET</div>
+      <input id="sync-token" type="password" placeholder="paste the secret" style="width:100%;padding:8px 10px;border:1.5px solid var(--ink);border-radius:2px 5px 2px 5px;background:var(--cream2);font-family:'DotGothic16',monospace;font-size:12px;color:var(--ink)">
+    </label>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="clearSync()" style="font-family:'DotGothic16',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:transparent;color:var(--mut);border:1px solid var(--mut);padding:6px 12px;border-radius:2px;cursor:pointer">Clear</button>
+      <button onclick="closeSync()" style="font-family:'DotGothic16',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:transparent;color:var(--ink);border:1px solid var(--ink);padding:6px 12px;border-radius:2px;cursor:pointer">Cancel</button>
+      <button onclick="saveSync()" style="font-family:'DotGothic16',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:var(--lip2);color:var(--cream);border:1px solid var(--lip2);padding:6px 12px;border-radius:2px;cursor:pointer">Save + sync</button>
+    </div>
+  </div>
+</div>
+<style>
+#sync-modal.open{display:flex !important}
+</style>
+
 
 <script>
 document.documentElement.classList.add('js');
