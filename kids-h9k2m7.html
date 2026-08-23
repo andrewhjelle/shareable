@@ -12,30 +12,127 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
-:root{--tape:#17141a;--ink:#211d20;--cream:#f2e0c8;--cream2:#e9d5ba;--lip2:#c24f3d;--osd:#f4f1e4;--skin:#edbd97;--mut:#7a6a5e}
+:root{
+  --tape:#17141a;--ink:#211d20;--cream:#f2e0c8;--cream2:#e9d5ba;
+  --lip:#d96b52;--lip2:#c24f3d;--cobalt:#4a6fb2;--signal:#cf4a2e;
+  --osd:#f4f1e4;--skin:#edbd97;--blush:#e58087;
+  --rule-soft:rgba(33,29,32,0.35);--rule-faint:rgba(33,29,32,0.18);
+  --mut:#7a6a5e;--zada:#a855f7;--kai:#4a6fb2;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Zen Kaku Gothic New",system-ui,sans-serif;font-size:14.5px;line-height:1.55;color:var(--ink);background:var(--tape);min-height:100vh;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth}
+body{font-family:"Zen Kaku Gothic New",system-ui,sans-serif;font-size:14px;line-height:1.5;color:var(--ink);background:var(--tape);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(10,8,12,.11) 3px 4px)}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 30% 20%,rgba(217,107,82,.08),transparent 60%),radial-gradient(ellipse at 80% 90%,rgba(74,111,178,.08),transparent 60%)}
 a{color:var(--lip2);text-decoration:none;border-bottom:1px dotted rgba(194,79,61,.5)}
 a:hover{color:var(--ink);border-bottom-color:var(--ink)}
-.masthead{position:sticky;top:0;z-index:30;background:rgba(23,20,26,.85);border-bottom:1px solid rgba(244,241,228,.14);backdrop-filter:blur(4px)}
-.masthead-inner{max-width:1600px;margin:0 auto;padding:12px 22px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:20px;font-family:"DotGothic16",monospace;color:var(--osd)}
-.brand .name{font-family:"Anton",sans-serif;font-size:22px;letter-spacing:.04em;text-transform:uppercase;color:var(--skin);transform:skewX(-6deg);display:inline-block}
-.hubnav{display:flex;justify-content:center;gap:2px;flex-wrap:wrap;font-family:"DotGothic16",monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase}
-.hubnav a{color:var(--osd);text-decoration:none;padding:5px 12px;border:1px solid transparent;border-radius:2px;transition:color .15s,border-color .15s}
-.hubnav a:hover{color:var(--skin);border-color:rgba(237,189,151,.4)}
-.hubnav a.here{color:var(--skin);border-color:var(--skin)}
-.main{max-width:900px;margin:0 auto;padding:40px 22px}
-.card{position:relative;background:var(--cream);color:var(--ink);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:28px 30px 24px;box-shadow:5px 6px 0 rgba(33,29,32,.85)}
+::selection{background:var(--lip);color:var(--cream)}
+
+/* Masthead — OSD bar */
+.mh{position:sticky;top:0;z-index:30;background:rgba(23,20,26,.85);border-bottom:1px solid rgba(244,241,228,.14);backdrop-filter:blur(4px)}
+.mh-in{max-width:1400px;margin:0 auto;padding:12px 22px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:20px;font-family:"DotGothic16",monospace;color:var(--osd);text-shadow:1px 0 0 rgba(217,107,82,.55),-1px 0 0 rgba(74,111,178,.55)}
+.brand{display:flex;align-items:baseline;gap:12px}
+.brand .mark{font-family:"DotGothic16",monospace;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--osd);display:inline-flex;align-items:center;gap:8px}
+.brand .mark::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--signal);animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:.15}}
+.brand .name{font-family:"Anton",sans-serif;font-size:22px;letter-spacing:.04em;text-transform:uppercase;color:var(--skin);transform:skewX(-6deg);font-style:normal}
+.dateline{font-family:"DotGothic16",monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--osd);text-align:center}
+.dateline strong{color:var(--skin);font-weight:400}
+.mh-actions{display:flex;gap:6px}
+.mh-actions a{font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.12em;background:transparent;color:var(--osd);border:1px solid rgba(244,241,228,.4);padding:4px 10px;border-radius:2px;text-transform:uppercase;transition:all .15s}
+.mh-actions a:hover{color:var(--skin);border-color:var(--skin)}
+
+/* Grid */
+.main{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:22px 22px 60px;display:grid;grid-template-columns:1fr;gap:18px;align-items:start}
+@media(min-width:900px){.main{grid-template-columns:1fr 1.3fr}}
+.col{display:grid;gap:18px;min-width:0}
+
+/* Card */
+.card{position:relative;background:var(--cream);color:var(--ink);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:18px 20px;box-shadow:5px 6px 0 rgba(33,29,32,.85)}
 .card::before{content:"";position:absolute;inset:4px;border:1px solid var(--ink);opacity:.22;border-radius:2px 9px 3px 8px;pointer-events:none}
 .card > *{position:relative}
-.section-label{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.section-label .num{font-family:"Anton",sans-serif;font-size:26px;letter-spacing:.03em;text-transform:uppercase;transform:skewX(-5deg);color:var(--ink);line-height:1}
-.section-label .rule{flex:1;height:1.5px;background:var(--ink);opacity:.35}
-.section-label > span:last-child{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
-.blurb{font-size:14px;color:var(--ink);margin:8px 0}
+
+.sec{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sec .num{font-family:"Anton",sans-serif;font-size:22px;letter-spacing:.03em;text-transform:uppercase;transform:skewX(-5deg);color:var(--ink);line-height:1}
+.sec .rule{flex:1;height:1.5px;background:var(--ink);opacity:.35}
+.sec > span:last-child{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+h2{font-family:"Anton",sans-serif;font-size:24px;letter-spacing:.02em;text-transform:uppercase;transform:skewX(-5deg);color:var(--ink);line-height:1.05;margin:2px 0 4px}
+h2 em{font-style:normal;color:var(--lip2)}
+.subhead{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+.blurb{font-size:13.5px;color:var(--ink);line-height:1.5}
 .blurb b{color:var(--lip2)}
-.stub-note{margin-top:18px;padding:14px 16px;background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px;font-size:13.5px}
-.stub-note b{color:var(--lip2)}
+
+/* Family-night picks — condensed one-line rows, why hidden until click */
+.pick{padding:7px 0;border-top:1.5px dashed var(--rule-soft);cursor:pointer}
+.pick:first-of-type{border-top:0}
+.pick-head{display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap;overflow:hidden;min-width:0}
+.pick .title{flex:1 1 auto;min-width:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink);font-family:"Zen Kaku Gothic New",sans-serif;font-size:14px}
+.pick .meta{flex:0 0 auto;font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);white-space:nowrap}
+.pick .meta .stream{color:var(--lip2);font-weight:700}
+.pick .why{display:none;font-size:12.5px;color:var(--ink);margin-top:6px;padding:8px 12px;background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px}
+.pick.open .why{display:block}
+.pick::after{content:" \203A";color:var(--mut);margin-left:2px}
+.pick.open::after{content:" \2304";color:var(--lip2)}
+
+/* Badges — condensed OSD chips */
+.badge{display:inline-block;font-family:"DotGothic16",monospace;font-size:9px;letter-spacing:.10em;text-transform:uppercase;padding:1px 6px;border:1px solid var(--rule-soft);color:var(--ink);background:var(--cream2);margin-left:2px;border-radius:2px;white-space:nowrap}
+.badge.hot{background:var(--lip2);color:var(--cream);border-color:var(--lip2)}
+.badge.kai{background:rgba(74,111,178,.15);color:var(--kai);border-color:var(--kai)}
+.badge.zada{background:rgba(168,85,247,.15);color:var(--zada);border-color:var(--zada)}
+.badge.new{background:var(--signal);color:var(--cream);border-color:var(--signal)}
+
+/* Ranked queue — tight rows */
+.rank{list-style:none}
+.rank li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:8px;padding:5px 0;border-top:1.5px dashed var(--rule-soft);align-items:baseline}
+.rank li:first-child{border-top:0}
+.rank .n{font-family:"DotGothic16",monospace;font-size:11px;font-weight:700;color:var(--lip2);letter-spacing:.06em;padding-top:2px}
+.rank .row{min-width:0;cursor:pointer;display:flex;gap:8px;align-items:baseline;overflow:hidden}
+.rank .rtitle{flex:1 1 auto;font-weight:500;font-size:13px;color:var(--ink);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank .row:hover .rtitle{color:var(--lip2)}
+.rank .rmeta{flex:0 0 auto;font-family:"DotGothic16",monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);white-space:nowrap}
+.rank .rmeta .st{color:var(--lip2)}
+.rank .rmeta .who{color:var(--mut)}
+.rank .rwhy{display:none;grid-column:2/-1;font-size:12.5px;color:var(--ink);margin-top:5px;line-height:1.5;padding:8px 12px;background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px}
+.rank li.open .rwhy{display:block}
+.rank .rtitle::after{content:" \203A";color:var(--mut);margin-left:2px}
+.rank li.open .rtitle::after{content:" \2304";color:var(--lip2)}
+
+/* Watched — 2-col dense list */
+.watched{list-style:none;display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:600px){.watched{grid-template-columns:1fr 1fr;column-gap:16px}}
+.watched li{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-top:1.5px dashed var(--rule-soft);align-items:baseline;font-size:12.5px;min-width:0}
+.watched li:first-child,.watched li:nth-child(2){border-top:0}
+@media(max-width:599px){.watched li:nth-child(2){border-top:1.5px dashed var(--rule-soft)}}
+.watched .w-title{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.watched .w-v{flex:0 0 auto;font-family:"DotGothic16",monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);white-space:nowrap}
+.watched .w-v.fav{color:var(--lip);font-weight:700}
+.watched .w-v.loved{color:var(--lip2);font-weight:700}
+.watched .w-v.liked{color:var(--cobalt)}
+.watched .w-v.meh{color:var(--mut)}
+.watched .w-v.skip{color:var(--mut);text-decoration:line-through}
+
+/* Backlog columns */
+.back{column-count:2;column-gap:20px;font-size:12px;color:var(--ink);line-height:1.6}
+@media(min-width:640px){.back{column-count:3}}
+@media(min-width:1000px){.back{column-count:4}}
+.back div{break-inside:avoid;padding:1px 0}
+.shelf-h{font-family:"Anton",sans-serif;font-size:20px;letter-spacing:.02em;text-transform:uppercase;transform:skewX(-4deg);color:var(--ink);margin:16px 0 6px;line-height:1.05}
+.shelf-h .shelf-c{font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.12em;color:var(--mut);margin-left:6px;text-transform:uppercase}
+.shelf-item{display:flex;flex-direction:column;gap:0}
+.shelf-t{font-size:12px;color:var(--ink)}
+.shelf-n{font-family:"DotGothic16",monospace;font-size:9px;letter-spacing:.06em;color:var(--mut);text-transform:uppercase}
+
+/* Footer */
+.footer-links{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:20px 22px 60px;display:flex;flex-wrap:wrap;gap:10px;border-top:1px solid rgba(244,241,228,.14)}
+.footer-links a{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--osd);background:rgba(33,29,32,.8);border:1px solid rgba(244,241,228,.25);padding:6px 12px;text-decoration:none;border-radius:2px}
+.footer-links a:hover{color:var(--skin);border-color:var(--skin)}
+.hubnav{position:sticky;top:0;z-index:50;background:rgba(33,29,32,.92);backdrop-filter:blur(6px);border-bottom:1px solid rgba(244,241,228,.18);display:flex;gap:2px;align-items:center;padding:8px 20px;font-family:"DotGothic16",monospace;letter-spacing:.14em;font-size:12px;text-transform:uppercase}
+.hubnav a{color:var(--osd);text-decoration:none;padding:8px 14px;border-radius:2px;border:1px solid transparent;transition:color .15s,border-color .15s}
+.hubnav a:hover{color:var(--skin);border-color:rgba(244,201,165,.4)}
+.hubnav a.here{color:var(--skin);border-color:var(--skin)}
+.hubnav .brand{font-family:"Anton",sans-serif;font-size:18px;letter-spacing:.06em;color:#f4f1e4;margin-right:14px;padding-right:14px;border-right:1px solid rgba(244,241,228,.2)}
+.footer-links{display:none}
+
 
 /* scene: cel + CRT pass (shared with hub) */
 .scene{position:fixed;inset:0;z-index:0;pointer-events:none}
@@ -53,7 +150,24 @@ body::before,body::after{display:none}
 @media(prefers-reduced-motion:reduce){.track,.scene .cel,.vhs .scan{animation:none}}
 .hubnav,.main,.wrap,.cols,.mast,.ctrl,.masthead{position:relative;z-index:2}
 .hubnav{z-index:50}
+.rank.tonight .row{flex-wrap:wrap;cursor:default}
+.rank.tonight .rtitle::after{content:none}
+.rank.tonight .rsub{flex-basis:100%;font-size:11.5px;line-height:1.4;color:var(--mut);margin-top:1px}
+.rank.tonight .rsub b{font-weight:700;color:var(--ink)}
+.rank.tonight .rsub i{font-style:normal;color:var(--cobalt)}
+
+.main{grid-template-columns:1fr}
+@media(min-width:900px){.main{grid-template-columns:1.15fr 1fr}}
+.rank.tonight .rmeta .mo{color:var(--lip2);font-weight:700}
+.rank.tonight .rmeta .kai{color:var(--kai)}
+.rank.tonight .rmeta .zada{color:var(--zada)}
+.rank.tonight .rsub u{text-decoration:none;color:var(--ink);font-weight:700}
+.rules{font-size:12.5px;line-height:1.55;color:var(--ink)}
+.rules li{margin:0 0 4px 16px}
+.rules b{color:var(--lip2)}
+.pair{font-family:"DotGothic16",monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--cobalt);white-space:nowrap}
 </style>
+
 </head>
 <body>
 <script>
@@ -78,31 +192,148 @@ body::before,body::after{display:none}
 </script>
 
 
-<header class="masthead">
-  <div class="masthead-inner">
-    <div class="brand"><span class="name">Hub</span></div>
-    <div class="scene"><div class="cel"></div><div class="celscrim"></div></div>
+<div class="scene"><div class="cel"></div><div class="celscrim"></div></div>
 <div class="vhs"><div class="scan"></div><div class="track"></div><div class="track t2"></div>
 <svg class="grainsvg" aria-hidden="true"><filter id="g"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2"></feTurbulence><feColorMatrix type="matrix" values="0 0 0 0 .9 0 0 0 0 .85 0 0 0 0 .78 0 0 0 .07 0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#g)"></rect></svg></div>
-<nav class="hubnav">
-      <a href="hub-h9k2m7.html">Hub</a>
-      <a href="house-design-h9k2m7.html">House design</a>
-      <a href="kids-h9k2m7.html" class="here">Kids</a>
-      <a href="recipes-h9k2m7.html">Recipes</a>
-      <a href="books-h9k2m7.html">Books</a>
-      <a href="movies-h9k2m7.html">Movies</a>
-    </nav>
-    <div></div>
-  </div>
-</header>
+<nav class="hubnav" aria-label="Hub nav">
+  <a class="brand" href="hub-h9k2m7.html">HUB</a>
+  <a href="house-design-h9k2m7.html">HOUSE DESIGN</a>
+  <a href="kids-h9k2m7.html" class="here">KIDS</a>
+  <a href="recipes-h9k2m7.html">RECIPES</a>
+  <a href="books-h9k2m7.html">BOOKS</a>
+  <a href="movies-h9k2m7.html">MOVIES</a>
+  <a href="#film" style="margin-left:auto">FILM</a><a href="#books">BOOKS</a><a href="#music">MUSIC</a><a href="#art">ART</a>
+</nav>
 
 <main class="main">
-  <div class="card">
-    <div class="section-label"><span class="num">Kids</span><span class="rule"></span><span>Things to think about &middot; not the action list</span></div>
-    <p class="blurb">The space for kids things worth thinking about and planning &mdash; not the action items. Actions live on the <a href="hub-h9k2m7.html">Hub</a>.</p>
-    <div class="stub-note"><b>Stub page.</b> This is the placeholder wired into the hub nav. Real content lands here once you tell Claude what you want on this page &mdash; think out loud, drop in a rough list, or paste anything you&rsquo;ve already got.</div>
-  </div>
-</main>
 
+<div class="col">
+
+  <div class="card" id="film">
+    <div class="sec"><span class="num">Film</span><span class="rule"></span><span>2026&ndash;27 &middot; one a month, together &middot; streaming unchecked</span></div>
+    <ol class="rank tonight">
+      <li><span class="n">1</span><div class="row"><div class="rtitle">The Wizard of Oz</div><div class="rmeta"><span class="mo">Sep</span> &middot; 1939 &middot; G</div><div class="rsub"><b>Musical fantasy</b> &middot; Both kids, no risk. If they&rsquo;ve seen it, swap in Mary Poppins. <i>Notice: the film starts in sepia and turns to color the second Dorothy opens the door. Ask why.</i></div></div></li>
+      <li><span class="n">2</span><div class="row"><div class="rtitle">The Nightmare Before Christmas</div><div class="rmeta"><span class="mo">Oct</span> &middot; 1993 &middot; PG</div><div class="rsub"><b>Stop-motion musical</b> &middot; Zada&rsquo;s Wednesday lane; Kai gets the craft. Pairs with Edward Scissorhands in the queue. <i>Notice: 24 frames a second, every one a hand-moved puppet. Three years to shoot. Count the mouth shapes.</i></div></div></li>
+      <li><span class="n">3</span><div class="row"><div class="rtitle">Fantasia</div><div class="rmeta"><span class="mo">Nov</span> &middot; 1940 &middot; G</div><div class="rsub"><b>Animation + orchestra</b> &middot; The film-and-music bridge. Skip the segments that drag (they will); Sorcerer&rsquo;s Apprentice, Night on Bald Mountain, the dinosaurs are the keepers. <i>Notice: you already heard these at breakfast in October and November. Which picture did you imagine before you saw Disney&rsquo;s?</i></div></div></li>
+      <li><span class="n">4</span><div class="row"><div class="rtitle">It&rsquo;s a Wonderful Life</div><div class="rmeta"><span class="mo">Dec</span> &middot; 1946 &middot; PG</div><div class="rsub"><b>Christmas drama</b> &middot; The ancestor of Groundhog Day, which they liked: one man shown a world without him. <i>Notice: it flopped in 1946 and became a classic because TV showed it for free every December. Ask what else got a second life that way.</i></div></div></li>
+      <li><span class="n">5</span><div class="row"><div class="rtitle">The Hidden Fortress</div><div class="rmeta"><span class="mo">Jan</span> &middot; 1958 &middot; subtitles</div><div class="rsub"><b>Kurosawa adventure</b> &middot; Kai lead. Star Wars is built on this: two bickering peasants (R2 and 3PO), a princess in disguise, a general, a fortress. <i>Notice: the screen wipes between scenes. Lucas copied those too. Zada can bail at the hour mark without guilt.</i></div></div></li>
+      <li><span class="n">6</span><div class="row"><div class="rtitle">Singin&rsquo; in the Rain</div><div class="rmeta"><span class="mo">Feb</span> &middot; 1952 &middot; G</div><div class="rsub"><b>Musical comedy</b> &middot; Andrew&rsquo;s pick from the queue, moved to a month with a reason. <i>Notice: it&rsquo;s a movie about movies, set in the year films learned to talk (1927). The bad-microphone scene is a real problem studios had.</i></div></div></li>
+      <li><span class="n">7</span><div class="row"><div class="rtitle">E.T.</div><div class="rmeta"><span class="mo">Mar</span> &middot; 1982 &middot; PG</div><div class="rsub"><b>Spielberg</b> &middot; They&rsquo;ve seen four Spielbergs (Raiders, Doom, Crusade, Jurassic Park). This is the gentle one. <i>Notice: the camera stays at kid height and you barely see an adult face until the last third. That&rsquo;s a choice.</i></div></div></li>
+      <li><span class="n">8</span><div class="row"><div class="rtitle">Modern Times</div><div class="rmeta"><span class="mo">Apr</span> &middot; 1936 &middot; G</div><div class="rsub"><b>Chaplin comedy</b> &middot; Zada liked Sherlock Jr.; this is the next silent, and it&rsquo;s short. Factory, feeding machine, roller skates. <i>Notice: sound films had existed for nine years. Chaplin made a silent anyway, and the only voices you hear come out of machines. Ask why.</i></div></div></li>
+      <li><span class="n">9</span><div class="row"><div class="rtitle">The Sting</div><div class="rmeta"><span class="mo">May</span> &middot; 1973 &middot; PG</div><div class="rsub"><b>Con-man caper</b> &middot; National Treasure was a hit; this is the grown-up puzzle version. Both kids can follow it. <i>Notice: title cards split it into chapters like a book, and the piano is Scott Joplin from 1902 (June breakfast music). You&rsquo;re conned too. Don&rsquo;t warn them.</i></div></div></li>
+      <li><span class="n">10</span><div class="row"><div class="rtitle">Jaws</div><div class="rmeta"><span class="mo">Jun</span> &middot; 1975 &middot; PG</div><div class="rsub"><b>Summer thriller</b> &middot; Kai first; Zada optional (it&rsquo;s scarier than Jurassic Park because you can&rsquo;t see it). <i>Notice: the mechanical shark kept breaking, so Spielberg hid it and used two notes of music instead. The limitation made the film.</i></div></div></li>
+      <li><span class="n">11</span><div class="row"><div class="rtitle">Spider-Man: Into the Spider-Verse</div><div class="rmeta"><span class="mo">Jul</span> &middot; 2018 &middot; PG</div><div class="rsub"><b>Animation</b> &middot; Modern, both kids, and a real piece of film education. <i>Notice: the animation runs at 12 frames a second on purpose, and the shading is printed halftone dots, the same trick as Seurat&rsquo;s painting you saw in September.</i></div></div></li>
+      <li><span class="n">12</span><div class="row"><div class="rtitle">Free Solo</div><div class="rmeta"><span class="mo">Aug</span> &middot; 2018 &middot; PG-13</div><div class="rsub"><b>Documentary</b> &middot; You climb every week. This is the climbing film, and the language is the only reason for the rating. <i>Notice: the crew argues on camera about whether filming him makes a fall more likely. That&rsquo;s the ethics question every documentary has, said out loud.</i></div></div></li>
+    </ol>
+    <div class="subhead" style="margin-top:12px">Kai extension &middot; PG-13 and older films, his pace</div>
+    <ol class="rank tonight">
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">The Empire Strikes Back</div><div class="rmeta"><span class="kai">Kai</span> &middot; 1980 &middot; PG</div><div class="rsub"><b>Star Wars</b> &middot; They liked A New Hope. This is the one that&rsquo;s better. <i>Notice: the heroes lose. A sequel that ends on a defeat is rare; ask whether it works.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Rear Window</div><div class="rmeta"><span class="kai">Kai</span> &middot; 1954 &middot; PG</div><div class="rsub"><b>Hitchcock</b> &middot; Before North by Northwest in the classics card. One apartment, one window, the whole film. <i>Notice: you only ever see what Jimmy Stewart can see from his chair. Every shot obeys that rule.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">King Kong</div><div class="rmeta"><span class="kai">Kai</span> &middot; 1933 &middot; unrated</div><div class="rsub"><b>Monster adventure</b> &middot; The grandfather of Jurassic Park, which he liked. <i>Notice: Kong is an 18-inch model moved one frame at a time. The same technique as Nightmare Before Christmas, 60 years earlier.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">The Adventures of Robin Hood</div><div class="rmeta"><span class="kai">Kai</span> &middot; 1938 &middot; PG</div><div class="rsub"><b>Swashbuckler</b> &middot; Indiana Jones&rsquo;s grandfather. Errol Flynn, sword fights on staircases, the castle. <i>Notice: three-strip Technicolor, the most expensive color process ever. Every green is greener than real life.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Superman</div><div class="rmeta"><span class="kai">Kai</span> &middot; 1978 &middot; PG</div><div class="rsub"><b>Superhero origin</b> &middot; Iron Man and Ragnarok landed. This is what those are quoting, slow first hour and all. <i>Notice: no computers. Wires, front-projection, a man on a crane. Ask how they made him fly, then look it up.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">A Hard Day&rsquo;s Night</div><div class="rmeta"><span class="kai">Kai</span> &middot; 1964 &middot; G</div><div class="rsub"><b>Beatles comedy</b> &middot; Music education disguised as a comedy. 87 minutes. <i>Notice: the handheld, jump-cut style was invented here and every music video since copies it.</i></div></div></li>
+    </ol>
+    <div class="subhead" style="margin-top:12px">Zada extension &middot; her lead</div>
+    <ol class="rank tonight">
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Paddington 2</div><div class="rmeta"><span class="zada">Zada</span> &middot; 2017 &middot; PG</div><div class="rsub"><b>Comedy</b> &middot; A modern classic. Hugh Grant as the villain. Both kids, but she leads. <i>Notice: the pop-up-book sequence; a whole scene made of paper. Kindness is the plot engine, not a lesson tacked on.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Kiki&rsquo;s Delivery Service</div><div class="rmeta"><span class="zada">Zada</span> &middot; 1989 &middot; G</div><div class="rsub"><b>Ghibli</b> &middot; After Totoro and Castle in the Sky. A 13-year-old&rsquo;s first job; there is no villain. <i>Notice: nothing bad happens and it&rsquo;s still a story. Ask what Kiki is actually afraid of.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">The Red Balloon</div><div class="rmeta"><span class="zada">Zada</span> &middot; 1956 &middot; 34 min</div><div class="rsub"><b>Short film, no dialogue</b> &middot; Paris, a boy, a balloon that follows him. One sitting. <i>Notice: no words at all, and you understand everything. Ask her how she knew what the balloon wanted.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Safety Last!</div><div class="rmeta"><span class="zada">Zada</span> &middot; 1923 &middot; silent</div><div class="rsub"><b>Harold Lloyd comedy</b> &middot; She liked Keaton. Lloyd is the third silent clown; this is the one with the clock. <i>Notice: the building climb is real (a set built on a roof, but a real drop). Compare Lloyd&rsquo;s glasses-guy to Keaton&rsquo;s stone face.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Babe</div><div class="rmeta"><span class="zada">Zada</span> &middot; 1995 &middot; G</div><div class="rsub"><b>Talking-animal farm story</b> &middot; Chicken Run fans. Real animals, not cartoons. <i>Notice: real pigs plus animatronic pigs, cut together so you can&rsquo;t tell. 48 piglets played Babe because they kept growing.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Mary Poppins</div><div class="rmeta"><span class="zada">Zada</span> &middot; 1964 &middot; G</div><div class="rsub"><b>Musical</b> &middot; The Oz backup, and the music-month tie-in. <i>Notice: live actors dancing with drawn penguins in 1964. The same problem Roger Rabbit solved 24 years later.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Matilda</div><div class="rmeta"><span class="zada">Zada</span> &middot; 1996 &middot; PG &middot; gated</div><div class="rsub"><b>Dahl adaptation</b> &middot; After she reads (or you read her) the book. Same rule as Coraline for Kai. <i>Notice: what the movie cut from the book, and whether the Trunchbull is scarier on the page or on screen.</i></div></div></li>
+    </ol>
+  </div>
+
+  <div class="card" id="books">
+    <div class="sec"><span class="num">Books</span><span class="rule"></span><span>2026&ndash;27 &middot; the reading year &middot; state lives on the Books page</span></div>
+    <div class="subhead">Kai &middot; 6th grade &middot; real books, one a month, after the Riordan run</div>
+    <ol class="rank tonight">
+      <li><span class="n">1</span><div class="row"><div class="rtitle">D&rsquo;Aulaires&rsquo; Book of Greek Myths</div><div class="rmeta">D&rsquo;Aulaire &middot; 1962 &middot; illustrated</div><div class="rsub"><b>Myth collection</b> &middot; He just finished seven Percy Jacksons. This is the source. <i>Notice: where Riordan changed the story. Then find the same heroes on the Greek vases at the Art Institute in January.</i></div></div></li>
+      <li><span class="n">2</span><div class="row"><div class="rtitle">The Odyssey (Gillian Cross retelling)</div><div class="rmeta">Cross / Packer &middot; 2012</div><div class="rsub"><b>Epic, retold</b> &middot; The real thing, at his level, with Neil Packer&rsquo;s drawings. Emily Wilson&rsquo;s translation is the next rung in a few years. <i>Notice: it starts in the middle and tells the early part as a flashback. Percy Jackson does the same thing.</i></div></div></li>
+      <li><span class="n">3</span><div class="row"><div class="rtitle">The Hobbit</div><div class="rmeta">Tolkien &middot; 1937</div><div class="rsub"><b>Fantasy quest</b> &middot; Dad&rsquo;s five-star. Read aloud, or the Andy Serkis audiobook on the drive to climbing. <i>Notice: it was told out loud to Tolkien&rsquo;s kids before it was written. Listen for the narrator talking to you.</i></div></div></li>
+      <li><span class="n">4</span><div class="row"><div class="rtitle">Treasure Island</div><div class="rmeta">Stevenson &middot; 1883</div><div class="rsub"><b>Adventure</b> &middot; Every pirate thing he&rsquo;s ever seen comes from this book. Parrots, maps with an X, one-legged men. <i>Notice: Long John Silver is the villain and you like him anyway. That was new in 1883.</i></div></div></li>
+      <li><span class="n">5</span><div class="row"><div class="rtitle">The Westing Game</div><div class="rmeta">Raskin &middot; 1978</div><div class="rsub"><b>Puzzle mystery</b> &middot; Sixteen heirs, one will, one murder. The book National Treasure fans deserve. <i>Notice: keep a suspect list as you go. The clues are fair; you can solve it.</i></div></div></li>
+      <li><span class="n">6</span><div class="row"><div class="rtitle">Holes</div><div class="rmeta">Sachar &middot; 1998</div><div class="rsub"><b>Novel, three timelines</b> &middot; Already on the movie queue; book first. <i>Notice: three stories from three centuries. Mark the page where they snap together.</i></div></div></li>
+      <li><span class="n">7</span><div class="row"><div class="rtitle">Hatchet</div><div class="rmeta">Paulsen &middot; 1987</div><div class="rsub"><b>Survival</b> &middot; Already top of his queue. One boy, one hatchet, a Canadian lake. <i>Notice: almost no dialogue. Short sentences on purpose. The whole book is inside his head.</i></div></div></li>
+      <li><span class="n">8</span><div class="row"><div class="rtitle">A Wrinkle in Time</div><div class="rmeta">L&rsquo;Engle &middot; 1962</div><div class="rsub"><b>Science fantasy</b> &middot; A girl hero in 1962, a tesseract, a planet where everyone bounces the ball at the same time. <i>Notice: the scariest thing in the book is sameness, not a monster. Ask what IT actually wants.</i></div></div></li>
+      <li><span class="n">9</span><div class="row"><div class="rtitle">The Adventures of Sherlock Holmes (five stories)</div><div class="rmeta">Doyle &middot; 1892</div><div class="rsub"><b>Detective stories</b> &middot; Enola Holmes landed. Pick five: Speckled Band, Red-Headed League, Blue Carbuncle, Scandal in Bohemia, Silver Blaze. <i>Notice: Watson tells it, not Holmes. Ask why the smartest character never narrates.</i></div></div></li>
+      <li><span class="n">10</span><div class="row"><div class="rtitle">Watership Down</div><div class="rmeta">Adams &middot; 1972</div><div class="rsub"><b>Epic, with rabbits</b> &middot; A long one, for when he wants a big book after the Riordan run. <i>Notice: the rabbits have their own language and their own myths. It&rsquo;s the Odyssey shape again: leave home, find home.</i></div></div></li>
+      <li><span class="n">11</span><div class="row"><div class="rtitle">Ender&rsquo;s Game</div><div class="rmeta">Card &middot; 1985</div><div class="rsub"><b>Sci-fi</b> &middot; Dad&rsquo;s five-star; he&rsquo;s the right age now. Skip the sequels (Dad rated those 1 and 2). <i>Notice: who is using whom. Reread the last chapter after the twist.</i></div></div></li>
+      <li><span class="n">12</span><div class="row"><div class="rtitle">Bone (complete edition)</div><div class="rmeta">Jeff Smith &middot; 1991&ndash;2004 &middot; graphic</div><div class="rsub"><b>Graphic novel epic</b> &middot; One 1,300-page graphic novel he&rsquo;ll finish in a week. Counts as a real book. <i>Notice: cartoon characters drawn into a realistic world. Ask why the Bones look different from everyone else.</i></div></div></li>
+    </ol>
+    <div class="subhead" style="margin-top:12px">Zada &middot; 3rd grade &middot; wins first, classics read aloud</div>
+    <ol class="rank tonight">
+      <li><span class="n">1</span><div class="row"><div class="rtitle">Dog Man</div><div class="rmeta">Pilkey &middot; graphic</div><div class="rsub"><b>Win lane</b> &middot; Top of her queue. The goal this fall is one book she finishes and asks for more of. <i>Notice: finishing is the skill. Nothing else matters until she has two finishes in a row.</i></div></div></li>
+      <li><span class="n">2</span><div class="row"><div class="rtitle">The Bad Guys</div><div class="rmeta">Blabey &middot; graphic-chapter</div><div class="rsub"><b>Win lane</b> &middot; In her queue. One sitting. <i>Notice: the pictures tell the joke, the words set it up. She&rsquo;s reading both.</i></div></div></li>
+      <li><span class="n">3</span><div class="row"><div class="rtitle">Mercy Watson to the Rescue</div><div class="rmeta">DiCamillo &middot; 2005 &middot; 70 pp</div><div class="rsub"><b>Early chapter book</b> &middot; A pig who loves buttered toast. Six books, all short, all funny. Not in her queue yet. <i>Notice: a picture on every page, chapters two pages long. It&rsquo;s a chapter book that doesn&rsquo;t feel like one.</i></div></div></li>
+      <li><span class="n">4</span><div class="row"><div class="rtitle">The Princess in Black</div><div class="rmeta">Hale &middot; 2014</div><div class="rsub"><b>Early chapter book</b> &middot; In her queue. Secret identity. <i>Notice: why does she hide it? The oldest superhero question, at 90 pages.</i></div></div></li>
+      <li><span class="n">5</span><div class="row"><div class="rtitle">Fantastic Mr. Fox</div><div class="rmeta">Dahl &middot; 1970</div><div class="rsub"><b>Dahl</b> &middot; After The Magic Finger. Then the movie as the reward. <i>Notice: a plan that fails, then a better plan. Compare to the film afterward; they&rsquo;re different stories.</i></div></div></li>
+      <li><span class="n">6</span><div class="row"><div class="rtitle">George&rsquo;s Marvellous Medicine</div><div class="rmeta">Dahl &middot; 1981</div><div class="rsub"><b>Dahl</b> &middot; Funny-gross. The grandma. The one reluctant readers pick. <i>Notice: Dahl lists the ingredients for a whole chapter and it&rsquo;s still funny. Lists can be stories.</i></div></div></li>
+      <li><span class="n">7</span><div class="row"><div class="rtitle">Where the Sidewalk Ends</div><div class="rmeta">Silverstein &middot; 1974 &middot; poems</div><div class="rsub"><b>Poems</b> &middot; One poem a night. Most are under a page; she reads the short ones, you read the long ones. <i>Notice: rhyme tells you what word is coming. Let her guess the last word of each line.</i></div></div></li>
+      <li><span class="n">8</span><div class="row"><div class="rtitle">Ramona Quimby, Age 8</div><div class="rmeta">Cleary &middot; 1981</div><div class="rsub"><b>Realistic, funny</b> &middot; She&rsquo;ll be 8 this year and in third grade, same as Ramona. The egg in the hair. <i>Notice: nothing magic happens and it&rsquo;s still a book. Ask if Ramona&rsquo;s school feels like hers.</i></div></div></li>
+      <li><span class="n">9</span><div class="row"><div class="rtitle">My Father&rsquo;s Dragon</div><div class="rmeta">Gannett &middot; 1948 &middot; 80 pp</div><div class="rsub"><b>Early classic</b> &middot; A map in the front, ten short chapters, a talking cat. The first chapter book for three generations of kids. <i>Notice: the map. Trace the route as you read. Maps are a way of reading too.</i></div></div></li>
+      <li><span class="n">10</span><div class="row"><div class="rtitle">Pippi Longstocking</div><div class="rmeta">Lindgren &middot; 1945</div><div class="rsub"><b>Read-aloud</b> &middot; Strongest girl in the world, lives alone with a horse and a monkey. Each chapter stands alone, so stopping is easy. <i>Notice: the grown-ups are always wrong. Same trick as Dahl, 20 years earlier, from Sweden.</i></div></div></li>
+      <li><span class="n">11</span><div class="row"><div class="rtitle">Charlotte&rsquo;s Web</div><div class="rmeta">E.B. White &middot; 1952</div><div class="rsub"><b>Read-aloud, together</b> &middot; You read it to her. The first book that makes a kid cry; it&rsquo;s also the best-written one on this list. <i>Notice: read the first sentence out loud twice. &ldquo;Where&rsquo;s Papa going with that ax?&rdquo; Ask why the book starts there.</i></div></div></li>
+      <li><span class="n">12</span><div class="row"><div class="rtitle">Greek Myths (Marcia Williams)</div><div class="rmeta">Williams &middot; comic-strip</div><div class="rsub"><b>Myths, comic format</b> &middot; So she gets Kai&rsquo;s Percy Jackson world in panels. Museum tie-in with the vases in January. <i>Notice: the same story as Kai&rsquo;s D&rsquo;Aulaires, drawn differently. Put the two side by side.</i></div></div></li>
+    </ol>
+  </div>
+
+</div>
+
+<div class="col">
+
+  <div class="card" id="music">
+    <div class="sec"><span class="num">Music</span><span class="rule"></span><span>Breakfast &middot; one composer or idea a month</span></div>
+    <ol class="rank tonight">
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Instruments are characters</div><div class="rmeta"><span class="mo">Sep</span></div><div class="rsub"><b>Prokofiev, Peter and the Wolf</b> &middot; Plus Saint-Sa&euml;ns, Carnival of the Animals; Britten, Young Person&rsquo;s Guide to the Orchestra. <i>Game: name the instrument before the narrator does. Bird = flute, wolf = horns, Peter = strings.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Spooky</div><div class="rmeta"><span class="mo">Oct</span></div><div class="rsub"><b>Mussorgsky, Night on Bald Mountain</b> &middot; Plus Grieg, In the Hall of the Mountain King; Saint-Sa&euml;ns, Danse Macabre; Dukas, The Sorcerer&rsquo;s Apprentice. <i>Game: what&rsquo;s the scary trick? Getting faster, going lower, the xylophone as bones. They&rsquo;ll see two of these in Fantasia next month.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Fantasia month</div><div class="rmeta"><span class="mo">Nov</span></div><div class="rsub"><b>Beethoven, Symphony No. 6 (the storm)</b> &middot; Plus Stravinsky, Rite of Spring (opening); Tchaikovsky, Nutcracker Suite; Bach, Toccata and Fugue in D minor. <i>Game: draw what you see while it plays. Then watch Fantasia and compare to Disney&rsquo;s picture.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">December</div><div class="rmeta"><span class="mo">Dec</span></div><div class="rsub"><b>Tchaikovsky, The Nutcracker (whole ballet)</b> &middot; Plus Handel, Messiah (Hallelujah); Bach, Christmas Oratorio (opening chorus); Vince Guaraldi, A Charlie Brown Christmas. <i>Game: the Nutcracker has a dance for each country. Guess the country from the sound before you tell them.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Bach</div><div class="rmeta"><span class="mo">Jan</span></div><div class="rsub"><b>Bach, Brandenburg Concerto No. 3</b> &middot; Plus Cello Suite No. 1 (Yo-Yo Ma); Goldberg Variations, Aria (Glenn Gould, 1981 recording). <i>Game: count the voices. A fugue is the same tune chasing itself; hold up fingers when a new one enters.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Mozart and Beethoven</div><div class="rmeta"><span class="mo">Feb</span></div><div class="rsub"><b>Beethoven, Symphony No. 5</b> &middot; Plus Mozart, Eine kleine Nachtmusik; Queen of the Night aria (The Magic Flute); F&uuml;r Elise. <i>Game: the four notes. Count how many times da-da-da-DUM comes back in the first movement. It never stops.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Spring</div><div class="rmeta"><span class="mo">Mar</span></div><div class="rsub"><b>Vivaldi, The Four Seasons: Spring</b> &middot; Plus Copland, Appalachian Spring; Stravinsky, Firebird (finale). <i>Game: Vivaldi wrote a poem for each season and put the birds, the dog, the storm in the music. Find the dog.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Pictures in sound</div><div class="rmeta"><span class="mo">Apr</span></div><div class="rsub"><b>Mussorgsky, Pictures at an Exhibition</b> &middot; Plus Debussy, Clair de lune and La Mer; Ravel, Bol&eacute;ro; Holst, The Planets (Mars, Jupiter). <i>Game: Pictures is a walk through an art show, one movement per painting. Same as your museum missions. Mars is where Star Wars got its marching sound.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Jazz</div><div class="rmeta"><span class="mo">May</span></div><div class="rsub"><b>Dave Brubeck, Take Five</b> &middot; Plus Louis Armstrong, West End Blues; Duke Ellington, Take the A Train; Miles Davis, So What; Ella Fitzgerald, anything. <i>Game: count to five with Take Five (it&rsquo;s in 5, not 4). Then find where the solo starts and the tune stops.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">America</div><div class="rmeta"><span class="mo">Jun</span></div><div class="rsub"><b>Gershwin, Rhapsody in Blue</b> &middot; Plus Copland, Rodeo (Hoe-Down); Scott Joplin, Maple Leaf Rag and The Entertainer; Bernstein, West Side Story (Mambo). <i>Game: Joplin is the piano in The Sting (May film). Hoe-Down is the beef commercial. Name where else they&rsquo;ve heard these.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">World</div><div class="rmeta"><span class="mo">Jul</span></div><div class="rsub"><b>Ali Farka Tour&eacute; &amp; Ry Cooder, Talking Timbuktu</b> &middot; Plus Ravi Shankar (any raga, 10 minutes of it); Buena Vista Social Club; a Balinese gamelan recording. <i>Game: which instrument is doing the job a drum does? Which one is doing the job a singer does? Different answers in each.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Now</div><div class="rmeta"><span class="mo">Aug</span></div><div class="rsub"><b>Steve Reich, Clapping Music</b> &middot; Plus Philip Glass, Glassworks (Opening); Max Richter, Vivaldi Recomposed (Spring); Arvo P&auml;rt, Spiegel im Spiegel; John Williams, Star Wars Main Title. <i>Game: do Clapping Music at the table; it&rsquo;s two people clapping the same pattern, one shifted. Then play Holst&rsquo;s Mars again next to Williams and hear the borrowing.</i></div></div></li>
+    </ol>
+  </div>
+
+  <div class="card" id="art">
+    <div class="sec"><span class="num">Art</span><span class="rule"></span><span>Art Institute &middot; one mission a month, after climbing &middot; galleries rotate, check the map</span></div>
+    <ol class="rank tonight">
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">The big three</div><div class="rmeta"><span class="mo">Sep</span> &middot; Impressionism + American galleries</div><div class="rsub"><b>Seurat, A Sunday on La Grande Jatte</b> &middot; Plus Hopper, Nighthawks; Grant Wood, American Gothic. <i>Do: stand six inches from the Seurat, then thirty feet. Dots become a picture (Spider-Verse does the same thing). Nighthawks: nobody&rsquo;s talking; make up what happened. American Gothic: it&rsquo;s his sister and his dentist.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Spooky</div><div class="rmeta"><span class="mo">Oct</span> &middot; American + Modern, Arms &amp; Armor</div><div class="rsub"><b>Ivan Albright, Picture of Dorian Gray</b> &middot; Plus Magritte, Time Transfixed (train out of a fireplace); Albright, That Which I Should Have Done I Did Not Do (the door); the Deering arms and armor hall. <i>Do: the Dorian Gray was painted for the 1945 film, and the movie flips to color for the one shot of it. Kai reads the book in a few years; Andrew has it in his queue now.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Tiny worlds</div><div class="rmeta"><span class="mo">Nov</span> &middot; lower level</div><div class="rsub"><b>The Thorne Miniature Rooms</b> &middot; 68 rooms at one inch to the foot, 1930s, built by hand. Plus the Rubloff paperweight collection next door. <i>Do: each kid picks the room they&rsquo;d live in and the one with the best fake view out the window. Find the room with a tiny newspaper you can read.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Light</div><div class="rmeta"><span class="mo">Dec</span> &middot; Impressionism; the Chagall windows</div><div class="rsub"><b>Monet, Stacks of Wheat (the series)</b> &middot; Plus Caillebotte, Paris Street; Rainy Day; Chagall, America Windows (the blue glass from Ferris Bueller). <i>Do: the Monets are the same haystack at different hours. Put them in time order. Caillebotte: find the vanishing point with your finger. Check whether the Thorne rooms are decorated for the holidays.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Ancient</div><div class="rmeta"><span class="mo">Jan</span> &middot; Greek, Roman, Egyptian galleries</div><div class="rsub"><b>Greek vases</b> &middot; Plus the mummy case of Paankhenamun; Roman portrait heads. <i>Do: Kai finds a myth he knows from D&rsquo;Aulaires on a vase (Heracles and Odysseus are the common ones). Zada finds hers from the Marcia Williams comic. Then the mummy.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Faces</div><div class="rmeta"><span class="mo">Feb</span> &middot; European painting</div><div class="rsub"><b>Picasso, The Old Guitarist</b> &middot; Plus Van Gogh, Self-Portrait and The Bedroom; Rembrandt, Old Man with a Gold Chain; Cassatt, The Child&rsquo;s Bath; Toulouse-Lautrec, At the Moulin Rouge. <i>Do: there&rsquo;s a woman&rsquo;s face hidden under the Old Guitarist; Picasso painted over an earlier picture and you can see her ghost above his neck. Van Gogh: his eyes follow you; ask why painters do that.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Japan</div><div class="rmeta"><span class="mo">Mar</span> &middot; Arts of Asia; the Ando Gallery</div><div class="rsub"><b>Japanese woodblock prints</b> &middot; Plus the Ando Gallery (the dark room of pillars with the screens). Hokusai&rsquo;s Great Wave if it&rsquo;s on view; prints rotate every few months, so check. <i>Do: Ghibli household. Find the Totoro trees and the Castle in the Sky clouds in the screens. A print was carved in wood and stamped, so there are many copies; ask which is &ldquo;the real one.&rdquo;</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Is it art?</div><div class="rmeta"><span class="mo">Apr</span> &middot; Modern Wing</div><div class="rsub"><b>Kandinsky, Improvisation No. 30 (Cannons)</b> &middot; Plus Pollock, Greyed Rainbow; Lichtenstein, Brushstroke with Spatter; Warhol, Mao; a Calder mobile; Joan Mitchell, City Landscape. <i>Do: each kid argues one piece IS art and one ISN&rsquo;T, and has to give a reason. Mussorgsky&rsquo;s Pictures is this month&rsquo;s breakfast music; the connection is the whole point.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Chicago</div><div class="rmeta"><span class="mo">May</span> &middot; American art; architecture galleries; then outside</div><div class="rsub"><b>Archibald Motley, Nightlife</b> &middot; Plus the Chicago Stock Exchange Trading Room (Louis Sullivan, rebuilt inside the museum); Frank Lloyd Wright windows and chairs; the architecture fragments. <i>Do: Motley painted Bronzeville in 1943, a few miles from the building. Then walk out: Cloud Gate, Calder&rsquo;s Flamingo, the Picasso in Daley Plaza. Art that isn&rsquo;t in a museum.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">America, big</div><div class="rmeta"><span class="mo">Jun</span> &middot; American galleries; top of the main stairs</div><div class="rsub"><b>Georgia O&rsquo;Keeffe, Sky Above Clouds IV</b> &middot; Plus Winslow Homer watercolors (if up); Sargent; Whistler; Jacob Lawrence; Kerry James Marshall, Many Mansions. <i>Do: the O&rsquo;Keeffe is 24 feet wide, painted at 77 from an airplane window. Ask what the picture is of; the answer (clouds from above) took most people a minute in 1965.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Other worlds</div><div class="rmeta"><span class="mo">Jul</span> &middot; Arts of Africa; Ancient Americas; Arts of Asia</div><div class="rsub"><b>African masks</b> &middot; Plus the Maya and Aztec objects; the Buddha heads in the Indian galleries. <i>Do: a mask in a case is a mask with the music, the dance and the person taken away. Ask what&rsquo;s missing. The Ancient Americas room has ballgame gear: a sport with rules we only half know.</i></div></div></li>
+      <li><span class="n">&middot;</span><div class="row"><div class="rtitle">Sketch day</div><div class="rmeta"><span class="mo">Aug</span> &middot; their pick</div><div class="rsub"><b>One work each, ten minutes, pencil</b> &middot; Each kid picks anything from the year and draws it. Pencil and a small pad only (museum rule). Postcard of it from the shop goes on the fridge. <i>Do: drawing a thing makes you look at it for ten minutes. That&rsquo;s the entire lesson of the year in one sitting.</i></div></div></li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="sec"><span class="num">How it runs</span><span class="rule"></span><span>Rules &middot; keep it small</span></div>
+
+    <ul class="rules">
+      <li><b>Film:</b> the monthly pick is the Friday family night for that month; everything else stays on the <a href="movies-h9k2m7.html">Movies</a> queue. One &ldquo;notice&rdquo; line per film, said before it starts, never a quiz after.</li>
+      <li><b>Books:</b> Kai&rsquo;s list is a year of real books at one a month; he reads faster than that and the gaps are his. Zada&rsquo;s list is wins first, classics as read-alouds. The rule for her stays: quit anything after 20 pages, no penalty.</li>
+      <li><b>Music:</b> 15&ndash;20 minutes at breakfast, one piece named out loud (&ldquo;this is Bach&rdquo;), the game is optional. Search the title on Spotify or YouTube; no playlist to maintain. Kids DJ on Fridays.</li>
+      <li><b>Art:</b> one mission, 45 minutes, after climbing. Each kid gets a &ldquo;last stop&rdquo; pick. Kids under 14 are free at the Art Institute; if the adults go more than three times a year, check whether a membership is cheaper than tickets. Check the free-evening schedule for Illinois residents before paying.</li>
+      <li><b>Tracking:</b> tell Claude what landed and what didn&rsquo;t the same way you do for movies. Verdicts change the next month&rsquo;s pick.</li>
+    </ul>
+  </div>
+
+</div>
+
+</main>
 </body>
 </html>
