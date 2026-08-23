@@ -196,6 +196,7 @@ const familyMembers = [
 /* Currently reading — static (not part of the recommendation flow). */
 const inProgress = {
   andrew: [
+    { title: "A Trade of Blood", author: "Robert Jackson Bennett", status: "Shadow of the Leviathan #3 — currently reading (Aug 2026)" },
     { title: "The Name of the Rose", author: "Umberto Eco",   status: "Currently enjoying" },
     { title: "Lord of Light",        author: "Roger Zelazny", status: "In progress" },
   ],
@@ -223,6 +224,7 @@ const recentlyFinished = {
   ],
   debbie: [
     { title: "Babel", author: "R.F. Kuang", verdict: "Finished by 2026-08 — liked it. Slow start, strong finish. Yellowface is the natural next." },
+    { title: "Wide Sargasso Sea", author: "Jean Rhys", verdict: "Tried it — not great. Pulled from Andrew's queue on the strength of that.", bounced: true },
   ],
   zada: [
     { title: "Esio Trot", author: "Roald Dahl", verdict: "Finished by 2026-08. Short Dahl; got her through. Still hasn't found a book she loves." },
@@ -328,9 +330,6 @@ const books = {
     { title: "The Tenant of Wildfell Hall", author: "Anne Brontë",
       tags: ["Brontë Sister","Diary Format","Dark & Modern"],
       pitch: "The third Brontë, wrongly the least famous. Diary-inside-a-frame about a woman escaping an abusive marriage — shockingly modern.", match: "93%" },
-    { title: "Wide Sargasso Sea", author: "Jean Rhys",
-      tags: ["Jane Eyre Companion","Caribbean Gothic","Bertha's Story","Short"],
-      pitch: "The mad wife in the attic — her story. Caribbean gothic, first-person, gorgeously written. Reads with Jane Eyre.", match: "93%" },
     { title: "The Picture of Dorian Gray", author: "Oscar Wilde",
       tags: ["Aestheticism","Corruption","Voice-Driven","Short"],
       pitch: "The one classic he might already know the shape of. Wilde's voice on every page. Short.", match: "90%" },
@@ -458,6 +457,56 @@ const GAME_NEXT = {
   shortlist: { next: "playing",   label: "We Got It",   cls: "selected"  },
   playing:   { next: "played",    label: "Mark Played", cls: "reading"   },
   played:    { next: "available", label: "Reset",       cls: "finished"  },
+};
+
+/* Form + what to notice — the reading-education line under each recommendation. */
+const LESSONS = {
+  // Zada — reluctant-reader set
+  "The Bad Guys (Book 1)": "<b>Graphic-chapter hybrid</b> &middot; <i>Notice how the pictures tell the joke and the words set it up. Finishing a whole book in one sitting is the point.</i>",
+  "Dog Man": "<b>Graphic novel</b> &middot; <i>The drawings are deliberately kid-style &mdash; the story is &lsquo;made&rsquo; by two kids. Spot the Flip-O-Rama pages.</i>",
+  "The Twits": "<b>Dahl, short novel</b> &middot; <i>Dahl describes people by what they do, not what they look like. How do you know the Twits are awful?</i>",
+  "Fantastic Mr. Fox": "<b>Dahl, short novel</b> &middot; <i>A plan story: watch Mr. Fox make a plan, have it fail, and make a better one. Then compare the movie.</i>",
+  "The Princess in Black": "<b>Early chapter book</b> &middot; <i>Secret identity &mdash; the oldest superhero trick. Why does she need to hide it?</i>",
+  "InvestiGators": "<b>Graphic novel</b> &middot; <i>Puns: count them on one page. Word jokes are reading jokes &mdash; you have to read to get them.</i>",
+  "Harry Potter and the Sorcerer's Stone": "<b>Boarding-school mystery</b> &middot; <i>Notice how almost every chapter ends on a hook that makes you turn the page.</i>",
+  "The Graveyard Book": "<b>Novel, episodic</b> &middot; <i>It&rsquo;s The Jungle Book retold with ghosts &mdash; spot the borrowings once you know.</i>",
+  "Coraline": "<b>Fairy tale with rules</b> &middot; <i>What makes the Other Mother scary with no blood at all? Buttons, and rules she can&rsquo;t break.</i>",
+  "Matilda": "<b>Dahl comedy</b> &middot; <i>Grown-ups are the villains, kids are the heroes &mdash; Dahl&rsquo;s signature. Listen for invented words.</i>",
+  "Witch Boy": "<b>Graphic novel</b> &middot; <i>Read the pictures: what do the panels say that the words don&rsquo;t?</i>",
+  "Sheets": "<b>Graphic novel</b> &middot; <i>Watch the colors &mdash; the palette changes with the mood of each scene.</i>",
+  "Wings of Fire: The Dragonet Prophecy": "<b>Fantasy series</b> &middot; <i>A prophecy plot: keep score of how the story pays off each line of the prophecy.</i>",
+  "Spy x Family Vol. 1": "<b>Manga, reads right-to-left</b> &middot; <i>Dramatic irony: we know everyone&rsquo;s secret, they don&rsquo;t. That&rsquo;s where the jokes come from.</i>",
+  "Saiki K Vol. 1": "<b>Gag manga</b> &middot; <i>Comedy timing in panels &mdash; setup, setup, punchline. Same rhythm as the anime.</i>",
+  // Kai
+  "Lockwood & Co: The Screaming Staircase": "<b>Ghost story + detective agency</b> &middot; <i>First-person narrator: decide how much you trust Lucy&rsquo;s version of events.</i>",
+  "The Maze Runner": "<b>Dystopian thriller</b> &middot; <i>Starts in the middle (in medias res): you know exactly as much as Thomas does, and no more.</i>",
+  "Miss Peregrine's Home for Peculiar Children": "<b>Fantasy built on real photos</b> &middot; <i>The author found the photographs first and wrote the story around them. Which came first in each chapter?</i>",
+  "Hatchet": "<b>Survival novel</b> &middot; <i>Almost no dialogue &mdash; the whole book is inside one boy&rsquo;s head. Short chapters, short sentences, on purpose.</i>",
+  "The Outsiders": "<b>Coming-of-age classic</b> &middot; <i>Written by a 16-year-old, and it sounds like it. Voice is the entire book.</i>",
+  "Scythe": "<b>Dystopia disguised as utopia</b> &middot; <i>Nobody dies &mdash; so what drives the plot? The rules of the world are the engine.</i>",
+  "Alex Rider: Stormbreaker": "<b>Spy thriller</b> &middot; <i>The James Bond formula for kids: gadgets, a villain&rsquo;s master plan, a ticking clock. Spot all three.</i>",
+  "Skulduggery Pleasant": "<b>Urban fantasy</b> &middot; <i>Banter-driven: notice how much you learn about characters from how they talk, not how they&rsquo;re described.</i>",
+  // Andrew
+  "My Cousin Rachel": "<b>Gothic, unreliable narrator</b> &middot; <i>Philip never realizes he&rsquo;s unreliable. Du Maurier refuses to resolve the question &mdash; that&rsquo;s the design.</i>",
+  "The Woman in White": "<b>Victorian sensation novel</b> &middot; <i>Invented the genre. Multi-witness testimony structure &mdash; Dracula copied it 37 years later.</i>",
+  "The Tenant of Wildfell Hall": "<b>Brontë, frame narrative</b> &middot; <i>A diary inside letters. The proto-feminist Brontë novel; Charlotte suppressed it after Anne died.</i>",
+  "Wide Sargasso Sea": "<b>Postcolonial prequel</b> &middot; <i>Jane Eyre&rsquo;s mad wife gets her own voice. Read it as an argument with Brontë.</i>",
+  "The Picture of Dorian Gray": "<b>Aestheticism in prose</b> &middot; <i>The epigram as style &mdash; Wilde&rsquo;s sentences are the point, the plot is the excuse.</i>",
+  "Dracula": "<b>Epistolary horror</b> &middot; <i>Letters, journals, telegrams, phonograph &mdash; 1897 technology as plot device. The multi-voice template.</i>",
+  "The Thirteenth Tale": "<b>Modern gothic pastiche</b> &middot; <i>Spot the Jane Eyre and Rebecca borrowings; it&rsquo;s built from them deliberately.</i>",
+  "We Have Always Lived in the Castle": "<b>Voice novel</b> &middot; <i>Merricat&rsquo;s narration IS the horror. Shirley Jackson&rsquo;s shortest and best.</i>",
+  "Mexican Gothic": "<b>Gothic transplanted</b> &middot; <i>1950s Mexico, English mansion. What the gothic form keeps when you move it, and what it sheds.</i>",
+  "A Gentleman in Moscow": "<b>Confined-space novel</b> &middot; <i>Thirty years in one building. How a narrow setting forces a wide story.</i>",
+  "The Wager": "<b>Narrative nonfiction</b> &middot; <i>Competing survivor accounts &mdash; the structure is a trial. Grann lets the sources contradict.</i>",
+  "Wuthering Heights": "<b>Gothic, nested narrators</b> &middot; <i>Lockwood hears it from Nelly who saw half of it. The frame is the point &mdash; nobody is reliable.</i>",
+  "Piranesi": "<b>Epistolary, dreamlike</b> &middot; <i>Journal entries from a narrator whose ignorance is the mystery. Short; read in two sittings.</i>",
+  "The Historian": "<b>Scholarly thriller</b> &middot; <i>Dracula retold through archives and letters. The research is the adventure.</i>",
+  // Debbie
+  "Yellowface": "<b>Satire, unreliable first-person</b> &middot; <i>A narrator you&rsquo;re meant to dislike but keep reading. Publishing-industry inside baseball.</i>",
+  "The Likeness": "<b>Literary crime</b> &middot; <i>Doppelg&auml;nger premise. Tana French&rsquo;s slow-burn: the case matters less than the narrator.</i>",
+  "I'm Glad My Mom Died": "<b>Memoir</b> &middot; <i>Comedy as coping &mdash; the voice is the argument. She narrates the audiobook herself.</i>",
+  "Such a Fun Age": "<b>Social novel, dual POV</b> &middot; <i>Race and class through small awkward moments, not big speeches. Severance energy.</i>",
+  "The Fifth Season": "<b>Fantasy, structural experiment</b> &middot; <i>Second-person narration + three braided timelines. Won three Hugos in a row for the trilogy.</i>",
 };
 
 /* Form + what to notice — the reading-education line under each recommendation. */
