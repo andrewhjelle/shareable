@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Engineering voice agents: Latency, quality, and scale — Talk Brief</title>
+<title>Engineering voice agents: Latency, quality, and scale &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,139 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Gives concrete latency and quality targets for building a production voice agent pipeline (STT word error rate, LLM time-to-first-token, TTS real-time factor) and specific engineering levers like model size range and co-locating models t...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Human conversational turn-taking happens around 300ms; agents taking over 500ms are noticeable and over 1-2 seconds cause people to hang up, which sets the latency budget for the whole pipeline (c1, c2).</li><li>Component targets: STT state-of-the-art is around 6% word error rate with Together&#x27;s models hitting P90 ~100ms transcript completion; LLM should target ~200-300ms time-to-first-token, which caps usable model size at roughly 8-30B parameters (c3, c4, c5).</li><li>Co-locating STT/LLM/TTS models and the agent orchestrator in the same data center can cut network latency from ~75ms to ~5ms, a 30% reduction on an already-optimized pipeline; pure speech-to-speech models are still held back in production mainly by weaker instruction-following and tool-calling (c6, c7).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Voice agent latency pipeline (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">VOICE AGENT LATENCY PIPELINE (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">LATENCY BUDGET</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">User speech</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Turn-taking cue ~300ms; hangs up past</text><text x="430" y="107" font-size="8.5" text-anchor="middle" fill="#807565">1-2s</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">CASCADING PIPELINE</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">STT</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">SOTA ~6% WER; Together P90 ~100ms</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">LLM</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">TTFT target 200-300ms caps size 8-30B</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">TTS</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Starts as LLM tokens stream in</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">PRODUCTION ALTERNATIVES</text><rect x="24" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="315" font-size="11" text-anchor="middle" fill="#14110D">Co-location</text><text x="120" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Same DC cuts network latency 75ms</text><text x="120" y="343" font-size="8.5" text-anchor="middle" fill="#807565">to 5ms</text><rect x="230" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="315" font-size="11" text-anchor="middle" fill="#14110D">Speech-to-speech model</text><text x="327" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Single model; weak tool-calling</text><text x="327" y="343" font-size="8.5" text-anchor="middle" fill="#807565">limits prod use</text><rect x="437" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="315" font-size="11" text-anchor="middle" fill="#14110D">Fine-tuned small LLM</text><text x="533" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Tuned on use-case data to raise</text><text x="533" y="343" font-size="8.5" text-anchor="middle" fill="#807565">tool-calling</text><rect x="644" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="315" font-size="11" text-anchor="middle" fill="#14110D">Thinker-talker pattern</text><text x="740" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Small LLM talks, hands off via one</text><text x="740" y="343" font-size="8.5" text-anchor="middle" fill="#807565">tool call</text><path d="M417,118 V127 H193 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="305" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">speaks</text><line x1="311" y1="207" x2="325" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">transcript</text><line x1="535" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">tokens stream</text><path d="M654,178 V169 H430 V118" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="167" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">audio</text><path d="M94,296 V287 H219 V236" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="157" y="285" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">same data center</text><path d="M120,296 V279 H404 V236" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="262" y="277" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">same data center</text><path d="M146,296 V271 H641 V236" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="394" y="269" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">same data center</text><path d="M443,118 V135 H327 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="385" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">alt: single model</text><path d="M533,296 V263 H430 V236" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="482" y="261" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">raises tool-calling</text><path d="M417,236 V245 H740 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="578" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">hands off via tool call</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the cascading STT/LLM/TTS pipeline against the speaker&#x27;s latency budget and the alternatives teams reach for when the cascade is not enough (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">VOICE AGENT LATENCY PIPELINE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 843.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- user -->
+<g id="node1" class="node">
+<title>user</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="704.92,-298.87 517,-298.87 517,-262.59 704.92,-262.59 704.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="580.59" y="-280.78" font-family="Geist Mono" font-size="11.00">User speech</text>
+<text xml:space="preserve" text-anchor="start" x="529.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Turn&#45;taking cue ~300ms; hangs up past 1&#45;2s</text>
+</g>
+<!-- stt -->
+<g id="node2" class="node">
+<title>stt</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="483.92,-211.34 314,-211.34 314,-175.06 483.92,-175.06 483.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="389.96" y="-193.25" font-family="Geist Mono" font-size="11.00">STT</text>
+<text xml:space="preserve" text-anchor="start" x="326.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">SOTA ~6% WER; Together P90 ~100ms</text>
+</g>
+<!-- user&#45;&gt;stt -->
+<g id="edge1" class="edge">
+<title>user&#45;&gt;stt</title>
+<path fill="none" stroke="#c8501f" d="M566.78,-261.9C533.04,-248.3 486.47,-229.51 450.95,-215.17"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="451.9,-212.92 444.49,-212.57 450.07,-217.46 451.9,-212.92"/>
+<text xml:space="preserve" text-anchor="middle" x="530.4" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">speaks</text>
+</g>
+<!-- s2s -->
+<g id="node6" class="node">
+<title>s2s</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="834.67,-211.34 645.25,-211.34 645.25,-175.06 834.67,-175.06 834.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="679.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Speech&#45;to&#45;speech model</text>
+<text xml:space="preserve" text-anchor="start" x="658.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Single model; weak tool&#45;calling limits prod use</text>
+</g>
+<!-- user&#45;&gt;s2s -->
+<g id="edge8" class="edge">
+<title>user&#45;&gt;s2s</title>
+<path fill="none" stroke="#c8501f" d="M637.69,-262.01C657.58,-248.82 684.87,-230.73 706.26,-216.55"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="707.52,-218.65 712,-212.74 704.82,-214.56 707.52,-218.65"/>
+<text xml:space="preserve" text-anchor="middle" x="715.06" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">alt: single model</text>
+</g>
+<!-- llm -->
+<g id="node3" class="node">
+<title>llm</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="338.54,-123.81 169.38,-123.81 169.38,-87.53 338.54,-87.53 338.54,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="244.58" y="-105.72" font-family="Geist Mono" font-size="11.00">LLM</text>
+<text xml:space="preserve" text-anchor="start" x="182.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">TTFT target 200&#45;300ms caps size 8&#45;30B</text>
+</g>
+<!-- stt&#45;&gt;llm -->
+<g id="edge2" class="edge">
+<title>stt&#45;&gt;llm</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M368.92,-174.48C346.36,-161.18 315.35,-142.88 291.22,-128.65"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="292.54,-126.58 285.27,-125.14 290.05,-130.8 292.54,-126.58"/>
+<text xml:space="preserve" text-anchor="middle" x="352.77" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">transcript</text>
+</g>
+<!-- tts -->
+<g id="node4" class="node">
+<title>tts</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="586.05,-36.28 449.88,-36.28 449.88,0 586.05,0 586.05,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="508.96" y="-18.19" font-family="Geist Mono" font-size="11.00">TTS</text>
+<text xml:space="preserve" text-anchor="start" x="462.84" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Starts as LLM tokens stream in</text>
+</g>
+<!-- llm&#45;&gt;tts -->
+<g id="edge3" class="edge">
+<title>llm&#45;&gt;tts</title>
+<path fill="none" stroke="#c8501f" d="M308.98,-86.84C351.61,-73.03 410.69,-53.89 455.16,-39.48"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="455.67,-41.9 461.57,-37.41 454.15,-37.24 455.67,-41.9"/>
+<text xml:space="preserve" text-anchor="middle" x="428.77" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">tokens stream</text>
+</g>
+<!-- thinker_talker -->
+<g id="node8" class="node">
+<title>thinker_talker</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="340.79,-36.28 167.12,-36.28 167.12,0 340.79,0 340.79,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="201.08" y="-18.19" font-family="Geist Mono" font-size="11.00">Thinker&#45;talker pattern</text>
+<text xml:space="preserve" text-anchor="start" x="180.08" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Small LLM talks, hands off via one tool call</text>
+</g>
+<!-- llm&#45;&gt;thinker_talker -->
+<g id="edge10" class="edge">
+<title>llm&#45;&gt;thinker_talker</title>
+<path fill="none" stroke="#c8501f" d="M253.96,-86.95C253.96,-74.91 253.96,-58.78 253.96,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="256.41,-45.35 253.96,-38.35 251.51,-45.35 256.41,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="295.21" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">hands off via tool call</text>
+</g>
+<!-- tts&#45;&gt;user -->
+<g id="edge4" class="edge">
+<title>tts&#45;&gt;user</title>
+<path fill="none" stroke="#c8501f" d="M529.78,-36.92C544.85,-60.4 570.66,-103.52 584.96,-143.81 598.09,-180.79 605.05,-225.91 608.37,-253.73"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="605.92,-253.94 609.15,-260.62 610.79,-253.38 605.92,-253.94"/>
+<text xml:space="preserve" text-anchor="middle" x="598.71" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">audio</text>
+</g>
+<!-- colocate -->
+<g id="node5" class="node">
+<title>colocate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="490.67,-298.87 307.25,-298.87 307.25,-262.59 490.67,-262.59 490.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="371.96" y="-280.78" font-family="Geist Mono" font-size="11.00">Co&#45;location</text>
+<text xml:space="preserve" text-anchor="start" x="320.21" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Same DC cuts network latency 75ms to 5ms</text>
+</g>
+<!-- colocate&#45;&gt;stt -->
+<g id="edge5" class="edge">
+<title>colocate&#45;&gt;stt</title>
+<path fill="none" stroke="#c8501f" d="M398.96,-262.01C398.96,-249.97 398.96,-233.84 398.96,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="401.41,-220.41 398.96,-213.41 396.51,-220.41 401.41,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="431.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">same data center</text>
+</g>
+<!-- colocate&#45;&gt;llm -->
+<g id="edge6" class="edge">
+<title>colocate&#45;&gt;llm</title>
+<path fill="none" stroke="#c8501f" d="M308.05,-261.91C280.55,-251.81 253.33,-236.02 236.96,-211.34 221.21,-187.6 230.72,-154.31 240.7,-131.69"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="242.83,-132.92 243.57,-125.55 238.39,-130.85 242.83,-132.92"/>
+<text xml:space="preserve" text-anchor="middle" x="269.96" y="-190.75" font-family="Geist Mono" font-size="8.50" fill="#c8501f">same data center</text>
+</g>
+<!-- colocate&#45;&gt;tts -->
+<g id="edge7" class="edge">
+<title>colocate&#45;&gt;tts</title>
+<path fill="none" stroke="#c8501f" d="M442.65,-261.92C463.24,-250.84 485.35,-234.27 494.96,-211.34 518.29,-155.68 520.21,-83.52 519.27,-45.4"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="521.72,-45.35 519.05,-38.43 516.82,-45.51 521.72,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="546.09" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">same data center</text>
+</g>
+<!-- finetune -->
+<g id="node7" class="node">
+<title>finetune</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="181.92,-211.34 0,-211.34 0,-175.06 181.92,-175.06 181.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="39.58" y="-193.25" font-family="Geist Mono" font-size="11.00">Fine&#45;tuned small LLM</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Tuned on use&#45;case data to raise tool&#45;calling</text>
+</g>
+<!-- finetune&#45;&gt;llm -->
+<g id="edge9" class="edge">
+<title>finetune&#45;&gt;llm</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M106.33,-174.52C115.98,-164.35 129.18,-152 142.96,-143.81 153.71,-137.42 165.7,-131.96 177.72,-127.35"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="178.47,-129.68 184.19,-124.96 176.77,-125.09 178.47,-129.68"/>
+<text xml:space="preserve" text-anchor="middle" x="175.96" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">raises tool&#45;calling</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the cascading STT/LLM/TTS pipeline against the speaker&#x27;s latency budget and the alternatives teams reach for when the cascade is not enough (ours).</p></section>
 
 
 

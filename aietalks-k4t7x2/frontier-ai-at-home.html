@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Run Frontier AI at Home — Talk Brief</title>
+<title>Run Frontier AI at Home &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,132 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Details the concrete engineering constraints on local LLM inference (memory-bandwidth bound, not compute-bound) and reports real benchmark numbers -- a 30% speedup from kernel fusion, roughly 5x hardware efficiency gains in two years, a ...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Local inference is bottlenecked by memory bandwidth, not compute, and current software leaves large gains on the table -- fusing unnecessary kernels on Qwen 3.5 alone yielded a 30% speedup (c1, c2, c3).</li><li>On an intelligence-per-joule metric, local inference improved roughly 5x from hardware and separately from model gains over two years; the speaker predicts $5,000 consumer hardware will reach close to frontier-level performance within about 18 months to 2 years (c4, c5).</li><li>EXO clusters heterogeneous hardware (Macs plus an Nvidia Spark) and added RDMA to cut inter-device latency by 100x, splitting prefill and decode across devices for roughly a 2x speedup on large prompts in a live demo (c6, c9).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="EXO&#x27;s local-inference optimization stack (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">EXO&#x27;S LOCAL-INFERENCE OPTIMIZATION STACK (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">BOTTLENECK</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">Memory-bandwidth bound</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">most inference ops bound by memory,</text><text x="206" y="107" font-size="8.5" text-anchor="middle" fill="#807565">not compute</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Kernels launched separately</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Qwen 3.5 ran ~50% slower than</text><text x="430" y="107" font-size="8.5" text-anchor="middle" fill="#807565">theoretical</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">High inter-device latency</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">~300 microseconds without RDMA</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">EXO OPTIMIZATION</text><rect x="24" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="197" font-size="11" text-anchor="middle" fill="#14110D">Kernel fusion</text><text x="120" y="213" font-size="8.5" text-anchor="middle" fill="#807565">fused unnecessary separate kernel</text><text x="120" y="225" font-size="8.5" text-anchor="middle" fill="#807565">launches</text><rect x="230" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="197" font-size="11" text-anchor="middle" fill="#14110D">Harness prompt caching</text><text x="327" y="213" font-size="8.5" text-anchor="middle" fill="#807565">caches system prompt/tools across</text><text x="327" y="225" font-size="8.5" text-anchor="middle" fill="#807565">turns</text><rect x="437" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="197" font-size="11" text-anchor="middle" fill="#14110D">RDMA clustering</text><text x="533" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Macs + Nvidia Spark over</text><text x="533" y="225" font-size="8.5" text-anchor="middle" fill="#807565">Thunderbolt/RDMA</text><rect x="644" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="197" font-size="11" text-anchor="middle" fill="#14110D">Prefill/decode split</text><text x="740" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Spark does prefill, MacBook does</text><text x="740" y="225" font-size="8.5" text-anchor="middle" fill="#807565">decode</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">MEASURED RESULT</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">+30% inference speed</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">on Qwen 3.5, Apple silicon</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">100x lower latency</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">300us down to single-digit</text><text x="430" y="343" font-size="8.5" text-anchor="middle" fill="#807565">microseconds</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">2x demo speedup</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">vs MacBook alone, large prompt</text><path d="M430,118 V127 H120 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="275" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">fuse</text><path d="M120,236 V245 H206 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="163" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">yields</text><path d="M206,118 V135 H327 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="266" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">informs</text><path d="M654,118 V143 H533 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="594" y="141" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">reduce</text><path d="M520,236 V253 H430 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="475" y="251" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">yields</text><line x1="630" y1="207" x2="644" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="636" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">enables</text><path d="M740,236 V261 H654 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="697" y="259" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">yields</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the specific bottlenecks EXO names and the techniques it says addressed them, using the speedup numbers reported in the talk; the causal links between technique and result reflect the speaker&#x27;s own framing rather than independent verification (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">EXO&#x27;S LOCAL-INFERENCE OPTIMIZATION STACK (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 804.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- b1 -->
+<g id="node1" class="node">
+<title>b1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="211.17,-298.87 0,-298.87 0,-262.59 211.17,-262.59 211.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="42.59" y="-280.78" font-family="Geist Mono" font-size="11.00">Memory&#45;bandwidth bound</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">most inference ops bound by memory, not compute</text>
+</g>
+<!-- o2 -->
+<g id="node5" class="node">
+<title>o2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="192.42,-211.34 18.75,-211.34 18.75,-175.06 192.42,-175.06 192.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="46.34" y="-193.25" font-family="Geist Mono" font-size="11.00">Harness prompt caching</text>
+<text xml:space="preserve" text-anchor="start" x="31.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">caches system prompt/tools across turns</text>
+</g>
+<!-- b1&#45;&gt;o2 -->
+<g id="edge3" class="edge">
+<title>b1&#45;&gt;o2</title>
+<path fill="none" stroke="#c8501f" d="M105.59,-262.01C105.59,-249.97 105.59,-233.84 105.59,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="108.04,-220.41 105.59,-213.41 103.14,-220.41 108.04,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="119.84" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">informs</text>
+</g>
+<!-- b2 -->
+<g id="node2" class="node">
+<title>b2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="417.67,-298.87 233.5,-298.87 233.5,-262.59 417.67,-262.59 417.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="257.34" y="-280.78" font-family="Geist Mono" font-size="11.00">Kernels launched separately</text>
+<text xml:space="preserve" text-anchor="start" x="246.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Qwen 3.5 ran ~50% slower than theoretical</text>
+</g>
+<!-- o1 -->
+<g id="node4" class="node">
+<title>o1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="418.05,-211.34 233.13,-211.34 233.13,-175.06 418.05,-175.06 418.05,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="294.09" y="-193.25" font-family="Geist Mono" font-size="11.00">Kernel fusion</text>
+<text xml:space="preserve" text-anchor="start" x="246.09" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">fused unnecessary separate kernel launches</text>
+</g>
+<!-- b2&#45;&gt;o1 -->
+<g id="edge1" class="edge">
+<title>b2&#45;&gt;o1</title>
+<path fill="none" stroke="#c8501f" d="M325.59,-262.01C325.59,-249.97 325.59,-233.84 325.59,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="328.04,-220.41 325.59,-213.41 323.14,-220.41 328.04,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="333.46" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">fuse</text>
+</g>
+<!-- b3 -->
+<g id="node3" class="node">
+<title>b3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="696.05,-298.87 547.12,-298.87 547.12,-262.59 696.05,-262.59 696.05,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="561.59" y="-280.78" font-family="Geist Mono" font-size="11.00">High inter&#45;device latency</text>
+<text xml:space="preserve" text-anchor="start" x="560.09" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">~300 microseconds without RDMA</text>
+</g>
+<!-- o3 -->
+<g id="node6" class="node">
+<title>o3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="714.42,-211.34 528.75,-211.34 528.75,-175.06 714.42,-175.06 714.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="581.84" y="-193.25" font-family="Geist Mono" font-size="11.00">RDMA clustering</text>
+<text xml:space="preserve" text-anchor="start" x="541.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Macs + Nvidia Spark over Thunderbolt/RDMA</text>
+</g>
+<!-- b3&#45;&gt;o3 -->
+<g id="edge4" class="edge">
+<title>b3&#45;&gt;o3</title>
+<path fill="none" stroke="#c8501f" d="M621.59,-262.01C621.59,-249.97 621.59,-233.84 621.59,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="624.04,-220.41 621.59,-213.41 619.14,-220.41 624.04,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="633.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reduce</text>
+</g>
+<!-- r1 -->
+<g id="node8" class="node">
+<title>r1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="394.8,-123.81 256.38,-123.81 256.38,-87.53 394.8,-87.53 394.8,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="269.34" y="-105.72" font-family="Geist Mono" font-size="11.00">+30% inference speed</text>
+<text xml:space="preserve" text-anchor="start" x="279.09" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">on Qwen 3.5, Apple silicon</text>
+</g>
+<!-- o1&#45;&gt;r1 -->
+<g id="edge2" class="edge">
+<title>o1&#45;&gt;r1</title>
+<path fill="none" stroke="#c8501f" d="M325.59,-174.48C325.59,-162.44 325.59,-146.31 325.59,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="328.04,-132.88 325.59,-125.88 323.14,-132.88 328.04,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="336.46" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">yields</text>
+</g>
+<!-- o4 -->
+<g id="node7" class="node">
+<title>o4</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="602.92,-123.81 432.25,-123.81 432.25,-87.53 602.92,-87.53 602.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="472.96" y="-105.72" font-family="Geist Mono" font-size="11.00">Prefill/decode split</text>
+<text xml:space="preserve" text-anchor="start" x="445.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Spark does prefill, MacBook does decode</text>
+</g>
+<!-- o3&#45;&gt;o4 -->
+<g id="edge6" class="edge">
+<title>o3&#45;&gt;o4</title>
+<path fill="none" stroke="#c8501f" d="M600.04,-174.48C584.28,-161.52 562.76,-143.82 545.66,-129.76"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="547.24,-127.88 540.28,-125.33 544.13,-131.67 547.24,-127.88"/>
+<text xml:space="preserve" text-anchor="middle" x="590.06" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+<!-- r2 -->
+<g id="node9" class="node">
+<title>r2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="795.92,-123.81 625.25,-123.81 625.25,-87.53 795.92,-87.53 795.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="664.84" y="-105.72" font-family="Geist Mono" font-size="11.00">100x lower latency</text>
+<text xml:space="preserve" text-anchor="start" x="638.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">300us down to single&#45;digit microseconds</text>
+</g>
+<!-- o3&#45;&gt;r2 -->
+<g id="edge5" class="edge">
+<title>o3&#45;&gt;r2</title>
+<path fill="none" stroke="#c8501f" d="M640.03,-174.48C653.39,-161.63 671.6,-144.14 686.17,-130.13"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="687.73,-132.03 691.08,-125.42 684.33,-128.5 687.73,-132.03"/>
+<text xml:space="preserve" text-anchor="middle" x="682.29" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">yields</text>
+</g>
+<!-- r3 -->
+<g id="node10" class="node">
+<title>r3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="587.55,-36.28 447.63,-36.28 447.63,0 587.55,0 587.55,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="474.09" y="-18.19" font-family="Geist Mono" font-size="11.00">2x demo speedup</text>
+<text xml:space="preserve" text-anchor="start" x="460.59" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">vs MacBook alone, large prompt</text>
+</g>
+<!-- o4&#45;&gt;r3 -->
+<g id="edge7" class="edge">
+<title>o4&#45;&gt;r3</title>
+<path fill="none" stroke="#c8501f" d="M517.59,-86.95C517.59,-74.91 517.59,-58.78 517.59,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="520.04,-45.35 517.59,-38.35 515.14,-45.35 520.04,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="528.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">yields</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the specific bottlenecks EXO names and the techniques it says addressed them, using the speedup numbers reported in the talk; the causal links between technique and result reflect the speaker&#x27;s own framing rather than independent verification (ours).</p></section>
 
 
 

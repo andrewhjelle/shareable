@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Text Diffusion — Talk Brief</title>
+<title>Text Diffusion &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,132 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Explains the actual hardware reason text diffusion models are faster than autoregressive ones (fewer memory transfers, not raw compute), and where the real trade-off bites: much lower latency per user but worse throughput at large batch ...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Text diffusion trades throughput for latency: it needs far fewer memory transfers per response than autoregressive decoding, but multiple forward passes over a batch make it more expensive to serve at scale (c3, c2).</li><li>Gemini diffusion hit ~2,000 tokens/second in its research preview and could self-correct mistakes mid-generation because it sees future tokens, something GPT-4o and Gemini 2.5 Flash could not do on the same math problem (c4, c5).</li><li>No lab is putting text diffusion into flagship hosted models yet because of the throughput cost, but it&#x27;s already used in on-device/robotics settings where batching isn&#x27;t the bottleneck (c7, c8).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="How text diffusion trades throughput for latency (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">HOW TEXT DIFFUSION TRADES THROUGHPUT FOR LATENCY (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">MECHANISM</text><rect x="24" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="79" font-size="11" text-anchor="middle" fill="#14110D">Init noise block</text><text x="120" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Entire block initialized as random</text><text x="120" y="107" font-size="8.5" text-anchor="middle" fill="#807565">noise</text><rect x="230" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="79" font-size="11" text-anchor="middle" fill="#14110D">24 denoising passes</text><text x="327" y="95" font-size="8.5" text-anchor="middle" fill="#807565">24 passes generate 256 tokens</text><rect x="437" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="79" font-size="11" text-anchor="middle" fill="#14110D">Bidirectional self-correct</text><text x="533" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Sees future tokens, revises wrong</text><text x="533" y="107" font-size="8.5" text-anchor="middle" fill="#807565">steps</text><rect x="644" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="79" font-size="11" text-anchor="middle" fill="#14110D">Adaptive step count</text><text x="740" y="95" font-size="8.5" text-anchor="middle" fill="#807565">4 steps easy vs 31 steps hard</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">EFFICIENCY</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">~10x fewer transfers</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">vs autoregressive token-by-token</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">~2,000 tokens/sec</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Gemini diffusion preview, research</text><text x="542" y="225" font-size="8.5" text-anchor="middle" fill="#807565">demo</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">TRADE-OFF &amp; FIT</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Lower batch throughput</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Multiple passes cost more at scale</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">No flagship deployment</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Labs skip it due to cost-to-serve</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">Fits on-device/robotics</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">No large-batch throughput penalty</text><line x1="216" y1="89" x2="230" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">denoises</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">enables</text><line x1="423" y1="89" x2="644" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="533" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">scales steps</text><path d="M301,118 V127 H318 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="339" y="125" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">fewer transfers</text><line x1="423" y1="207" x2="437" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">yields speed</text><path d="M542,236 V245 H206 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="374" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">but costly at scale</text><line x1="311" y1="325" x2="325" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">raises cost to serve</text><line x1="535" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">so fits instead</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the denoising mechanism DeepMind described and the throughput trade-off that keeps it out of flagship serving today; specifics beyond what was said are not shown (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW TEXT DIFFUSION TRADES THROUGHPUT FOR LATENCY (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 512.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- init_noise -->
+<g id="node1" class="node">
+<title>init_noise</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="339.17,-561.46 176,-561.46 176,-525.18 339.17,-525.18 339.17,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="220.84" y="-543.37" font-family="Geist Mono" font-size="11.00">Init noise block</text>
+<text xml:space="preserve" text-anchor="start" x="188.96" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">Entire block initialized as random noise</text>
+</g>
+<!-- denoise_passes -->
+<g id="node2" class="node">
+<title>denoise_passes</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="327.17,-473.93 188,-473.93 188,-437.65 327.17,-437.65 327.17,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="208.09" y="-455.84" font-family="Geist Mono" font-size="11.00">24 denoising passes</text>
+<text xml:space="preserve" text-anchor="start" x="200.96" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">24 passes generate 256 tokens</text>
+</g>
+<!-- init_noise&#45;&gt;denoise_passes -->
+<g id="edge1" class="edge">
+<title>init_noise&#45;&gt;denoise_passes</title>
+<path fill="none" stroke="#c8501f" d="M257.59,-524.6C257.59,-512.56 257.59,-496.43 257.59,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="260.04,-483 257.59,-476 255.14,-483 260.04,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="273.71" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">denoises</text>
+</g>
+<!-- bidirectional -->
+<g id="node3" class="node">
+<title>bidirectional</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="169.17,-386.4 0,-386.4 0,-350.12 169.17,-350.12 169.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="26.46" y="-368.31" font-family="Geist Mono" font-size="11.00">Bidirectional self&#45;correct</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Sees future tokens, revises wrong steps</text>
+</g>
+<!-- denoise_passes&#45;&gt;bidirectional -->
+<g id="edge2" class="edge">
+<title>denoise_passes&#45;&gt;bidirectional</title>
+<path fill="none" stroke="#c8501f" d="M221.74,-437.07C194.48,-423.59 156.87,-405 127.92,-390.69"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="129.1,-388.54 121.74,-387.63 126.93,-392.93 129.1,-388.54"/>
+<text xml:space="preserve" text-anchor="middle" x="195.69" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+<!-- adaptive -->
+<g id="node4" class="node">
+<title>adaptive</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="323.8,-386.4 191.38,-386.4 191.38,-350.12 323.8,-350.12 323.8,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="208.84" y="-368.31" font-family="Geist Mono" font-size="11.00">Adaptive step count</text>
+<text xml:space="preserve" text-anchor="start" x="204.34" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">4 steps easy vs 31 steps hard</text>
+</g>
+<!-- denoise_passes&#45;&gt;adaptive -->
+<g id="edge3" class="edge">
+<title>denoise_passes&#45;&gt;adaptive</title>
+<path fill="none" stroke="#c8501f" d="M257.59,-437.07C257.59,-425.03 257.59,-408.9 257.59,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="260.04,-395.47 257.59,-388.47 255.14,-395.47 260.04,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="280.09" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">scales steps</text>
+</g>
+<!-- mem_savings -->
+<g id="node5" class="node">
+<title>mem_savings</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="491.55,-386.4 345.63,-386.4 345.63,-350.12 491.55,-350.12 491.55,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="366.46" y="-368.31" font-family="Geist Mono" font-size="11.00">~10x fewer transfers</text>
+<text xml:space="preserve" text-anchor="start" x="358.59" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">vs autoregressive token&#45;by&#45;token</text>
+</g>
+<!-- denoise_passes&#45;&gt;mem_savings -->
+<g id="edge4" class="edge">
+<title>denoise_passes&#45;&gt;mem_savings</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M290.94,-437.07C316.2,-423.65 351.02,-405.15 377.91,-390.87"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="378.9,-393.12 383.93,-387.67 376.6,-388.79 378.9,-393.12"/>
+<text xml:space="preserve" text-anchor="middle" x="376.22" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">fewer transfers</text>
+</g>
+<!-- throughput -->
+<g id="node6" class="node">
+<title>throughput</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="503.55,-298.87 333.63,-298.87 333.63,-262.59 503.55,-262.59 503.55,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="372.46" y="-280.78" font-family="Geist Mono" font-size="11.00">~2,000 tokens/sec</text>
+<text xml:space="preserve" text-anchor="start" x="346.59" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Gemini diffusion preview, research demo</text>
+</g>
+<!-- mem_savings&#45;&gt;throughput -->
+<g id="edge5" class="edge">
+<title>mem_savings&#45;&gt;throughput</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M418.59,-349.54C418.59,-337.5 418.59,-321.37 418.59,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="421.04,-307.94 418.59,-300.94 416.14,-307.94 421.04,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="441.84" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">yields speed</text>
+</g>
+<!-- batch_cost -->
+<g id="node7" class="node">
+<title>batch_cost</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="492.67,-211.34 344.5,-211.34 344.5,-175.06 492.67,-175.06 492.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="360.09" y="-193.25" font-family="Geist Mono" font-size="11.00">Lower batch throughput</text>
+<text xml:space="preserve" text-anchor="start" x="357.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Multiple passes cost more at scale</text>
+</g>
+<!-- throughput&#45;&gt;batch_cost -->
+<g id="edge6" class="edge">
+<title>throughput&#45;&gt;batch_cost</title>
+<path fill="none" stroke="#c8501f" d="M418.59,-262.01C418.59,-249.97 418.59,-233.84 418.59,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="421.04,-220.41 418.59,-213.41 416.14,-220.41 421.04,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="453.09" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">but costly at scale</text>
+</g>
+<!-- no_flagship -->
+<g id="node8" class="node">
+<title>no_flagship</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="488.92,-123.81 348.25,-123.81 348.25,-87.53 488.92,-87.53 488.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="361.21" y="-105.72" font-family="Geist Mono" font-size="11.00">No flagship deployment</text>
+<text xml:space="preserve" text-anchor="start" x="361.59" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Labs skip it due to cost&#45;to&#45;serve</text>
+</g>
+<!-- batch_cost&#45;&gt;no_flagship -->
+<g id="edge7" class="edge">
+<title>batch_cost&#45;&gt;no_flagship</title>
+<path fill="none" stroke="#c8501f" d="M418.59,-174.48C418.59,-162.44 418.59,-146.31 418.59,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="421.04,-132.88 418.59,-125.88 416.14,-132.88 421.04,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="455.34" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">raises cost to serve</text>
+</g>
+<!-- ondevice -->
+<g id="node9" class="node">
+<title>ondevice</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="493.8,-36.28 343.38,-36.28 343.38,0 493.8,0 493.8,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="363.46" y="-18.19" font-family="Geist Mono" font-size="11.00">Fits on&#45;device/robotics</text>
+<text xml:space="preserve" text-anchor="start" x="356.34" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">No large&#45;batch throughput penalty</text>
+</g>
+<!-- no_flagship&#45;&gt;ondevice -->
+<g id="edge8" class="edge">
+<title>no_flagship&#45;&gt;ondevice</title>
+<path fill="none" stroke="#c8501f" d="M418.59,-86.95C418.59,-74.91 418.59,-58.78 418.59,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="421.04,-45.35 418.59,-38.35 416.14,-45.35 421.04,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="445.21" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">so fits instead</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the denoising mechanism DeepMind described and the throughput trade-off that keeps it out of flagship serving today; specifics beyond what was said are not shown (ours).</p></section>
 
 
 

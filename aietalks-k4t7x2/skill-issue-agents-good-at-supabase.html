@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Skill Issue: How We Used AI to Make Agents Actually Good at Supabase — Talk Brief</title>
+<title>Skill Issue: How We Used AI to Make Agents Actually Good at Supabase &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,111 @@ Quotes are verbatim from the talk transcript with the time they were said.</span
 <p class="deck" style="font-size:15px">Documents a concrete, reproducible security bug -- Postgres views silently bypass row-level security unless a security_invoker flag is set -- worth checking in any Supabase/Postgres schema an agent can modify</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Skills add progressive disclosure over MCP: only the skill&#x27;s name/description front matter loads into context up front, with the full file loaded on demand -- the recommendation is to use skills and MCP together, not instead of each other.</li><li>Live demo: a Supabase SQL view built by Claude leaked salary and performance-review data across employees because Postgres views bypass row-level security by default; adding a security_invoker flag fixed it.</li><li>A skill costs about 1.3 thousand tokens of context once loaded, and phrasing a skill&#x27;s description with the verb &#x27;use&#x27; reportedly increases the chance Claude loads it -- but LLM-as-judge eval grading can itself be wrong, as shown when a passing run was graded as a failure.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="How a Supabase view leaked RLS data (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">HOW A SUPABASE VIEW LEAKED RLS DATA (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">AGENT + MCP</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Claude Code agent</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">builds SQL view via Supabase MCP</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">POSTGRES OBJECTS</text><rect x="213" y="178" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">Underlying table</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">protected by RLS policies</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">SQL view</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">runs with creator&#x27;s permissions</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">SECURITY BYPASS</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">RLS bypassed</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">view ignores table RLS by default</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Data leak</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">manager sees other depts</text><text x="542" y="343" font-size="8.5" text-anchor="middle" fill="#807565">salary/reviews</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">FIX</text><rect x="213" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="433" font-size="11" text-anchor="middle" fill="#14110D">security_invoker flag</text><text x="318" y="449" font-size="8.5" text-anchor="middle" fill="#807565">enables RLS on the view itself</text><rect x="437" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="433" font-size="11" text-anchor="middle" fill="#14110D">Supabase-security skill</text><text x="542" y="449" font-size="8.5" text-anchor="middle" fill="#807565">RLS checklist, ~1.3k tokens loaded</text><path d="M430,118 V127 H516 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="473" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">creates view</text><line x1="423" y1="207" x2="437" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">underlies</text><path d="M542,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">ignores RLS</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">exposes data</text><path d="M542,354 V363 H305 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="424" y="361" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">triggers fix</text><path d="M318,414 V405 H542 V236" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="403" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">restores RLS</text><line x1="437" y1="443" x2="423" y2="443" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="439" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">documents</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the live demo&#x27;s security_invoker bug as a mechanism rather than a one-off anecdote, so the RLS-bypass path likely generalizes to any Postgres view an agent creates (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW A SUPABASE VIEW LEAKED RLS DATA (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 400.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- agent -->
+<g id="node1" class="node">
+<title>agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="150.92,-386.4 3.5,-386.4 3.5,-350.12 150.92,-350.12 150.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="30.71" y="-368.31" font-family="Geist Mono" font-size="11.00">Claude Code agent</text>
+<text xml:space="preserve" text-anchor="start" x="16.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">builds SQL view via Supabase MCP</text>
+</g>
+<!-- view -->
+<g id="node3" class="node">
+<title>view</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="221.67,-298.87 84.75,-298.87 84.75,-262.59 221.67,-262.59 221.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="131.08" y="-280.78" font-family="Geist Mono" font-size="11.00">SQL view</text>
+<text xml:space="preserve" text-anchor="start" x="97.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">runs with creator&#39;s permissions</text>
+</g>
+<!-- agent&#45;&gt;view -->
+<g id="edge1" class="edge">
+<title>agent&#45;&gt;view</title>
+<path fill="none" stroke="#c8501f" d="M92.96,-349.54C104.27,-336.81 119.64,-319.51 132.03,-305.57"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="133.66,-307.42 136.48,-300.56 130,-304.17 133.66,-307.42"/>
+<text xml:space="preserve" text-anchor="middle" x="143.39" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">creates view</text>
+</g>
+<!-- table -->
+<g id="node2" class="node">
+<title>table</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="287.79,-386.4 172.62,-386.4 172.62,-350.12 287.79,-350.12 287.79,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="190.83" y="-368.31" font-family="Geist Mono" font-size="11.00">Underlying table</text>
+<text xml:space="preserve" text-anchor="start" x="185.58" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">protected by RLS policies</text>
+</g>
+<!-- table&#45;&gt;view -->
+<g id="edge2" class="edge">
+<title>table&#45;&gt;view</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M214.26,-349.54C202.8,-336.81 187.22,-319.51 174.67,-305.57"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="176.66,-304.12 170.16,-300.55 173.02,-307.4 176.66,-304.12"/>
+<text xml:space="preserve" text-anchor="middle" x="213.2" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">underlies</text>
+</g>
+<!-- bypass -->
+<g id="node4" class="node">
+<title>bypass</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="170.04,-211.34 26.37,-211.34 26.37,-175.06 170.04,-175.06 170.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="64.46" y="-193.25" font-family="Geist Mono" font-size="11.00">RLS bypassed</text>
+<text xml:space="preserve" text-anchor="start" x="39.33" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">view ignores table RLS by default</text>
+</g>
+<!-- view&#45;&gt;bypass -->
+<g id="edge3" class="edge">
+<title>view&#45;&gt;bypass</title>
+<path fill="none" stroke="#c8501f" d="M141.81,-262.01C133.78,-249.51 122.9,-232.6 114.03,-218.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="116.26,-217.73 110.41,-213.17 112.14,-220.39 116.26,-217.73"/>
+<text xml:space="preserve" text-anchor="middle" x="151.13" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">ignores RLS</text>
+</g>
+<!-- leak -->
+<g id="node5" class="node">
+<title>leak</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="174.42,-123.81 0,-123.81 0,-87.53 174.42,-87.53 174.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="63.96" y="-105.72" font-family="Geist Mono" font-size="11.00">Data leak</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">manager sees other depts salary/reviews</text>
+</g>
+<!-- bypass&#45;&gt;leak -->
+<g id="edge4" class="edge">
+<title>bypass&#45;&gt;leak</title>
+<path fill="none" stroke="#c8501f" d="M95.93,-174.48C94.38,-162.44 92.31,-146.31 90.57,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="93,-132.5 89.68,-125.87 88.14,-133.13 93,-132.5"/>
+<text xml:space="preserve" text-anchor="middle" x="118.12" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">exposes data</text>
+</g>
+<!-- fix -->
+<g id="node6" class="node">
+<title>fix</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="274.04,-36.28 142.38,-36.28 142.38,0 274.04,0 274.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="158.33" y="-18.19" font-family="Geist Mono" font-size="11.00">security_invoker flag</text>
+<text xml:space="preserve" text-anchor="start" x="155.33" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">enables RLS on the view itself</text>
+</g>
+<!-- leak&#45;&gt;fix -->
+<g id="edge5" class="edge">
+<title>leak&#45;&gt;fix</title>
+<path fill="none" stroke="#c8501f" d="M109.21,-86.93C121.09,-77.56 136.11,-66 149.96,-56.28 157.1,-51.27 164.88,-46.1 172.37,-41.28"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="173.28,-43.61 177.86,-37.78 170.64,-39.48 173.28,-43.61"/>
+<text xml:space="preserve" text-anchor="middle" x="170.58" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">triggers fix</text>
+</g>
+<!-- fix&#45;&gt;view -->
+<g id="edge6" class="edge">
+<title>fix&#45;&gt;view</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M208.52,-36.9C208.64,-75.62 205.8,-169.96 178.21,-242.59 176.59,-246.86 174.39,-251.12 171.98,-255.16"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="170.03,-253.66 168.28,-260.87 174.14,-256.33 170.03,-253.66"/>
+<text xml:space="preserve" text-anchor="middle" x="225.01" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">restores RLS</text>
+</g>
+<!-- skill -->
+<g id="node7" class="node">
+<title>skill</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="392.04,-123.81 242.38,-123.81 242.38,-87.53 392.04,-87.53 392.04,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="262.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Supabase&#45;security skill</text>
+<text xml:space="preserve" text-anchor="start" x="255.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">RLS checklist, ~1.3k tokens loaded</text>
+</g>
+<!-- skill&#45;&gt;fix -->
+<g id="edge7" class="edge">
+<title>skill&#45;&gt;fix</title>
+<path fill="none" stroke="#c8501f" d="M294.63,-86.95C277.96,-73.87 255.16,-55.98 237.16,-41.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="238.98,-40.17 231.96,-37.77 235.95,-44.02 238.98,-40.17"/>
+<text xml:space="preserve" text-anchor="middle" x="289.49" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">documents</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the live demo&#x27;s security_invoker bug as a mechanism rather than a one-off anecdote, so the RLS-bypass path likely generalizes to any Postgres view an agent creates (ours).</p></section>
 
 
 

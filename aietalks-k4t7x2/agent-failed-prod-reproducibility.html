@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Your Agent Failed in Prod. Good Luck Reproducing It. — Talk Brief</title>
+<title>Your Agent Failed in Prod. Good Luck Reproducing It. &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,139 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Argues that chasing bitwise-deterministic model output is the wrong fix for irreproducible agent failures, and instead shows a boundary-annotation recording/replay approach (Chronicle) that freezes non-LLM state so failed runs become rer...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Setting temperature to zero doesn&#x27;t make an agent reproducible -- it&#x27;s not even bitwise deterministic on real hardware because of batch-dependent floating-point ops and MoE routing, and it just repeats the same reasoning error identically.</li><li>The real target is replayability (capturing what a run did, well enough to debug it) rather than bitwise determinism (guaranteed identical output), and recording should happen at method-level &#x27;boundaries&#x27; rather than the network layer.</li><li>Chronicle&#x27;s boundary annotation records every input/output at each node so failed production traces can be replayed with the LLM stubbed out, turning them into free, rerunnable, deterministic regression tests.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Chronicle: recording and replaying agent runs (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">CHRONICLE: RECORDING AND REPLAYING AGENT RUNS (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">PROD RUN (THE BUG)</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">Agent run in prod</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Sells 1,000 shares, not $1,000</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Retry at temp=0</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Repeats same logic error identically</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">GPU/MoE routing</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">1,000 runs give dozens of outputs</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">CHRONICLE CAPTURE</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">Boundary annotation</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Logs input/output at each node</text><rect x="437" y="178" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">Chronicle trace</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Captures what the run did, not the</text><text x="542" y="225" font-size="8.5" text-anchor="middle" fill="#807565">model</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">REPLAY &amp; TESTING</text><rect x="24" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="315" font-size="11" text-anchor="middle" fill="#14110D">Replay, LLM stubbed</text><text x="120" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Other nodes kept as recorded</text><rect x="230" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="315" font-size="11" text-anchor="middle" fill="#14110D">Tool guardrails</text><text x="327" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Since the LLM itself can&#x27;t be</text><text x="327" y="343" font-size="8.5" text-anchor="middle" fill="#807565">pinned</text><rect x="437" y="296" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="533" y="315" font-size="11" text-anchor="middle" fill="#14110D">Deterministic test</text><text x="533" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Free, rerunnable regression case</text><rect x="644" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="315" font-size="11" text-anchor="middle" fill="#14110D">LLM-as-judge</text><text x="740" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Checks tone/trajectory subjectively</text><line x1="311" y1="89" x2="325" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">retried</text><line x1="535" y1="89" x2="549" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">still varies</text><path d="M193,118 V127 H318 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="256" y="125" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">in/out logged</text><line x1="423" y1="207" x2="437" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">writes trace</text><path d="M542,236 V245 H120 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="331" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replayed later</text><line x1="216" y1="325" x2="230" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">LLM not pinned</text><line x1="423" y1="325" x2="437" y2="325" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">enforced in test</text><line x1="216" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="327" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">deterministic nodes</text><line x1="216" y1="325" x2="644" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">subjective nodes</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">The diagram traces the talk&#x27;s argument from the temperature-zero dead end to Chronicle&#x27;s boundary-annotation trace and the two kinds of tests it enables (ours). Node placement follows the order the speakers presented, not a claim about deployment topology (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">CHRONICLE: RECORDING AND REPLAYING AGENT RUNS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 511.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- agent_run -->
+<g id="node1" class="node">
+<title>agent_run</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="231.67,-473.93 97.75,-473.93 97.75,-437.65 231.67,-437.65 231.67,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="121.96" y="-455.84" font-family="Geist Mono" font-size="11.00">Agent run in prod</text>
+<text xml:space="preserve" text-anchor="start" x="110.71" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">Sells 1,000 shares, not $1,000</text>
+</g>
+<!-- temp_zero -->
+<g id="node2" class="node">
+<title>temp_zero</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="157.04,-386.4 4.37,-386.4 4.37,-350.12 157.04,-350.12 157.04,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="39.83" y="-368.31" font-family="Geist Mono" font-size="11.00">Retry at temp=0</text>
+<text xml:space="preserve" text-anchor="start" x="17.33" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Repeats same logic error identically</text>
+</g>
+<!-- agent_run&#45;&gt;temp_zero -->
+<g id="edge1" class="edge">
+<title>agent_run&#45;&gt;temp_zero</title>
+<path fill="none" stroke="#c8501f" d="M147.31,-437.07C134.69,-424.22 117.51,-406.73 103.75,-392.72"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="105.81,-391.32 99.15,-388.04 102.31,-394.75 105.81,-391.32"/>
+<text xml:space="preserve" text-anchor="middle" x="140.11" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">retried</text>
+</g>
+<!-- boundary -->
+<g id="node4" class="node">
+<title>boundary</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="322.29,-386.4 183.12,-386.4 183.12,-350.12 322.29,-350.12 322.29,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="202.08" y="-368.31" font-family="Geist Mono" font-size="11.00">Boundary annotation</text>
+<text xml:space="preserve" text-anchor="start" x="196.08" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Logs input/output at each node</text>
+</g>
+<!-- agent_run&#45;&gt;boundary -->
+<g id="edge3" class="edge">
+<title>agent_run&#45;&gt;boundary</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M182.94,-437.07C196.16,-424.22 214.16,-406.73 228.57,-392.72"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="230.1,-394.65 233.41,-388.01 226.69,-391.14 230.1,-394.65"/>
+<text xml:space="preserve" text-anchor="middle" x="238.73" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">in/out logged</text>
+</g>
+<!-- gpu_nondeterm -->
+<g id="node3" class="node">
+<title>gpu_nondeterm</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="147.42,-298.87 0,-298.87 0,-262.59 147.42,-262.59 147.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="32.08" y="-280.78" font-family="Geist Mono" font-size="11.00">GPU/MoE routing</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">1,000 runs give dozens of outputs</text>
+</g>
+<!-- temp_zero&#45;&gt;gpu_nondeterm -->
+<g id="edge2" class="edge">
+<title>temp_zero&#45;&gt;gpu_nondeterm</title>
+<path fill="none" stroke="#c8501f" d="M79.26,-349.54C78.27,-337.5 76.95,-321.37 75.85,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="78.29,-307.71 75.28,-300.94 73.41,-308.11 78.29,-307.71"/>
+<text xml:space="preserve" text-anchor="middle" x="97.13" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">still varies</text>
+</g>
+<!-- chronicle -->
+<g id="node5" class="node">
+<title>chronicle</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="343.92,-298.87 169.5,-298.87 169.5,-262.59 343.92,-262.59 343.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="220.33" y="-280.78" font-family="Geist Mono" font-size="11.00">Chronicle trace</text>
+<text xml:space="preserve" text-anchor="start" x="182.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Captures what the run did, not the model</text>
+</g>
+<!-- boundary&#45;&gt;chronicle -->
+<g id="edge4" class="edge">
+<title>boundary&#45;&gt;chronicle</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M253.54,-349.54C254.1,-337.5 254.86,-321.37 255.49,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="257.93,-308.05 255.81,-300.94 253.04,-307.82 257.93,-308.05"/>
+<text xml:space="preserve" text-anchor="middle" x="277.07" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">writes trace</text>
+</g>
+<!-- replay -->
+<g id="node6" class="node">
+<title>replay</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="323.67,-211.34 189.75,-211.34 189.75,-175.06 323.67,-175.06 323.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="206.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Replay, LLM stubbed</text>
+<text xml:space="preserve" text-anchor="start" x="202.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Other nodes kept as recorded</text>
+</g>
+<!-- chronicle&#45;&gt;replay -->
+<g id="edge5" class="edge">
+<title>chronicle&#45;&gt;replay</title>
+<path fill="none" stroke="#c8501f" d="M256.71,-262.01C256.71,-249.97 256.71,-233.84 256.71,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="259.16,-220.41 256.71,-213.41 254.26,-220.41 259.16,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="282.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replayed later</text>
+</g>
+<!-- guardrails -->
+<g id="node7" class="node">
+<title>guardrails</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="212.92,-123.81 62.5,-123.81 62.5,-87.53 212.92,-87.53 212.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="102.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Tool guardrails</text>
+<text xml:space="preserve" text-anchor="start" x="75.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Since the LLM itself can&#39;t be pinned</text>
+</g>
+<!-- replay&#45;&gt;guardrails -->
+<g id="edge6" class="edge">
+<title>replay&#45;&gt;guardrails</title>
+<path fill="none" stroke="#c8501f" d="M213.51,-174.46C202.49,-169.01 190.99,-162.47 181.21,-155.06 172.02,-148.11 163.25,-139.01 156.02,-130.59"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="158.14,-129.3 151.78,-125.48 154.37,-132.43 158.14,-129.3"/>
+<text xml:space="preserve" text-anchor="middle" x="210.46" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">LLM not pinned</text>
+</g>
+<!-- det_test -->
+<g id="node8" class="node">
+<title>det_test</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="269.92,-36.28 125.5,-36.28 125.5,0 269.92,0 269.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="154.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Deterministic test</text>
+<text xml:space="preserve" text-anchor="start" x="138.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Free, rerunnable regression case</text>
+</g>
+<!-- replay&#45;&gt;det_test -->
+<g id="edge8" class="edge">
+<title>replay&#45;&gt;det_test</title>
+<path fill="none" stroke="#c8501f" d="M257.44,-174.38C257.82,-147.32 255.59,-94.92 235.71,-56.28 233.27,-51.54 230,-47.05 226.4,-42.94"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="228.18,-41.26 221.58,-37.9 224.64,-44.65 228.18,-41.26"/>
+<text xml:space="preserve" text-anchor="middle" x="291.45" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#c8501f">deterministic nodes</text>
+</g>
+<!-- behavioral -->
+<g id="node9" class="node">
+<title>behavioral</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="503.29,-123.81 352.12,-123.81 352.12,-87.53 503.29,-87.53 503.29,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="395.46" y="-105.72" font-family="Geist Mono" font-size="11.00">LLM&#45;as&#45;judge</text>
+<text xml:space="preserve" text-anchor="start" x="365.08" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Checks tone/trajectory subjectively</text>
+</g>
+<!-- replay&#45;&gt;behavioral -->
+<g id="edge9" class="edge">
+<title>replay&#45;&gt;behavioral</title>
+<path fill="none" stroke="#c8501f" d="M292.14,-174.48C319.08,-161 356.26,-142.41 384.87,-128.1"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="385.81,-130.37 390.97,-125.05 383.61,-125.99 385.81,-130.37"/>
+<text xml:space="preserve" text-anchor="middle" x="383.57" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">subjective nodes</text>
+</g>
+<!-- guardrails&#45;&gt;det_test -->
+<g id="edge7" class="edge">
+<title>guardrails&#45;&gt;det_test</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M150.14,-86.95C158.91,-74.45 170.77,-57.54 180.46,-43.74"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="182.41,-45.22 184.42,-38.08 178.4,-42.4 182.41,-45.22"/>
+<text xml:space="preserve" text-anchor="middle" x="200.93" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">enforced in test</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The diagram traces the talk&#x27;s argument from the temperature-zero dead end to Chronicle&#x27;s boundary-annotation trace and the two kinds of tests it enables (ours). Node placement follows the order the speakers presented, not a claim about deployment topology (ours).</p></section>
 
 
 

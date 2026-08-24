@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>The Small Model Infrastructure Nobody Built (So We Did) — Talk Brief</title>
+<title>The Small Model Infrastructure Nobody Built (So We Did) &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,90 @@ Quotes are verbatim from the talk transcript with the time they were said.</span
 <p class="deck" style="font-size:15px">Reports on Superlinked&#x27;s open-source small-model inference engine (Sie), built for embedding, reranking, and named-entity-recognition models used in AI search and document pipelines</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Small models (embedding, reranking, named-entity-recognition) can preprocess and filter data to fight context rot, where response quality degrades as context grows, before it reaches an agent.</li><li>Provisioning one GPU per small model wastes idle capacity; Sie hot-swaps models onto a single GPU with an LRU eviction policy to raise utilization.</li><li>No existing open-source project took users from model inference through production (routing, autoscaling, monitoring); Sie targets hundreds of open-source models and re-implements the forward pass per architecture (BERT, Qwen, ColBERT) since each handles attention, padding, and positional embeddings differently.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="How Sie hot-swaps small models (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">HOW SIE HOT-SWAPS SMALL MODELS (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">MODELS</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Stella &amp; GLiNER models</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Each needs only a few GB of GPU memory</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Per-architecture forward pass</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Re-implemented for BERT, Qwen, ColBERT</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">SIE ENGINE</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">LRU hot-swap scheduler</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Swaps models on demand to free GPU</text><text x="318" y="225" font-size="8.5" text-anchor="middle" fill="#807565">space</text><rect x="437" y="178" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">Shared GPU pool</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">One GPU serves many models, less idle</text><text x="542" y="225" font-size="8.5" text-anchor="middle" fill="#807565">capacity</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">PRODUCTION</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Routing &amp; autoscaling</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Built-in end-to-end serving layer</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Prometheus/Grafana monitoring</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Missing piece other OSS engines lacked</text><path d="M318,118 V127 H305 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="280" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">load</text><path d="M542,118 V135 H331 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="436" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">enables</text><line x1="423" y1="207" x2="437" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">swap</text><path d="M542,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">serve</text><line x1="423" y1="325" x2="437" y2="325" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">expose metrics</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Sie&#x27;s flow from model loading through hot-swap scheduling to production routing and monitoring, based on the talk&#x27;s description (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW SIE HOT-SWAPS SMALL MODELS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 380.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- n1 -->
+<g id="node1" class="node">
+<title>n1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="175.17,-386.4 0,-386.4 0,-350.12 175.17,-350.12 175.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="30.21" y="-368.31" font-family="Geist Mono" font-size="11.00">Stella &amp; GLiNER models</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Each needs only a few GB of GPU memory</text>
+</g>
+<!-- n3 -->
+<g id="node3" class="node">
+<title>n3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="278.79,-298.87 92.37,-298.87 92.37,-262.59 278.79,-262.59 278.79,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="126.33" y="-280.78" font-family="Geist Mono" font-size="11.00">LRU hot&#45;swap scheduler</text>
+<text xml:space="preserve" text-anchor="start" x="105.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Swaps models on demand to free GPU space</text>
+</g>
+<!-- n1&#45;&gt;n3 -->
+<g id="edge1" class="edge">
+<title>n1&#45;&gt;n3</title>
+<path fill="none" stroke="#c8501f" d="M107.89,-349.54C122.74,-336.58 143.01,-318.88 159.13,-304.82"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="160.5,-306.87 164.17,-300.42 157.28,-303.18 160.5,-306.87"/>
+<text xml:space="preserve" text-anchor="middle" x="150.33" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">load</text>
+</g>
+<!-- n2 -->
+<g id="node2" class="node">
+<title>n2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="372.17,-386.4 197,-386.4 197,-350.12 372.17,-350.12 372.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="212.21" y="-368.31" font-family="Geist Mono" font-size="11.00">Per&#45;architecture forward pass</text>
+<text xml:space="preserve" text-anchor="start" x="209.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Re&#45;implemented for BERT, Qwen, ColBERT</text>
+</g>
+<!-- n2&#45;&gt;n3 -->
+<g id="edge2" class="edge">
+<title>n2&#45;&gt;n3</title>
+<path fill="none" stroke="#c8501f" d="M264.07,-349.54C249.07,-336.58 228.59,-318.88 212.31,-304.82"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="214.12,-303.14 207.22,-300.42 210.91,-306.85 214.12,-303.14"/>
+<text xml:space="preserve" text-anchor="middle" x="255.26" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+<!-- n4 -->
+<g id="node4" class="node">
+<title>n4</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="284.04,-211.34 87.12,-211.34 87.12,-175.06 284.04,-175.06 284.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="144.33" y="-193.25" font-family="Geist Mono" font-size="11.00">Shared GPU pool</text>
+<text xml:space="preserve" text-anchor="start" x="100.08" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">One GPU serves many models, less idle capacity</text>
+</g>
+<!-- n3&#45;&gt;n4 -->
+<g id="edge3" class="edge">
+<title>n3&#45;&gt;n4</title>
+<path fill="none" stroke="#c8501f" d="M185.58,-262.01C185.58,-249.97 185.58,-233.84 185.58,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="188.04,-220.41 185.59,-213.41 183.14,-220.41 188.04,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="194.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">swap</text>
+</g>
+<!-- n5 -->
+<g id="node5" class="node">
+<title>n5</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="255.17,-123.81 116,-123.81 116,-87.53 255.17,-87.53 255.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="132.33" y="-105.72" font-family="Geist Mono" font-size="11.00">Routing &amp; autoscaling</text>
+<text xml:space="preserve" text-anchor="start" x="128.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Built&#45;in end&#45;to&#45;end serving layer</text>
+</g>
+<!-- n4&#45;&gt;n5 -->
+<g id="edge4" class="edge">
+<title>n4&#45;&gt;n5</title>
+<path fill="none" stroke="#c8501f" d="M185.58,-174.48C185.58,-162.44 185.58,-146.31 185.58,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="188.04,-132.88 185.59,-125.88 183.14,-132.88 188.04,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="195.71" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">serve</text>
+</g>
+<!-- n6 -->
+<g id="node6" class="node">
+<title>n6</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="276.54,-36.28 94.62,-36.28 94.62,0 276.54,0 276.54,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="107.58" y="-18.19" font-family="Geist Mono" font-size="11.00">Prometheus/Grafana monitoring</text>
+<text xml:space="preserve" text-anchor="start" x="115.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Missing piece other OSS engines lacked</text>
+</g>
+<!-- n5&#45;&gt;n6 -->
+<g id="edge5" class="edge">
+<title>n5&#45;&gt;n6</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M185.58,-86.95C185.58,-74.91 185.58,-58.78 185.58,-45.27"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="188.04,-45.35 185.59,-38.35 183.14,-45.35 188.04,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="214.08" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">expose metrics</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Sie&#x27;s flow from model loading through hot-swap scheduling to production routing and monitoring, based on the talk&#x27;s description (ours).</p></section>
 
 
 

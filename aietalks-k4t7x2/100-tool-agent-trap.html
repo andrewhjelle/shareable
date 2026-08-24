@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>The 100-Tool Agent Is a Trap — Talk Brief</title>
+<title>The 100-Tool Agent Is a Trap &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,143 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Gives specific benchmark numbers on why loading every tool definition into every prompt (&#x27;fat agent&#x27;) degrades accuracy, latency, and cost as a tool catalog grows, and proposes semantic routing (RAG for tools) with just-in-time schema in...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Fat-agent tool accuracy drops from about 78% at 10 tools to around 40% at 100 tools to 13.6% at 741 tools, while a semantic router stays above 83% across the same catalog sizes.</li><li>At 741 tools, loading every tool description costs about 127,000 tokens per request before the user&#x27;s question is even considered; just-in-time routing cuts that to roughly 1,000 tokens (about a 99% reduction) by injecting only 3-5 relevant schemas.</li><li>Anthropic reported on-demand MCP tool loading cutting token usage from 150k to 2k tokens (98.7% reduction), cited as external confirmation of the same pattern.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Fat agent vs semantic tool routing (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">FAT AGENT VS SEMANTIC TOOL ROUTING (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">FAT AGENT (BASELINE)</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">Load all tool schemas</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">741 tools, about 127k tokens/req</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Model confuses tools</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Lost-in-the-middle attention effect</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">Accuracy collapses</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">78% to 40% to 13.6% at 10/100/741</text><text x="654" y="107" font-size="8.5" text-anchor="middle" fill="#807565">tools</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">SEMANTIC ROUTER (FIX)</text><rect x="24" y="178" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="120" y="197" font-size="11" text-anchor="middle" fill="#14110D">Embed tool descriptions</text><text x="120" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Offline vector index build</text><rect x="230" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="327" y="197" font-size="11" text-anchor="middle" fill="#14110D">Embed user query</text><text x="327" y="213" font-size="8.5" text-anchor="middle" fill="#807565">At runtime, before matching</text><rect x="437" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="197" font-size="11" text-anchor="middle" fill="#14110D">Semantic router</text><text x="533" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Returns top-K, often 3-5 tools</text><rect x="644" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="197" font-size="11" text-anchor="middle" fill="#14110D">Inject only top-K schemas</text><text x="740" y="213" font-size="8.5" text-anchor="middle" fill="#807565">About 1,000 tokens vs 127k full</text><text x="740" y="225" font-size="8.5" text-anchor="middle" fill="#807565">load</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">OUTCOME</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Router accuracy holds</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Stays above 83% across 10-741 tools</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Anthropic MCP confirmation</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">150k to 2k tokens, 98.7% cut</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">When to adopt routing</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Skip under 20 tools; adopt past 50</text><line x1="311" y1="89" x2="325" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><line x1="535" y1="89" x2="549" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><line x1="423" y1="207" x2="437" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">query embed</text><line x1="216" y1="207" x2="437" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="327" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">vector match</text><line x1="630" y1="207" x2="644" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="636" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">top-K</text><path d="M740,236 V245 H193 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><path d="M654,118 V127 H219 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="436" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">vs fat agent</text><line x1="311" y1="325" x2="325" y2="325" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">confirmed by</text><path d="M520,236 V253 H654 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="587" y="251" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">adopt past 50</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s own benchmark comparing loading every tool schema against retrieving only the top-K match at query time; the underlying numbers come from the speakers&#x27; synthetic tool pool, not a shared public benchmark (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">FAT AGENT VS SEMANTIC TOOL ROUTING (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 543.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- fa_load -->
+<g id="node1" class="node">
+<title>fa_load</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="162.42,-386.4 17.25,-386.4 17.25,-350.12 162.42,-350.12 162.42,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="36.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Load all tool schemas</text>
+<text xml:space="preserve" text-anchor="start" x="30.21" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">741 tools, about 127k tokens/req</text>
+</g>
+<!-- fa_confuse -->
+<g id="node2" class="node">
+<title>fa_confuse</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="163.92,-298.87 15.75,-298.87 15.75,-262.59 163.92,-262.59 163.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="38.46" y="-280.78" font-family="Geist Mono" font-size="11.00">Model confuses tools</text>
+<text xml:space="preserve" text-anchor="start" x="28.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Lost&#45;in&#45;the&#45;middle attention effect</text>
+</g>
+<!-- fa_load&#45;&gt;fa_confuse -->
+<g id="edge1" class="edge">
+<title>fa_load&#45;&gt;fa_confuse</title>
+<path fill="none" stroke="#c8501f" d="M89.83,-349.54C89.83,-337.5 89.83,-321.37 89.83,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="92.29,-307.94 89.84,-300.94 87.39,-307.94 92.29,-307.94"/>
+</g>
+<!-- fa_acc -->
+<g id="node3" class="node">
+<title>fa_acc</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="179.67,-211.34 0,-211.34 0,-175.06 179.67,-175.06 179.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="44.08" y="-193.25" font-family="Geist Mono" font-size="11.00">Accuracy collapses</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">78% to 40% to 13.6% at 10/100/741 tools</text>
+</g>
+<!-- fa_confuse&#45;&gt;fa_acc -->
+<g id="edge2" class="edge">
+<title>fa_confuse&#45;&gt;fa_acc</title>
+<path fill="none" stroke="#c8501f" d="M89.83,-262.01C89.83,-249.97 89.83,-233.84 89.83,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="92.29,-220.41 89.84,-213.41 87.39,-220.41 92.29,-220.41"/>
+</g>
+<!-- router_acc -->
+<g id="node8" class="node">
+<title>router_acc</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="264.29,-123.81 103.37,-123.81 103.37,-87.53 264.29,-87.53 264.29,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="129.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Router accuracy holds</text>
+<text xml:space="preserve" text-anchor="start" x="116.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Stays above 83% across 10&#45;741 tools</text>
+</g>
+<!-- fa_acc&#45;&gt;router_acc -->
+<g id="edge7" class="edge">
+<title>fa_acc&#45;&gt;router_acc</title>
+<path fill="none" stroke="#c8501f" d="M109.31,-174.48C123.55,-161.52 143,-143.82 158.46,-129.76"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="159.73,-131.91 163.26,-125.39 156.44,-128.29 159.73,-131.91"/>
+<text xml:space="preserve" text-anchor="middle" x="165.34" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">vs fat agent</text>
+</g>
+<!-- idx -->
+<g id="node4" class="node">
+<title>idx</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="386.92,-386.4 244.75,-386.4 244.75,-350.12 386.92,-350.12 386.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="257.71" y="-368.31" font-family="Geist Mono" font-size="11.00">Embed tool descriptions</text>
+<text xml:space="preserve" text-anchor="start" x="272.33" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Offline vector index build</text>
+</g>
+<!-- router -->
+<g id="node6" class="node">
+<title>router</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="460.42,-298.87 327.25,-298.87 327.25,-262.59 460.42,-262.59 460.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="355.21" y="-280.78" font-family="Geist Mono" font-size="11.00">Semantic router</text>
+<text xml:space="preserve" text-anchor="start" x="340.21" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Returns top&#45;K, often 3&#45;5 tools</text>
+</g>
+<!-- idx&#45;&gt;router -->
+<g id="edge4" class="edge">
+<title>idx&#45;&gt;router</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M332,-349.54C343.61,-336.81 359.38,-319.51 372.09,-305.57"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="373.77,-307.37 376.67,-300.55 370.15,-304.07 373.77,-307.37"/>
+<text xml:space="preserve" text-anchor="middle" x="384.26" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">vector match</text>
+</g>
+<!-- query -->
+<g id="node5" class="node">
+<title>query</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="535.04,-386.4 408.62,-386.4 408.62,-350.12 535.04,-350.12 535.04,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="427.58" y="-368.31" font-family="Geist Mono" font-size="11.00">Embed user query</text>
+<text xml:space="preserve" text-anchor="start" x="421.58" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">At runtime, before matching</text>
+</g>
+<!-- query&#45;&gt;router -->
+<g id="edge3" class="edge">
+<title>query&#45;&gt;router</title>
+<path fill="none" stroke="#c8501f" d="M455.67,-349.54C444.06,-336.81 428.29,-319.51 415.58,-305.57"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="417.52,-304.07 411,-300.55 413.9,-307.37 417.52,-304.07"/>
+<text xml:space="preserve" text-anchor="middle" x="462.26" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">query embed</text>
+</g>
+<!-- inject -->
+<g id="node7" class="node">
+<title>inject</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="355.92,-211.34 201.75,-211.34 201.75,-175.06 355.92,-175.06 355.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="215.08" y="-193.25" font-family="Geist Mono" font-size="11.00">Inject only top&#45;K schemas</text>
+<text xml:space="preserve" text-anchor="start" x="214.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">About 1,000 tokens vs 127k full load</text>
+</g>
+<!-- router&#45;&gt;inject -->
+<g id="edge5" class="edge">
+<title>router&#45;&gt;inject</title>
+<path fill="none" stroke="#c8501f" d="M370.01,-262.01C352.43,-248.93 328.37,-231.04 309.38,-216.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="310.93,-215.01 303.85,-212.8 308,-218.95 310.93,-215.01"/>
+<text xml:space="preserve" text-anchor="middle" x="353.35" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">top&#45;K</text>
+</g>
+<!-- threshold -->
+<g id="node10" class="node">
+<title>threshold</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="527.67,-211.34 378,-211.34 378,-175.06 527.67,-175.06 527.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="397.71" y="-193.25" font-family="Geist Mono" font-size="11.00">When to adopt routing</text>
+<text xml:space="preserve" text-anchor="start" x="390.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Skip under 20 tools; adopt past 50</text>
+</g>
+<!-- router&#45;&gt;threshold -->
+<g id="edge9" class="edge">
+<title>router&#45;&gt;threshold</title>
+<path fill="none" stroke="#c8501f" d="M406.06,-262.01C414.68,-249.51 426.35,-232.6 435.87,-218.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="437.81,-220.3 439.77,-213.15 433.77,-217.52 437.81,-220.3"/>
+<text xml:space="preserve" text-anchor="middle" x="452.74" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">adopt past 50</text>
+</g>
+<!-- inject&#45;&gt;router_acc -->
+<g id="edge6" class="edge">
+<title>inject&#45;&gt;router_acc</title>
+<path fill="none" stroke="#c8501f" d="M259.15,-174.48C244.76,-161.52 225.1,-143.82 209.48,-129.76"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="211.46,-128.24 204.62,-125.38 208.18,-131.89 211.46,-128.24"/>
+</g>
+<!-- anthropic -->
+<g id="node9" class="node">
+<title>anthropic</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="263.92,-36.28 103.75,-36.28 103.75,0 263.92,0 263.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="116.71" y="-18.19" font-family="Geist Mono" font-size="11.00">Anthropic MCP confirmation</text>
+<text xml:space="preserve" text-anchor="start" x="131.33" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">150k to 2k tokens, 98.7% cut</text>
+</g>
+<!-- router_acc&#45;&gt;anthropic -->
+<g id="edge8" class="edge">
+<title>router_acc&#45;&gt;anthropic</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M183.83,-86.95C183.83,-74.91 183.83,-58.78 183.83,-45.27"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="186.29,-45.35 183.84,-38.35 181.39,-45.35 186.29,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="208.58" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">confirmed by</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s own benchmark comparing loading every tool schema against retrieving only the top-K match at query time; the underlying numbers come from the speakers&#x27; synthetic tool pool, not a shared public benchmark (ours).</p></section>
 
 
 

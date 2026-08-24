@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>From Chaos to Choreography: Multi-Agent Orchestration Patterns That Actually Work — Talk Brief</title>
+<title>From Chaos to Choreography: Multi-Agent Orchestration Patterns That Actually Work &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,146 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Names the specific coordination failure mode (a stale-cache race condition between two agents that produced a 20% incorrect-decision rate in a financial-services production system) and the concrete patterns used to fix the class of bug: ...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Going from one agent to five agents doesn&#x27;t add linear complexity: the speaker states it makes the system &quot;25 times more complex&quot; because coordination connections grow combinatorially (c1).</li><li>A real credit-decisioning deployment hit a stale-cache race condition, one agent wrote a 750 credit score while another read a cached 680 for the same customer 500ms later, causing 20% of decisions to carry incorrect risk ratings (c2, c3).</li><li>The fix pattern is immutable, versioned state (append-only, never updated in place) plus circuit breakers and saga-style compensate methods for failure recovery, rather than shared mutable state agents write to directly (c7, c8, c9).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="From stale cache to safe handoffs (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">FROM STALE CACHE TO SAFE HANDOFFS (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">THE INCIDENT</text><rect x="24" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="120" y="79" font-size="11" text-anchor="middle" fill="#14110D">Credit-score agent</text><text x="120" y="95" font-size="8.5" text-anchor="middle" fill="#807565">writes score 750 to DB</text><rect x="230" y="60" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="327" y="79" font-size="11" text-anchor="middle" fill="#14110D">Stale cache</text><text x="327" y="95" font-size="8.5" text-anchor="middle" fill="#807565">not invalidated after write</text><rect x="437" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="533" y="79" font-size="11" text-anchor="middle" fill="#14110D">Risk agent</text><text x="533" y="95" font-size="8.5" text-anchor="middle" fill="#807565">reads cached 680, 500ms later</text><rect x="644" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="79" font-size="11" text-anchor="middle" fill="#14110D">20% wrong risk ratings</text><text x="740" y="95" font-size="8.5" text-anchor="middle" fill="#807565">surfaced within 3 days</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">COORDINATION CHOICE</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">Choreography vs orchestration</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">simple/high-autonomy vs</text><text x="318" y="225" font-size="8.5" text-anchor="middle" fill="#807565">complex/low-autonomy</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">Orchestrator</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">agents dumb; orchestrator retries+logs</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">STATE AND RECOVERY PATTERNS</text><rect x="24" y="296" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="120" y="315" font-size="11" text-anchor="middle" fill="#14110D">Immutable versioned state</text><text x="120" y="331" font-size="8.5" text-anchor="middle" fill="#807565">append-only handoffs, no shared</text><text x="120" y="343" font-size="8.5" text-anchor="middle" fill="#807565">writes</text><rect x="230" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="315" font-size="11" text-anchor="middle" fill="#14110D">Data contract check</text><text x="327" y="331" font-size="8.5" text-anchor="middle" fill="#807565">rejects handoff if confidence &lt;0.7</text><rect x="437" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="315" font-size="11" text-anchor="middle" fill="#14110D">Circuit breaker</text><text x="533" y="331" font-size="8.5" text-anchor="middle" fill="#807565">opens after 5 failures in a row</text><rect x="644" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="315" font-size="11" text-anchor="middle" fill="#14110D">Saga compensate</text><text x="740" y="331" font-size="8.5" text-anchor="middle" fill="#807565">execute + compensate rollback</text><line x1="216" y1="89" x2="230" y2="89" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="224" y="85" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">writes 750</text><line x1="423" y1="89" x2="437" y2="89" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">stale read 680</text><line x1="630" y1="89" x2="644" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="636" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">causes</text><path d="M740,118 V127 H318 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="529" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">drives fix</text><line x1="423" y1="207" x2="437" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">low autonomy</text><path d="M542,236 V245 H120 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="331" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">state handoff</text><line x1="216" y1="325" x2="230" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">checked at boundary</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">on repeated fail</text><line x1="630" y1="325" x2="644" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="636" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">trips rollback</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk stale-cache incident into the fix patterns it recommends next; the exact wiring between orchestration and the state patterns is our inference, not a diagram shown on screen (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">FROM STALE CACHE TO SAFE HANDOFFS (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 209.00 832.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 828.05)">
+<title>G</title>
+<!-- cs_agent -->
+<g id="node1" class="node">
+<title>cs_agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="158.3,-824.05 42.38,-824.05 42.38,-787.77 158.3,-787.77 158.3,-824.05"/>
+<text xml:space="preserve" text-anchor="start" x="55.34" y="-805.96" font-family="Geist Mono" font-size="11.00">Credit&#45;score agent</text>
+<text xml:space="preserve" text-anchor="start" x="59.84" y="-797.81" font-family="Geist Mono" font-size="8.00" fill="#807565">writes score 750 to DB</text>
+</g>
+<!-- cache -->
+<g id="node2" class="node">
+<title>cache</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="159.05,-736.52 41.63,-736.52 41.63,-700.24 159.05,-700.24 159.05,-736.52"/>
+<text xml:space="preserve" text-anchor="start" x="72.21" y="-718.43" font-family="Geist Mono" font-size="11.00">Stale cache</text>
+<text xml:space="preserve" text-anchor="start" x="54.59" y="-710.28" font-family="Geist Mono" font-size="8.00" fill="#807565">not invalidated after write</text>
+</g>
+<!-- cs_agent&#45;&gt;cache -->
+<g id="edge1" class="edge">
+<title>cs_agent&#45;&gt;cache</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M100.34,-787.19C100.34,-775.15 100.34,-759.02 100.34,-745.51"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="102.79,-745.59 100.34,-738.59 97.89,-745.59 102.79,-745.59"/>
+<text xml:space="preserve" text-anchor="middle" x="119.84" y="-759.69" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">writes 750</text>
+</g>
+<!-- risk_agent -->
+<g id="node3" class="node">
+<title>risk_agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="168.8,-648.99 31.88,-648.99 31.88,-612.71 168.8,-612.71 168.8,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="74.84" y="-630.9" font-family="Geist Mono" font-size="11.00">Risk agent</text>
+<text xml:space="preserve" text-anchor="start" x="44.84" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">reads cached 680, 500ms later</text>
+</g>
+<!-- cache&#45;&gt;risk_agent -->
+<g id="edge2" class="edge">
+<title>cache&#45;&gt;risk_agent</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M100.34,-699.66C100.34,-687.62 100.34,-671.49 100.34,-657.98"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="102.79,-658.06 100.34,-651.06 97.89,-658.06 102.79,-658.06"/>
+<text xml:space="preserve" text-anchor="middle" x="127.34" y="-672.16" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">stale read 680</text>
+</g>
+<!-- impact -->
+<g id="node4" class="node">
+<title>impact</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="169.92,-561.46 30.75,-561.46 30.75,-525.18 169.92,-525.18 169.92,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="43.71" y="-543.37" font-family="Geist Mono" font-size="11.00">20% wrong risk ratings</text>
+<text xml:space="preserve" text-anchor="start" x="60.59" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">surfaced within 3 days</text>
+</g>
+<!-- risk_agent&#45;&gt;impact -->
+<g id="edge3" class="edge">
+<title>risk_agent&#45;&gt;impact</title>
+<path fill="none" stroke="#c8501f" d="M100.34,-612.13C100.34,-600.09 100.34,-583.96 100.34,-570.45"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.79,-570.53 100.34,-563.53 97.89,-570.53 102.79,-570.53"/>
+<text xml:space="preserve" text-anchor="middle" x="112.71" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#c8501f">causes</text>
+</g>
+<!-- decision_rule -->
+<g id="node5" class="node">
+<title>decision_rule</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="200.67,-473.93 0,-473.93 0,-437.65 200.67,-437.65 200.67,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="25.71" y="-455.84" font-family="Geist Mono" font-size="11.00">Choreography vs orchestration</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">simple/high&#45;autonomy vs complex/low&#45;autonomy</text>
+</g>
+<!-- impact&#45;&gt;decision_rule -->
+<g id="edge4" class="edge">
+<title>impact&#45;&gt;decision_rule</title>
+<path fill="none" stroke="#c8501f" d="M100.34,-524.6C100.34,-512.56 100.34,-496.43 100.34,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.79,-483 100.34,-476 97.89,-483 102.79,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="117.96" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">drives fix</text>
+</g>
+<!-- orchestrator -->
+<g id="node6" class="node">
+<title>orchestrator</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="184.92,-386.4 15.75,-386.4 15.75,-350.12 184.92,-350.12 184.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="69.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Orchestrator</text>
+<text xml:space="preserve" text-anchor="start" x="28.71" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">agents dumb; orchestrator retries+logs</text>
+</g>
+<!-- decision_rule&#45;&gt;orchestrator -->
+<g id="edge5" class="edge">
+<title>decision_rule&#45;&gt;orchestrator</title>
+<path fill="none" stroke="#c8501f" d="M100.34,-437.07C100.34,-425.03 100.34,-408.9 100.34,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.79,-395.47 100.34,-388.47 97.89,-395.47 102.79,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="126.59" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">low autonomy</text>
+</g>
+<!-- versioned_state -->
+<g id="node7" class="node">
+<title>versioned_state</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="184.17,-298.87 16.5,-298.87 16.5,-262.59 184.17,-262.59 184.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="35.09" y="-280.78" font-family="Geist Mono" font-size="11.00">Immutable versioned state</text>
+<text xml:space="preserve" text-anchor="start" x="29.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">append&#45;only handoffs, no shared writes</text>
+</g>
+<!-- orchestrator&#45;&gt;versioned_state -->
+<g id="edge6" class="edge">
+<title>orchestrator&#45;&gt;versioned_state</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M100.34,-349.54C100.34,-337.5 100.34,-321.37 100.34,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="102.79,-307.94 100.34,-300.94 97.89,-307.94 102.79,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="125.46" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">state handoff</text>
+</g>
+<!-- data_contract -->
+<g id="node8" class="node">
+<title>data_contract</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="173.3,-211.34 27.38,-211.34 27.38,-175.06 173.3,-175.06 173.3,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="51.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Data contract check</text>
+<text xml:space="preserve" text-anchor="start" x="40.34" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">rejects handoff if confidence &lt;0.7</text>
+</g>
+<!-- versioned_state&#45;&gt;data_contract -->
+<g id="edge7" class="edge">
+<title>versioned_state&#45;&gt;data_contract</title>
+<path fill="none" stroke="#c8501f" d="M100.34,-262.01C100.34,-249.97 100.34,-233.84 100.34,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.79,-220.41 100.34,-213.41 97.89,-220.41 102.79,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="139.34" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">checked at boundary</text>
+</g>
+<!-- circuit_breaker -->
+<g id="node9" class="node">
+<title>circuit_breaker</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="166.55,-123.81 34.13,-123.81 34.13,-87.53 166.55,-87.53 166.55,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="65.09" y="-105.72" font-family="Geist Mono" font-size="11.00">Circuit breaker</text>
+<text xml:space="preserve" text-anchor="start" x="47.09" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">opens after 5 failures in a row</text>
+</g>
+<!-- data_contract&#45;&gt;circuit_breaker -->
+<g id="edge8" class="edge">
+<title>data_contract&#45;&gt;circuit_breaker</title>
+<path fill="none" stroke="#c8501f" d="M100.34,-174.48C100.34,-162.44 100.34,-146.31 100.34,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.79,-132.88 100.34,-125.88 97.89,-132.88 102.79,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="130.34" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">on repeated fail</text>
+</g>
+<!-- saga -->
+<g id="node10" class="node">
+<title>saga</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="169.55,-36.28 31.13,-36.28 31.13,0 169.55,0 169.55,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="56.84" y="-18.19" font-family="Geist Mono" font-size="11.00">Saga compensate</text>
+<text xml:space="preserve" text-anchor="start" x="44.09" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">execute + compensate rollback</text>
+</g>
+<!-- circuit_breaker&#45;&gt;saga -->
+<g id="edge9" class="edge">
+<title>circuit_breaker&#45;&gt;saga</title>
+<path fill="none" stroke="#c8501f" d="M100.34,-86.95C100.34,-74.91 100.34,-58.78 100.34,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.79,-45.35 100.34,-38.35 97.89,-45.35 102.79,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="124.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">trips rollback</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk stale-cache incident into the fix patterns it recommends next; the exact wiring between orchestration and the state patterns is our inference, not a diagram shown on screen (ours).</p></section>
 
 
 

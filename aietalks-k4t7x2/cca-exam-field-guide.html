@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Anthropic&#x27;s CCA Exam as a Field-Guide for Agentic Engineering — Talk Brief</title>
+<title>Anthropic&#x27;s CCA Exam as a Field-Guide for Agentic Engineering &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,97 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">For anyone deciding whether to study for or skip Anthropic&#x27;s Claude Certified Architect exam, this talk maps its five scored domains and walks through the anti-patterns (unbounded context, overloaded single agents, missing stop-reason ch...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>The CCA exam ($99, every 6 months for individuals) weights agentic architecture at 27% and Claude Code configuration at 20%, tested via six production scenarios (c1, c2)</li><li>Core anti-patterns: skipping the stop-reason check on tool-use loops, loading one agent with every tool instead of specializing sub-agents, and letting sub-agent context spill into the main thread (c3, c4, c5, c6)</li><li>Mitigations taught: context forking with a token-count-triggered compact around 150k tokens, and batch mode for 50% lower token cost on non-urgent runs (c7, c8, c9)</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="CCA exam anti-pattern to mitigation map (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">CCA EXAM ANTI-PATTERN TO MITIGATION MAP (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">TOOL-USE LOOP</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Model proposes tool call</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">LLM cannot execute tools itself</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Branch on stop_reason</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">tool_use vs end_of_turn vs max_tokens</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">AGENT TOPOLOGY</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">One agent, every tool</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">anti-pattern: pooled context,</text><text x="318" y="225" font-size="8.5" text-anchor="middle" fill="#807565">group-think</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">Narrow specialist sub-agents</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">each gets only its claim/evidence</text><text x="542" y="225" font-size="8.5" text-anchor="middle" fill="#807565">slice</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">CONTEXT &amp; COST CONTROLS</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Fork sub-task context</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">sub-agent tokens skip the main thread</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Compact at ~150k tokens</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">auto-triggered once main thread</text><text x="430" y="343" font-size="8.5" text-anchor="middle" fill="#807565">crosses it</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">Batch mode</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">50% cheaper, up to 24h turnaround</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">on response</text><line x1="423" y1="207" x2="437" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replace with</text><path d="M542,236 V245 H206 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="374" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">runs in</text><line x1="311" y1="325" x2="325" y2="325" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">token count</text><line x1="535" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">for non-urgent work</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">A rough map of the CCA exam anti-patterns to their fixes: check the stop reason instead of trusting raw output, split an overloaded agent into specialists, and fork/compact/batch to keep context and cost bounded (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">CCA EXAM ANTI-PATTERN TO MITIGATION MAP (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 372.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- loop_call -->
+<g id="node1" class="node">
+<title>loop_call</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="156.04,-386.4 12.37,-386.4 12.37,-350.12 156.04,-350.12 156.04,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="25.33" y="-368.31" font-family="Geist Mono" font-size="11.00">Model proposes tool call</text>
+<text xml:space="preserve" text-anchor="start" x="29.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">LLM cannot execute tools itself</text>
+</g>
+<!-- loop_check -->
+<g id="node2" class="node">
+<title>loop_check</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="168.42,-298.87 0,-298.87 0,-262.59 168.42,-262.59 168.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="27.58" y="-280.78" font-family="Geist Mono" font-size="11.00">Branch on stop_reason</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">tool_use vs end_of_turn vs max_tokens</text>
+</g>
+<!-- loop_call&#45;&gt;loop_check -->
+<g id="edge1" class="edge">
+<title>loop_call&#45;&gt;loop_check</title>
+<path fill="none" stroke="#c8501f" d="M84.21,-349.54C84.21,-337.5 84.21,-321.37 84.21,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="86.66,-307.94 84.21,-300.94 81.76,-307.94 86.66,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="106.71" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">on response</text>
+</g>
+<!-- single_agent -->
+<g id="node3" class="node">
+<title>single_agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="361.04,-386.4 187.38,-386.4 187.38,-350.12 361.04,-350.12 361.04,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="221.33" y="-368.31" font-family="Geist Mono" font-size="11.00">One agent, every tool</text>
+<text xml:space="preserve" text-anchor="start" x="200.33" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">anti&#45;pattern: pooled context, group&#45;think</text>
+</g>
+<!-- sub_agents -->
+<g id="node4" class="node">
+<title>sub_agents</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="357.67,-298.87 190.75,-298.87 190.75,-262.59 357.67,-262.59 357.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="203.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Narrow specialist sub&#45;agents</text>
+<text xml:space="preserve" text-anchor="start" x="207.08" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">each gets only its claim/evidence slice</text>
+</g>
+<!-- single_agent&#45;&gt;sub_agents -->
+<g id="edge2" class="edge">
+<title>single_agent&#45;&gt;sub_agents</title>
+<path fill="none" stroke="#c8501f" d="M274.21,-349.54C274.21,-337.5 274.21,-321.37 274.21,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="276.66,-307.94 274.21,-300.94 271.76,-307.94 276.66,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="297.08" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replace with</text>
+</g>
+<!-- fork -->
+<g id="node5" class="node">
+<title>fork</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="356.54,-211.34 191.88,-211.34 191.88,-175.06 356.54,-175.06 356.54,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="221.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Fork sub&#45;task context</text>
+<text xml:space="preserve" text-anchor="start" x="204.83" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">sub&#45;agent tokens skip the main thread</text>
+</g>
+<!-- sub_agents&#45;&gt;fork -->
+<g id="edge3" class="edge">
+<title>sub_agents&#45;&gt;fork</title>
+<path fill="none" stroke="#c8501f" d="M274.21,-262.01C274.21,-249.97 274.21,-233.84 274.21,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="276.66,-220.41 274.21,-213.41 271.76,-220.41 276.66,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="286.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs in</text>
+</g>
+<!-- compact -->
+<g id="node6" class="node">
+<title>compact</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="364.04,-123.81 184.38,-123.81 184.38,-87.53 364.04,-87.53 364.04,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="210.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Compact at ~150k tokens</text>
+<text xml:space="preserve" text-anchor="start" x="197.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">auto&#45;triggered once main thread crosses it</text>
+</g>
+<!-- fork&#45;&gt;compact -->
+<g id="edge4" class="edge">
+<title>fork&#45;&gt;compact</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M274.21,-174.48C274.21,-162.44 274.21,-146.31 274.21,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="276.66,-132.88 274.21,-125.88 271.76,-132.88 276.66,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="296.33" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">token count</text>
+</g>
+<!-- batch -->
+<g id="node7" class="node">
+<title>batch</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="351.67,-36.28 196.75,-36.28 196.75,0 351.67,0 351.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="244.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Batch mode</text>
+<text xml:space="preserve" text-anchor="start" x="209.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">50% cheaper, up to 24h turnaround</text>
+</g>
+<!-- compact&#45;&gt;batch -->
+<g id="edge5" class="edge">
+<title>compact&#45;&gt;batch</title>
+<path fill="none" stroke="#c8501f" d="M274.21,-86.95C274.21,-74.91 274.21,-58.78 274.21,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="276.66,-45.35 274.21,-38.35 271.76,-45.35 276.66,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="311.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">for non&#45;urgent work</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">A rough map of the CCA exam anti-patterns to their fixes: check the stop reason instead of trusting raw output, split an overloaded agent into specialists, and fork/compact/batch to keep context and cost bounded (ours).</p></section>
 
 
 

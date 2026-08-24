@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>I Run a Fleet of AI Agents Across Three Machines. Here&#x27;s What Broke. — Talk Brief</title>
+<title>I Run a Fleet of AI Agents Across Three Machines. Here&#x27;s What Broke. &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,146 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Walks through five concrete failure modes of scaling personal coding-agent usage past a single machine (over-delegation, unreadable tmux panes, out-of-memory, credential collisions, laptop sleep/crash) and the fixes applied</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>The speaker replaced a flat pile of agents (where he personally acted as scheduler, memory, and reviewer for 5-6 live contexts) with a hierarchy of scoped agents (CEO/VP/manager/worker), reducing his own review load to one point of approval.</li><li>Agent state was moved out of the model&#x27;s context window into per-entity workspace files on disk, so instead of compacting/summarizing a full context window, the agent resets and re-reads its handoff/history files.</li><li>Scaling to three machines surfaced five failures: agents doing work instead of delegating, unreadable crowded tmux panes, out-of-memory swap exhaustion, crossed credentials between workspaces, and a laptop losing all in-flight jobs when it slept/lost power.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="The fleet: hierarchy, disk state, and one gateway (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">THE FLEET: HIERARCHY, DISK STATE, AND ONE GATEWAY (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">HUMAN</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Human reviewer</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">single approval point</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">AGENT HIERARCHY</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">CEO/VP/manager/worker</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">each layer own scoped context</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">CLI harness</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">forces dispatch, stops self-work</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">STATE &amp; REVIEW</text><rect x="101" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Per-entity workspace</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">mission, status, handoff files</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Reset, not compact</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">clears context, re-reads handoff</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">Review gateway</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">plan blocks until approved</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">INFRASTRUCTURE</text><rect x="101" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="433" font-size="11" text-anchor="middle" fill="#14110D">MacBook</text><text x="206" y="449" font-size="8.5" text-anchor="middle" fill="#807565">loses in-flight jobs on sleep/power</text><text x="206" y="461" font-size="8.5" text-anchor="middle" fill="#807565">loss</text><rect x="325" y="414" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="433" font-size="11" text-anchor="middle" fill="#14110D">Cross-machine sync</text><text x="430" y="449" font-size="8.5" text-anchor="middle" fill="#807565">git push/pull, shared state via PR</text><rect x="549" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="433" font-size="11" text-anchor="middle" fill="#14110D">Always-on Linux box</text><text x="654" y="449" font-size="8.5" text-anchor="middle" fill="#807565">hosts the one gateway, Mac sleeps</text><path d="M430,118 V127 H628 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="529" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">approves</text><path d="M654,296 V287 H305 V236" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="480" y="285" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">hook fires work</text><line x1="423" y1="207" x2="437" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">enforces dispatch</text><path d="M292,236 V245 H206 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="249" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">writes state</text><line x1="311" y1="325" x2="325" y2="325" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">re-read on reset</text><path d="M430,296 V279 H331 V236" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="380" y="277" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">resumes</text><path d="M318,236 V253 H654 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="486" y="251" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">submits plan</text><line x1="311" y1="443" x2="325" y2="443" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="439" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">push/pull</text><line x1="535" y1="443" x2="549" y2="443" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="439" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">SSH send-keys</text><path d="M654,414 V405 H680 V354" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="692" y="403" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">hosts</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">The hierarchy, disk-backed state, and review gateway form the core loop; cross-machine sync and the always-on Linux host were added once a single laptop stopped being enough (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">THE FLEET: HIERARCHY, DISK STATE, AND ONE GATEWAY (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 435.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- human -->
+<g id="node1" class="node">
+<title>human</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="246.92,-386.4 141.5,-386.4 141.5,-350.12 246.92,-350.12 246.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="154.46" y="-368.31" font-family="Geist Mono" font-size="11.00">Human reviewer</text>
+<text xml:space="preserve" text-anchor="start" x="157.83" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">single approval point</text>
+</g>
+<!-- gateway -->
+<g id="node6" class="node">
+<title>gateway</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="283.29,-298.87 165.12,-298.87 165.12,-262.59 283.29,-262.59 283.29,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="184.46" y="-280.78" font-family="Geist Mono" font-size="11.00">Review gateway</text>
+<text xml:space="preserve" text-anchor="start" x="178.08" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">plan blocks until approved</text>
+</g>
+<!-- human&#45;&gt;gateway -->
+<g id="edge1" class="edge">
+<title>human&#45;&gt;gateway</title>
+<path fill="none" stroke="#c8501f" d="M200.43,-349.54C204.73,-337.27 210.52,-320.75 215.32,-307.09"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="217.5,-308.27 217.5,-300.86 212.87,-306.65 217.5,-308.27"/>
+<text xml:space="preserve" text-anchor="middle" x="227.88" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">approves</text>
+</g>
+<!-- hierarchy -->
+<g id="node2" class="node">
+<title>hierarchy</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="298.29,-211.34 150.12,-211.34 150.12,-175.06 298.29,-175.06 298.29,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="163.08" y="-193.25" font-family="Geist Mono" font-size="11.00">CEO/VP/manager/worker</text>
+<text xml:space="preserve" text-anchor="start" x="168.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">each layer own scoped context</text>
+</g>
+<!-- delegate_cli -->
+<g id="node3" class="node">
+<title>delegate_cli</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="138.42,-123.81 0,-123.81 0,-87.53 138.42,-87.53 138.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="40.33" y="-105.72" font-family="Geist Mono" font-size="11.00">CLI harness</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">forces dispatch, stops self&#45;work</text>
+</g>
+<!-- hierarchy&#45;&gt;delegate_cli -->
+<g id="edge3" class="edge">
+<title>hierarchy&#45;&gt;delegate_cli</title>
+<path fill="none" stroke="#c8501f" d="M190.15,-174.48C178.61,-168.4 165.69,-161.51 153.96,-155.06 138.39,-146.5 121.36,-136.84 106.68,-128.41"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="108.27,-126.5 100.98,-125.14 105.83,-130.75 108.27,-126.5"/>
+<text xml:space="preserve" text-anchor="middle" x="186.58" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enforces dispatch</text>
+</g>
+<!-- workspace -->
+<g id="node4" class="node">
+<title>workspace</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="288.17,-123.81 160.25,-123.81 160.25,-87.53 288.17,-87.53 288.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="173.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Per&#45;entity workspace</text>
+<text xml:space="preserve" text-anchor="start" x="173.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">mission, status, handoff files</text>
+</g>
+<!-- hierarchy&#45;&gt;workspace -->
+<g id="edge4" class="edge">
+<title>hierarchy&#45;&gt;workspace</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M224.21,-174.48C224.21,-162.44 224.21,-146.31 224.21,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="226.66,-132.88 224.21,-125.88 221.76,-132.88 226.66,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="246.33" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">writes state</text>
+</g>
+<!-- hierarchy&#45;&gt;gateway -->
+<g id="edge7" class="edge">
+<title>hierarchy&#45;&gt;gateway</title>
+<path fill="none" stroke="#c8501f" d="M235.43,-211.82C239.89,-220.86 243.49,-232.15 241.21,-242.59 240.35,-246.54 239.03,-250.57 237.5,-254.45"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="235.3,-253.35 234.74,-260.75 239.79,-255.32 235.3,-253.35"/>
+<text xml:space="preserve" text-anchor="middle" x="265.91" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">submits plan</text>
+</g>
+<!-- reset -->
+<g id="node5" class="node">
+<title>reset</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="348.54,-36.28 207.88,-36.28 207.88,0 348.54,0 348.54,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="230.58" y="-18.19" font-family="Geist Mono" font-size="11.00">Reset, not compact</text>
+<text xml:space="preserve" text-anchor="start" x="220.83" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">clears context, re&#45;reads handoff</text>
+</g>
+<!-- workspace&#45;&gt;reset -->
+<g id="edge5" class="edge">
+<title>workspace&#45;&gt;reset</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M235.09,-87.17C240.83,-77.97 248,-66.5 254.46,-56.28 256.97,-52.32 259.63,-48.13 262.24,-44.04"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="264.3,-45.37 266,-38.15 260.17,-42.73 264.3,-45.37"/>
+<text xml:space="preserve" text-anchor="middle" x="284.83" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">re&#45;read on reset</text>
+</g>
+<!-- reset&#45;&gt;hierarchy -->
+<g id="edge6" class="edge">
+<title>reset&#45;&gt;hierarchy</title>
+<path fill="none" stroke="#c8501f" d="M302.15,-36.85C307.83,-42.38 313.13,-48.97 316.21,-56.28 328.22,-84.81 313.88,-96.56 299.21,-123.81 289.51,-141.84 273.16,-157.6 258.2,-169.42"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="256.73,-167.46 252.65,-173.66 259.71,-171.36 256.73,-167.46"/>
+<text xml:space="preserve" text-anchor="middle" x="334.43" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#c8501f">resumes</text>
+</g>
+<!-- gateway&#45;&gt;hierarchy -->
+<g id="edge2" class="edge">
+<title>gateway&#45;&gt;hierarchy</title>
+<path fill="none" stroke="#c8501f" d="M197.04,-262.11C190.86,-256.66 185.11,-250.08 181.71,-242.59 177.55,-233.42 181.57,-224.72 188.54,-217.28"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="189.8,-219.46 193.24,-212.89 186.45,-215.88 189.8,-219.46"/>
+<text xml:space="preserve" text-anchor="middle" x="210.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">hook fires work</text>
+</g>
+<!-- laptop -->
+<g id="node7" class="node">
+<title>laptop</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="426.79,-561.46 263.62,-561.46 263.62,-525.18 426.79,-525.18 426.79,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="323.46" y="-543.37" font-family="Geist Mono" font-size="11.00">MacBook</text>
+<text xml:space="preserve" text-anchor="start" x="276.58" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">loses in&#45;flight jobs on sleep/power loss</text>
+</g>
+<!-- sync -->
+<g id="node8" class="node">
+<title>sync</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="417.04,-473.93 273.38,-473.93 273.38,-437.65 417.04,-437.65 417.04,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="296.83" y="-455.84" font-family="Geist Mono" font-size="11.00">Cross&#45;machine sync</text>
+<text xml:space="preserve" text-anchor="start" x="286.33" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">git push/pull, shared state via PR</text>
+</g>
+<!-- laptop&#45;&gt;sync -->
+<g id="edge8" class="edge">
+<title>laptop&#45;&gt;sync</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M345.21,-524.6C345.21,-512.56 345.21,-496.43 345.21,-482.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="347.66,-483 345.21,-476 342.76,-483 347.66,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="362.08" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">push/pull</text>
+</g>
+<!-- linux_gw -->
+<g id="node9" class="node">
+<title>linux_gw</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="421.17,-386.4 269.25,-386.4 269.25,-350.12 421.17,-350.12 421.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="295.71" y="-368.31" font-family="Geist Mono" font-size="11.00">Always&#45;on Linux box</text>
+<text xml:space="preserve" text-anchor="start" x="282.21" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">hosts the one gateway, Mac sleeps</text>
+</g>
+<!-- sync&#45;&gt;linux_gw -->
+<g id="edge9" class="edge">
+<title>sync&#45;&gt;linux_gw</title>
+<path fill="none" stroke="#c8501f" d="M345.21,-437.07C345.21,-425.03 345.21,-408.9 345.21,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="347.66,-395.47 345.21,-388.47 342.76,-395.47 347.66,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="372.96" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">SSH send&#45;keys</text>
+</g>
+<!-- linux_gw&#45;&gt;gateway -->
+<g id="edge10" class="edge">
+<title>linux_gw&#45;&gt;gateway</title>
+<path fill="none" stroke="#c8501f" d="M320.14,-349.54C301.56,-336.41 276.11,-318.41 256.08,-304.26"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="257.62,-302.34 250.49,-300.3 254.79,-306.34 257.62,-302.34"/>
+<text xml:space="preserve" text-anchor="middle" x="301.7" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">hosts</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The hierarchy, disk-backed state, and review gateway form the core loop; cross-machine sync and the always-on Linux host were added once a single laptop stopped being enough (ours).</p></section>
 
 
 

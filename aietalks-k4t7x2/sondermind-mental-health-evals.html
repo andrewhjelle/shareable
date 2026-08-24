@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Evals-Driven Development for a Mental Health AI Coach — Talk Brief</title>
+<title>Evals-Driven Development for a Mental Health AI Coach &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,146 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Lays out a concrete architecture (separate input/output LLM-as-judge guardrails around a core model) and a concrete workflow for turning a clinician&#x27;s annotation of a flagged conversation into a typed eval that gates every future prompt,...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>SonderMind built separate input and output LLM-as-judge guardrails around its Sonder core model specifically because separating them is more robust and harder to jailbreak than folding safety into one pass, even at added latency/cost (c2, c3).</li><li>The design goal is more correct triggers, not more triggers, because over-calibrated guardrails feel like a door slam to a vulnerable user; SonderMind had to disable the underlying frontier models&#x27; built-in guardrails because they filtered too aggressively (c4).</li><li>Every clinician annotation of a flagged conversation is converted into a typed eval (input, expected result, expected observation, category) that every subsequent prompt, model, or guardrail change must be scored against, and SonderMind open-sourced 200 input and 100 output guardrail scenarios as a shared baseline (c7, c8).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Guardrail sandwich and eval feedback loop (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">GUARDRAIL SANDWICH AND EVAL FEEDBACK LOOP (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">USER INPUT</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">User message</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">incoming chat message</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Input guardrail</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">LLM-as-judge, screens before core</text><text x="542" y="107" font-size="8.5" text-anchor="middle" fill="#807565">replies</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">CORE MODEL</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Sonder core model</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">clinically grounded AI coach</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">OUTPUT SAFETY</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Output guardrail</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">separate LLM-as-judge, monitors</text><text x="318" y="343" font-size="8.5" text-anchor="middle" fill="#807565">response</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Disengage + resources</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">present-tense danger: surfaces local</text><text x="542" y="343" font-size="8.5" text-anchor="middle" fill="#807565">resources</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">EVAL LOOP</text><rect x="24" y="414" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="120" y="433" font-size="11" text-anchor="middle" fill="#14110D">Flagged conversation</text><text x="120" y="449" font-size="8.5" text-anchor="middle" fill="#807565">traced conversation sent for review</text><rect x="230" y="414" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="327" y="433" font-size="11" text-anchor="middle" fill="#14110D">Clinician annotation</text><text x="327" y="449" font-size="8.5" text-anchor="middle" fill="#807565">licensed clinician labels the case</text><rect x="437" y="414" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="533" y="433" font-size="11" text-anchor="middle" fill="#14110D">Typed eval</text><text x="533" y="449" font-size="8.5" text-anchor="middle" fill="#807565">input, expected result, expected</text><text x="533" y="461" font-size="8.5" text-anchor="middle" fill="#807565">observation</text><rect x="644" y="414" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="433" font-size="11" text-anchor="middle" fill="#14110D">Gates every release</text><text x="740" y="449" font-size="8.5" text-anchor="middle" fill="#807565">scores every prompt/model/guardrail</text><text x="740" y="461" font-size="8.5" text-anchor="middle" fill="#807565">change</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">screens</text><path d="M542,118 V127 H430 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="486" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">clears</text><path d="M430,236 V245 H305 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="368" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">response</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">danger detected</text><path d="M305,354 V363 H120 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="213" y="361" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">flags</text><line x1="216" y1="443" x2="230" y2="443" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="439" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">reviewed by</text><line x1="423" y1="443" x2="437" y2="443" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="439" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">annotated into</text><line x1="630" y1="443" x2="644" y2="443" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="636" y="439" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">scores against</text><path d="M727,414 V405 H529 V118" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="628" y="403" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">gates changes</text><path d="M753,414 V397 H331 V354" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="395" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">gates changes</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the guardrail sandwich SonderMind described, from an incoming message through separate input and output LLM-as-judge guardrails to a clinician-annotated eval that gates every future prompt, model, or guardrail change; the loop is our synthesis of the talk&#x27;s description, not a slide shown verbatim (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">GUARDRAIL SANDWICH AND EVAL FEEDBACK LOOP (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 552.00 657.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 652.99)">
+<title>G</title>
+<!-- msg -->
+<g id="node1" class="node">
+<title>msg</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="497.29,-648.99 387.38,-648.99 387.38,-612.71 497.29,-612.71 497.29,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="407.46" y="-630.9" font-family="Geist Mono" font-size="11.00">User message</text>
+<text xml:space="preserve" text-anchor="start" x="400.33" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">incoming chat message</text>
+</g>
+<!-- inputgr -->
+<g id="node2" class="node">
+<title>inputgr</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="529.92,-561.46 354.75,-561.46 354.75,-525.18 529.92,-525.18 529.92,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="406.71" y="-543.37" font-family="Geist Mono" font-size="11.00">Input guardrail</text>
+<text xml:space="preserve" text-anchor="start" x="367.71" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">LLM&#45;as&#45;judge, screens before core replies</text>
+</g>
+<!-- msg&#45;&gt;inputgr -->
+<g id="edge1" class="edge">
+<title>msg&#45;&gt;inputgr</title>
+<path fill="none" stroke="#c8501f" d="M442.33,-612.13C442.33,-600.09 442.33,-583.96 442.33,-570.45"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="444.79,-570.53 442.34,-563.53 439.89,-570.53 444.79,-570.53"/>
+<text xml:space="preserve" text-anchor="middle" x="456.21" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#c8501f">screens</text>
+</g>
+<!-- core -->
+<g id="node3" class="node">
+<title>core</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="449.04,-473.93 325.62,-473.93 325.62,-437.65 449.04,-437.65 449.04,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="341.58" y="-455.84" font-family="Geist Mono" font-size="11.00">Sonder core model</text>
+<text xml:space="preserve" text-anchor="start" x="338.58" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">clinically grounded AI coach</text>
+</g>
+<!-- inputgr&#45;&gt;core -->
+<g id="edge2" class="edge">
+<title>inputgr&#45;&gt;core</title>
+<path fill="none" stroke="#c8501f" d="M430.94,-524.6C422.9,-512.1 412.03,-495.19 403.15,-481.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="405.38,-480.32 399.54,-475.76 401.26,-482.98 405.38,-480.32"/>
+<text xml:space="preserve" text-anchor="middle" x="429" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">clears</text>
+</g>
+<!-- outputgr -->
+<g id="node4" class="node">
+<title>outputgr</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="420.17,-386.4 240.5,-386.4 240.5,-350.12 420.17,-350.12 420.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="290.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Output guardrail</text>
+<text xml:space="preserve" text-anchor="start" x="253.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">separate LLM&#45;as&#45;judge, monitors response</text>
+</g>
+<!-- core&#45;&gt;outputgr -->
+<g id="edge3" class="edge">
+<title>core&#45;&gt;outputgr</title>
+<path fill="none" stroke="#c8501f" d="M375.52,-437.07C367.19,-424.57 355.93,-407.66 346.73,-393.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="348.89,-392.68 342.97,-388.22 344.81,-395.4 348.89,-392.68"/>
+<text xml:space="preserve" text-anchor="middle" x="378.75" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">response</text>
+</g>
+<!-- disengage -->
+<g id="node5" class="node">
+<title>disengage</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="194.67,-298.87 0,-298.87 0,-262.59 194.67,-262.59 194.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="40.33" y="-280.78" font-family="Geist Mono" font-size="11.00">Disengage + resources</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">present&#45;tense danger: surfaces local resources</text>
+</g>
+<!-- outputgr&#45;&gt;disengage -->
+<g id="edge4" class="edge">
+<title>outputgr&#45;&gt;disengage</title>
+<path fill="none" stroke="#c8501f" d="M281.77,-349.43C244.39,-335.71 192.66,-316.72 153.49,-302.34"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="154.67,-300.17 147.25,-300.05 152.98,-304.77 154.67,-300.17"/>
+<text xml:space="preserve" text-anchor="middle" x="258.16" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">danger detected</text>
+</g>
+<!-- flagged -->
+<g id="node6" class="node">
+<title>flagged</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="369.67,-298.87 217,-298.87 217,-262.59 369.67,-262.59 369.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="241.58" y="-280.78" font-family="Geist Mono" font-size="11.00">Flagged conversation</text>
+<text xml:space="preserve" text-anchor="start" x="229.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">traced conversation sent for review</text>
+</g>
+<!-- outputgr&#45;&gt;flagged -->
+<g id="edge5" class="edge">
+<title>outputgr&#45;&gt;flagged</title>
+<path fill="none" stroke="#c8501f" d="M322.67,-349.54C317.36,-337.27 310.21,-320.75 304.31,-307.09"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="306.62,-306.27 301.59,-300.82 302.12,-308.22 306.62,-306.27"/>
+<text xml:space="preserve" text-anchor="middle" x="323.05" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">flags</text>
+</g>
+<!-- clinician -->
+<g id="node7" class="node">
+<title>clinician</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="355.92,-211.34 216.75,-211.34 216.75,-175.06 355.92,-175.06 355.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="239.08" y="-193.25" font-family="Geist Mono" font-size="11.00">Clinician annotation</text>
+<text xml:space="preserve" text-anchor="start" x="229.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">licensed clinician labels the case</text>
+</g>
+<!-- flagged&#45;&gt;clinician -->
+<g id="edge6" class="edge">
+<title>flagged&#45;&gt;clinician</title>
+<path fill="none" stroke="#c8501f" d="M291.88,-262.01C290.9,-249.97 289.58,-233.84 288.47,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="290.92,-220.18 287.91,-213.41 286.04,-220.58 290.92,-220.18"/>
+<text xml:space="preserve" text-anchor="middle" x="313.13" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reviewed by</text>
+</g>
+<!-- typedeval -->
+<g id="node8" class="node">
+<title>typedeval</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="369.79,-123.81 184.88,-123.81 184.88,-87.53 369.79,-87.53 369.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="251.08" y="-105.72" font-family="Geist Mono" font-size="11.00">Typed eval</text>
+<text xml:space="preserve" text-anchor="start" x="197.83" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">input, expected result, expected observation</text>
+</g>
+<!-- clinician&#45;&gt;typedeval -->
+<g id="edge7" class="edge">
+<title>clinician&#45;&gt;typedeval</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M284.47,-174.48C283.2,-162.44 281.51,-146.31 280.08,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="282.52,-132.58 279.36,-125.87 277.65,-133.09 282.52,-132.58"/>
+<text xml:space="preserve" text-anchor="middle" x="309.75" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">annotated into</text>
+</g>
+<!-- gate -->
+<g id="node9" class="node">
+<title>gate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="496.92,-36.28 309.75,-36.28 309.75,0 496.92,0 496.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="354.58" y="-18.19" font-family="Geist Mono" font-size="11.00">Gates every release</text>
+<text xml:space="preserve" text-anchor="start" x="322.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">scores every prompt/model/guardrail change</text>
+</g>
+<!-- typedeval&#45;&gt;gate -->
+<g id="edge8" class="edge">
+<title>typedeval&#45;&gt;gate</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M295.56,-86.97C306.05,-77.27 319.76,-65.41 333.08,-56.28 341.09,-50.8 349.99,-45.53 358.7,-40.76"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="359.6,-43.06 364.61,-37.6 357.29,-38.74 359.6,-43.06"/>
+<text xml:space="preserve" text-anchor="middle" x="359.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">scores against</text>
+</g>
+<!-- gate&#45;&gt;inputgr -->
+<g id="edge9" class="edge">
+<title>gate&#45;&gt;inputgr</title>
+<path fill="none" stroke="#c8501f" d="M439.48,-36.87C463.38,-51.41 490.33,-74.49 490.33,-104.67 490.33,-456.79 490.33,-456.79 490.33,-456.79 490.33,-479.59 477.21,-501.93 464.68,-518.06"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="462.86,-516.42 460.35,-523.4 466.66,-519.51 462.86,-516.42"/>
+<text xml:space="preserve" text-anchor="middle" x="516.96" y="-278.28" font-family="Geist Mono" font-size="8.50" fill="#c8501f">gates changes</text>
+</g>
+<!-- gate&#45;&gt;outputgr -->
+<g id="edge10" class="edge">
+<title>gate&#45;&gt;outputgr</title>
+<path fill="none" stroke="#c8501f" d="M403.33,-36.83C403.33,-54.13 403.33,-81.21 403.33,-104.67 403.33,-281.73 403.33,-281.73 403.33,-281.73 403.33,-307.51 383.91,-329.46 365.09,-344.66"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="364,-342.41 359.96,-348.63 367,-346.28 364,-342.41"/>
+<text xml:space="preserve" text-anchor="middle" x="429.96" y="-190.75" font-family="Geist Mono" font-size="8.50" fill="#c8501f">gates changes</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the guardrail sandwich SonderMind described, from an incoming message through separate input and output LLM-as-judge guardrails to a clinician-annotated eval that gates every future prompt, model, or guardrail change; the loop is our synthesis of the talk&#x27;s description, not a slide shown verbatim (ours).</p></section>
 
 
 

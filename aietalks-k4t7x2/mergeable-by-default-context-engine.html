@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Mergeable by default: Building the context engine to save time and tokens — Talk Brief</title>
+<title>Mergeable by default: Building the context engine to save time and tokens &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,118 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Explains one technique in depth, the context engine rules for access gating, surfacing conflicts, and never caching answers, illustrated with before/after benchmark numbers rather than a full end-to-end system.</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Naive RAG causes &#x27;satisfaction of search&#x27;: agents stop once they find something that looks like an answer, risking missed conflicting or more important information elsewhere, similar to a radiology diagnostic bias (c1)</li><li>On a benchmark task (implementing Anthropic&#x27;s adaptive thinking mode), Unblocked&#x27;s context engine cut a 2.5-hour, 21-million-token agent run to 25 minutes and 10 million tokens; roughly 90% of agent time went to context collection rather than code writing, and output tokens -- not input tokens -- turned out to be the real performance drag (c2, c8, c7)</li><li>Two hard-won lessons: surface conflicts the engine can&#x27;t resolve instead of hiding them, and never cache/reuse a past answer, since code, docs, and reasoning change constantly (c3, c4)</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="How the context engine handles sources and rules (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">HOW THE CONTEXT ENGINE HANDLES SOURCES AND RULES (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">SOURCES</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Docs &amp; repos</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">knowledge sources for RAG</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Private Slack channels</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">restricted-access source</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">CONTEXT ENGINE</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Access control gate</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">only uses info the asker can already</text><text x="206" y="225" font-size="8.5" text-anchor="middle" fill="#807565">see</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Conflict detection</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">surfaces conflicts instead of hiding</text><text x="430" y="225" font-size="8.5" text-anchor="middle" fill="#807565">them</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">No-cache policy</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">never reuses a past answer</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">DELIVERY &amp; OUTCOMES</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Planning-phase use</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">biggest ROI point, per speaker</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Benchmark result</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">2.5h/21M tokens to 25min/10M tokens</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">Output tokens drag</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">output, not input tokens, hurt perf</text><text x="654" y="343" font-size="8.5" text-anchor="middle" fill="#807565">most</text><path d="M318,118 V127 H417 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="368" y="125" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">raw context</text><path d="M542,118 V135 H206 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="374" y="133" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">channel content</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">gated content</text><line x1="535" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">fresh each time</text><path d="M654,236 V245 H206 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">fed into plan</text><line x1="311" y1="325" x2="325" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">measured on task</text><line x1="535" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">explains savings</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the context engine from gated sources through conflict-surfacing and no-cache rules to the planning-phase benchmark the speaker cites; exact benchmark methodology beyond the stated numbers was not detailed (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW THE CONTEXT ENGINE HANDLES SOURCES AND RULES (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 322.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- src_docs -->
+<g id="node1" class="node">
+<title>src_docs</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="123.42,-473.93 0,-473.93 0,-437.65 123.42,-437.65 123.42,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="28.71" y="-455.84" font-family="Geist Mono" font-size="11.00">Docs &amp; repos</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">knowledge sources for RAG</text>
+</g>
+<!-- conflict -->
+<g id="node4" class="node">
+<title>conflict</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="180.92,-386.4 12.5,-386.4 12.5,-350.12 180.92,-350.12 180.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="54.34" y="-368.31" font-family="Geist Mono" font-size="11.00">Conflict detection</text>
+<text xml:space="preserve" text-anchor="start" x="25.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">surfaces conflicts instead of hiding them</text>
+</g>
+<!-- src_docs&#45;&gt;conflict -->
+<g id="edge1" class="edge">
+<title>src_docs&#45;&gt;conflict</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M68.96,-437.07C73.98,-424.8 80.74,-408.28 86.33,-394.62"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="88.51,-395.77 88.89,-388.36 83.98,-393.91 88.51,-395.77"/>
+<text xml:space="preserve" text-anchor="middle" x="103.43" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">raw context</text>
+</g>
+<!-- src_slack -->
+<g id="node2" class="node">
+<title>src_slack</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="296.67,-561.46 162.75,-561.46 162.75,-525.18 296.67,-525.18 296.67,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="175.71" y="-543.37" font-family="Geist Mono" font-size="11.00">Private Slack channels</text>
+<text xml:space="preserve" text-anchor="start" x="185.84" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">restricted&#45;access source</text>
+</g>
+<!-- access_gate -->
+<g id="node3" class="node">
+<title>access_gate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="313.92,-473.93 145.5,-473.93 145.5,-437.65 313.92,-437.65 313.92,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="181.71" y="-455.84" font-family="Geist Mono" font-size="11.00">Access control gate</text>
+<text xml:space="preserve" text-anchor="start" x="158.46" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">only uses info the asker can already see</text>
+</g>
+<!-- src_slack&#45;&gt;access_gate -->
+<g id="edge2" class="edge">
+<title>src_slack&#45;&gt;access_gate</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M229.71,-524.6C229.71,-512.56 229.71,-496.43 229.71,-482.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="232.16,-483 229.71,-476 227.26,-483 232.16,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="259.33" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">channel content</text>
+</g>
+<!-- access_gate&#45;&gt;conflict -->
+<g id="edge3" class="edge">
+<title>access_gate&#45;&gt;conflict</title>
+<path fill="none" stroke="#c8501f" d="M202.15,-437.07C181.56,-423.82 153.26,-405.63 131.17,-391.42"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="132.72,-389.5 125.51,-387.78 130.07,-393.62 132.72,-389.5"/>
+<text xml:space="preserve" text-anchor="middle" x="197.05" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">gated content</text>
+</g>
+<!-- no_cache -->
+<g id="node5" class="node">
+<title>no_cache</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="159.55,-298.87 33.88,-298.87 33.88,-262.59 159.55,-262.59 159.55,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="58.46" y="-280.78" font-family="Geist Mono" font-size="11.00">No&#45;cache policy</text>
+<text xml:space="preserve" text-anchor="start" x="46.84" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">never reuses a past answer</text>
+</g>
+<!-- conflict&#45;&gt;no_cache -->
+<g id="edge4" class="edge">
+<title>conflict&#45;&gt;no_cache</title>
+<path fill="none" stroke="#c8501f" d="M96.71,-349.54C96.71,-337.5 96.71,-321.37 96.71,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="99.16,-307.94 96.71,-300.94 94.26,-307.94 99.16,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="126.34" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">fresh each time</text>
+</g>
+<!-- planning -->
+<g id="node6" class="node">
+<title>planning</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="164.8,-211.34 28.63,-211.34 28.63,-175.06 164.8,-175.06 164.8,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="49.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Planning&#45;phase use</text>
+<text xml:space="preserve" text-anchor="start" x="41.59" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">biggest ROI point, per speaker</text>
+</g>
+<!-- no_cache&#45;&gt;planning -->
+<g id="edge5" class="edge">
+<title>no_cache&#45;&gt;planning</title>
+<path fill="none" stroke="#c8501f" d="M96.71,-262.01C96.71,-249.97 96.71,-233.84 96.71,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="99.16,-220.41 96.71,-213.41 94.26,-220.41 99.16,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="120.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">fed into plan</text>
+</g>
+<!-- benchmark -->
+<g id="node7" class="node">
+<title>benchmark</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="178.67,-123.81 14.75,-123.81 14.75,-87.53 178.67,-87.53 178.67,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="54.34" y="-105.72" font-family="Geist Mono" font-size="11.00">Benchmark result</text>
+<text xml:space="preserve" text-anchor="start" x="27.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">2.5h/21M tokens to 25min/10M tokens</text>
+</g>
+<!-- planning&#45;&gt;benchmark -->
+<g id="edge6" class="edge">
+<title>planning&#45;&gt;benchmark</title>
+<path fill="none" stroke="#c8501f" d="M96.71,-174.48C96.71,-162.44 96.71,-146.31 96.71,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="99.16,-132.88 96.71,-125.88 94.26,-132.88 99.16,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="130.46" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">measured on task</text>
+</g>
+<!-- token_drag -->
+<g id="node8" class="node">
+<title>token_drag</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="181.3,-36.28 12.13,-36.28 12.13,0 181.3,0 181.3,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="49.46" y="-18.19" font-family="Geist Mono" font-size="11.00">Output tokens drag</text>
+<text xml:space="preserve" text-anchor="start" x="25.09" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">output, not input tokens, hurt perf most</text>
+</g>
+<!-- benchmark&#45;&gt;token_drag -->
+<g id="edge7" class="edge">
+<title>benchmark&#45;&gt;token_drag</title>
+<path fill="none" stroke="#c8501f" d="M96.71,-86.95C96.71,-74.91 96.71,-58.78 96.71,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="99.16,-45.35 96.71,-38.35 94.26,-45.35 99.16,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="127.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">explains savings</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the context engine from gated sources through conflict-surfacing and no-cache rules to the planning-phase benchmark the speaker cites; exact benchmark methodology beyond the stated numbers was not detailed (ours).</p></section>
 
 
 

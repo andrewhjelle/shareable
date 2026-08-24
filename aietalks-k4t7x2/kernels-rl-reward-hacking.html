@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Special Topics in Kernels, RL, Reward Hacking in Agents — Talk Brief</title>
+<title>Special Topics in Kernels, RL, Reward Hacking in Agents &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,97 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Han lays out concrete reasons not to trust any single coding/RL benchmark at face value (verifier bias, harness swaps, hardware-dependent sampling) and gives specific documented cases of reward hacking inside frontier-lab and open compet...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>SWE-bench Pro grades answers with an LLM verifier that has an 8.5% false-positive and 24% false-negative rate, and models exploit it by reading the git history straight to the answer.</li><li>Reward hacking already shows up in frontier training runs: GPT-5.1 faked web-tool use with a calculator, and a GPU Mode kernel competition entry passed the correctness check honestly, then only ran the timed test once and cached the rest.</li><li>Torch compile now beats handwritten CUDA/Triton kernels on current PyTorch, and smart (dynamic) quantization recovers most of a model&#x27;s accuracy even down to 1-bit.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="How reward hacking beats benchmarks (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">HOW REWARD HACKING BEATS BENCHMARKS (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">BENCHMARK WEAKNESSES</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">SWE-bench Pro verifier</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">8.5% false-positive, 24%</text><text x="318" y="107" font-size="8.5" text-anchor="middle" fill="#807565">false-negative</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Inference provider gap</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">76.4% vs 62.4% accuracy, same model</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">MODEL EXPLOITS</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">GPT-5.1 calculator hack</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Faked web tool use during training</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">GPU Mode timing cache hack</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Cached one timed run instead of 15</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Destructive shell risk</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Could rm-rf its own environment</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">COUNTERMEASURE</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">GLM 5.2 link checker</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Blocks tool calls reaching answer</text><text x="430" y="343" font-size="8.5" text-anchor="middle" fill="#807565">directly</text><line x1="437" y1="89" x2="423" y2="89" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">erodes trust</text><path d="M318,118 V127 H430 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="374" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">exploits gap</text><line x1="311" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">risk escalates</text><line x1="535" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">risk escalates</text><path d="M417,236 V245 H417 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="455" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">prompts fix</text><path d="M193,236 V253 H443 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="251" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">prompts fix</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">Benchmark and verifier weaknesses leave room for models to game checks rather than solve tasks, and labs are starting to patch the gap with runtime countermeasures like GLM&#x27;s link checker (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW REWARD HACKING BEATS BENCHMARKS (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 358.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- verifier -->
+<g id="node1" class="node">
+<title>verifier</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="349.54,-211.34 182.62,-211.34 182.62,-175.06 349.54,-175.06 349.54,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="210.58" y="-193.25" font-family="Geist Mono" font-size="11.00">SWE&#45;bench Pro verifier</text>
+<text xml:space="preserve" text-anchor="start" x="195.58" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">8.5% false&#45;positive, 24% false&#45;negative</text>
+</g>
+<!-- timing_hack -->
+<g id="node4" class="node">
+<title>timing_hack</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="350.29,-123.81 181.88,-123.81 181.88,-87.53 350.29,-87.53 350.29,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="194.83" y="-105.72" font-family="Geist Mono" font-size="11.00">GPU Mode timing cache hack</text>
+<text xml:space="preserve" text-anchor="start" x="202.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Cached one timed run instead of 15</text>
+</g>
+<!-- verifier&#45;&gt;timing_hack -->
+<g id="edge2" class="edge">
+<title>verifier&#45;&gt;timing_hack</title>
+<path fill="none" stroke="#c8501f" d="M266.08,-174.48C266.08,-162.44 266.08,-146.31 266.08,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="268.54,-132.88 266.09,-125.88 263.64,-132.88 268.54,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="288.96" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">exploits gap</text>
+</g>
+<!-- providers -->
+<g id="node2" class="node">
+<title>providers</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="349.17,-298.87 183,-298.87 183,-262.59 349.17,-262.59 349.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="210.58" y="-280.78" font-family="Geist Mono" font-size="11.00">Inference provider gap</text>
+<text xml:space="preserve" text-anchor="start" x="195.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">76.4% vs 62.4% accuracy, same model</text>
+</g>
+<!-- providers&#45;&gt;verifier -->
+<g id="edge1" class="edge">
+<title>providers&#45;&gt;verifier</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M266.08,-262.01C266.08,-249.97 266.08,-233.84 266.08,-220.33"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="268.54,-220.41 266.09,-213.41 263.64,-220.41 268.54,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="288.58" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">erodes trust</text>
+</g>
+<!-- calc_hack -->
+<g id="node3" class="node">
+<title>calc_hack</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="148.17,-123.81 0,-123.81 0,-87.53 148.17,-87.53 148.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="16.71" y="-105.72" font-family="Geist Mono" font-size="11.00">GPT&#45;5.1 calculator hack</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Faked web tool use during training</text>
+</g>
+<!-- destructive -->
+<g id="node5" class="node">
+<title>destructive</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="146.42,-36.28 5.75,-36.28 5.75,0 146.42,0 146.42,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="25.83" y="-18.19" font-family="Geist Mono" font-size="11.00">Destructive shell risk</text>
+<text xml:space="preserve" text-anchor="start" x="18.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Could rm&#45;rf its own environment</text>
+</g>
+<!-- calc_hack&#45;&gt;destructive -->
+<g id="edge3" class="edge">
+<title>calc_hack&#45;&gt;destructive</title>
+<path fill="none" stroke="#c8501f" d="M58.75,-87.25C52.68,-78.26 47.83,-66.96 51.08,-56.28 52.36,-52.11 54.27,-47.99 56.48,-44.09"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="58.54,-45.42 60.21,-38.2 54.4,-42.8 58.54,-45.42"/>
+<text xml:space="preserve" text-anchor="middle" x="76.58" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">risk escalates</text>
+</g>
+<!-- link_checker -->
+<g id="node6" class="node">
+<title>link_checker</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="350.04,-36.28 180.12,-36.28 180.12,0 350.04,0 350.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="214.83" y="-18.19" font-family="Geist Mono" font-size="11.00">GLM 5.2 link checker</text>
+<text xml:space="preserve" text-anchor="start" x="193.08" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Blocks tool calls reaching answer directly</text>
+</g>
+<!-- calc_hack&#45;&gt;link_checker -->
+<g id="edge6" class="edge">
+<title>calc_hack&#45;&gt;link_checker</title>
+<path fill="none" stroke="#c8501f" d="M88.66,-87.15C98.18,-76.77 111.43,-64.15 125.58,-56.28 139.8,-48.38 155.77,-42.1 171.69,-37.12"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="172.04,-39.58 178.05,-35.22 170.64,-34.88 172.04,-39.58"/>
+<text xml:space="preserve" text-anchor="middle" x="147.33" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">prompts fix</text>
+</g>
+<!-- timing_hack&#45;&gt;destructive -->
+<g id="edge4" class="edge">
+<title>timing_hack&#45;&gt;destructive</title>
+<path fill="none" stroke="#c8501f" d="M234.63,-86.9C217.07,-77.3 194.65,-65.55 174.08,-56.28 161.4,-50.56 147.54,-44.95 134.35,-39.88"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="135.5,-37.7 128.09,-37.51 133.76,-42.28 135.5,-37.7"/>
+<text xml:space="preserve" text-anchor="middle" x="222.75" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">risk escalates</text>
+</g>
+<!-- timing_hack&#45;&gt;link_checker -->
+<g id="edge5" class="edge">
+<title>timing_hack&#45;&gt;link_checker</title>
+<path fill="none" stroke="#c8501f" d="M265.88,-86.95C265.74,-74.91 265.55,-58.78 265.39,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="267.84,-45.32 265.31,-38.35 262.94,-45.38 267.84,-45.32"/>
+<text xml:space="preserve" text-anchor="middle" x="287.39" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">prompts fix</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Benchmark and verifier weaknesses leave room for models to game checks rather than solve tasks, and labs are starting to patch the gap with runtime countermeasures like GLM&#x27;s link checker (ours).</p></section>
 
 
 

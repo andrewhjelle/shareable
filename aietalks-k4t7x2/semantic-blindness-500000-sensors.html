@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Semantic Blindness: 500,000 Sensors Confused an LLM — Talk Brief</title>
+<title>Semantic Blindness: 500,000 Sensors Confused an LLM &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,132 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Documents a concrete production failure mode -- naive LLM and RAG approaches both collapse when asked to resolve queries against hundreds of thousands of near-identical equipment names in a data center -- and the hierarchical, determinis...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Naive sharded LLM search over equipment names produced horrible recall and hallucinated phantom equipment; the old approach&#x27;s correctness dropped from 80% at 64 GPUs to about 30% at 460,000 GPUs.</li><li>The fix uses an LLM only to plan (produce a structured scope + filter) while a deterministic tree-indexed resolver does exact set operations, restoring 100% correctness across scales and real production systems with zero failures in 66 test cases.</li><li>This cut token cost from 116 million tokens for a single validation pass down to 390,000, and made per-query cost flat (about 9,000 tokens) whether the system has 64 GPUs or 460,000.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Plan with the LLM, resolve with code (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">PLAN WITH THE LLM, RESOLVE WITH CODE (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">NAIVE APPROACH (FAILS)</text><rect x="24" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="120" y="79" font-size="11" text-anchor="middle" fill="#14110D">Operator NL query</text><text x="120" y="95" font-size="8.5" text-anchor="middle" fill="#807565">e.g. &quot;CH3 something something six&quot;</text><rect x="230" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="79" font-size="11" text-anchor="middle" fill="#14110D">Vector/semantic search</text><text x="327" y="95" font-size="8.5" text-anchor="middle" fill="#807565">fails on near-identical names</text><rect x="437" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="79" font-size="11" text-anchor="middle" fill="#14110D">Sharded LLM listing</text><text x="533" y="95" font-size="8.5" text-anchor="middle" fill="#807565">frequency penalty cuts off output</text><rect x="644" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="740" y="79" font-size="11" text-anchor="middle" fill="#14110D">Phantom equipment</text><text x="740" y="95" font-size="8.5" text-anchor="middle" fill="#807565">hallucinated + real equipment</text><text x="740" y="107" font-size="8.5" text-anchor="middle" fill="#807565">dropped</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">FIXED APPROACH</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">LLM planner</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">converts query to scope + filter</text><rect x="325" y="178" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Tree-indexed hierarchy</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">data center &gt; hall &gt; aisle &gt; row &gt;</text><text x="430" y="225" font-size="8.5" text-anchor="middle" fill="#807565">rack &gt; device</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Deterministic resolver</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">exact set ops over pre-indexed</text><text x="654" y="225" font-size="8.5" text-anchor="middle" fill="#807565">subtrees</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">RESULT</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">100% correctness</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">held across all scales, 66 cases, 6</text><text x="318" y="343" font-size="8.5" text-anchor="middle" fill="#807565">systems</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Flat query cost</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">~9,000 tokens/query, 64 to 460,000</text><text x="542" y="343" font-size="8.5" text-anchor="middle" fill="#807565">GPUs</text><line x1="216" y1="89" x2="230" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">naive try</text><line x1="216" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="327" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">naive try</text><line x1="630" y1="89" x2="644" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="636" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">at scale</text><path d="M94,118 V127 H206 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="150" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">fixed path</text><line x1="311" y1="207" x2="325" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">scope+filter</text><line x1="535" y1="207" x2="549" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">subtree</text><path d="M641,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="480" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">result set</text><path d="M667,236 V253 H542 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="604" y="251" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">result set</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">The naive path throws every query at an LLM or vector index and degrades as equipment count grows; the fixed path only asks the LLM to plan, then lets deterministic tree lookups do the actual resolving (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">PLAN WITH THE LLM, RESOLVE WITH CODE (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 630.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- query -->
+<g id="node1" class="node">
+<title>query</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="310.29,-386.4 157.62,-386.4 157.62,-350.12 310.29,-350.12 310.29,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="188.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Operator NL query</text>
+<text xml:space="preserve" text-anchor="start" x="170.58" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">e.g. &quot;CH3 something something six&quot;</text>
+</g>
+<!-- vector -->
+<g id="node2" class="node">
+<title>vector</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="139.92,-298.87 0,-298.87 0,-262.59 139.92,-262.59 139.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-280.78" font-family="Geist Mono" font-size="11.00">Vector/semantic search</text>
+<text xml:space="preserve" text-anchor="start" x="18.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">fails on near&#45;identical names</text>
+</g>
+<!-- query&#45;&gt;vector -->
+<g id="edge1" class="edge">
+<title>query&#45;&gt;vector</title>
+<path fill="none" stroke="#c8501f" d="M199.98,-349.54C174.25,-336.12 138.79,-317.62 111.39,-303.34"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="112.58,-301.19 105.24,-300.13 110.31,-305.54 112.58,-301.19"/>
+<text xml:space="preserve" text-anchor="middle" x="178.65" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">naive try</text>
+</g>
+<!-- sharded -->
+<g id="node3" class="node">
+<title>sharded</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="306.17,-298.87 161.75,-298.87 161.75,-262.59 306.17,-262.59 306.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="187.08" y="-280.78" font-family="Geist Mono" font-size="11.00">Sharded LLM listing</text>
+<text xml:space="preserve" text-anchor="start" x="174.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">frequency penalty cuts off output</text>
+</g>
+<!-- query&#45;&gt;sharded -->
+<g id="edge2" class="edge">
+<title>query&#45;&gt;sharded</title>
+<path fill="none" stroke="#c8501f" d="M233.96,-349.54C233.96,-337.5 233.96,-321.37 233.96,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="236.41,-307.94 233.96,-300.94 231.51,-307.94 236.41,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="250.83" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">naive try</text>
+</g>
+<!-- planner -->
+<g id="node5" class="node">
+<title>planner</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="486.17,-298.87 347.75,-298.87 347.75,-262.59 486.17,-262.59 486.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="387.71" y="-280.78" font-family="Geist Mono" font-size="11.00">LLM planner</text>
+<text xml:space="preserve" text-anchor="start" x="360.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">converts query to scope + filter</text>
+</g>
+<!-- query&#45;&gt;planner -->
+<g id="edge4" class="edge">
+<title>query&#45;&gt;planner</title>
+<path fill="none" stroke="#c8501f" d="M271.88,-349.54C300.83,-336.01 340.84,-317.31 371.51,-302.97"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="372.42,-305.25 377.72,-300.07 370.34,-300.81 372.42,-305.25"/>
+<text xml:space="preserve" text-anchor="middle" x="355.54" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">fixed path</text>
+</g>
+<!-- phantom -->
+<g id="node4" class="node">
+<title>phantom</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="311.67,-211.34 146.25,-211.34 146.25,-175.06 311.67,-175.06 311.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="180.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Phantom equipment</text>
+<text xml:space="preserve" text-anchor="start" x="159.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">hallucinated + real equipment dropped</text>
+</g>
+<!-- sharded&#45;&gt;phantom -->
+<g id="edge3" class="edge">
+<title>sharded&#45;&gt;phantom</title>
+<path fill="none" stroke="#c8501f" d="M232.92,-262.01C232.22,-249.97 231.28,-233.84 230.49,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="232.94,-220.26 230.08,-213.41 228.05,-220.54 232.94,-220.26"/>
+<text xml:space="preserve" text-anchor="middle" x="246.38" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">at scale</text>
+</g>
+<!-- tree -->
+<g id="node6" class="node">
+<title>tree</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="532.54,-211.34 333.38,-211.34 333.38,-175.06 532.54,-175.06 532.54,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="377.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Tree&#45;indexed hierarchy</text>
+<text xml:space="preserve" text-anchor="start" x="346.33" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">data center &gt; hall &gt; aisle &gt; row &gt; rack &gt; device</text>
+</g>
+<!-- planner&#45;&gt;tree -->
+<g id="edge5" class="edge">
+<title>planner&#45;&gt;tree</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M420.28,-262.01C422.55,-249.85 425.6,-233.53 428.14,-219.94"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="430.49,-220.72 429.37,-213.39 425.68,-219.82 430.49,-220.72"/>
+<text xml:space="preserve" text-anchor="middle" x="448.42" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">scope+filter</text>
+</g>
+<!-- resolver -->
+<g id="node7" class="node">
+<title>resolver</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="518.29,-123.81 347.62,-123.81 347.62,-87.53 518.29,-87.53 518.29,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="380.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Deterministic resolver</text>
+<text xml:space="preserve" text-anchor="start" x="360.58" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">exact set ops over pre&#45;indexed subtrees</text>
+</g>
+<!-- tree&#45;&gt;resolver -->
+<g id="edge6" class="edge">
+<title>tree&#45;&gt;resolver</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M432.96,-174.48C432.96,-162.44 432.96,-146.31 432.96,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="435.41,-132.88 432.96,-125.88 430.51,-132.88 435.41,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="446.83" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">subtree</text>
+</g>
+<!-- accuracy -->
+<g id="node8" class="node">
+<title>accuracy</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="422.29,-36.28 245.62,-36.28 245.62,0 422.29,0 422.29,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="289.71" y="-18.19" font-family="Geist Mono" font-size="11.00">100% correctness</text>
+<text xml:space="preserve" text-anchor="start" x="258.58" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">held across all scales, 66 cases, 6 systems</text>
+</g>
+<!-- resolver&#45;&gt;accuracy -->
+<g id="edge7" class="edge">
+<title>resolver&#45;&gt;accuracy</title>
+<path fill="none" stroke="#c8501f" d="M412.45,-86.95C397.45,-73.99 376.96,-56.29 360.68,-42.23"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="362.49,-40.55 355.59,-37.83 359.29,-44.26 362.49,-40.55"/>
+<text xml:space="preserve" text-anchor="middle" x="407.01" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">result set</text>
+</g>
+<!-- cost -->
+<g id="node9" class="node">
+<title>cost</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="621.67,-36.28 444.25,-36.28 444.25,0 621.67,0 621.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="496.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Flat query cost</text>
+<text xml:space="preserve" text-anchor="start" x="457.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">~9,000 tokens/query, 64 to 460,000 GPUs</text>
+</g>
+<!-- resolver&#45;&gt;cost -->
+<g id="edge8" class="edge">
+<title>resolver&#45;&gt;cost</title>
+<path fill="none" stroke="#c8501f" d="M453.68,-86.95C468.83,-73.99 489.52,-56.29 505.97,-42.23"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="507.39,-44.23 511.12,-37.82 504.2,-40.51 507.39,-44.23"/>
+<text xml:space="preserve" text-anchor="middle" x="506.57" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">result set</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The naive path throws every query at an LLM or vector index and degrades as equipment count grows; the fixed path only asks the LLM to plan, then lets deterministic tree lookups do the actual resolving (ours).</p></section>
 
 
 

@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Agents Need Feature Flags — Talk Brief</title>
+<title>Agents Need Feature Flags &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,132 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">For teams shipping agents with tools that send money, send mail, delete data, or spawn subprocesses, this talk gives a concrete taxonomy of six flag types (prompt variant, tool access, model routing, memory policy, autonomy level, kill s...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Agents now ship tools that send money, send mail, modify databases, and spawn processes with none of the canary/segment/kill-switch infrastructure web teams adopted a decade ago; the Cursor support-bot and a runaway LangChain pipeline that burned $47,000 are cited as evidence (c1, c2, c3)</li><li>The fix is six independent flag types -- autonomy has three settings (suggest, auto-approve, autoexecute) and a real kill switch must take effect in seconds with no deployment -- but a parent agent&#x27;s flags don&#x27;t automatically protect a spawned child agent that bypasses the middleware (c4, c5, c6)</li><li>The rollout playbook tracks kill-switch fires per week (target zero, investigate above two) and closes with a single recommendation: ship the kill switch first (c7, c8)</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Flag middleware and the kill switch (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">FLAG MIDDLEWARE AND THE KILL SWITCH (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">AGENT LAYER</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">User request</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">triggers agent action</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Parent agent</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">flags applied via middleware</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">Child agent</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">spawned, bypasses middleware</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">CONTROL PLANE</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Flag middleware</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">resolves flag before each tool call</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Autonomy level</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">suggest, auto-approve, autoexecute</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Kill switch</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">no deploy, no code change, seconds</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">BACKEND &amp; OPS</text><rect x="213" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Flag backend</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">LaunchDarkly, Unleash, or homegrown</text><rect x="437" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Rollout metrics</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">kill fires/wk, target zero</text><line x1="311" y1="89" x2="325" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">request</text><path d="M417,118 V127 H206 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="312" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">flag check</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">applies</text><line x1="311" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">honors</text><path d="M167,236 V245 H305 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="236" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">reads flags</text><line x1="535" y1="89" x2="549" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">spawns</text><path d="M654,118 V135 H331 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="492" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">direct call, no middleware</text><path d="M654,236 V253 H529 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="592" y="251" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">fires logged</text><path d="M193,236 V261 H555 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="374" y="259" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">audit trail</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s proposed flag middleware and the sub-agent bypass failure mode it warns about; the exact wiring between the kill switch and the audit trail is inferred from the talk&#x27;s description rather than shown on screen (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">FLAG MIDDLEWARE AND THE KILL SWITCH (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 587.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- user -->
+<g id="node1" class="node">
+<title>user</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="224.04,-386.4 123.12,-386.4 123.12,-350.12 224.04,-350.12 224.04,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="142.08" y="-368.31" font-family="Geist Mono" font-size="11.00">User request</text>
+<text xml:space="preserve" text-anchor="start" x="136.08" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">triggers agent action</text>
+</g>
+<!-- agent -->
+<g id="node2" class="node">
+<title>agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="236.42,-298.87 110.75,-298.87 110.75,-262.59 236.42,-262.59 236.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="142.08" y="-280.78" font-family="Geist Mono" font-size="11.00">Parent agent</text>
+<text xml:space="preserve" text-anchor="start" x="123.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">flags applied via middleware</text>
+</g>
+<!-- user&#45;&gt;agent -->
+<g id="edge1" class="edge">
+<title>user&#45;&gt;agent</title>
+<path fill="none" stroke="#c8501f" d="M173.58,-349.54C173.58,-337.5 173.58,-321.37 173.58,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="176.04,-307.94 173.59,-300.94 171.14,-307.94 176.04,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="187.46" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">request</text>
+</g>
+<!-- child -->
+<g id="node3" class="node">
+<title>child</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="161.17,-211.34 22,-211.34 22,-175.06 161.17,-175.06 161.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="64.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Child agent</text>
+<text xml:space="preserve" text-anchor="start" x="34.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">spawned, bypasses middleware</text>
+</g>
+<!-- agent&#45;&gt;child -->
+<g id="edge6" class="edge">
+<title>agent&#45;&gt;child</title>
+<path fill="none" stroke="#c8501f" d="M156.59,-262.01C144.39,-249.28 127.8,-231.98 114.44,-218.04"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="116.21,-216.35 109.6,-212.99 112.68,-219.74 116.21,-216.35"/>
+<text xml:space="preserve" text-anchor="middle" x="150.99" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">spawns</text>
+</g>
+<!-- middleware -->
+<g id="node4" class="node">
+<title>middleware</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="341.79,-211.34 197.38,-211.34 197.38,-175.06 341.79,-175.06 341.79,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="229.83" y="-193.25" font-family="Geist Mono" font-size="11.00">Flag middleware</text>
+<text xml:space="preserve" text-anchor="start" x="210.33" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">resolves flag before each tool call</text>
+</g>
+<!-- agent&#45;&gt;middleware -->
+<g id="edge2" class="edge">
+<title>agent&#45;&gt;middleware</title>
+<path fill="none" stroke="#c8501f" d="M193.48,-262.01C208.02,-249.05 227.88,-231.35 243.67,-217.29"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="244.99,-219.39 248.59,-212.91 241.73,-215.73 244.99,-219.39"/>
+<text xml:space="preserve" text-anchor="middle" x="246.46" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">flag check</text>
+</g>
+<!-- backend -->
+<g id="node7" class="node">
+<title>backend</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="163.17,-123.81 0,-123.81 0,-87.53 163.17,-87.53 163.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="49.33" y="-105.72" font-family="Geist Mono" font-size="11.00">Flag backend</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">LaunchDarkly, Unleash, or homegrown</text>
+</g>
+<!-- child&#45;&gt;backend -->
+<g id="edge7" class="edge">
+<title>child&#45;&gt;backend</title>
+<path fill="none" stroke="#c8501f" d="M83.11,-174.46C80.66,-168.45 78.31,-161.59 77.08,-155.06 75.72,-147.79 75.81,-139.82 76.53,-132.49"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="78.93,-133.01 77.41,-125.75 74.08,-132.37 78.93,-133.01"/>
+<text xml:space="preserve" text-anchor="middle" x="125.83" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">direct call, no middleware</text>
+</g>
+<!-- autonomy -->
+<g id="node5" class="node">
+<title>autonomy</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="345.17,-123.81 188,-123.81 188,-87.53 345.17,-87.53 345.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="229.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Autonomy level</text>
+<text xml:space="preserve" text-anchor="start" x="200.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">suggest, auto&#45;approve, autoexecute</text>
+</g>
+<!-- middleware&#45;&gt;autonomy -->
+<g id="edge3" class="edge">
+<title>middleware&#45;&gt;autonomy</title>
+<path fill="none" stroke="#c8501f" d="M268.96,-174.48C268.54,-162.44 267.98,-146.31 267.5,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="269.95,-132.79 267.26,-125.88 265.06,-132.96 269.95,-132.79"/>
+<text xml:space="preserve" text-anchor="middle" x="281.39" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">applies</text>
+</g>
+<!-- killswitch -->
+<g id="node6" class="node">
+<title>killswitch</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="522.42,-123.81 366.75,-123.81 366.75,-87.53 522.42,-87.53 522.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="420.58" y="-105.72" font-family="Geist Mono" font-size="11.00">Kill switch</text>
+<text xml:space="preserve" text-anchor="start" x="379.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">no deploy, no code change, seconds</text>
+</g>
+<!-- middleware&#45;&gt;killswitch -->
+<g id="edge4" class="edge">
+<title>middleware&#45;&gt;killswitch</title>
+<path fill="none" stroke="#c8501f" d="M305.85,-174.48C333.42,-161 371.47,-142.41 400.75,-128.1"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="401.8,-130.31 407.01,-125.03 399.65,-125.91 401.8,-130.31"/>
+<text xml:space="preserve" text-anchor="middle" x="379.94" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">honors</text>
+</g>
+<!-- middleware&#45;&gt;backend -->
+<g id="edge5" class="edge">
+<title>middleware&#45;&gt;backend</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M236.91,-174.37C219.01,-164.86 196.31,-153.21 175.58,-143.81 163.28,-138.23 149.87,-132.64 137.13,-127.56"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="138.13,-125.32 130.71,-125.02 136.32,-129.88 138.13,-125.32"/>
+<text xml:space="preserve" text-anchor="middle" x="219.79" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">reads flags</text>
+</g>
+<!-- metrics -->
+<g id="node8" class="node">
+<title>metrics</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="560.17,-36.28 451,-36.28 451,0 560.17,0 560.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="469.58" y="-18.19" font-family="Geist Mono" font-size="11.00">Rollout metrics</text>
+<text xml:space="preserve" text-anchor="start" x="463.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">kill fires/wk, target zero</text>
+</g>
+<!-- middleware&#45;&gt;metrics -->
+<g id="edge9" class="edge">
+<title>middleware&#45;&gt;metrics</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M342.36,-183.34C412.16,-173.17 510.29,-153.9 533.59,-123.81 551.56,-100.59 537.2,-66.77 523.26,-43.91"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="525.43,-42.76 519.6,-38.17 521.3,-45.39 525.43,-42.76"/>
+<text xml:space="preserve" text-anchor="middle" x="560.37" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">audit trail</text>
+</g>
+<!-- killswitch&#45;&gt;metrics -->
+<g id="edge8" class="edge">
+<title>killswitch&#45;&gt;metrics</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M457.22,-86.95C466.14,-74.45 478.2,-57.54 488.04,-43.74"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="490.01,-45.19 492.08,-38.07 486.02,-42.35 490.01,-45.19"/>
+<text xml:space="preserve" text-anchor="middle" x="500.86" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">fires logged</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s proposed flag middleware and the sub-agent bypass failure mode it warns about; the exact wiring between the kill switch and the audit trail is inferred from the talk&#x27;s description rather than shown on screen (ours).</p></section>
 
 
 

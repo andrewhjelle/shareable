@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Skills are new features: Building Skill-Centric Harness — Talk Brief</title>
+<title>Skills are new features: Building Skill-Centric Harness &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,132 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">This talk gives a concrete architecture and set of failure modes for teams building their own agent harness with skill support outside of Claude Code/Codex, including what breaks when a skill library scales past a handful of skills or th...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>In an agent-first product, skills replace screens/buttons/dropdowns as the feature unit: prompts define who the agent is, tools define what it connects to, and skills define how a task gets done.</li><li>Skill descriptions function as routing signals and must be written for user intent, and skills are version-pinned contracts to a specific model, so swapping models can silently break behavior even with zero skill changes, which is why skills need evals rerun on every model upgrade.</li><li>At enterprise scale, skill library governance (admission, ownership, boundaries, lifecycle, coherence) becomes non-negotiable, and the engineer&#x27;s role shifts from shipping features to shipping the harness that runs them.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="The skill harness: registry to governance (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">THE SKILL HARNESS: REGISTRY TO GOVERNANCE (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">CORE HARNESS</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">System prompt</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">who agent is</text><rect x="325" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Skill registry</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">name/description/path</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">File-read tool</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">+ bash/sandbox for scripts</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">ROUTING</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">Description</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">routing signal, user-intent phrased</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">Progressive disclosure</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">loads full skill body if selected</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">MODEL RISK &amp; GOVERNANCE</text><rect x="24" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="120" y="315" font-size="11" text-anchor="middle" fill="#14110D">Model upgrade</text><text x="120" y="331" font-size="8.5" text-anchor="middle" fill="#807565">new model attends to skill start</text><rect x="230" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="315" font-size="11" text-anchor="middle" fill="#14110D">Skill = contract</text><text x="327" y="331" font-size="8.5" text-anchor="middle" fill="#807565">versioned to specific model</text><rect x="437" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="533" y="315" font-size="11" text-anchor="middle" fill="#14110D">Rerun evals</text><text x="533" y="331" font-size="8.5" text-anchor="middle" fill="#807565">on every model upgrade</text><rect x="644" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="740" y="315" font-size="11" text-anchor="middle" fill="#14110D">Governance layer</text><text x="740" y="331" font-size="8.5" text-anchor="middle" fill="#807565">admission/ownership/boundaries/lifecycle/coherence</text><line x1="311" y1="89" x2="325" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">defines identity</text><path d="M417,118 V127 H318 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="368" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">concatenated into prompt</text><line x1="423" y1="207" x2="437" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">agent selects skill</text><path d="M542,178 V169 H654 V118" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="598" y="167" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">reads skill body</text><line x1="216" y1="325" x2="230" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">exposes fragility</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">requires rerun</text><line x1="630" y1="325" x2="644" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="636" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">feeds review</text><path d="M443,118 V135 H727 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="585" y="133" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">scales past ~10 skills</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Miraje&#x27;s own architecture from the minimal three-part harness through routing into the governance layer he says becomes necessary at scale, with the model-upgrade failure sitting alongside it as the concrete risk that motivates rerunning evals (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">THE SKILL HARNESS: REGISTRY TO GOVERNANCE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 408.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- prompt -->
+<g id="node1" class="node">
+<title>prompt</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="174.54,-386.4 75.12,-386.4 75.12,-350.12 174.54,-350.12 174.54,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="88.08" y="-368.31" font-family="Geist Mono" font-size="11.00">System prompt</text>
+<text xml:space="preserve" text-anchor="start" x="101.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">who agent is</text>
+</g>
+<!-- registry -->
+<g id="node2" class="node">
+<title>registry</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="178.67,-298.87 71,-298.87 71,-262.59 178.67,-262.59 178.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="95.96" y="-280.78" font-family="Geist Mono" font-size="11.00">Skill registry</text>
+<text xml:space="preserve" text-anchor="start" x="83.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">name/description/path</text>
+</g>
+<!-- prompt&#45;&gt;registry -->
+<g id="edge1" class="edge">
+<title>prompt&#45;&gt;registry</title>
+<path fill="none" stroke="#c8501f" d="M124.83,-349.54C124.83,-337.5 124.83,-321.37 124.83,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="127.29,-307.94 124.84,-300.94 122.39,-307.94 127.29,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="154.08" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">defines identity</text>
+</g>
+<!-- desc -->
+<g id="node4" class="node">
+<title>desc</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="149.67,-211.34 0,-211.34 0,-175.06 149.67,-175.06 149.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="47.83" y="-193.25" font-family="Geist Mono" font-size="11.00">Description</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">routing signal, user&#45;intent phrased</text>
+</g>
+<!-- registry&#45;&gt;desc -->
+<g id="edge2" class="edge">
+<title>registry&#45;&gt;desc</title>
+<path fill="none" stroke="#c8501f" d="M91.88,-261.92C85.13,-256.64 78.92,-250.19 75.08,-242.59 71.58,-235.65 70.58,-227.4 70.73,-219.7"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="73.14,-220.31 71.17,-213.16 68.25,-219.98 73.14,-220.31"/>
+<text xml:space="preserve" text-anchor="middle" x="123.46" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">concatenated into prompt</text>
+</g>
+<!-- governance -->
+<g id="node9" class="node">
+<title>governance</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="399.92,-211.34 185.75,-211.34 185.75,-175.06 399.92,-175.06 399.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="250.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Governance layer</text>
+<text xml:space="preserve" text-anchor="start" x="198.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">admission/ownership/boundaries/lifecycle/coherence</text>
+</g>
+<!-- registry&#45;&gt;governance -->
+<g id="edge8" class="edge">
+<title>registry&#45;&gt;governance</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M155.92,-261.96C172.64,-252.58 193.7,-241.03 212.83,-231.34 223.28,-226.05 234.62,-220.61 245.39,-215.58"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="246.42,-217.8 251.74,-212.63 244.35,-213.36 246.42,-217.8"/>
+<text xml:space="preserve" text-anchor="middle" x="253.33" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">scales past ~10 skills</text>
+</g>
+<!-- tool -->
+<g id="node3" class="node">
+<title>tool</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="135.79,-36.28 13.87,-36.28 13.87,0 135.79,0 135.79,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="42.96" y="-18.19" font-family="Geist Mono" font-size="11.00">File&#45;read tool</text>
+<text xml:space="preserve" text-anchor="start" x="26.83" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">+ bash/sandbox for scripts</text>
+</g>
+<!-- disclosure -->
+<g id="node5" class="node">
+<title>disclosure</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="141.42,-123.81 8.25,-123.81 8.25,-87.53 141.42,-87.53 141.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="21.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Progressive disclosure</text>
+<text xml:space="preserve" text-anchor="start" x="23.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">loads full skill body if selected</text>
+</g>
+<!-- desc&#45;&gt;disclosure -->
+<g id="edge3" class="edge">
+<title>desc&#45;&gt;disclosure</title>
+<path fill="none" stroke="#c8501f" d="M74.83,-174.48C74.83,-162.44 74.83,-146.31 74.83,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="77.29,-132.88 74.84,-125.88 72.39,-132.88 77.29,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="108.58" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">agent selects skill</text>
+</g>
+<!-- disclosure&#45;&gt;tool -->
+<g id="edge4" class="edge">
+<title>disclosure&#45;&gt;tool</title>
+<path fill="none" stroke="#c8501f" d="M74.83,-86.95C74.83,-74.91 74.83,-58.78 74.83,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="77.29,-45.35 74.84,-38.35 72.39,-45.35 77.29,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="104.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reads skill body</text>
+</g>
+<!-- modelupgrade -->
+<g id="node6" class="node">
+<title>modelupgrade</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="376.04,-473.93 237.62,-473.93 237.62,-437.65 376.04,-437.65 376.04,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="270.83" y="-455.84" font-family="Geist Mono" font-size="11.00">Model upgrade</text>
+<text xml:space="preserve" text-anchor="start" x="250.58" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">new model attends to skill start</text>
+</g>
+<!-- contract -->
+<g id="node7" class="node">
+<title>contract</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="367.79,-386.4 245.87,-386.4 245.87,-350.12 367.79,-350.12 367.79,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="270.08" y="-368.31" font-family="Geist Mono" font-size="11.00">Skill = contract</text>
+<text xml:space="preserve" text-anchor="start" x="258.83" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">versioned to specific model</text>
+</g>
+<!-- modelupgrade&#45;&gt;contract -->
+<g id="edge5" class="edge">
+<title>modelupgrade&#45;&gt;contract</title>
+<path fill="none" stroke="#c8501f" d="M306.83,-437.07C306.83,-425.03 306.83,-408.9 306.83,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="309.29,-395.47 306.84,-388.47 304.39,-395.47 309.29,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="337.96" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">exposes fragility</text>
+</g>
+<!-- evals -->
+<g id="node8" class="node">
+<title>evals</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="363.29,-298.87 250.37,-298.87 250.37,-262.59 363.29,-262.59 363.29,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="278.33" y="-280.78" font-family="Geist Mono" font-size="11.00">Rerun evals</text>
+<text xml:space="preserve" text-anchor="start" x="263.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">on every model upgrade</text>
+</g>
+<!-- contract&#45;&gt;evals -->
+<g id="edge6" class="edge">
+<title>contract&#45;&gt;evals</title>
+<path fill="none" stroke="#c8501f" d="M306.83,-349.54C306.83,-337.5 306.83,-321.37 306.83,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="309.29,-307.94 306.84,-300.94 304.39,-307.94 309.29,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="333.08" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">requires rerun</text>
+</g>
+<!-- evals&#45;&gt;governance -->
+<g id="edge7" class="edge">
+<title>evals&#45;&gt;governance</title>
+<path fill="none" stroke="#c8501f" d="M303.93,-262.01C301.94,-249.85 299.27,-233.53 297.05,-219.94"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="299.53,-219.91 295.98,-213.39 294.69,-220.7 299.53,-219.91"/>
+<text xml:space="preserve" text-anchor="middle" x="324.67" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">feeds review</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Miraje&#x27;s own architecture from the minimal three-part harness through routing into the governance layer he says becomes necessary at scale, with the model-upgrade failure sitting alongside it as the concrete risk that motivates rerunning evals (ours).</p></section>
 
 
 

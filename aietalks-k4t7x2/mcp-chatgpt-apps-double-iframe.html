@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Why MCP and ChatGPT Apps Use Double Iframes — Talk Brief</title>
+<title>Why MCP and ChatGPT Apps Use Double Iframes &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,132 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Walks through the exact content-security-policy tradeoffs that forced ChatGPT and Claude to nest one iframe inside another to render third-party MCP app UI safely</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>MCP apps render UI via &#x27;views&#x27; -- tool-call-triggered HTML/JS/CSS snippets discovered from tool-list metadata and rendered inside an iframe injected with tool results.</li><li>A single iframe with sourceDoc either shares the host&#x27;s CSP/origin (letting third-party scripts read the host&#x27;s local storage/cookies) or, if sandboxed with allow-same-origin, ends up back in the same unsafe spot -- neither is safe.</li><li>The double-iframe pattern (outer iframe on a per-app subdomain loading an inner sourceDoc iframe) isolates each app&#x27;s origin from both the host and other apps, and traces back to Facebook&#x27;s app marketplace architecture.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Why MCP app UI needs two nested iframes (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">WHY MCP APP UI NEEDS TWO NESTED IFRAMES (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">FAILED SINGLE-IFRAME APPROACHES</text><rect x="24" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="79" font-size="11" text-anchor="middle" fill="#14110D">sourceDoc iframe</text><text x="120" y="95" font-size="8.5" text-anchor="middle" fill="#807565">shares host CSP, blocks scripts via</text><text x="120" y="107" font-size="8.5" text-anchor="middle" fill="#807565">nonce</text><rect x="230" y="60" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="327" y="79" font-size="11" text-anchor="middle" fill="#14110D">Relaxed CSP</text><text x="327" y="95" font-size="8.5" text-anchor="middle" fill="#807565">script could read host</text><text x="327" y="107" font-size="8.5" text-anchor="middle" fill="#807565">cookies/local storage</text><rect x="437" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="79" font-size="11" text-anchor="middle" fill="#14110D">Sandbox + allow-same-origin</text><text x="533" y="95" font-size="8.5" text-anchor="middle" fill="#807565">blocks storage, or reopens same</text><text x="533" y="107" font-size="8.5" text-anchor="middle" fill="#807565">escape risk</text><rect x="644" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="740" y="79" font-size="11" text-anchor="middle" fill="#14110D">src to app server</text><text x="740" y="95" font-size="8.5" text-anchor="middle" fill="#807565">needs every app domain in frame-src</text><text x="740" y="107" font-size="8.5" text-anchor="middle" fill="#807565">forever</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">DOUBLE-IFRAME PATTERN</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Outer iframe, per-app subdomain</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">isolates each app origin from host +</text><text x="206" y="225" font-size="8.5" text-anchor="middle" fill="#807565">other apps</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Inner iframe, sourceDoc</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">loads the actual tool-triggered view</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Facebook app marketplace</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">first implemented this double-iframe</text><text x="654" y="225" font-size="8.5" text-anchor="middle" fill="#807565">pattern</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">DEVELOPER REQUIREMENTS</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Declare app domains</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">every external domain listed in MCP</text><text x="318" y="343" font-size="8.5" text-anchor="middle" fill="#807565">app spec metadata</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Missing domains</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">common cause of ChatGPT app store</text><text x="542" y="343" font-size="8.5" text-anchor="middle" fill="#807565">rejections</text><line x1="216" y1="89" x2="230" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">relax CSP</text><line x1="437" y1="89" x2="423" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">allow-same-origin</text><path d="M740,118 V127 H180 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="460" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replaced by</text><path d="M327,118 V135 H206 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="266" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replaced by</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">loads view</text><line x1="549" y1="207" x2="311" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">precedent for</text><path d="M193,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="256" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">requires</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">if skipped</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">The talk frames the double iframe as the fix that survives every single-iframe failure mode, tracing the pattern back to Facebook app marketplace precedent (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">WHY MCP APP UI NEEDS TWO NESTED IFRAMES (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 696.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- src_doc -->
+<g id="node1" class="node">
+<title>src_doc</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="169.92,-386.4 0,-386.4 0,-350.12 169.92,-350.12 169.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="42.21" y="-368.31" font-family="Geist Mono" font-size="11.00">sourceDoc iframe</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">shares host CSP, blocks scripts via nonce</text>
+</g>
+<!-- relax_csp -->
+<g id="node2" class="node">
+<title>relax_csp</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="274.17,-298.87 93.75,-298.87 93.75,-262.59 274.17,-262.59 274.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="153.58" y="-280.78" font-family="Geist Mono" font-size="11.00">Relaxed CSP</text>
+<text xml:space="preserve" text-anchor="start" x="106.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">script could read host cookies/local storage</text>
+</g>
+<!-- src_doc&#45;&gt;relax_csp -->
+<g id="edge1" class="edge">
+<title>src_doc&#45;&gt;relax_csp</title>
+<path fill="none" stroke="#c8501f" d="M105.47,-349.54C120.47,-336.58 140.96,-318.88 157.24,-304.82"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="158.63,-306.85 162.33,-300.42 155.43,-303.14 158.63,-306.85"/>
+<text xml:space="preserve" text-anchor="middle" x="158.39" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">relax CSP</text>
+</g>
+<!-- outer -->
+<g id="node5" class="node">
+<title>outer</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="487.04,-211.34 290.88,-211.34 290.88,-175.06 487.04,-175.06 487.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="307.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Outer iframe, per&#45;app subdomain</text>
+<text xml:space="preserve" text-anchor="start" x="303.83" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">isolates each app origin from host + other apps</text>
+</g>
+<!-- relax_csp&#45;&gt;outer -->
+<g id="edge4" class="edge">
+<title>relax_csp&#45;&gt;outer</title>
+<path fill="none" stroke="#c8501f" d="M226.44,-262.01C259.15,-248.36 304.45,-229.46 338.91,-215.08"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="339.62,-217.44 345.14,-212.48 337.74,-212.92 339.62,-217.44"/>
+<text xml:space="preserve" text-anchor="middle" x="320.48" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+<!-- sandbox -->
+<g id="node3" class="node">
+<title>sandbox</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="376.42,-386.4 191.5,-386.4 191.5,-350.12 376.42,-350.12 376.42,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="213.08" y="-368.31" font-family="Geist Mono" font-size="11.00">Sandbox + allow&#45;same&#45;origin</text>
+<text xml:space="preserve" text-anchor="start" x="204.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">blocks storage, or reopens same escape risk</text>
+</g>
+<!-- sandbox&#45;&gt;relax_csp -->
+<g id="edge2" class="edge">
+<title>sandbox&#45;&gt;relax_csp</title>
+<path fill="none" stroke="#c8501f" d="M263.24,-349.54C248.09,-336.58 227.4,-318.88 210.95,-304.82"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="212.72,-303.1 205.8,-300.41 209.53,-306.82 212.72,-303.1"/>
+<text xml:space="preserve" text-anchor="middle" x="273.32" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">allow&#45;same&#45;origin</text>
+</g>
+<!-- src_attr -->
+<g id="node4" class="node">
+<title>src_attr</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="482.17,-298.87 295.75,-298.87 295.75,-262.59 482.17,-262.59 482.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="347.33" y="-280.78" font-family="Geist Mono" font-size="11.00">src to app server</text>
+<text xml:space="preserve" text-anchor="start" x="308.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">needs every app domain in frame&#45;src forever</text>
+</g>
+<!-- src_attr&#45;&gt;outer -->
+<g id="edge3" class="edge">
+<title>src_attr&#45;&gt;outer</title>
+<path fill="none" stroke="#c8501f" d="M388.96,-262.01C388.96,-249.97 388.96,-233.84 388.96,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="391.41,-220.41 388.96,-213.41 386.51,-220.41 391.41,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="410.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+<!-- inner -->
+<g id="node6" class="node">
+<title>inner</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="432.29,-123.81 279.62,-123.81 279.62,-87.53 432.29,-87.53 432.29,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="297.08" y="-105.72" font-family="Geist Mono" font-size="11.00">Inner iframe, sourceDoc</text>
+<text xml:space="preserve" text-anchor="start" x="292.58" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">loads the actual tool&#45;triggered view</text>
+</g>
+<!-- outer&#45;&gt;inner -->
+<g id="edge5" class="edge">
+<title>outer&#45;&gt;inner</title>
+<path fill="none" stroke="#c8501f" d="M382.12,-174.48C377.39,-162.21 371.01,-145.69 365.74,-132.03"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="368.14,-131.43 363.33,-125.78 363.57,-133.19 368.14,-131.43"/>
+<text xml:space="preserve" text-anchor="middle" x="394.31" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">loads view</text>
+</g>
+<!-- declare -->
+<g id="node8" class="node">
+<title>declare</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="677.92,-123.81 454,-123.81 454,-87.53 677.92,-87.53 677.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="514.59" y="-105.72" font-family="Geist Mono" font-size="11.00">Declare app domains</text>
+<text xml:space="preserve" text-anchor="start" x="466.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">every external domain listed in MCP app spec metadata</text>
+</g>
+<!-- outer&#45;&gt;declare -->
+<g id="edge7" class="edge">
+<title>outer&#45;&gt;declare</title>
+<path fill="none" stroke="#c8501f" d="M425.63,-174.48C453.64,-160.95 492.33,-142.25 522,-127.91"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="522.73,-130.28 527.97,-125.03 520.6,-125.87 522.73,-130.28"/>
+<text xml:space="preserve" text-anchor="middle" x="503.06" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">requires</text>
+</g>
+<!-- fb -->
+<g id="node7" class="node">
+<title>fb</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="688.05,-298.87 503.88,-298.87 503.88,-262.59 688.05,-262.59 688.05,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="531.09" y="-280.78" font-family="Geist Mono" font-size="11.00">Facebook app marketplace</text>
+<text xml:space="preserve" text-anchor="start" x="516.84" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">first implemented this double&#45;iframe pattern</text>
+</g>
+<!-- fb&#45;&gt;outer -->
+<g id="edge6" class="edge">
+<title>fb&#45;&gt;outer</title>
+<path fill="none" stroke="#c8501f" d="M552.82,-261.9C519.88,-248.3 474.41,-229.51 439.72,-215.17"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="440.85,-212.99 433.45,-212.58 438.98,-217.52 440.85,-212.99"/>
+<text xml:space="preserve" text-anchor="middle" x="529.98" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">precedent for</text>
+</g>
+<!-- missing -->
+<g id="node9" class="node">
+<title>missing</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="664.05,-36.28 467.88,-36.28 467.88,0 664.05,0 664.05,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="526.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Missing domains</text>
+<text xml:space="preserve" text-anchor="start" x="480.84" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">common cause of ChatGPT app store rejections</text>
+</g>
+<!-- declare&#45;&gt;missing -->
+<g id="edge8" class="edge">
+<title>declare&#45;&gt;missing</title>
+<path fill="none" stroke="#c8501f" d="M565.96,-86.95C565.96,-74.91 565.96,-58.78 565.96,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="568.41,-45.35 565.96,-38.35 563.51,-45.35 568.41,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="584.34" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">if skipped</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The talk frames the double iframe as the fix that survives every single-iframe failure mode, tracing the pattern back to Facebook app marketplace precedent (ours).</p></section>
 
 
 

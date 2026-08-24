@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Everything I Learned Training Frontier Small Models — Talk Brief</title>
+<title>Everything I Learned Training Frontier Small Models &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,118 @@ Quotes are verbatim from the talk transcript with the time they were said.</span
 <p class="deck" style="font-size:15px">Gives concrete architecture and post-training choices for anyone deploying edge/on-device models: why embedding-layer size eats effective capacity in small models, why pre-training past Chinchilla-optimal token counts still helped at 350...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>LFM2&#x27;s short-convolution architecture keeps the embedding layer far smaller than Gemma 3 270M&#x27;s, which is 63% embedding parameters, leaving more of the parameter budget for reasoning.</li><li>Liquid pre-trained a 350M-parameter model on 28 trillion tokens, overshooting Chinchilla-style compute-optimal ratios, and still saw performance improve.</li><li>A DPO-based rollout-scoring pipeline plus RL with verifiable rewards cut LFM 2.5 1.2B&#x27;s doom-loop (infinite repetition) rate from ~15-16% after pre-training to near zero, versus over 50% for Qwen 3.5 0.8B in reasoning mode.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Liquid&#x27;s doom-loop fix pipeline (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">LIQUID&#x27;S DOOM-LOOP FIX PIPELINE (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">PROBLEM</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Doom looping</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">model repeats same sequence</text><text x="318" y="107" font-size="8.5" text-anchor="middle" fill="#807565">indefinitely</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">After pre-training</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">~15-16% doom-loop rate, barely moved</text><text x="542" y="107" font-size="8.5" text-anchor="middle" fill="#807565">by SFT</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">ALIGNMENT PIPELINE</text><rect x="24" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="197" font-size="11" text-anchor="middle" fill="#14110D">Rollout sampling</text><text x="120" y="213" font-size="8.5" text-anchor="middle" fill="#807565">5 temp-sampled + 1 greedy rollout</text><text x="120" y="225" font-size="8.5" text-anchor="middle" fill="#807565">per prompt</text><rect x="230" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="327" y="197" font-size="11" text-anchor="middle" fill="#14110D">LLM jury scoring</text><text x="327" y="213" font-size="8.5" text-anchor="middle" fill="#807565">scores rollouts, flags doom-looping</text><text x="327" y="225" font-size="8.5" text-anchor="middle" fill="#807565">outputs</text><rect x="437" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="197" font-size="11" text-anchor="middle" fill="#14110D">DPO training</text><text x="533" y="213" font-size="8.5" text-anchor="middle" fill="#807565">trains model to reject doom-looping</text><text x="533" y="225" font-size="8.5" text-anchor="middle" fill="#807565">outputs</text><rect x="644" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="197" font-size="11" text-anchor="middle" fill="#14110D">RLVR + n-gram penalty</text><text x="740" y="213" font-size="8.5" text-anchor="middle" fill="#807565">RL with verifiable rewards,</text><text x="740" y="225" font-size="8.5" text-anchor="middle" fill="#807565">repetition penalty</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">OUTCOME</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Near-zero doom loops</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">LFM 2.5 1.2B thinking after DPO+RL</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Qwen 3.5 0.8B comparison</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">over 50% doom loops in reasoning mode</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">measured</text><path d="M542,118 V127 H120 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="331" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">sampled for scoring</text><line x1="216" y1="207" x2="230" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">scored by</text><line x1="423" y1="207" x2="437" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">trains via</text><line x1="630" y1="207" x2="644" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="636" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">then</text><path d="M740,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="529" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">reduces to</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">vs competitor</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">Rollouts are jury-scored and used to DPO-train the model away from repetition, then RL with verifiable rewards further suppresses it, cutting the doom-loop rate from about 15-16% to near zero versus over 50% for a comparable competitor model (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">LIQUID&#x27;S DOOM-LOOP FIX PIPELINE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 205.00 657.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 652.99)">
+<title>G</title>
+<!-- doom -->
+<g id="node1" class="node">
+<title>doom</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="186.42,-648.99 10.5,-648.99 10.5,-612.71 186.42,-612.71 186.42,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="65.08" y="-630.9" font-family="Geist Mono" font-size="11.00">Doom looping</text>
+<text xml:space="preserve" text-anchor="start" x="23.46" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">model repeats same sequence indefinitely</text>
+</g>
+<!-- afterpretrain -->
+<g id="node2" class="node">
+<title>afterpretrain</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="196.92,-561.46 0,-561.46 0,-525.18 196.92,-525.18 196.92,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="56.83" y="-543.37" font-family="Geist Mono" font-size="11.00">After pre&#45;training</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">~15&#45;16% doom&#45;loop rate, barely moved by SFT</text>
+</g>
+<!-- doom&#45;&gt;afterpretrain -->
+<g id="edge1" class="edge">
+<title>doom&#45;&gt;afterpretrain</title>
+<path fill="none" stroke="#c8501f" d="M98.46,-612.13C98.46,-600.09 98.46,-583.96 98.46,-570.45"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="100.91,-570.53 98.46,-563.53 96.01,-570.53 100.91,-570.53"/>
+<text xml:space="preserve" text-anchor="middle" x="116.83" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#c8501f">measured</text>
+</g>
+<!-- rollouts -->
+<g id="node3" class="node">
+<title>rollouts</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="195.42,-473.93 1.5,-473.93 1.5,-437.65 195.42,-437.65 195.42,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="58.71" y="-455.84" font-family="Geist Mono" font-size="11.00">Rollout sampling</text>
+<text xml:space="preserve" text-anchor="start" x="14.46" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">5 temp&#45;sampled + 1 greedy rollout per prompt</text>
+</g>
+<!-- afterpretrain&#45;&gt;rollouts -->
+<g id="edge2" class="edge">
+<title>afterpretrain&#45;&gt;rollouts</title>
+<path fill="none" stroke="#c8501f" d="M98.46,-524.6C98.46,-512.56 98.46,-496.43 98.46,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="100.91,-483 98.46,-476 96.01,-483 100.91,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="135.58" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">sampled for scoring</text>
+</g>
+<!-- jury -->
+<g id="node4" class="node">
+<title>jury</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="188.29,-386.4 8.62,-386.4 8.62,-350.12 188.29,-350.12 188.29,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="59.08" y="-368.31" font-family="Geist Mono" font-size="11.00">LLM jury scoring</text>
+<text xml:space="preserve" text-anchor="start" x="21.58" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">scores rollouts, flags doom&#45;looping outputs</text>
+</g>
+<!-- rollouts&#45;&gt;jury -->
+<g id="edge3" class="edge">
+<title>rollouts&#45;&gt;jury</title>
+<path fill="none" stroke="#c8501f" d="M98.46,-437.07C98.46,-425.03 98.46,-408.9 98.46,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="100.91,-395.47 98.46,-388.47 96.01,-395.47 100.91,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="116.46" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">scored by</text>
+</g>
+<!-- dpo -->
+<g id="node5" class="node">
+<title>dpo</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="190.54,-298.87 6.38,-298.87 6.38,-262.59 190.54,-262.59 190.54,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="68.08" y="-280.78" font-family="Geist Mono" font-size="11.00">DPO training</text>
+<text xml:space="preserve" text-anchor="start" x="19.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">trains model to reject doom&#45;looping outputs</text>
+</g>
+<!-- jury&#45;&gt;dpo -->
+<g id="edge4" class="edge">
+<title>jury&#45;&gt;dpo</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M98.46,-349.54C98.46,-337.5 98.46,-321.37 98.46,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="100.91,-307.94 98.46,-300.94 96.01,-307.94 100.91,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="116.08" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">trains via</text>
+</g>
+<!-- rlvr -->
+<g id="node6" class="node">
+<title>rlvr</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="190.92,-211.34 6,-211.34 6,-175.06 190.92,-175.06 190.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="41.46" y="-193.25" font-family="Geist Mono" font-size="11.00">RLVR + n&#45;gram penalty</text>
+<text xml:space="preserve" text-anchor="start" x="18.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">RL with verifiable rewards, repetition penalty</text>
+</g>
+<!-- dpo&#45;&gt;rlvr -->
+<g id="edge5" class="edge">
+<title>dpo&#45;&gt;rlvr</title>
+<path fill="none" stroke="#c8501f" d="M98.46,-262.01C98.46,-249.97 98.46,-233.84 98.46,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="100.91,-220.41 98.46,-213.41 96.01,-220.41 100.91,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="106.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">then</text>
+</g>
+<!-- nearzero -->
+<g id="node7" class="node">
+<title>nearzero</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="175.54,-123.81 21.38,-123.81 21.38,-87.53 175.54,-87.53 175.54,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="44.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Near&#45;zero doom loops</text>
+<text xml:space="preserve" text-anchor="start" x="34.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">LFM 2.5 1.2B thinking after DPO+RL</text>
+</g>
+<!-- rlvr&#45;&gt;nearzero -->
+<g id="edge6" class="edge">
+<title>rlvr&#45;&gt;nearzero</title>
+<path fill="none" stroke="#c8501f" d="M98.46,-174.48C98.46,-162.44 98.46,-146.31 98.46,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="100.91,-132.88 98.46,-125.88 96.01,-132.88 100.91,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="117.96" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reduces to</text>
+</g>
+<!-- qwen -->
+<g id="node8" class="node">
+<title>qwen</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="184.54,-36.28 12.38,-36.28 12.38,0 184.54,0 184.54,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="32.83" y="-18.19" font-family="Geist Mono" font-size="11.00">Qwen 3.5 0.8B comparison</text>
+<text xml:space="preserve" text-anchor="start" x="25.33" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">over 50% doom loops in reasoning mode</text>
+</g>
+<!-- nearzero&#45;&gt;qwen -->
+<g id="edge7" class="edge">
+<title>nearzero&#45;&gt;qwen</title>
+<path fill="none" stroke="#c8501f" d="M98.46,-86.95C98.46,-74.91 98.46,-58.78 98.46,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="100.91,-45.35 98.46,-38.35 96.01,-45.35 100.91,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="124.33" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">vs competitor</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Rollouts are jury-scored and used to DPO-train the model away from repetition, then RL with verifiable rewards further suppresses it, cutting the doom-loop rate from about 15-16% to near zero versus over 50% for a comparable competitor model (ours).</p></section>
 
 
 

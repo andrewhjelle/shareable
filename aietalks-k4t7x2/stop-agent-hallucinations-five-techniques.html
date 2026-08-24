@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Stop AI Agent Hallucinations: 5 Techniques + Production Patterns — Talk Brief</title>
+<title>Stop AI Agent Hallucinations: 5 Techniques + Production Patterns &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,118 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Walks through five concrete code-level fixes (not prompt tweaks) for agent reliability: filtering tool schemas from context, replacing vector RAG with graph queries for aggregation questions, adding a second validator agent, enforcing ha...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Filtering an agent&#x27;s tool list to only the top few relevant tools (semantic tool selection) cut one 29-tool travel agent&#x27;s per-call token cost from ~3,000 tokens to under 300.</li><li>For aggregation/count/multi-hop questions, GraphRAG (Cypher queries against a knowledge graph) returns a computed answer instead of the estimate a vector-search RAG model produces from a handful of retrieved chunks.</li><li>Rules written only in the system prompt are suggestions the model can ignore; enforcing them as code (Strands hooks that fire before a tool executes) makes them unskippable, and a runtime-steering layer lets soft rules redirect the agent instead of hard-blocking it.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Three code-level fixes for agent hallucinations (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">THREE CODE-LEVEL FIXES FOR AGENT HALLUCINATIONS (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">PROBLEM</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">29 tools in prompt</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">adds ~3,000 tokens per call</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Vector RAG estimates</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">guesses aggregates from a few chunks</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">Prompt rule as text</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">e.g. max 10 guests, model can ignore</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">CODE-LEVEL FIX</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Vector tool index</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">retrieves top 3 relevant tools</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">GraphRAG Cypher query</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">runs across the full graph dataset</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Strands hook</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">checks params, cancels call</text><text x="654" y="225" font-size="8.5" text-anchor="middle" fill="#807565">pre-execute</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">RESULT</text><rect x="101" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Under 300 tokens/call</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">drops from thousands</text><rect x="325" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Computed verified answer</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">not a sample estimate</text><rect x="549" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">Hard block or soft steer</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Agent Control redirects instead of</text><text x="654" y="343" font-size="8.5" text-anchor="middle" fill="#807565">stopping</text><path d="M206,118 V127 H206 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="244" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">triggers filter</text><path d="M206,236 V245 H206 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="244" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">reduces to</text><path d="M430,118 V135 H430 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="468" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replaced by</text><path d="M430,236 V253 H430 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="468" y="251" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">returns</text><path d="M654,118 V143 H654 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="692" y="141" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">enforced by</text><path d="M654,236 V261 H654 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="692" y="259" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">produces</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces three of the talk&#x27;s five techniques from problem to code fix to result: tool filtering and GraphRAG replace model guesses with computed lookups, and hooks make a stated rule unskippable (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">THREE CODE-LEVEL FIXES FOR AGENT HALLUCINATIONS (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 520.00 219.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 215.34)">
+<title>G</title>
+<!-- p1 -->
+<g id="node1" class="node">
+<title>p1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="129.42,-211.34 3.75,-211.34 3.75,-175.06 129.42,-175.06 129.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="21.96" y="-193.25" font-family="Geist Mono" font-size="11.00">29 tools in prompt</text>
+<text xml:space="preserve" text-anchor="start" x="16.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">adds ~3,000 tokens per call</text>
+</g>
+<!-- f1 -->
+<g id="node4" class="node">
+<title>f1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="130.92,-123.81 2.25,-123.81 2.25,-87.53 130.92,-87.53 130.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="26.08" y="-105.72" font-family="Geist Mono" font-size="11.00">Vector tool index</text>
+<text xml:space="preserve" text-anchor="start" x="15.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">retrieves top 3 relevant tools</text>
+</g>
+<!-- p1&#45;&gt;f1 -->
+<g id="edge1" class="edge">
+<title>p1&#45;&gt;f1</title>
+<path fill="none" stroke="#c8501f" d="M66.58,-174.48C66.58,-162.44 66.58,-146.31 66.58,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="69.04,-132.88 66.59,-125.88 64.14,-132.88 69.04,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="91.33" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">triggers filter</text>
+</g>
+<!-- p2 -->
+<g id="node2" class="node">
+<title>p2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="317.67,-211.34 151.5,-211.34 151.5,-175.06 317.67,-175.06 317.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="181.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Vector RAG estimates</text>
+<text xml:space="preserve" text-anchor="start" x="164.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">guesses aggregates from a few chunks</text>
+</g>
+<!-- f2 -->
+<g id="node5" class="node">
+<title>f2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="307.92,-123.81 161.25,-123.81 161.25,-87.53 307.92,-87.53 307.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="175.33" y="-105.72" font-family="Geist Mono" font-size="11.00">GraphRAG Cypher query</text>
+<text xml:space="preserve" text-anchor="start" x="174.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">runs across the full graph dataset</text>
+</g>
+<!-- p2&#45;&gt;f2 -->
+<g id="edge3" class="edge">
+<title>p2&#45;&gt;f2</title>
+<path fill="none" stroke="#c8501f" d="M234.58,-174.48C234.58,-162.44 234.58,-146.31 234.58,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="237.04,-132.88 234.59,-125.88 232.14,-132.88 237.04,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="256.33" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+<!-- p3 -->
+<g id="node3" class="node">
+<title>p3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="502.67,-211.34 342.5,-211.34 342.5,-175.06 502.67,-175.06 502.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="375.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Prompt rule as text</text>
+<text xml:space="preserve" text-anchor="start" x="355.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">e.g. max 10 guests, model can ignore</text>
+</g>
+<!-- f3 -->
+<g id="node6" class="node">
+<title>f3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="507.17,-123.81 338,-123.81 338,-87.53 507.17,-87.53 507.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="390.71" y="-105.72" font-family="Geist Mono" font-size="11.00">Strands hook</text>
+<text xml:space="preserve" text-anchor="start" x="350.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">checks params, cancels call pre&#45;execute</text>
+</g>
+<!-- p3&#45;&gt;f3 -->
+<g id="edge5" class="edge">
+<title>p3&#45;&gt;f3</title>
+<path fill="none" stroke="#c8501f" d="M422.58,-174.48C422.58,-162.44 422.58,-146.31 422.58,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="425.04,-132.88 422.59,-125.88 420.14,-132.88 425.04,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="444.71" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enforced by</text>
+</g>
+<!-- r1 -->
+<g id="node7" class="node">
+<title>r1</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="133.17,-36.28 0,-36.28 0,0 133.17,0 133.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Under 300 tokens/call</text>
+<text xml:space="preserve" text-anchor="start" x="27.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">drops from thousands</text>
+</g>
+<!-- f1&#45;&gt;r1 -->
+<g id="edge2" class="edge">
+<title>f1&#45;&gt;r1</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M66.58,-86.95C66.58,-74.91 66.58,-58.78 66.58,-45.27"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="69.04,-45.35 66.59,-38.35 64.14,-45.35 69.04,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="86.08" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">reduces to</text>
+</g>
+<!-- r2 -->
+<g id="node8" class="node">
+<title>r2</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="311.29,-36.28 157.88,-36.28 157.88,0 311.29,0 311.29,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="170.83" y="-18.19" font-family="Geist Mono" font-size="11.00">Computed verified answer</text>
+<text xml:space="preserve" text-anchor="start" x="194.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">not a sample estimate</text>
+</g>
+<!-- f2&#45;&gt;r2 -->
+<g id="edge4" class="edge">
+<title>f2&#45;&gt;r2</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M234.58,-86.95C234.58,-74.91 234.58,-58.78 234.58,-45.27"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="237.04,-45.35 234.59,-38.35 232.14,-45.35 237.04,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="247.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">returns</text>
+</g>
+<!-- r3 -->
+<g id="node9" class="node">
+<title>r3</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="512.04,-36.28 333.12,-36.28 333.12,0 512.04,0 512.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="364.46" y="-18.19" font-family="Geist Mono" font-size="11.00">Hard block or soft steer</text>
+<text xml:space="preserve" text-anchor="start" x="346.08" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Agent Control redirects instead of stopping</text>
+</g>
+<!-- f3&#45;&gt;r3 -->
+<g id="edge6" class="edge">
+<title>f3&#45;&gt;r3</title>
+<path fill="none" stroke="#c8501f" d="M422.58,-86.95C422.58,-74.91 422.58,-58.78 422.58,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="425.04,-45.35 422.59,-38.35 420.14,-45.35 425.04,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="439.08" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">produces</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces three of the talk&#x27;s five techniques from problem to code fix to result: tool filtering and GraphRAG replace model guesses with computed lookups, and hooks make a stated rule unskippable (ours).</p></section>
 
 
 

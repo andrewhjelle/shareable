@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Why Your Agent Disagrees With Itself (And What To Do About It) — Talk Brief</title>
+<title>Why Your Agent Disagrees With Itself (And What To Do About It) &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,125 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Diane Lin (ex-Chronosphere, now Datadog) gives a concrete diagnosis for the common problem of an LLM agent giving different verdicts on the same input across runs: inconsistency clusters at genuinely ambiguous decision-boundary cases, no...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Running the same model on the same input repeatedly can produce semantically different verdicts, in both sentiment analysis and security-alert triage, and the flip-flopping concentrates near the decision boundary, not randomly (c1, c3).</li><li>LLM self-reported confidence/uncertainty scores are unreliable signals for finding these cases; disagreement across multiple runs or models is the more reliable signal (c4).</li><li>Rather than fine-tuning, augmenting the agent with semantic memory (domain policy) and episodic memory (past similar labeled cases) is proposed as a lighter-weight fix, tested on 93 real alerts where a quarter flip-flopped and the intervention got 15% to consistent automatically, leaving 10% still inconsistent for human review (c5, c6, c7).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="How flip-flop cases get resolved (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">HOW FLIP-FLOP CASES GET RESOLVED (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">DETECT</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Same input, 3 runs</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">93 alerts run three times each</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Disagreement sampling</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">cross-run/model disagreement, not</text><text x="542" y="107" font-size="8.5" text-anchor="middle" fill="#807565">confidence</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">DIAGNOSE</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">Decision boundary</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">flip-flops concentrate in the gray</text><text x="318" y="225" font-size="8.5" text-anchor="middle" fill="#807565">zone</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">Trust risk</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">inconsistent verdicts vs. a consistent</text><text x="542" y="225" font-size="8.5" text-anchor="middle" fill="#807565">rival</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">FIX</text><rect x="24" y="296" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="120" y="315" font-size="11" text-anchor="middle" fill="#14110D">Semantic memory</text><text x="120" y="331" font-size="8.5" text-anchor="middle" fill="#807565">explicit domain/policy knowledge</text><rect x="230" y="296" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="327" y="315" font-size="11" text-anchor="middle" fill="#14110D">Episodic memory</text><text x="327" y="331" font-size="8.5" text-anchor="middle" fill="#807565">past similar labeled cases</text><rect x="437" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="315" font-size="11" text-anchor="middle" fill="#14110D">Auto-consistent</text><text x="533" y="331" font-size="8.5" text-anchor="middle" fill="#807565">~15% resolved automatically</text><rect x="644" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="740" y="315" font-size="11" text-anchor="middle" fill="#14110D">Human review</text><text x="740" y="331" font-size="8.5" text-anchor="middle" fill="#807565">~10% still inconsistent, escalated</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">reveals flip-flop</text><path d="M542,118 V127 H318 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">surfaces gray zone</text><line x1="423" y1="207" x2="437" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">risks trust</text><path d="M292,236 V245 H120 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="206" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">policy lookup</text><path d="M318,236 V253 H327 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="356" y="251" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">case lookup</text><line x1="216" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="327" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">resolves</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">resolves</text><line x1="423" y1="325" x2="644" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="533" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">still ambiguous</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Diane Lin&#x27;s proposed fix: disagreement sampling finds decision-boundary cases, then semantic and episodic memory resolve most of them automatically, with the rest escalated to a person (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW FLIP-FLOP CASES GET RESOLVED (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 506.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- runs -->
+<g id="node1" class="node">
+<title>runs</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="332.42,-386.4 197.75,-386.4 197.75,-350.12 332.42,-350.12 332.42,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="218.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Same input, 3 runs</text>
+<text xml:space="preserve" text-anchor="start" x="210.71" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">93 alerts run three times each</text>
+</g>
+<!-- disagree -->
+<g id="node2" class="node">
+<title>disagree</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="361.67,-298.87 168.5,-298.87 168.5,-262.59 361.67,-262.59 361.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="208.08" y="-280.78" font-family="Geist Mono" font-size="11.00">Disagreement sampling</text>
+<text xml:space="preserve" text-anchor="start" x="181.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">cross&#45;run/model disagreement, not confidence</text>
+</g>
+<!-- runs&#45;&gt;disagree -->
+<g id="edge1" class="edge">
+<title>runs&#45;&gt;disagree</title>
+<path fill="none" stroke="#c8501f" d="M265.08,-349.54C265.08,-337.5 265.08,-321.37 265.08,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="267.54,-307.94 265.09,-300.94 262.64,-307.94 267.54,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="294.71" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reveals flip&#45;flop</text>
+</g>
+<!-- boundary -->
+<g id="node3" class="node">
+<title>boundary</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="345.17,-211.34 185,-211.34 185,-175.06 345.17,-175.06 345.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="220.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Decision boundary</text>
+<text xml:space="preserve" text-anchor="start" x="197.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">flip&#45;flops concentrate in the gray zone</text>
+</g>
+<!-- disagree&#45;&gt;boundary -->
+<g id="edge2" class="edge">
+<title>disagree&#45;&gt;boundary</title>
+<path fill="none" stroke="#c8501f" d="M265.08,-262.01C265.08,-249.97 265.08,-233.84 265.08,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="267.54,-220.41 265.09,-213.41 262.64,-220.41 267.54,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="300.33" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">surfaces gray zone</text>
+</g>
+<!-- trust -->
+<g id="node4" class="node">
+<title>trust</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="172.17,-123.81 0,-123.81 0,-87.53 172.17,-87.53 172.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="63.58" y="-105.72" font-family="Geist Mono" font-size="11.00">Trust risk</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">inconsistent verdicts vs. a consistent rival</text>
+</g>
+<!-- boundary&#45;&gt;trust -->
+<g id="edge3" class="edge">
+<title>boundary&#45;&gt;trust</title>
+<path fill="none" stroke="#c8501f" d="M228,-174.48C199.68,-160.95 160.54,-142.25 130.54,-127.91"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="131.86,-125.83 124.49,-125.02 129.75,-130.25 131.86,-125.83"/>
+<text xml:space="preserve" text-anchor="middle" x="205.05" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">risks trust</text>
+</g>
+<!-- semantic -->
+<g id="node5" class="node">
+<title>semantic</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="335.79,-123.81 194.38,-123.81 194.38,-87.53 335.79,-87.53 335.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="221.58" y="-105.72" font-family="Geist Mono" font-size="11.00">Semantic memory</text>
+<text xml:space="preserve" text-anchor="start" x="207.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">explicit domain/policy knowledge</text>
+</g>
+<!-- boundary&#45;&gt;semantic -->
+<g id="edge4" class="edge">
+<title>boundary&#45;&gt;semantic</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M265.08,-174.48C265.08,-162.44 265.08,-146.31 265.08,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="267.54,-132.88 265.09,-125.88 262.64,-132.88 267.54,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="289.83" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">policy lookup</text>
+</g>
+<!-- episodic -->
+<g id="node6" class="node">
+<title>episodic</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="474.42,-123.81 357.75,-123.81 357.75,-87.53 474.42,-87.53 474.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="375.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Episodic memory</text>
+<text xml:space="preserve" text-anchor="start" x="370.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">past similar labeled cases</text>
+</g>
+<!-- boundary&#45;&gt;episodic -->
+<g id="edge5" class="edge">
+<title>boundary&#45;&gt;episodic</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M296.37,-174.48C319.96,-161.12 352.44,-142.72 377.61,-128.46"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="378.64,-130.7 383.52,-125.12 376.22,-126.43 378.64,-130.7"/>
+<text xml:space="preserve" text-anchor="middle" x="371.75" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">case lookup</text>
+</g>
+<!-- consistent -->
+<g id="node7" class="node">
+<title>consistent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="330.17,-36.28 200,-36.28 200,0 330.17,0 330.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="227.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Auto&#45;consistent</text>
+<text xml:space="preserve" text-anchor="start" x="212.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">~15% resolved automatically</text>
+</g>
+<!-- semantic&#45;&gt;consistent -->
+<g id="edge6" class="edge">
+<title>semantic&#45;&gt;consistent</title>
+<path fill="none" stroke="#c8501f" d="M265.08,-86.95C265.08,-74.91 265.08,-58.78 265.08,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="267.54,-45.35 265.09,-38.35 262.64,-45.35 267.54,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="280.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">resolves</text>
+</g>
+<!-- episodic&#45;&gt;consistent -->
+<g id="edge7" class="edge">
+<title>episodic&#45;&gt;consistent</title>
+<path fill="none" stroke="#c8501f" d="M384.8,-86.95C361.21,-73.59 328.73,-55.19 303.56,-40.93"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="304.95,-38.9 297.65,-37.59 302.53,-43.17 304.95,-38.9"/>
+<text xml:space="preserve" text-anchor="middle" x="365" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">resolves</text>
+</g>
+<!-- human -->
+<g id="node8" class="node">
+<title>human</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="498.04,-36.28 352.12,-36.28 352.12,0 498.04,0 498.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="390.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Human review</text>
+<text xml:space="preserve" text-anchor="start" x="365.08" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">~10% still inconsistent, escalated</text>
+</g>
+<!-- episodic&#45;&gt;human -->
+<g id="edge8" class="edge">
+<title>episodic&#45;&gt;human</title>
+<path fill="none" stroke="#c8501f" d="M417.95,-86.95C419.22,-74.91 420.91,-58.78 422.34,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="424.77,-45.56 423.06,-38.34 419.9,-45.05 424.77,-45.56"/>
+<text xml:space="preserve" text-anchor="middle" x="449.62" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">still ambiguous</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Diane Lin&#x27;s proposed fix: disagreement sampling finds decision-boundary cases, then semantic and episodic memory resolve most of them automatically, with the rest escalated to a person (ours).</p></section>
 
 
 

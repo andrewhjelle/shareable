@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Full Workshop: Better Auth — Talk Brief</title>
+<title>Full Workshop: Better Auth &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,139 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Paola Estefania walks through a concrete failure mode in most current agent setups: agents connect to Gmail, calendars, and other services using the user&#x27;s own OAuth token or personal credentials, meaning the agent can act as the user wi...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Current agent-to-service connections typically reuse the user&#x27;s own credentials, so the agent is &#x27;acting on behalf of us but pretending to be us&#x27; with no separate identity or audit trail (c1).</li><li>The proposed fix gives each agent its own identity backed by a private key so tokens can be signed, actions logged per agent, and access revoked without touching the underlying user account (c4, c5, c6).</li><li>Fine-grained capabilities (not broad OAuth scopes) plus a directory that maps user intent to specific capabilities are used to scope exactly what an agent can do, demonstrated live via an MCP connection to Gmail (c3, c9).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="How the agent identity protocol replaces shared credentials (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">HOW THE AGENT IDENTITY PROTOCOL REPLACES SHARED CREDENTIALS (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">PROBLEM: SHARED CREDENTIALS</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">User&#x27;s OAuth token</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Agent reuses user&#x27;s own credentials</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Agent impersonates user</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">No separate identity, no audit trail</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">PROTOCOL MECHANISM</text><rect x="24" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="100" y="197" font-size="11" text-anchor="middle" fill="#14110D">Per-agent private key</text><text x="100" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Agent gets its own key, not</text><text x="100" y="225" font-size="8.5" text-anchor="middle" fill="#807565">user&#x27;s</text><rect x="189" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="265" y="197" font-size="11" text-anchor="middle" fill="#14110D">Signed agent token</text><text x="265" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Token signed by agent&#x27;s own</text><text x="265" y="225" font-size="8.5" text-anchor="middle" fill="#807565">key</text><rect x="354" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Fine-grained capability</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Exact action, not broad</text><text x="430" y="225" font-size="8.5" text-anchor="middle" fill="#807565">OAuth scope</text><rect x="520" y="178" width="151" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="595" y="197" font-size="11" text-anchor="middle" fill="#14110D">Directory</text><text x="595" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Maps user intent to</text><text x="595" y="225" font-size="8.5" text-anchor="middle" fill="#807565">capabilities</text><rect x="685" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="760" y="197" font-size="11" text-anchor="middle" fill="#14110D">Service (e.g. Gmail)</text><text x="760" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Connected via MCP, demoed</text><text x="760" y="225" font-size="8.5" text-anchor="middle" fill="#807565">live</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">OUTCOME</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Per-agent audit log</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Traces which agent did what</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Revoke single agent</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Access pulled without touching user</text><text x="542" y="343" font-size="8.5" text-anchor="middle" fill="#807565">account</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">reused as</text><path d="M542,118 V127 H100 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="321" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replaced by</text><line x1="175" y1="207" x2="189" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="182" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">signs</text><line x1="506" y1="207" x2="520" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="513" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">listed in</text><line x1="671" y1="207" x2="685" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="678" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">discovers</text><line x1="340" y1="207" x2="685" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="513" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">authenticates</text><path d="M252,236 V245 H305 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="290" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">logged</text><path d="M760,236 V253 H331 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="546" y="251" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">recorded</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">identifies</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s live demo mechanism from shared-credential impersonation to per-agent identity, capability discovery, and revocation; the protocol is described as an early V1/V2 draft still being iterated (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW THE AGENT IDENTITY PROTOCOL REPLACES SHARED CREDENTIALS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 338.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- a -->
+<g id="node1" class="node">
+<title>a</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="154.92,-561.46 0,-561.46 0,-525.18 154.92,-525.18 154.92,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="30.21" y="-543.37" font-family="Geist Mono" font-size="11.00">User&#39;s OAuth token</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">Agent reuses user&#39;s own credentials</text>
+</g>
+<!-- b -->
+<g id="node2" class="node">
+<title>b</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="151.54,-473.93 3.37,-473.93 3.37,-437.65 151.54,-437.65 151.54,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="16.33" y="-455.84" font-family="Geist Mono" font-size="11.00">Agent impersonates user</text>
+<text xml:space="preserve" text-anchor="start" x="16.33" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">No separate identity, no audit trail</text>
+</g>
+<!-- a&#45;&gt;b -->
+<g id="edge1" class="edge">
+<title>a&#45;&gt;b</title>
+<path fill="none" stroke="#c8501f" d="M77.46,-524.6C77.46,-512.56 77.46,-496.43 77.46,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="79.91,-483 77.46,-476 75.01,-483 79.91,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="95.46" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reused as</text>
+</g>
+<!-- c -->
+<g id="node3" class="node">
+<title>c</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="150.79,-386.4 4.12,-386.4 4.12,-350.12 150.79,-350.12 150.79,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="25.33" y="-368.31" font-family="Geist Mono" font-size="11.00">Per&#45;agent private key</text>
+<text xml:space="preserve" text-anchor="start" x="17.08" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Agent gets its own key, not user&#39;s</text>
+</g>
+<!-- b&#45;&gt;c -->
+<g id="edge2" class="edge">
+<title>b&#45;&gt;c</title>
+<path fill="none" stroke="#c8501f" d="M77.46,-437.07C77.46,-425.03 77.46,-408.9 77.46,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="79.91,-395.47 77.46,-388.47 75.01,-395.47 79.91,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="99.21" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+<!-- d -->
+<g id="node4" class="node">
+<title>d</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="156.92,-298.87 14,-298.87 14,-262.59 156.92,-262.59 156.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="38.21" y="-280.78" font-family="Geist Mono" font-size="11.00">Signed agent token</text>
+<text xml:space="preserve" text-anchor="start" x="26.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Token signed by agent&#39;s own key</text>
+</g>
+<!-- c&#45;&gt;d -->
+<g id="edge3" class="edge">
+<title>c&#45;&gt;d</title>
+<path fill="none" stroke="#c8501f" d="M79.12,-349.54C80.24,-337.5 81.75,-321.37 83.02,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="85.45,-308.13 83.66,-300.94 80.57,-307.68 85.45,-308.13"/>
+<text xml:space="preserve" text-anchor="middle" x="91.31" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">signs</text>
+</g>
+<!-- g -->
+<g id="node7" class="node">
+<title>g</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="271.04,-211.34 131.88,-211.34 131.88,-175.06 271.04,-175.06 271.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="153.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Service (e.g. Gmail)</text>
+<text xml:space="preserve" text-anchor="start" x="144.83" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Connected via MCP, demoed live</text>
+</g>
+<!-- d&#45;&gt;g -->
+<g id="edge6" class="edge">
+<title>d&#45;&gt;g</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M109.5,-262.01C127.23,-248.93 151.5,-231.04 170.65,-216.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="172.06,-218.92 176.24,-212.8 169.15,-214.98 172.06,-218.92"/>
+<text xml:space="preserve" text-anchor="middle" x="175.53" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">authenticates</text>
+</g>
+<!-- h -->
+<g id="node8" class="node">
+<title>h</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="168.42,-123.81 40.5,-123.81 40.5,-87.53 168.42,-87.53 168.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="57.96" y="-105.72" font-family="Geist Mono" font-size="11.00">Per&#45;agent audit log</text>
+<text xml:space="preserve" text-anchor="start" x="53.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Traces which agent did what</text>
+</g>
+<!-- d&#45;&gt;h -->
+<g id="edge7" class="edge">
+<title>d&#45;&gt;h</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M87.04,-261.93C88.93,-241.09 92.27,-205.54 95.71,-175.06 97.29,-161.05 99.27,-145.45 100.95,-132.69"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="103.36,-133.13 101.85,-125.87 98.5,-132.48 103.36,-133.13"/>
+<text xml:space="preserve" text-anchor="middle" x="108.08" y="-190.75" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">logged</text>
+</g>
+<!-- e -->
+<g id="node5" class="node">
+<title>e</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="330.04,-386.4 172.88,-386.4 172.88,-350.12 330.04,-350.12 330.04,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="197.08" y="-368.31" font-family="Geist Mono" font-size="11.00">Fine&#45;grained capability</text>
+<text xml:space="preserve" text-anchor="start" x="185.83" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Exact action, not broad OAuth scope</text>
+</g>
+<!-- f -->
+<g id="node6" class="node">
+<title>f</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="318.92,-298.87 182,-298.87 182,-262.59 318.92,-262.59 318.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="228.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Directory</text>
+<text xml:space="preserve" text-anchor="start" x="194.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Maps user intent to capabilities</text>
+</g>
+<!-- e&#45;&gt;f -->
+<g id="edge4" class="edge">
+<title>e&#45;&gt;f</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M251.25,-349.54C251.11,-337.5 250.92,-321.37 250.77,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="253.22,-307.91 250.68,-300.94 248.32,-307.97 253.22,-307.91"/>
+<text xml:space="preserve" text-anchor="middle" x="266.02" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">listed in</text>
+</g>
+<!-- f&#45;&gt;g -->
+<g id="edge5" class="edge">
+<title>f&#45;&gt;g</title>
+<path fill="none" stroke="#c8501f" d="M240.31,-262.01C233.21,-249.62 223.64,-232.91 215.77,-219.18"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="217.96,-218.07 212.35,-213.21 213.71,-220.5 217.96,-218.07"/>
+<text xml:space="preserve" text-anchor="middle" x="246.14" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">discovers</text>
+</g>
+<!-- g&#45;&gt;h -->
+<g id="edge8" class="edge">
+<title>g&#45;&gt;h</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M181.36,-174.48C166.66,-161.52 146.6,-143.82 130.64,-129.76"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="132.54,-128.16 125.67,-125.37 129.3,-131.84 132.54,-128.16"/>
+<text xml:space="preserve" text-anchor="middle" x="174.89" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">recorded</text>
+</g>
+<!-- i -->
+<g id="node9" class="node">
+<title>i</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="196.54,-36.28 12.37,-36.28 12.37,0 196.54,0 196.54,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="55.33" y="-18.19" font-family="Geist Mono" font-size="11.00">Revoke single agent</text>
+<text xml:space="preserve" text-anchor="start" x="25.33" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Access pulled without touching user account</text>
+</g>
+<!-- h&#45;&gt;i -->
+<g id="edge9" class="edge">
+<title>h&#45;&gt;i</title>
+<path fill="none" stroke="#c8501f" d="M104.46,-86.95C104.46,-74.91 104.46,-58.78 104.46,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="106.91,-45.35 104.46,-38.35 102.01,-45.35 106.91,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="121.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">identifies</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s live demo mechanism from shared-credential impersonation to per-agent identity, capability discovery, and revocation; the protocol is described as an early V1/V2 draft still being iterated (ours).</p></section>
 
 
 

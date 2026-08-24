@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Agent Optimization with Pydantic AI: GEPA, Evals, Feedback Loops — Talk Brief</title>
+<title>Agent Optimization with Pydantic AI: GEPA, Evals, Feedback Loops &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,104 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Informs whether prompt/agent optimization tooling like GEPA and managed-variable (feature-flag-style) prompt deployment is worth adopting for a given task</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>GEPA is a genetic/Pareto optimization library that evolves a prompt (or JSON) string by breeding from the best-performing candidates; Pydantic AI&#x27;s managed variables let any Pydantic-model-typed value, not just text, be swapped in production via feature-flag-style targeting (built on the OpenFeature standard) without redeploying.</li><li>On a live political-relations extraction demo, eval accuracy moved from 87% (one-line prompt) to 92% (hand-written detailed prompt) to 96.7% after a GEPA run -- but the optimized prompt started explicitly excluding aunts/uncles even though they appear in the golden data set, which the speaker attributes to overfitting on a training subset that lacked those cases.</li><li>Cited Shopify example: switching a site-classification task from GPT-5-on-raw-HTML to a Qwen agent optimized with GEPA cut cost from $5 million/year to $73,000/year. The speaker frames optimization as most valuable with large private data volumes, and notes Claude Code&#x27;s own team reportedly tunes &#x27;mostly vibes&#x27; rather than running formal evals.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="GEPA prompt optimization loop (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">GEPA PROMPT OPTIMIZATION LOOP (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">BASELINE PROMPTS</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">One-line prompt</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">87% accuracy baseline</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Detailed prompt</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">92% accuracy, hand-written</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">GEPA OPTIMIZATION LOOP</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">GEPA genetic search</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">breeds best Pareto candidates</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Optimized prompt</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">96.7% score, more verbose</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Overfit failure</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">excludes aunts/uncles in golden set</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">DEPLOYMENT AND OUTCOMES</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Managed variables</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">OpenFeature-based % rollout</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Shopify cost cut</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">$5M/yr to $73K/yr on Qwen agent</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">hand-tune</text><path d="M542,118 V127 H206 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="374" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">seed prompt</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">breed candidates</text><line x1="535" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">audience reran</text><path d="M417,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="368" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">deploy via</text><path d="M193,236 V253 H542 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="368" y="251" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">same technique</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">The optimization loop moves a prompt from hand-written baselines through GEPA&#x27;s genetic search to a higher-scoring but riskier candidate, which the speaker&#x27;s Shopify example suggests pays off most at large data volumes (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">GEPA PROMPT OPTIMIZATION LOOP (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 399.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- n1 -->
+<g id="node1" class="node">
+<title>n1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="291.17,-386.4 183.5,-386.4 183.5,-350.12 291.17,-350.12 291.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="198.33" y="-368.31" font-family="Geist Mono" font-size="11.00">One&#45;line prompt</text>
+<text xml:space="preserve" text-anchor="start" x="196.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">87% accuracy baseline</text>
+</g>
+<!-- n2 -->
+<g id="node2" class="node">
+<title>n2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="300.92,-298.87 173.75,-298.87 173.75,-262.59 300.92,-262.59 300.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="198.33" y="-280.78" font-family="Geist Mono" font-size="11.00">Detailed prompt</text>
+<text xml:space="preserve" text-anchor="start" x="186.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">92% accuracy, hand&#45;written</text>
+</g>
+<!-- n1&#45;&gt;n2 -->
+<g id="edge1" class="edge">
+<title>n1&#45;&gt;n2</title>
+<path fill="none" stroke="#c8501f" d="M237.33,-349.54C237.33,-337.5 237.33,-321.37 237.33,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="239.79,-307.94 237.34,-300.94 234.89,-307.94 239.79,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="256.08" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">hand&#45;tune</text>
+</g>
+<!-- n3 -->
+<g id="node3" class="node">
+<title>n3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="305.04,-211.34 169.62,-211.34 169.62,-175.06 305.04,-175.06 305.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="186.71" y="-193.25" font-family="Geist Mono" font-size="11.00">GEPA genetic search</text>
+<text xml:space="preserve" text-anchor="start" x="182.58" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">breeds best Pareto candidates</text>
+</g>
+<!-- n2&#45;&gt;n3 -->
+<g id="edge2" class="edge">
+<title>n2&#45;&gt;n3</title>
+<path fill="none" stroke="#c8501f" d="M237.33,-262.01C237.33,-249.97 237.33,-233.84 237.33,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="239.79,-220.41 237.34,-213.41 234.89,-220.41 239.79,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="260.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">seed prompt</text>
+</g>
+<!-- n4 -->
+<g id="node4" class="node">
+<title>n4</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="220.79,-123.81 95.87,-123.81 95.87,-87.53 220.79,-87.53 220.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="115.58" y="-105.72" font-family="Geist Mono" font-size="11.00">Optimized prompt</text>
+<text xml:space="preserve" text-anchor="start" x="108.83" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">96.7% score, more verbose</text>
+</g>
+<!-- n3&#45;&gt;n4 -->
+<g id="edge3" class="edge">
+<title>n3&#45;&gt;n4</title>
+<path fill="none" stroke="#c8501f" d="M220.97,-174.48C209.21,-161.75 193.23,-144.45 180.35,-130.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="182.26,-128.96 175.71,-125.48 178.66,-132.29 182.26,-128.96"/>
+<text xml:space="preserve" text-anchor="middle" x="234.44" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">breed candidates</text>
+</g>
+<!-- n7 -->
+<g id="node7" class="node">
+<title>n7</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="391.42,-123.81 243.25,-123.81 243.25,-87.53 391.42,-87.53 391.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="278.33" y="-105.72" font-family="Geist Mono" font-size="11.00">Shopify cost cut</text>
+<text xml:space="preserve" text-anchor="start" x="256.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">$5M/yr to $73K/yr on Qwen agent</text>
+</g>
+<!-- n3&#45;&gt;n7 -->
+<g id="edge6" class="edge">
+<title>n3&#45;&gt;n7</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M253.91,-174.48C265.82,-161.75 282,-144.45 295.04,-130.51"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="296.75,-132.26 299.75,-125.47 293.18,-128.91 296.75,-132.26"/>
+<text xml:space="preserve" text-anchor="middle" x="311.75" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">same technique</text>
+</g>
+<!-- n5 -->
+<g id="node5" class="node">
+<title>n5</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="152.67,-36.28 0,-36.28 0,0 152.67,0 152.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="43.33" y="-18.19" font-family="Geist Mono" font-size="11.00">Overfit failure</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">excludes aunts/uncles in golden set</text>
+</g>
+<!-- n4&#45;&gt;n5 -->
+<g id="edge4" class="edge">
+<title>n4&#45;&gt;n5</title>
+<path fill="none" stroke="#c8501f" d="M141.34,-86.95C129.14,-74.22 112.55,-56.92 99.19,-42.98"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="100.96,-41.29 94.35,-37.93 97.43,-44.68 100.96,-41.29"/>
+<text xml:space="preserve" text-anchor="middle" x="149.99" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">audience reran</text>
+</g>
+<!-- n6 -->
+<g id="node6" class="node">
+<title>n6</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="306.17,-36.28 174.5,-36.28 174.5,0 306.17,0 306.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="194.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Managed variables</text>
+<text xml:space="preserve" text-anchor="start" x="187.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">OpenFeature&#45;based % rollout</text>
+</g>
+<!-- n4&#45;&gt;n6 -->
+<g id="edge5" class="edge">
+<title>n4&#45;&gt;n6</title>
+<path fill="none" stroke="#c8501f" d="M175.33,-86.95C187.53,-74.22 204.12,-56.92 217.48,-42.98"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="219.24,-44.68 222.32,-37.93 215.71,-41.29 219.24,-44.68"/>
+<text xml:space="preserve" text-anchor="middle" x="223.74" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">deploy via</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The optimization loop moves a prompt from hand-written baselines through GEPA&#x27;s genetic search to a higher-scoring but riskier candidate, which the speaker&#x27;s Shopify example suggests pays off most at large data volumes (ours).</p></section>
 
 
 

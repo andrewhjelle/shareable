@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Why More Context Makes Your Agent Dumber and What to Do About It — Talk Brief</title>
+<title>Why More Context Makes Your Agent Dumber and What to Do About It &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,132 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Draws on Qodo&#x27;s production experience running agentic code review to argue that dumping more context degrades results (a &#x27;lost in the middle&#x27; effect) and that fixing it requires context-optimization strategy, not bigger context windows</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>LLMs show a U-curve where initial and final inputs get weighted but middle context is effectively dropped, so dumping more context doesn&#x27;t make agents smarter.</li><li>Context engines, hierarchical summarization, knowledge graphs, and iterative retrieval each trade off upfront indexing effort against scaling limits (e.g. context engines get unpredictable past 600-700 repos).</li><li>An 80/20 split -- high-reasoning models for open-ended research/discovery (80%) and cheaper deterministic models for final validation/summarization (20%) -- plus a mixture-of-agents-with-judge-agent pattern (used in Qodo&#x27;s own PR review architecture) helps contain orchestration loops and reconcile conflicting agent outputs.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Qodo&#x27;s context-to-judge pipeline (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">QODO&#x27;S CONTEXT-TO-JUDGE PIPELINE (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">CONTEXT SOURCES</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">PR &amp; tools</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">context collector pulls from PRs, MCP</text><text x="206" y="107" font-size="8.5" text-anchor="middle" fill="#807565">tools</text><rect x="325" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Context engine</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">search + ranking; unstable past</text><text x="430" y="107" font-size="8.5" text-anchor="middle" fill="#807565">600-700 repos</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">Context collector</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">distributes context slices to</text><text x="654" y="107" font-size="8.5" text-anchor="middle" fill="#807565">sub-agents</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">AGENT EXECUTION</text><rect x="24" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="197" font-size="11" text-anchor="middle" fill="#14110D">Single overloaded agent</text><text x="120" y="213" font-size="8.5" text-anchor="middle" fill="#807565">4 tasks at once, silently drops 2</text><rect x="230" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="197" font-size="11" text-anchor="middle" fill="#14110D">Security agent</text><text x="327" y="213" font-size="8.5" text-anchor="middle" fill="#807565">works its own slice</text><rect x="437" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="197" font-size="11" text-anchor="middle" fill="#14110D">Coding agent</text><text x="533" y="213" font-size="8.5" text-anchor="middle" fill="#807565">works its own slice</text><rect x="644" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="197" font-size="11" text-anchor="middle" fill="#14110D">Jira-issue agent</text><text x="740" y="213" font-size="8.5" text-anchor="middle" fill="#807565">works its own slice</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">RECONCILIATION</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Judge agent</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">reconciles agent outputs into one</text><text x="430" y="343" font-size="8.5" text-anchor="middle" fill="#807565">result</text><line x1="311" y1="89" x2="549" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">context</text><line x1="535" y1="89" x2="549" y2="89" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="542" y="85" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">search+rank</text><path d="M615,118 V127 H120 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="368" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">alt: one agent</text><path d="M641,118 V135 H327 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="484" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">slice</text><path d="M667,118 V143 H533 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="600" y="141" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">slice</text><path d="M693,118 V151 H740 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="731" y="149" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">slice</text><path d="M327,236 V245 H404 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="365" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">output</text><path d="M533,236 V253 H430 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="482" y="251" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">output</text><path d="M740,236 V261 H456 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="598" y="259" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">output</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Qodo&#x27;s stated PR-review architecture, a context collector feeding specialist agents whose outputs a judge agent reconciles, set against the single-overloaded-agent failure mode the talk warns about (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">QODO&#x27;S CONTEXT-TO-JUDGE PIPELINE (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 507.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- pr -->
+<g id="node1" class="node">
+<title>pr</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="254.79,-298.87 78.12,-298.87 78.12,-262.59 254.79,-262.59 254.79,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="140.96" y="-280.78" font-family="Geist Mono" font-size="11.00">PR &amp; tools</text>
+<text xml:space="preserve" text-anchor="start" x="91.08" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">context collector pulls from PRs, MCP tools</text>
+</g>
+<!-- collector -->
+<g id="node3" class="node">
+<title>collector</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="353.54,-211.34 187.38,-211.34 187.38,-175.06 353.54,-175.06 353.54,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="229.58" y="-193.25" font-family="Geist Mono" font-size="11.00">Context collector</text>
+<text xml:space="preserve" text-anchor="start" x="200.33" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">distributes context slices to sub&#45;agents</text>
+</g>
+<!-- pr&#45;&gt;collector -->
+<g id="edge1" class="edge">
+<title>pr&#45;&gt;collector</title>
+<path fill="none" stroke="#c8501f" d="M188.01,-262.01C203.77,-249.05 225.28,-231.35 242.39,-217.29"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="243.92,-219.2 247.77,-212.86 240.81,-215.41 243.92,-219.2"/>
+<text xml:space="preserve" text-anchor="middle" x="238.56" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">context</text>
+</g>
+<!-- ctxengine -->
+<g id="node2" class="node">
+<title>ctxengine</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="472.17,-298.87 276.75,-298.87 276.75,-262.59 472.17,-262.59 472.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="337.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Context engine</text>
+<text xml:space="preserve" text-anchor="start" x="289.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">search + ranking; unstable past 600&#45;700 repos</text>
+</g>
+<!-- ctxengine&#45;&gt;collector -->
+<g id="edge2" class="edge">
+<title>ctxengine&#45;&gt;collector</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M352.91,-262.01C337.15,-249.05 315.64,-231.35 298.53,-217.29"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="300.11,-215.41 293.15,-212.86 297,-219.2 300.11,-215.41"/>
+<text xml:space="preserve" text-anchor="middle" x="351.94" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">search+rank</text>
+</g>
+<!-- overload -->
+<g id="node4" class="node">
+<title>overload</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="142.92,-123.81 0,-123.81 0,-87.53 142.92,-87.53 142.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-105.72" font-family="Geist Mono" font-size="11.00">Single overloaded agent</text>
+<text xml:space="preserve" text-anchor="start" x="15.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">4 tasks at once, silently drops 2</text>
+</g>
+<!-- collector&#45;&gt;overload -->
+<g id="edge3" class="edge">
+<title>collector&#45;&gt;overload</title>
+<path fill="none" stroke="#c8501f" d="M226.75,-174.5C211.93,-168.43 195.32,-161.53 180.21,-155.06 159.84,-146.34 137.46,-136.43 118.32,-127.87"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="119.38,-125.66 111.99,-125.03 117.37,-130.13 119.38,-125.66"/>
+<text xml:space="preserve" text-anchor="middle" x="206.83" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">alt: one agent</text>
+</g>
+<!-- secagent -->
+<g id="node5" class="node">
+<title>secagent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="260.29,-123.81 164.62,-123.81 164.62,-87.53 260.29,-87.53 260.29,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="177.58" y="-105.72" font-family="Geist Mono" font-size="11.00">Security agent</text>
+<text xml:space="preserve" text-anchor="start" x="179.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">works its own slice</text>
+</g>
+<!-- collector&#45;&gt;secagent -->
+<g id="edge4" class="edge">
+<title>collector&#45;&gt;secagent</title>
+<path fill="none" stroke="#c8501f" d="M258.44,-174.48C249.97,-161.98 238.5,-145.07 229.14,-131.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="231.27,-130.04 225.31,-125.62 227.21,-132.79 231.27,-130.04"/>
+<text xml:space="preserve" text-anchor="middle" x="253.18" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">slice</text>
+</g>
+<!-- codeagent -->
+<g id="node6" class="node">
+<title>codeagent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="374.42,-123.81 282.5,-123.81 282.5,-87.53 374.42,-87.53 374.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="296.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Coding agent</text>
+<text xml:space="preserve" text-anchor="start" x="295.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">works its own slice</text>
+</g>
+<!-- collector&#45;&gt;codeagent -->
+<g id="edge5" class="edge">
+<title>collector&#45;&gt;codeagent</title>
+<path fill="none" stroke="#c8501f" d="M282.48,-174.48C290.95,-161.98 302.42,-145.07 311.78,-131.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="313.71,-132.79 315.61,-125.62 309.65,-130.04 313.71,-132.79"/>
+<text xml:space="preserve" text-anchor="middle" x="311.18" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">slice</text>
+</g>
+<!-- jiraagent -->
+<g id="node7" class="node">
+<title>jiraagent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="498.67,-123.81 396.25,-123.81 396.25,-87.53 498.67,-87.53 498.67,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="409.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Jira&#45;issue agent</text>
+<text xml:space="preserve" text-anchor="start" x="414.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">works its own slice</text>
+</g>
+<!-- collector&#45;&gt;jiraagent -->
+<g id="edge6" class="edge">
+<title>collector&#45;&gt;jiraagent</title>
+<path fill="none" stroke="#c8501f" d="M307.13,-174.48C335.14,-160.95 373.83,-142.25 403.5,-127.91"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="404.23,-130.28 409.47,-125.03 402.1,-125.87 404.23,-130.28"/>
+<text xml:space="preserve" text-anchor="middle" x="377.81" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">slice</text>
+</g>
+<!-- judge -->
+<g id="node8" class="node">
+<title>judge</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="412.67,-36.28 244.25,-36.28 244.25,0 412.67,0 412.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="298.46" y="-18.19" font-family="Geist Mono" font-size="11.00">Judge agent</text>
+<text xml:space="preserve" text-anchor="start" x="257.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">reconciles agent outputs into one result</text>
+</g>
+<!-- secagent&#45;&gt;judge -->
+<g id="edge7" class="edge">
+<title>secagent&#45;&gt;judge</title>
+<path fill="none" stroke="#c8501f" d="M236.5,-86.95C254.23,-73.87 278.5,-55.98 297.65,-41.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="299.06,-43.86 303.24,-37.74 296.15,-39.92 299.06,-43.86"/>
+<text xml:space="preserve" text-anchor="middle" x="289.41" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">output</text>
+</g>
+<!-- codeagent&#45;&gt;judge -->
+<g id="edge8" class="edge">
+<title>codeagent&#45;&gt;judge</title>
+<path fill="none" stroke="#c8501f" d="M328.46,-86.95C328.46,-74.91 328.46,-58.78 328.46,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="330.91,-45.35 328.46,-38.35 326.01,-45.35 330.91,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="340.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">output</text>
+</g>
+<!-- jiraagent&#45;&gt;judge -->
+<g id="edge9" class="edge">
+<title>jiraagent&#45;&gt;judge</title>
+<path fill="none" stroke="#c8501f" d="M422.8,-86.95C404.53,-73.82 379.5,-55.82 359.81,-41.67"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="361.43,-39.82 354.31,-37.72 358.57,-43.8 361.43,-39.82"/>
+<text xml:space="preserve" text-anchor="middle" x="407.08" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">output</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Qodo&#x27;s stated PR-review architecture, a context collector feeding specialist agents whose outputs a judge agent reconciles, set against the single-overloaded-agent failure mode the talk warns about (ours).</p></section>
 
 
 

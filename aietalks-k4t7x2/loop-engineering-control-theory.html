@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Loop Engineering from First Principles — Talk Brief</title>
+<title>Loop Engineering from First Principles &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,104 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Argues for building agentic loops on control-theory primitives (sensor, controller, actuator, incremental change) instead of blind bash-loop prompting, and gives a concrete internal example: a scheduled GitHub Actions workflow using AST ...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Piping a prompt in a loop to a coding agent without control produces 40,000-line PRs nobody wants to read, and this approach is only viable with an unlimited token budget most teams don&#x27;t have (c1, c3).</li><li>The recommended architecture borrows from control theory: a sensor measures current vs. desired state, a controller picks a small incremental change, and an actuator applies it, which avoids over-steering and destabilizing the codebase (c4, c5).</li><li>HumanLayer&#x27;s internal loop runs as a scheduled GitHub Actions workflow and refuses to open a new PR while a prior PR from the same loop is still open and unreviewed, guaranteeing at most one open PR per loop at a time (c7, c8).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Control loop as a CI-gated migration engine (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">CONTROL LOOP AS A CI-GATED MIGRATION ENGINE (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">CONTROL LOOP</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">Sensor</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Finds something measurable in codebase</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Controller</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Stays deterministic, not agentic</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">Actuator</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Applies one incremental change</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">CI EXECUTION</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">GitHub Actions workflow</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Runs as scheduled CI job</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">OUTPUT CONTROL</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Open-PR gate check</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Checks for existing open labeled PR</text><rect x="325" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">At most 1 open PR</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Caps loop to one open PR at a time</text><rect x="549" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">150-procedure backlog</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">One-at-a-time pace takes ~6 months</text><line x1="311" y1="89" x2="325" y2="89" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="85" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">measures state</text><line x1="535" y1="89" x2="549" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">picks change</text><path d="M654,118 V127 H430 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">runs daily</text><path d="M430,236 V245 H206 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">checks before run</text><line x1="311" y1="325" x2="325" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">enforces cap</text><line x1="311" y1="325" x2="549" y2="325" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">paces migration</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">The talk frames the sensor-controller-actuator loop as an engineering artifact gated by a PR-open check that paces a 150-procedure migration; the loop-to-gate wiring shown here is our read of how those pieces connect (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">CONTROL LOOP AS A CI-GATED MIGRATION ENGINE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 342.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- sensor -->
+<g id="node1" class="node">
+<title>sensor</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="252.17,-473.93 78.5,-473.93 78.5,-437.65 252.17,-437.65 252.17,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="148.83" y="-455.84" font-family="Geist Mono" font-size="11.00">Sensor</text>
+<text xml:space="preserve" text-anchor="start" x="91.46" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">Finds something measurable in codebase</text>
+</g>
+<!-- controller -->
+<g id="node2" class="node">
+<title>controller</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="234.54,-386.4 96.12,-386.4 96.12,-350.12 234.54,-350.12 234.54,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="142.08" y="-368.31" font-family="Geist Mono" font-size="11.00">Controller</text>
+<text xml:space="preserve" text-anchor="start" x="109.08" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Stays deterministic, not agentic</text>
+</g>
+<!-- sensor&#45;&gt;controller -->
+<g id="edge1" class="edge">
+<title>sensor&#45;&gt;controller</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M165.33,-437.07C165.33,-425.03 165.33,-408.9 165.33,-395.39"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="167.79,-395.47 165.34,-388.47 162.89,-395.47 167.79,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="194.21" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">measures state</text>
+</g>
+<!-- actuator -->
+<g id="node3" class="node">
+<title>actuator</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="234.92,-298.87 95.75,-298.87 95.75,-262.59 234.92,-262.59 234.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="144.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Actuator</text>
+<text xml:space="preserve" text-anchor="start" x="108.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Applies one incremental change</text>
+</g>
+<!-- controller&#45;&gt;actuator -->
+<g id="edge2" class="edge">
+<title>controller&#45;&gt;actuator</title>
+<path fill="none" stroke="#c8501f" d="M165.33,-349.54C165.33,-337.5 165.33,-321.37 165.33,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="167.79,-307.94 165.34,-300.94 162.89,-307.94 167.79,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="189.33" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">picks change</text>
+</g>
+<!-- ci_workflow -->
+<g id="node4" class="node">
+<title>ci_workflow</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="237.92,-211.34 92.75,-211.34 92.75,-175.06 237.92,-175.06 237.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="105.71" y="-193.25" font-family="Geist Mono" font-size="11.00">GitHub Actions workflow</text>
+<text xml:space="preserve" text-anchor="start" x="120.33" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Runs as scheduled CI job</text>
+</g>
+<!-- actuator&#45;&gt;ci_workflow -->
+<g id="edge3" class="edge">
+<title>actuator&#45;&gt;ci_workflow</title>
+<path fill="none" stroke="#c8501f" d="M165.33,-262.01C165.33,-249.97 165.33,-233.84 165.33,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="167.79,-220.41 165.34,-213.41 162.89,-220.41 167.79,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="183.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs daily</text>
+</g>
+<!-- pr_gate -->
+<g id="node5" class="node">
+<title>pr_gate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="241.29,-123.81 89.37,-123.81 89.37,-87.53 241.29,-87.53 241.29,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="115.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Open&#45;PR gate check</text>
+<text xml:space="preserve" text-anchor="start" x="102.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Checks for existing open labeled PR</text>
+</g>
+<!-- ci_workflow&#45;&gt;pr_gate -->
+<g id="edge4" class="edge">
+<title>ci_workflow&#45;&gt;pr_gate</title>
+<path fill="none" stroke="#c8501f" d="M165.33,-174.48C165.33,-162.44 165.33,-146.31 165.33,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="167.79,-132.88 165.34,-125.88 162.89,-132.88 167.79,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="198.71" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">checks before run</text>
+</g>
+<!-- one_pr_max -->
+<g id="node6" class="node">
+<title>one_pr_max</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="152.67,-36.28 0,-36.28 0,0 152.67,0 152.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="30.21" y="-18.19" font-family="Geist Mono" font-size="11.00">At most 1 open PR</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Caps loop to one open PR at a time</text>
+</g>
+<!-- pr_gate&#45;&gt;one_pr_max -->
+<g id="edge5" class="edge">
+<title>pr_gate&#45;&gt;one_pr_max</title>
+<path fill="none" stroke="#c8501f" d="M146.89,-86.95C133.53,-74.1 115.32,-56.61 100.75,-42.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.59,-40.97 95.84,-37.89 99.19,-44.5 102.59,-40.97"/>
+<text xml:space="preserve" text-anchor="middle" x="149.79" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enforces cap</text>
+</g>
+<!-- backlog -->
+<g id="node7" class="node">
+<title>backlog</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="334.42,-36.28 174.25,-36.28 174.25,0 334.42,0 334.42,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="198.83" y="-18.19" font-family="Geist Mono" font-size="11.00">150&#45;procedure backlog</text>
+<text xml:space="preserve" text-anchor="start" x="187.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">One&#45;at&#45;a&#45;time pace takes ~6 months</text>
+</g>
+<!-- pr_gate&#45;&gt;backlog -->
+<g id="edge6" class="edge">
+<title>pr_gate&#45;&gt;backlog</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M183.78,-86.95C197.14,-74.1 215.35,-56.61 229.92,-42.6"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="231.48,-44.5 234.83,-37.89 228.08,-40.97 231.48,-44.5"/>
+<text xml:space="preserve" text-anchor="middle" x="245.16" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">paces migration</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The talk frames the sensor-controller-actuator loop as an engineering artifact gated by a PR-open check that paces a 150-procedure migration; the loop-to-gate wiring shown here is our read of how those pieces connect (ours).</p></section>
 
 
 

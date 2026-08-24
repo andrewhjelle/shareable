@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>MCP = Mega Context Problem — Talk Brief</title>
+<title>MCP = Mega Context Problem &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,132 @@ Quotes are verbatim from the talk transcript with the time they were said.</span
 <p class="deck" style="font-size:15px">It explains one technique, code mode with sandboxed execution, in depth rather than Cloudflare full operating model end to end.</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Cloudflare tried exposing its full API as MCP tools and blew the context window: the raw OpenAPI spec is 2.3 million tokens, about 1.1 million tokens as naive tool definitions, so it split into 16 product-based MCP servers that still had coverage gaps (e.g. 6 tools covering only 30 of a product&#x27;s endpoints against ~2,600 total API endpoints).</li><li>Cloudflare&#x27;s alternative, &#x27;code mode,&#x27; lets the model write TypeScript against a generated typed SDK instead of loading tool definitions, but MCP clients didn&#x27;t adopt it at first because running LLM-generated code without review felt too risky.</li><li>The fix is running that generated code in an isolated Workers sandbox with programmable guardrails (e.g. toggling internet access, blocking process.env), which Carey frames as a step toward &#x27;one tool called code&#x27; replacing individual tool calls.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="From tool explosion to code mode (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">FROM TOOL EXPLOSION TO CODE MODE (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">PROBLEM: RAW API</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">OpenAPI spec</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">2.3M tokens raw</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Naive tool defs</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">~1.1M tokens as tools</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">WORKAROUNDS</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">16 product MCP servers</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">~2,600 total endpoints</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Coverage gap</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">6 tools vs ~30 endpoints</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Tool search</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">keyword match loads K=8 tools</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">CODE MODE + SANDBOX</text><rect x="24" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="315" font-size="11" text-anchor="middle" fill="#14110D">Typed SDK</text><text x="120" y="331" font-size="8.5" text-anchor="middle" fill="#807565">generated from OpenAPI spec</text><rect x="230" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="315" font-size="11" text-anchor="middle" fill="#14110D">Code mode</text><text x="327" y="331" font-size="8.5" text-anchor="middle" fill="#807565">model writes code, not tool calls</text><rect x="437" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="315" font-size="11" text-anchor="middle" fill="#14110D">Isolated Worker</text><text x="533" y="331" font-size="8.5" text-anchor="middle" fill="#807565">runs backend, fully isolated</text><rect x="644" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="315" font-size="11" text-anchor="middle" fill="#14110D">Guardrails</text><text x="740" y="331" font-size="8.5" text-anchor="middle" fill="#807565">toggle internet, block env/secrets</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">converted to</text><path d="M529,118 V127 H206 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="368" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">split into</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">still leaves</text><path d="M555,118 V135 H654 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="604" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">alt: search</text><path d="M305,118 V143 H120 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="213" y="141" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">generates</text><line x1="216" y1="325" x2="230" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">writes against</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">runs in</text><line x1="630" y1="325" x2="644" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="636" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">enforces</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">Cloudflare moved from exposing its full API as tool definitions, which blew the context window, to letting the model write code against a typed SDK inside a sandboxed worker (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">FROM TOOL EXPLOSION TO CODE MODE (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 476.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- spec -->
+<g id="node1" class="node">
+<title>spec</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="351.17,-386.4 257,-386.4 257,-350.12 351.17,-350.12 351.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="269.96" y="-368.31" font-family="Geist Mono" font-size="11.00">OpenAPI spec</text>
+<text xml:space="preserve" text-anchor="start" x="274.83" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">2.3M tokens raw</text>
+</g>
+<!-- tooldefs -->
+<g id="node2" class="node">
+<title>tooldefs</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="285.79,-298.87 180.38,-298.87 180.38,-262.59 285.79,-262.59 285.79,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="196.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Naive tool defs</text>
+<text xml:space="preserve" text-anchor="start" x="193.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">~1.1M tokens as tools</text>
+</g>
+<!-- spec&#45;&gt;tooldefs -->
+<g id="edge1" class="edge">
+<title>spec&#45;&gt;tooldefs</title>
+<path fill="none" stroke="#c8501f" d="M289.37,-349.54C278.9,-336.92 264.7,-319.82 253.19,-305.95"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="255.1,-304.41 248.74,-300.59 251.33,-307.54 255.1,-304.41"/>
+<text xml:space="preserve" text-anchor="middle" x="296.46" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">converted to</text>
+</g>
+<!-- sdk -->
+<g id="node6" class="node">
+<title>sdk</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="452.42,-298.87 317.75,-298.87 317.75,-262.59 452.42,-262.59 452.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="358.46" y="-280.78" font-family="Geist Mono" font-size="11.00">Typed SDK</text>
+<text xml:space="preserve" text-anchor="start" x="330.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">generated from OpenAPI spec</text>
+</g>
+<!-- spec&#45;&gt;sdk -->
+<g id="edge5" class="edge">
+<title>spec&#45;&gt;sdk</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M320.87,-349.54C332.92,-336.81 349.31,-319.51 362.51,-305.57"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="364.25,-307.3 367.28,-300.53 360.69,-303.93 364.25,-307.3"/>
+<text xml:space="preserve" text-anchor="middle" x="367.81" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">generates</text>
+</g>
+<!-- servers -->
+<g id="node3" class="node">
+<title>servers</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="142.17,-211.34 0,-211.34 0,-175.06 142.17,-175.06 142.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-193.25" font-family="Geist Mono" font-size="11.00">16 product MCP servers</text>
+<text xml:space="preserve" text-anchor="start" x="29.83" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">~2,600 total endpoints</text>
+</g>
+<!-- tooldefs&#45;&gt;servers -->
+<g id="edge2" class="edge">
+<title>tooldefs&#45;&gt;servers</title>
+<path fill="none" stroke="#c8501f" d="M199.52,-262.01C174.1,-248.59 139.07,-230.09 112.01,-215.81"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="113.28,-213.71 105.95,-212.61 110.99,-218.04 113.28,-213.71"/>
+<text xml:space="preserve" text-anchor="middle" x="178.28" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">split into</text>
+</g>
+<!-- toolsearch -->
+<g id="node5" class="node">
+<title>toolsearch</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="302.29,-211.34 163.88,-211.34 163.88,-175.06 302.29,-175.06 302.29,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="205.33" y="-193.25" font-family="Geist Mono" font-size="11.00">Tool search</text>
+<text xml:space="preserve" text-anchor="start" x="176.83" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">keyword match loads K=8 tools</text>
+</g>
+<!-- tooldefs&#45;&gt;toolsearch -->
+<g id="edge4" class="edge">
+<title>tooldefs&#45;&gt;toolsearch</title>
+<path fill="none" stroke="#c8501f" d="M233.08,-262.01C233.08,-249.97 233.08,-233.84 233.08,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="235.54,-220.41 233.09,-213.41 230.64,-220.41 235.54,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="252.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">alt: search</text>
+</g>
+<!-- gap -->
+<g id="node4" class="node">
+<title>gap</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="128.29,-123.81 13.87,-123.81 13.87,-87.53 128.29,-87.53 128.29,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="37.33" y="-105.72" font-family="Geist Mono" font-size="11.00">Coverage gap</text>
+<text xml:space="preserve" text-anchor="start" x="26.83" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">6 tools vs ~30 endpoints</text>
+</g>
+<!-- servers&#45;&gt;gap -->
+<g id="edge3" class="edge">
+<title>servers&#45;&gt;gap</title>
+<path fill="none" stroke="#c8501f" d="M71.08,-174.48C71.08,-162.44 71.08,-146.31 71.08,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="73.54,-132.88 71.09,-125.88 68.64,-132.88 73.54,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="91.33" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">still leaves</text>
+</g>
+<!-- codemode -->
+<g id="node7" class="node">
+<title>codemode</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="465.42,-211.34 324.75,-211.34 324.75,-175.06 465.42,-175.06 465.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="367.33" y="-193.25" font-family="Geist Mono" font-size="11.00">Code mode</text>
+<text xml:space="preserve" text-anchor="start" x="337.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">model writes code, not tool calls</text>
+</g>
+<!-- sdk&#45;&gt;codemode -->
+<g id="edge6" class="edge">
+<title>sdk&#45;&gt;codemode</title>
+<path fill="none" stroke="#c8501f" d="M387.16,-262.01C388.56,-249.97 390.45,-233.84 392.03,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="394.46,-220.64 392.84,-213.4 389.59,-220.07 394.46,-220.64"/>
+<text xml:space="preserve" text-anchor="middle" x="416.93" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">writes against</text>
+</g>
+<!-- sandbox -->
+<g id="node8" class="node">
+<title>sandbox</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="456.04,-123.81 334.12,-123.81 334.12,-87.53 456.04,-87.53 456.04,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="356.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Isolated Worker</text>
+<text xml:space="preserve" text-anchor="start" x="347.08" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">runs backend, fully isolated</text>
+</g>
+<!-- codemode&#45;&gt;sandbox -->
+<g id="edge7" class="edge">
+<title>codemode&#45;&gt;sandbox</title>
+<path fill="none" stroke="#c8501f" d="M395.08,-174.48C395.08,-162.44 395.08,-146.31 395.08,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="397.54,-132.88 395.09,-125.88 392.64,-132.88 397.54,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="407.83" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs in</text>
+</g>
+<!-- guardrails -->
+<g id="node9" class="node">
+<title>guardrails</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="468.04,-36.28 322.12,-36.28 322.12,0 468.04,0 468.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="370.71" y="-18.19" font-family="Geist Mono" font-size="11.00">Guardrails</text>
+<text xml:space="preserve" text-anchor="start" x="335.08" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">toggle internet, block env/secrets</text>
+</g>
+<!-- sandbox&#45;&gt;guardrails -->
+<g id="edge8" class="edge">
+<title>sandbox&#45;&gt;guardrails</title>
+<path fill="none" stroke="#c8501f" d="M395.08,-86.95C395.08,-74.91 395.08,-58.78 395.08,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="397.54,-45.35 395.09,-38.35 392.64,-45.35 397.54,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="410.83" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enforces</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Cloudflare moved from exposing its full API as tool definitions, which blew the context window, to letting the model write code against a typed SDK inside a sandboxed worker (ours).</p></section>
 
 
 

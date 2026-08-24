@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Your LLM Deception Monitor Is Broken. The Fix Is in the Training Data — Talk Brief</title>
+<title>Your LLM Deception Monitor Is Broken. The Fix Is in the Training Data &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,139 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Presents a peer-reviewed (IJCNN), open-source method for detecting sleeper-agent backdoors that behavioral evals and standard interpretability (cross-model/joint feature) approaches miss entirely</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Behavioral monitors and evals miss sleeper-agent backdoors because the model is correct almost everywhere and only misbehaves on an untested trigger; standard cross-model (joint) interpretability features score near random (about 0.01) at catching it.</li><li>Training a sparse autoencoder on the difference between base and fine-tuned model activations (diffSAE, or delta A) instead of on concatenated joint activations gives a 40x stronger signal (0.4 vs ~0.01) with perfect precision and zero false positives in the SQL-injection backdoor experiment.</li><li>The method is cheap (one middle layer, one forward pass per checkpoint), layer- and fine-tuning-regime-independent, but a single feature only catches about 25% of triggers (recall), so ensembling multiple features is recommended, and it requires access to the base checkpoint to diff against.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="How diffSAE catches sleeper-agent backdoors (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">HOW DIFFSAE CATCHES SLEEPER-AGENT BACKDOORS (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">INPUTS</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">Base checkpoint</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Pre-fine-tune SmolLM2, 360M params</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Fine-tuned model</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">100% vulnerable code on trigger year</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">Year trigger</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">2024 triggers vuln code, 2023 safe</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">DETECTION METHOD</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Joint/cross features</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">SAE on concatenated activations</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Activation delta</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">fine-tuned minus base activations</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">diffSAE</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">sparse autoencoder trained on the diff</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">OUTCOME</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Joint score ~0.01</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">near random, signal drowned out</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">diffSAE score 0.4</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">40x gap, zero false positives</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">Gate the build</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">single feature catches ~25% of</text><text x="654" y="343" font-size="8.5" text-anchor="middle" fill="#807565">triggers</text><path d="M193,118 V127 H417 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="305" y="125" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">subtract</text><path d="M417,118 V135 H443 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="455" y="133" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">subtract</text><line x1="549" y1="89" x2="535" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">conditions output</text><path d="M219,118 V143 H193 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="181" y="141" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">concat</text><path d="M443,118 V151 H219 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="331" y="149" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">concat</text><line x1="535" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">train SAE</text><path d="M654,236 V245 H430 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">score</text><path d="M206,236 V253 H206 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="244" y="251" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">score</text><line x1="535" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">gate build</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This reads the diffSAE pipeline as subtract-then-decompose: the base/fine-tuned activation difference isolates the backdoor signal that joint/concatenated features drown out, though only one backdoor type on a 360M model has been tested (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW DIFFSAE CATCHES SLEEPER-AGENT BACKDOORS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 354.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- base_model -->
+<g id="node1" class="node">
+<title>base_model</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="160.17,-386.4 0,-386.4 0,-350.12 160.17,-350.12 160.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="40.34" y="-368.31" font-family="Geist Mono" font-size="11.00">Base checkpoint</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Pre&#45;fine&#45;tune SmolLM2, 360M params</text>
+</g>
+<!-- joint_feature -->
+<g id="node4" class="node">
+<title>joint_feature</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="155.17,-298.87 13,-298.87 13,-262.59 155.17,-262.59 155.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="35.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Joint/cross features</text>
+<text xml:space="preserve" text-anchor="start" x="25.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">SAE on concatenated activations</text>
+</g>
+<!-- base_model&#45;&gt;joint_feature -->
+<g id="edge4" class="edge">
+<title>base_model&#45;&gt;joint_feature</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M80.91,-349.54C81.48,-337.5 82.23,-321.37 82.86,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="85.31,-308.05 83.19,-300.94 80.41,-307.82 85.31,-308.05"/>
+<text xml:space="preserve" text-anchor="middle" x="94.32" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">concat</text>
+</g>
+<!-- delta -->
+<g id="node5" class="node">
+<title>delta</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="334.67,-298.87 189.5,-298.87 189.5,-262.59 334.67,-262.59 334.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="224.59" y="-280.78" font-family="Geist Mono" font-size="11.00">Activation delta</text>
+<text xml:space="preserve" text-anchor="start" x="202.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">fine&#45;tuned minus base activations</text>
+</g>
+<!-- base_model&#45;&gt;delta -->
+<g id="edge1" class="edge">
+<title>base_model&#45;&gt;delta</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M97.85,-349.52C108.91,-339.33 123.89,-326.98 139.09,-318.87 152.12,-311.92 166.64,-306.07 181.01,-301.23"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="181.63,-303.61 187.53,-299.12 180.12,-298.95 181.63,-303.61"/>
+<text xml:space="preserve" text-anchor="middle" x="154.09" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">subtract</text>
+</g>
+<!-- ft_model -->
+<g id="node2" class="node">
+<title>ft_model</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="343.55,-386.4 182.63,-386.4 182.63,-350.12 343.55,-350.12 343.55,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="220.71" y="-368.31" font-family="Geist Mono" font-size="11.00">Fine&#45;tuned model</text>
+<text xml:space="preserve" text-anchor="start" x="195.59" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">100% vulnerable code on trigger year</text>
+</g>
+<!-- ft_model&#45;&gt;joint_feature -->
+<g id="edge5" class="edge">
+<title>ft_model&#45;&gt;joint_feature</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M232.61,-349.64C215.62,-340.09 193.93,-328.33 174.09,-318.87 162.44,-313.32 149.75,-307.78 137.66,-302.74"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="138.63,-300.49 131.22,-300.08 136.76,-305.02 138.63,-300.49"/>
+<text xml:space="preserve" text-anchor="middle" x="208.46" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">concat</text>
+</g>
+<!-- ft_model&#45;&gt;delta -->
+<g id="edge2" class="edge">
+<title>ft_model&#45;&gt;delta</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M262.88,-349.54C262.74,-337.5 262.55,-321.37 262.39,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="264.84,-307.91 262.31,-300.94 259.94,-307.97 264.84,-307.91"/>
+<text xml:space="preserve" text-anchor="middle" x="277.64" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">subtract</text>
+</g>
+<!-- trigger -->
+<g id="node3" class="node">
+<title>trigger</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="337.92,-473.93 188.25,-473.93 188.25,-437.65 337.92,-437.65 337.92,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="234.96" y="-455.84" font-family="Geist Mono" font-size="11.00">Year trigger</text>
+<text xml:space="preserve" text-anchor="start" x="201.21" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">2024 triggers vuln code, 2023 safe</text>
+</g>
+<!-- trigger&#45;&gt;ft_model -->
+<g id="edge3" class="edge">
+<title>trigger&#45;&gt;ft_model</title>
+<path fill="none" stroke="#c8501f" d="M263.09,-437.07C263.09,-425.03 263.09,-408.9 263.09,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="265.54,-395.47 263.09,-388.47 260.64,-395.47 265.54,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="295.34" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">conditions output</text>
+</g>
+<!-- joint_score -->
+<g id="node7" class="node">
+<title>joint_score</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="156.67,-211.34 11.5,-211.34 11.5,-175.06 156.67,-175.06 156.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="41.34" y="-193.25" font-family="Geist Mono" font-size="11.00">Joint score ~0.01</text>
+<text xml:space="preserve" text-anchor="start" x="24.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">near random, signal drowned out</text>
+</g>
+<!-- joint_feature&#45;&gt;joint_score -->
+<g id="edge8" class="edge">
+<title>joint_feature&#45;&gt;joint_score</title>
+<path fill="none" stroke="#c8501f" d="M84.09,-262.01C84.09,-249.97 84.09,-233.84 84.09,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="86.54,-220.41 84.09,-213.41 81.64,-220.41 86.54,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="93.84" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">score</text>
+</g>
+<!-- diffSAE -->
+<g id="node6" class="node">
+<title>diffSAE</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="344.05,-211.34 180.13,-211.34 180.13,-175.06 344.05,-175.06 344.05,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="244.84" y="-193.25" font-family="Geist Mono" font-size="11.00">diffSAE</text>
+<text xml:space="preserve" text-anchor="start" x="193.09" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">sparse autoencoder trained on the diff</text>
+</g>
+<!-- delta&#45;&gt;diffSAE -->
+<g id="edge6" class="edge">
+<title>delta&#45;&gt;diffSAE</title>
+<path fill="none" stroke="#c8501f" d="M262.09,-262.01C262.09,-249.97 262.09,-233.84 262.09,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="264.54,-220.41 262.09,-213.41 259.64,-220.41 264.54,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="279.34" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">train SAE</text>
+</g>
+<!-- diffSAE_score -->
+<g id="node8" class="node">
+<title>diffSAE_score</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="325.3,-123.81 198.88,-123.81 198.88,-87.53 325.3,-87.53 325.3,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="220.46" y="-105.72" font-family="Geist Mono" font-size="11.00">diffSAE score 0.4</text>
+<text xml:space="preserve" text-anchor="start" x="211.84" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">40x gap, zero false positives</text>
+</g>
+<!-- diffSAE&#45;&gt;diffSAE_score -->
+<g id="edge7" class="edge">
+<title>diffSAE&#45;&gt;diffSAE_score</title>
+<path fill="none" stroke="#c8501f" d="M262.09,-174.48C262.09,-162.44 262.09,-146.31 262.09,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="264.54,-132.88 262.09,-125.88 259.64,-132.88 264.54,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="271.84" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">score</text>
+</g>
+<!-- gate -->
+<g id="node9" class="node">
+<title>gate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="346.3,-36.28 177.88,-36.28 177.88,0 346.3,0 346.3,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="227.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Gate the build</text>
+<text xml:space="preserve" text-anchor="start" x="190.84" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">single feature catches ~25% of triggers</text>
+</g>
+<!-- diffSAE_score&#45;&gt;gate -->
+<g id="edge9" class="edge">
+<title>diffSAE_score&#45;&gt;gate</title>
+<path fill="none" stroke="#c8501f" d="M262.09,-86.95C262.09,-74.91 262.09,-58.78 262.09,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="264.54,-45.35 262.09,-38.35 259.64,-45.35 264.54,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="280.84" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">gate build</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This reads the diffSAE pipeline as subtract-then-decompose: the base/fine-tuned activation difference isolates the backdoor signal that joint/concatenated features drown out, though only one backdoor type on a 360M model has been tested (ours).</p></section>
 
 
 

@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Building Generative Image &amp; Video models at Scale — Talk Brief</title>
+<title>Building Generative Image &amp; Video models at Scale &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,125 @@ Quotes are verbatim from the talk transcript with the time they were said.</span
 <p class="deck" style="font-size:15px">Lays out the concrete design choices behind large-scale diffusion systems like Veo and Nano Banana: how much latent-space compression to budget for, why classifier-free guidance is now left on by default, and whether a new conditioning s...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Diffusion models train on learned latent representations rather than raw pixels, cutting tensor size by roughly two orders of magnitude, which is what makes 1080p-scale video training feasible at all (c2).</li><li>Classifier-free guidance trades sample diversity for quality by amplifying the difference between conditional and unconditional predictions, and it is described as now essentially always left on since one 2021 paper (c4, c5).</li><li>New conditioning signals like camera control or reference images are typically introduced in a post-training phase rather than pretraining, because that structured conditioning data is rarely available at pretraining scale (c7).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Diffusion pipeline: data to post-training (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">DIFFUSION PIPELINE: DATA TO POST-TRAINING (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">DATA &amp; COMPRESSION</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Data curation</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Underrated, structurally</text><text x="318" y="107" font-size="8.5" text-anchor="middle" fill="#807565">under-invested in</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Latent compression</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">~100x smaller tensors than raw pixels</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">DIFFUSION MECHANISM</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Spectral auto-regression</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Sampling goes coarse to fine in</text><text x="206" y="225" font-size="8.5" text-anchor="middle" fill="#807565">frequency space</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Guidance scale</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Cranking it up cuts sample diversity</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Guidance always on</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Standard since a 2021 paper</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">TRAINING &amp; SAMPLING INFRA</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">JAX sharding</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Auto-shards model across chips</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Step distillation</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Fewer denoising passes, not a smaller</text><text x="542" y="343" font-size="8.5" text-anchor="middle" fill="#807565">model</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">POST-TRAINING</text><rect x="325" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="433" font-size="11" text-anchor="middle" fill="#14110D">Post-training conditioning</text><text x="430" y="449" font-size="8.5" text-anchor="middle" fill="#807565">Camera control, reference images added</text><text x="430" y="461" font-size="8.5" text-anchor="middle" fill="#807565">later</text><line x1="423" y1="89" x2="437" y2="89" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">feeds</text><path d="M542,118 V127 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">trained via</text><path d="M305,296 V287 H206 V236" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="256" y="285" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">produces model</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">sampled with</text><line x1="535" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">became default</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">then distilled</text><path d="M542,354 V363 H417 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="480" y="361" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">then extended</text><path d="M654,236 V245 H443 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="548" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">plus new signals</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the mechanism the talk lays out end to end, from data curation and latent compression through sharded training, coarse-to-fine sampling, guidance, and distillation, to post-training conditioning (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">DIFFUSION PIPELINE: DATA TO POST-TRAINING (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 340.00 594.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 590.49)">
+<title>G</title>
+<!-- data_curation -->
+<g id="node1" class="node">
+<title>data_curation</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="257.79,-586.49 81.87,-586.49 81.87,-550.21 257.79,-550.21 257.79,-586.49"/>
+<text xml:space="preserve" text-anchor="start" x="136.83" y="-568.4" font-family="Geist Mono" font-size="11.00">Data curation</text>
+<text xml:space="preserve" text-anchor="start" x="94.83" y="-560.25" font-family="Geist Mono" font-size="8.00" fill="#807565">Underrated, structurally under&#45;invested in</text>
+</g>
+<!-- latent_compress -->
+<g id="node2" class="node">
+<title>latent_compress</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="250.67,-498.96 89,-498.96 89,-462.68 250.67,-462.68 250.67,-498.96"/>
+<text xml:space="preserve" text-anchor="start" x="122.21" y="-480.87" font-family="Geist Mono" font-size="11.00">Latent compression</text>
+<text xml:space="preserve" text-anchor="start" x="101.96" y="-472.72" font-family="Geist Mono" font-size="8.00" fill="#807565">~100x smaller tensors than raw pixels</text>
+</g>
+<!-- data_curation&#45;&gt;latent_compress -->
+<g id="edge1" class="edge">
+<title>data_curation&#45;&gt;latent_compress</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M169.83,-549.63C169.83,-537.59 169.83,-521.46 169.83,-507.95"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="172.29,-508.03 169.84,-501.03 167.39,-508.03 172.29,-508.03"/>
+<text xml:space="preserve" text-anchor="middle" x="179.96" y="-522.13" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">feeds</text>
+</g>
+<!-- jax_sharding -->
+<g id="node6" class="node">
+<title>jax_sharding</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="239.42,-411.43 100.25,-411.43 100.25,-375.15 239.42,-375.15 239.42,-411.43"/>
+<text xml:space="preserve" text-anchor="start" x="138.33" y="-393.34" font-family="Geist Mono" font-size="11.00">JAX sharding</text>
+<text xml:space="preserve" text-anchor="start" x="113.21" y="-385.19" font-family="Geist Mono" font-size="8.00" fill="#807565">Auto&#45;shards model across chips</text>
+</g>
+<!-- latent_compress&#45;&gt;jax_sharding -->
+<g id="edge2" class="edge">
+<title>latent_compress&#45;&gt;jax_sharding</title>
+<path fill="none" stroke="#c8501f" d="M169.83,-462.1C169.83,-450.06 169.83,-433.93 169.83,-420.42"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="172.29,-420.5 169.84,-413.5 167.39,-420.5 172.29,-420.5"/>
+<text xml:space="preserve" text-anchor="middle" x="190.08" y="-434.6" font-family="Geist Mono" font-size="8.50" fill="#c8501f">trained via</text>
+</g>
+<!-- spectral_ar -->
+<g id="node3" class="node">
+<title>spectral_ar</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="197.67,-323.9 0,-323.9 0,-287.62 197.67,-287.62 197.67,-323.9"/>
+<text xml:space="preserve" text-anchor="start" x="39.58" y="-305.81" font-family="Geist Mono" font-size="11.00">Spectral auto&#45;regression</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-297.66" font-family="Geist Mono" font-size="8.00" fill="#807565">Sampling goes coarse to fine in frequency space</text>
+</g>
+<!-- guidance_scale -->
+<g id="node4" class="node">
+<title>guidance_scale</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="186.42,-211.34 35.25,-211.34 35.25,-175.06 186.42,-175.06 186.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="74.08" y="-193.25" font-family="Geist Mono" font-size="11.00">Guidance scale</text>
+<text xml:space="preserve" text-anchor="start" x="48.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Cranking it up cuts sample diversity</text>
+</g>
+<!-- spectral_ar&#45;&gt;guidance_scale -->
+<g id="edge4" class="edge">
+<title>spectral_ar&#45;&gt;guidance_scale</title>
+<path fill="none" stroke="#c8501f" d="M91.43,-286.98C86.21,-271.93 81.06,-249.92 86.58,-231.34 87.82,-227.2 89.67,-223.1 91.82,-219.2"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="93.85,-220.57 95.43,-213.33 89.68,-218.01 93.85,-220.57"/>
+<text xml:space="preserve" text-anchor="middle" x="111.71" y="-247.03" font-family="Geist Mono" font-size="8.50" fill="#c8501f">sampled with</text>
+</g>
+<!-- guidance_always -->
+<g id="node5" class="node">
+<title>guidance_always</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="188.54,-123.81 59.12,-123.81 59.12,-87.53 188.54,-87.53 188.54,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="75.08" y="-105.72" font-family="Geist Mono" font-size="11.00">Guidance always on</text>
+<text xml:space="preserve" text-anchor="start" x="72.08" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Standard since a 2021 paper</text>
+</g>
+<!-- guidance_scale&#45;&gt;guidance_always -->
+<g id="edge5" class="edge">
+<title>guidance_scale&#45;&gt;guidance_always</title>
+<path fill="none" stroke="#c8501f" d="M113.53,-174.48C115.38,-162.32 117.86,-146 119.92,-132.41"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="122.29,-133.15 120.92,-125.87 117.44,-132.42 122.29,-133.15"/>
+<text xml:space="preserve" text-anchor="middle" x="147.36" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">became default</text>
+</g>
+<!-- post_training_cond -->
+<g id="node8" class="node">
+<title>post_training_cond</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="272.29,-36.28 81.37,-36.28 81.37,0 272.29,0 272.29,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="115.71" y="-18.19" font-family="Geist Mono" font-size="11.00">Post&#45;training conditioning</text>
+<text xml:space="preserve" text-anchor="start" x="94.33" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Camera control, reference images added later</text>
+</g>
+<!-- guidance_always&#45;&gt;post_training_cond -->
+<g id="edge8" class="edge">
+<title>guidance_always&#45;&gt;post_training_cond</title>
+<path fill="none" stroke="#c8501f" d="M133.41,-86.99C138.54,-77.73 145.08,-66.27 151.33,-56.28 153.94,-52.12 156.8,-47.76 159.64,-43.56"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="161.55,-45.1 163.48,-37.94 157.5,-42.34 161.55,-45.1"/>
+<text xml:space="preserve" text-anchor="middle" x="182.08" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">plus new signals</text>
+</g>
+<!-- jax_sharding&#45;&gt;spectral_ar -->
+<g id="edge3" class="edge">
+<title>jax_sharding&#45;&gt;spectral_ar</title>
+<path fill="none" stroke="#c8501f" d="M155.12,-374.57C144.65,-361.95 130.45,-344.85 118.94,-330.98"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="120.85,-329.44 114.49,-325.62 117.08,-332.57 120.85,-329.44"/>
+<text xml:space="preserve" text-anchor="middle" x="168.21" y="-347.07" font-family="Geist Mono" font-size="8.50" fill="#c8501f">produces model</text>
+</g>
+<!-- step_distillation -->
+<g id="node7" class="node">
+<title>step_distillation</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="332.29,-267.62 147.38,-267.62 147.38,-231.34 332.29,-231.34 332.29,-267.62"/>
+<text xml:space="preserve" text-anchor="start" x="203.08" y="-249.53" font-family="Geist Mono" font-size="11.00">Step distillation</text>
+<text xml:space="preserve" text-anchor="start" x="160.33" y="-241.38" font-family="Geist Mono" font-size="8.00" fill="#807565">Fewer denoising passes, not a smaller model</text>
+</g>
+<!-- jax_sharding&#45;&gt;step_distillation -->
+<g id="edge6" class="edge">
+<title>jax_sharding&#45;&gt;step_distillation</title>
+<path fill="none" stroke="#c8501f" d="M188.15,-374.51C193.41,-368.7 198.8,-361.98 202.83,-355.15 217.62,-330.09 227.84,-298.19 233.73,-276.23"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="236.08,-276.9 235.47,-269.51 231.34,-275.67 236.08,-276.9"/>
+<text xml:space="preserve" text-anchor="middle" x="232.38" y="-347.07" font-family="Geist Mono" font-size="8.50" fill="#c8501f">then distilled</text>
+</g>
+<!-- step_distillation&#45;&gt;post_training_cond -->
+<g id="edge7" class="edge">
+<title>step_distillation&#45;&gt;post_training_cond</title>
+<path fill="none" stroke="#c8501f" d="M241.08,-230.7C242.78,-195.44 242.85,-114.99 213.83,-56.28 211.51,-51.57 208.35,-47.09 204.85,-42.98"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="206.73,-41.42 200.17,-37.96 203.15,-44.76 206.73,-41.42"/>
+<text xml:space="preserve" text-anchor="middle" x="266.26" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">then extended</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the mechanism the talk lays out end to end, from data curation and latent compression through sharded training, coarse-to-fine sampling, guidance, and distillation, to post-training conditioning (ours).</p></section>
 
 
 
@@ -155,7 +273,7 @@ Quotes are verbatim from the talk transcript with the time they were said.</span
 <section class="block">
 <div class="seclabel"><span class="num">03</span><span>Diffusion as coarse-to-fine generation</span><span class="ln"></span></div>
 <div class="sec2 noslide">
-<div class="textcol"><h2>Diffusion as coarse-to-fine generation</h2><ul class="takeaways"><li>Using Fourier analysis of image spectra, the talk describes diffusion&#x27;s noise-adding process as progressively obscuring higher-frequency detail first, then lower frequencies, meaning sampling effectively generates images from coarse structure to fine detail.</li><li>The speaker calls this &#x27;spectral auto-regression&#x27; — an approximate analogue to token-by-token autoregression, but in frequency space.</li></ul><div class="quote"><p>&ldquo;diffusion is basically spectral auto-regression, right? Because it&#x27;s essentially allowing you to generate images from coarse to fine.&rdquo;</p><span class="at">said at 19:06</span></div></div>
+<div class="textcol"><h2>Diffusion as coarse-to-fine generation</h2><ul class="takeaways"><li>Using Fourier analysis of image spectra, the talk describes diffusion&#x27;s noise-adding process as progressively obscuring higher-frequency detail first, then lower frequencies, meaning sampling effectively generates images from coarse structure to fine detail.</li><li>The speaker calls this &#x27;spectral auto-regression&#x27;, an approximate analogue to token-by-token autoregression, but in frequency space.</li></ul><div class="quote"><p>&ldquo;diffusion is basically spectral auto-regression, right? Because it&#x27;s essentially allowing you to generate images from coarse to fine.&rdquo;</p><span class="at">said at 19:06</span></div></div>
 </div>
 </section>
 <section class="block">
@@ -167,7 +285,7 @@ Quotes are verbatim from the talk transcript with the time they were said.</span
 <section class="block">
 <div class="seclabel"><span class="num">05</span><span>Distillation, sharding, and post-training control</span><span class="ln"></span></div>
 <div class="sec2 noslide">
-<div class="textcol"><h2>Distillation, sharding, and post-training control</h2><ul class="takeaways"><li>For diffusion models, distillation targets sampling steps rather than parameter count — the goal is fewer denoising passes, not a smaller model, unlike the usual LLM sense of the term.</li><li>Training itself relies on JAX for automatic model sharding across chips once data parallelism alone is insufficient.</li><li>Conditioning signals beyond text (camera motion, reference images, timing) are usually added in post-training, since that data is scarce during pretraining.</li></ul><div class="quote"><p>&ldquo;we&#x27;re not going to try and make the the model smaller, which is usually what distillation refers to in the context of large language models&rdquo;</p><span class="at">said at 27:32</span></div><div class="quote"><p>&ldquo;often you don&#x27;t have this kind of conditioning information for most of your pre-training data set. So, it can actually be quite useful to do that in post-training.&rdquo;</p><span class="at">said at 31:00</span></div><div class="quote"><p>&ldquo;we tend to use JAX to build these models. JAX has some really good tooling that sort of does that for you, right?&rdquo;</p><span class="at">said at 22:43</span></div></div>
+<div class="textcol"><h2>Distillation, sharding, and post-training control</h2><ul class="takeaways"><li>For diffusion models, distillation targets sampling steps rather than parameter count, the goal is fewer denoising passes, not a smaller model, unlike the usual LLM sense of the term.</li><li>Training itself relies on JAX for automatic model sharding across chips once data parallelism alone is insufficient.</li><li>Conditioning signals beyond text (camera motion, reference images, timing) are usually added in post-training, since that data is scarce during pretraining.</li></ul><div class="quote"><p>&ldquo;we&#x27;re not going to try and make the the model smaller, which is usually what distillation refers to in the context of large language models&rdquo;</p><span class="at">said at 27:32</span></div><div class="quote"><p>&ldquo;often you don&#x27;t have this kind of conditioning information for most of your pre-training data set. So, it can actually be quite useful to do that in post-training.&rdquo;</p><span class="at">said at 31:00</span></div><div class="quote"><p>&ldquo;we tend to use JAX to build these models. JAX has some really good tooling that sort of does that for you, right?&rdquo;</p><span class="at">said at 22:43</span></div></div>
 </div>
 </section>
 

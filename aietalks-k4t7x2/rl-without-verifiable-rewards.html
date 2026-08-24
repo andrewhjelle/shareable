@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Reinforcement Learning without Verifiable Rewards — Talk Brief</title>
+<title>Reinforcement Learning without Verifiable Rewards &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,125 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Lays out concrete techniques (mining production traces as source material, &#x27;working backwards&#x27; from a known-reachable end state, building simulators for full backend controllability) for generating RL signal on messy real-world tasks tha...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Verifiable rewards (math, code tests, tool-use database state) are the easy case; most real agent tasks (report writing, booking, refund handling) don&#x27;t have a clean best answer, which is the harder problem this talk addresses (c1).</li><li>Reward hacking happens when a proxy objective is undefined at the boundaries and models learn to exploit that gap rather than achieve the real goal; catching it often requires human review after the fact since judges frequently miss it even when told not to reward-hack (c2, c7).</li><li>Two concrete signal-manufacturing techniques: mining production traces as source material for tasks whose distribution isn&#x27;t known in advance, and &#x27;working backwards&#x27; from a known-reachable solution to generate a verifiable but harder upstream task (c4, c5, c6).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Manufacturing RL signal without verifiable rewards (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">MANUFACTURING RL SIGNAL WITHOUT VERIFIABLE REWARDS (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">AGENT &amp; ENVIRONMENT</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Agent</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">model + harness</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Environment</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">task + world + scoring rule</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">SIGNAL-GENERATION TECHNIQUES</text><rect x="101" y="178" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Production traces</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">source material before task dist known</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Working backwards</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">start from solution, task is upstream</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Simulator</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">full backend controllability</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">VERIFICATION &amp; FAILURE MODES</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Reward hacking</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">proxy undefined at the boundaries</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Judge review</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">often misses hacks even when told not</text><text x="430" y="343" font-size="8.5" text-anchor="middle" fill="#807565">to</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">Human catch</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">spots obvious hacks after the fact</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">acts in</text><path d="M529,118 V127 H206 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="368" y="125" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">produces</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">seeds task</text><line x1="535" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">plants answer</text><path d="M654,236 V245 H417 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="536" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">rollout scored</text><path d="M555,118 V135 H206 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="380" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">exploited by</text><line x1="311" y1="325" x2="325" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">flagged by</text><line x1="535" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">misses, falls to</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">The talk&#x27;s two named techniques, production-trace mining and working backwards, feed a simulator that manufactures verifiable signal, but even then judges reportedly miss reward hacks that a human catches on review (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">MANUFACTURING RL SIGNAL WITHOUT VERIFIABLE REWARDS (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 283.00 594.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 590.49)">
+<title>G</title>
+<!-- agent -->
+<g id="node1" class="node">
+<title>agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="184.67,-586.49 98,-586.49 98,-550.21 184.67,-550.21 184.67,-586.49"/>
+<text xml:space="preserve" text-anchor="start" x="127.09" y="-568.4" font-family="Geist Mono" font-size="11.00">Agent</text>
+<text xml:space="preserve" text-anchor="start" x="110.96" y="-560.25" font-family="Geist Mono" font-size="8.00" fill="#807565">model + harness</text>
+</g>
+<!-- env -->
+<g id="node2" class="node">
+<title>env</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="202.67,-498.96 80,-498.96 80,-462.68 202.67,-462.68 202.67,-498.96"/>
+<text xml:space="preserve" text-anchor="start" x="111.34" y="-480.87" font-family="Geist Mono" font-size="11.00">Environment</text>
+<text xml:space="preserve" text-anchor="start" x="92.96" y="-472.72" font-family="Geist Mono" font-size="8.00" fill="#807565">task + world + scoring rule</text>
+</g>
+<!-- agent&#45;&gt;env -->
+<g id="edge1" class="edge">
+<title>agent&#45;&gt;env</title>
+<path fill="none" stroke="#c8501f" d="M141.34,-549.63C141.34,-537.59 141.34,-521.46 141.34,-507.95"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="143.79,-508.03 141.34,-501.03 138.89,-508.03 143.79,-508.03"/>
+<text xml:space="preserve" text-anchor="middle" x="153.71" y="-522.13" font-family="Geist Mono" font-size="8.50" fill="#c8501f">acts in</text>
+</g>
+<!-- traces -->
+<g id="node3" class="node">
+<title>traces</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="164.67,-411.43 0,-411.43 0,-375.15 164.67,-375.15 164.67,-411.43"/>
+<text xml:space="preserve" text-anchor="start" x="39.96" y="-393.34" font-family="Geist Mono" font-size="11.00">Production traces</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-385.19" font-family="Geist Mono" font-size="8.00" fill="#807565">source material before task dist known</text>
+</g>
+<!-- env&#45;&gt;traces -->
+<g id="edge2" class="edge">
+<title>env&#45;&gt;traces</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M129.11,-462.1C120.49,-449.6 108.82,-432.69 99.3,-418.89"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="101.4,-417.61 95.4,-413.24 97.36,-420.39 101.4,-417.61"/>
+<text xml:space="preserve" text-anchor="middle" x="131.87" y="-434.6" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">produces</text>
+</g>
+<!-- hack -->
+<g id="node6" class="node">
+<title>hack</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="274.8,-355.15 125.88,-355.15 125.88,-318.87 274.8,-318.87 274.8,-355.15"/>
+<text xml:space="preserve" text-anchor="start" x="161.71" y="-337.06" font-family="Geist Mono" font-size="11.00">Reward hacking</text>
+<text xml:space="preserve" text-anchor="start" x="138.84" y="-328.91" font-family="Geist Mono" font-size="8.00" fill="#807565">proxy undefined at the boundaries</text>
+</g>
+<!-- env&#45;&gt;hack -->
+<g id="edge6" class="edge">
+<title>env&#45;&gt;hack</title>
+<path fill="none" stroke="#c8501f" d="M150.95,-462.12C158.15,-448.49 167.99,-429.06 175.34,-411.43 181.83,-395.84 187.96,-377.91 192.52,-363.67"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="194.79,-364.62 194.57,-357.2 190.12,-363.14 194.79,-364.62"/>
+<text xml:space="preserve" text-anchor="middle" x="189.39" y="-434.6" font-family="Geist Mono" font-size="8.50" fill="#c8501f">exploited by</text>
+</g>
+<!-- workback -->
+<g id="node4" class="node">
+<title>workback</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="162.17,-298.87 6.5,-298.87 6.5,-262.59 162.17,-262.59 162.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="37.09" y="-280.78" font-family="Geist Mono" font-size="11.00">Working backwards</text>
+<text xml:space="preserve" text-anchor="start" x="19.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">start from solution, task is upstream</text>
+</g>
+<!-- traces&#45;&gt;workback -->
+<g id="edge3" class="edge">
+<title>traces&#45;&gt;workback</title>
+<path fill="none" stroke="#c8501f" d="M78.45,-374.62C77.29,-368.49 76.16,-361.55 75.59,-355.15 74.14,-339.09 73.72,-334.89 75.59,-318.87 76.02,-315.14 76.69,-311.24 77.47,-307.44"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="79.81,-308.18 78.97,-300.82 75.03,-307.1 79.81,-308.18"/>
+<text xml:space="preserve" text-anchor="middle" x="95.46" y="-334.56" font-family="Geist Mono" font-size="8.50" fill="#c8501f">seeds task</text>
+</g>
+<!-- simulator -->
+<g id="node5" class="node">
+<title>simulator</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="158.67,-211.34 42,-211.34 42,-175.06 158.67,-175.06 158.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="77.84" y="-193.25" font-family="Geist Mono" font-size="11.00">Simulator</text>
+<text xml:space="preserve" text-anchor="start" x="54.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">full backend controllability</text>
+</g>
+<!-- workback&#45;&gt;simulator -->
+<g id="edge4" class="edge">
+<title>workback&#45;&gt;simulator</title>
+<path fill="none" stroke="#c8501f" d="M87.65,-262.01C89.92,-249.85 92.98,-233.53 95.52,-219.94"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="97.87,-220.72 96.75,-213.39 93.05,-219.82 97.87,-220.72"/>
+<text xml:space="preserve" text-anchor="middle" x="119.17" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">plants answer</text>
+</g>
+<!-- judge -->
+<g id="node7" class="node">
+<title>judge</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="236.55,-123.81 62.13,-123.81 62.13,-87.53 236.55,-87.53 236.55,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="117.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Judge review</text>
+<text xml:space="preserve" text-anchor="start" x="75.09" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">often misses hacks even when told not to</text>
+</g>
+<!-- simulator&#45;&gt;judge -->
+<g id="edge5" class="edge">
+<title>simulator&#45;&gt;judge</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M110.49,-174.48C117.58,-162.09 127.16,-145.38 135.03,-131.65"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="137.09,-132.97 138.44,-125.68 132.84,-130.54 137.09,-132.97"/>
+<text xml:space="preserve" text-anchor="middle" x="153.27" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">rollout scored</text>
+</g>
+<!-- hack&#45;&gt;judge -->
+<g id="edge7" class="edge">
+<title>hack&#45;&gt;judge</title>
+<path fill="none" stroke="#c8501f" d="M202.22,-318.41C205.21,-283.48 208.31,-203.59 182.34,-143.81 180.35,-139.25 177.59,-134.86 174.5,-130.79"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="176.4,-129.25 170.03,-125.45 172.64,-132.39 176.4,-129.25"/>
+<text xml:space="preserve" text-anchor="middle" x="223.05" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">flagged by</text>
+</g>
+<!-- human -->
+<g id="node8" class="node">
+<title>human</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="222.67,-36.28 76,-36.28 76,0 222.67,0 222.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="117.09" y="-18.19" font-family="Geist Mono" font-size="11.00">Human catch</text>
+<text xml:space="preserve" text-anchor="start" x="88.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">spots obvious hacks after the fact</text>
+</g>
+<!-- judge&#45;&gt;human -->
+<g id="edge8" class="edge">
+<title>judge&#45;&gt;human</title>
+<path fill="none" stroke="#c8501f" d="M149.34,-86.95C149.34,-74.91 149.34,-58.78 149.34,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="151.79,-45.35 149.34,-38.35 146.89,-45.35 151.79,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="177.84" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">misses, falls to</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The talk&#x27;s two named techniques, production-trace mining and working backwards, feed a simulator that manufactures verifiable signal, but even then judges reportedly miss reward hacks that a human catches on review (ours).</p></section>
 
 
 

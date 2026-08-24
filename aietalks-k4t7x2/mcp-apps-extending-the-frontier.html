@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>MCP Apps: Extending the Frontier — Talk Brief</title>
+<title>MCP Apps: Extending the Frontier &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,117 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">For anyone building or integrating an MCP server, this talk explains the mechanics and adoption state of MCP Apps -- the Anthropic/OpenAI-backed extension that lets a server return interactive branded UI instead of text, while the host (...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>MCP Apps became the official Anthropic/OpenAI-backed extension to MCP a few months ago, built on the MCP-UI protocol the speakers created; early adopters (11 Labs, Shopify, Postman, Goose) supported it roughly a year earlier, and Block just shipped an agentic-commerce product on it (c1, c2, c3)</li><li>The protocol standardizes host control: when a user clicks inside an app&#x27;s UI, the app messages the host rather than calling a backend directly, and the host decides whether to act -- including three levels of control ranging from a passive notification to the app handing off a prompt to the chat (c4, c7)</li><li>The speakers frame this as infrastructure for an emerging &quot;agentic web,&quot; citing ChatGPT&#x27;s reported 800 million weekly users (about 10% of world population) reached far faster than the web reached comparable scale, with reusable views and host-to-app &quot;app tools&quot; as near-term roadmap items (c5, c6, c8, c9)</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="How MCP Apps route control back to the host (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">HOW MCP APPS ROUTE CONTROL BACK TO THE HOST (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">USER</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">User clicks button</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">e.g. favorite button in Spotify widget</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">APP (MCP-UI)</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">App UI (MCP-UI)</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">built on the MCP-UI protocol</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">App messages host</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">not the backend directly</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">HOST</text><rect x="24" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="315" font-size="11" text-anchor="middle" fill="#14110D">Host decides</text><text x="120" y="331" font-size="8.5" text-anchor="middle" fill="#807565">three levels of control</text><rect x="230" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="315" font-size="11" text-anchor="middle" fill="#14110D">Notify only</text><text x="327" y="331" font-size="8.5" text-anchor="middle" fill="#807565">level 1: passive notification</text><rect x="437" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="315" font-size="11" text-anchor="middle" fill="#14110D">Call a tool</text><text x="533" y="331" font-size="8.5" text-anchor="middle" fill="#807565">level 2: host calls MCP tool</text><rect x="644" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="315" font-size="11" text-anchor="middle" fill="#14110D">Hand off to chat prompt</text><text x="740" y="331" font-size="8.5" text-anchor="middle" fill="#807565">level 3: app asks host to run a</text><text x="740" y="343" font-size="8.5" text-anchor="middle" fill="#807565">prompt</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">BACKEND / MCP SERVER</text><rect x="325" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="433" font-size="11" text-anchor="middle" fill="#14110D">MCP server / backend</text><text x="430" y="449" font-size="8.5" text-anchor="middle" fill="#807565">e.g. Spotify&#x27;s backend</text><path d="M430,118 V127 H318 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="374" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">interacts</text><line x1="423" y1="207" x2="437" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><path d="M542,236 V245 H120 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="331" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">message</text><line x1="216" y1="325" x2="230" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">level 1</text><line x1="216" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="327" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">level 2</text><line x1="216" y1="325" x2="644" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">level 3</text><path d="M533,354 V363 H430 V414" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="482" y="361" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">tool call</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">Simplifies the talk&#x27;s Spotify example: a user&#x27;s click never reaches the backend directly, it flows through the host, which picks one of three response levels before an MCP tool call (if any) reaches the backend (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW MCP APPS ROUTE CONTROL BACK TO THE HOST (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 455.00 472.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 467.68)">
+<title>G</title>
+<!-- user_click -->
+<g id="node1" class="node">
+<title>user_click</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="280.04,-463.68 125.12,-463.68 125.12,-427.4 280.04,-427.4 280.04,-463.68"/>
+<text xml:space="preserve" text-anchor="start" x="159.08" y="-445.59" font-family="Geist Mono" font-size="11.00">User clicks button</text>
+<text xml:space="preserve" text-anchor="start" x="138.08" y="-437.44" font-family="Geist Mono" font-size="8.00" fill="#807565">e.g. favorite button in Spotify widget</text>
+</g>
+<!-- app_ui -->
+<g id="node2" class="node">
+<title>app_ui</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="265.79,-376.15 139.37,-376.15 139.37,-339.87 265.79,-339.87 265.79,-376.15"/>
+<text xml:space="preserve" text-anchor="start" x="161.33" y="-358.06" font-family="Geist Mono" font-size="11.00">App UI (MCP&#45;UI)</text>
+<text xml:space="preserve" text-anchor="start" x="152.33" y="-349.91" font-family="Geist Mono" font-size="8.00" fill="#807565">built on the MCP&#45;UI protocol</text>
+</g>
+<!-- user_click&#45;&gt;app_ui -->
+<g id="edge1" class="edge">
+<title>user_click&#45;&gt;app_ui</title>
+<path fill="none" stroke="#c8501f" d="M202.58,-426.82C202.58,-414.78 202.58,-398.65 202.58,-385.14"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="205.04,-385.22 202.59,-378.22 200.14,-385.22 205.04,-385.22"/>
+<text xml:space="preserve" text-anchor="middle" x="218.71" y="-399.32" font-family="Geist Mono" font-size="8.50" fill="#c8501f">interacts</text>
+</g>
+<!-- app_msg -->
+<g id="node3" class="node">
+<title>app_msg</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="263.54,-298.87 141.62,-298.87 141.62,-262.59 263.54,-262.59 263.54,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="154.58" y="-280.78" font-family="Geist Mono" font-size="11.00">App messages host</text>
+<text xml:space="preserve" text-anchor="start" x="159.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">not the backend directly</text>
+</g>
+<!-- app_ui&#45;&gt;app_msg -->
+<g id="edge2" class="edge">
+<title>app_ui&#45;&gt;app_msg</title>
+<path fill="none" stroke="#c8501f" d="M202.58,-339.55C202.58,-330.12 202.58,-318.28 202.58,-307.78"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="205.04,-307.87 202.59,-300.87 200.14,-307.87 205.04,-307.87"/>
+</g>
+<!-- host_control -->
+<g id="node4" class="node">
+<title>host_control</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="254.17,-211.34 151,-211.34 151,-175.06 254.17,-175.06 254.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="171.08" y="-193.25" font-family="Geist Mono" font-size="11.00">Host decides</text>
+<text xml:space="preserve" text-anchor="start" x="163.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">three levels of control</text>
+</g>
+<!-- app_msg&#45;&gt;host_control -->
+<g id="edge3" class="edge">
+<title>app_msg&#45;&gt;host_control</title>
+<path fill="none" stroke="#c8501f" d="M202.58,-262.01C202.58,-249.97 202.58,-233.84 202.58,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="205.04,-220.41 202.59,-213.41 200.14,-220.41 205.04,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="219.08" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">message</text>
+</g>
+<!-- host_notify -->
+<g id="node5" class="node">
+<title>host_notify</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="121.17,-123.81 0,-123.81 0,-87.53 121.17,-87.53 121.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="34.71" y="-105.72" font-family="Geist Mono" font-size="11.00">Notify only</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">level 1: passive notification</text>
+</g>
+<!-- host_control&#45;&gt;host_notify -->
+<g id="edge4" class="edge">
+<title>host_control&#45;&gt;host_notify</title>
+<path fill="none" stroke="#c8501f" d="M173.16,-174.48C151.08,-161.18 120.7,-142.88 97.07,-128.65"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="98.53,-126.66 91.27,-125.15 96,-130.86 98.53,-126.66"/>
+<text xml:space="preserve" text-anchor="middle" x="152.84" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">level 1</text>
+</g>
+<!-- host_tool -->
+<g id="node6" class="node">
+<title>host_tool</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="262.42,-123.81 142.75,-123.81 142.75,-87.53 262.42,-87.53 262.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="178.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Call a tool</text>
+<text xml:space="preserve" text-anchor="start" x="155.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">level 2: host calls MCP tool</text>
+</g>
+<!-- host_control&#45;&gt;host_tool -->
+<g id="edge5" class="edge">
+<title>host_control&#45;&gt;host_tool</title>
+<path fill="none" stroke="#c8501f" d="M202.58,-174.48C202.58,-162.44 202.58,-146.31 202.58,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="205.04,-132.88 202.59,-125.88 200.14,-132.88 205.04,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="215.33" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">level 2</text>
+</g>
+<!-- host_prompt -->
+<g id="node7" class="node">
+<title>host_prompt</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="446.79,-123.81 284.38,-123.81 284.38,-87.53 446.79,-87.53 446.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="305.96" y="-105.72" font-family="Geist Mono" font-size="11.00">Hand off to chat prompt</text>
+<text xml:space="preserve" text-anchor="start" x="297.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">level 3: app asks host to run a prompt</text>
+</g>
+<!-- host_control&#45;&gt;host_prompt -->
+<g id="edge6" class="edge">
+<title>host_control&#45;&gt;host_prompt</title>
+<path fill="none" stroke="#c8501f" d="M236.36,-174.48C261.93,-161.06 297.18,-142.56 324.4,-128.28"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="325.45,-130.49 330.51,-125.07 323.18,-126.16 325.45,-130.49"/>
+<text xml:space="preserve" text-anchor="middle" x="306.59" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">level 3</text>
+</g>
+<!-- backend -->
+<g id="node8" class="node">
+<title>backend</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="269.17,-36.28 136,-36.28 136,0 269.17,0 269.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="148.96" y="-18.19" font-family="Geist Mono" font-size="11.00">MCP server / backend</text>
+<text xml:space="preserve" text-anchor="start" x="163.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">e.g. Spotify&#39;s backend</text>
+</g>
+<!-- host_tool&#45;&gt;backend -->
+<g id="edge7" class="edge">
+<title>host_tool&#45;&gt;backend</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M202.58,-86.95C202.58,-74.91 202.58,-58.78 202.58,-45.27"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="205.04,-45.35 202.59,-38.35 200.14,-45.35 205.04,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="217.58" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">tool call</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Simplifies the talk&#x27;s Spotify example: a user&#x27;s click never reaches the backend directly, it flows through the host, which picks one of three response levels before an MCP tool call (if any) reaches the backend (ours).</p></section>
 
 
 

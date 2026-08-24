@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Designing Voice Agents for Real Conversations — Talk Brief</title>
+<title>Designing Voice Agents for Real Conversations &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,125 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Directly informs which turn-detection architecture to pick for a voice agent build (Silero VAD vs</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Humans switch turns in about 200ms; the best measured cascaded voice pipeline (Salesforce, March 2026) hit 755ms, so turn-taking design has to compensate for a 4x gap.</li><li>Three levels of turn detection exist: Silero VAD alone (fully self-owned but context-blind), STT-provider built-in endpointing (smarter but opaque), and local VAD + Smart Turn model (full control, 58.9% recall with VAD as a safety net).</li><li>STT and LLM time-to-first-token together eat about two-thirds of the voice latency budget, making them the only two real levers to reduce total response time.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Three levels of turn detection (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">THREE LEVELS OF TURN DETECTION (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">SIGNAL SOURCE</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">User audio stream</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">raw mic input, silence after speech</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">DETECTION LOGIC</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Silero VAD</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">300K params, 2MB, silence-only</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">STT provider endpointing</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Cartesia ~300ms P50, Deepgram ~250ms</text><text x="430" y="225" font-size="8.5" text-anchor="middle" fill="#807565">P50</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Smart Turn model</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">8MB, 58.9% recall, 68.4% precision</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">TURN DECISION</text><rect x="24" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="315" font-size="11" text-anchor="middle" fill="#14110D">Fires on any silence</text><text x="120" y="331" font-size="8.5" text-anchor="middle" fill="#807565">cannot tell thought from breath</text><text x="120" y="343" font-size="8.5" text-anchor="middle" fill="#807565">pause</text><rect x="230" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="327" y="315" font-size="11" text-anchor="middle" fill="#14110D">Opaque turn event</text><text x="327" y="331" font-size="8.5" text-anchor="middle" fill="#807565">works well, unexplainable when it</text><text x="327" y="343" font-size="8.5" text-anchor="middle" fill="#807565">misfires</text><rect x="437" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="315" font-size="11" text-anchor="middle" fill="#14110D">VAD timer safety net</text><text x="533" y="331" font-size="8.5" text-anchor="middle" fill="#807565">fires at configured latency, e.g.</text><text x="533" y="343" font-size="8.5" text-anchor="middle" fill="#807565">300ms</text><rect x="644" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="315" font-size="11" text-anchor="middle" fill="#14110D">Turn-end decision</text><text x="740" y="331" font-size="8.5" text-anchor="middle" fill="#807565">response pipeline starts here</text><path d="M417,118 V127 H206 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="312" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">silence</text><path d="M443,118 V135 H430 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="405" y="133" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">audio+transcript</text><path d="M180,236 V245 H120 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="142" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">level 1</text><path d="M430,236 V253 H327 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="378" y="251" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">level 2</text><line x1="311" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">runs during silence</text><path d="M654,236 V261 H727 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="690" y="259" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">confident: fire</text><path d="M206,236 V269 H533 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="370" y="267" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">safety net</text><line x1="630" y1="325" x2="644" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="636" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">not confident: fallback</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">The three levels are not mutually exclusive escalation steps but three different ways to answer the same silence, with level three combining local VAD as a fallback under a Smart Turn model to get ownership without getting stuck (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">THREE LEVELS OF TURN DETECTION (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 724.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- audio -->
+<g id="node1" class="node">
+<title>audio</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="481.05,-298.87 332.13,-298.87 332.13,-262.59 481.05,-262.59 481.05,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="361.59" y="-280.78" font-family="Geist Mono" font-size="11.00">User audio stream</text>
+<text xml:space="preserve" text-anchor="start" x="345.09" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">raw mic input, silence after speech</text>
+</g>
+<!-- vad -->
+<g id="node2" class="node">
+<title>vad</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="382.8,-211.34 244.38,-211.34 244.38,-175.06 382.8,-175.06 382.8,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="288.09" y="-193.25" font-family="Geist Mono" font-size="11.00">Silero VAD</text>
+<text xml:space="preserve" text-anchor="start" x="257.34" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">300K params, 2MB, silence&#45;only</text>
+</g>
+<!-- audio&#45;&gt;vad -->
+<g id="edge1" class="edge">
+<title>audio&#45;&gt;vad</title>
+<path fill="none" stroke="#c8501f" d="M387.32,-262.01C373.22,-249.05 353.98,-231.35 338.69,-217.29"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="340.75,-215.86 333.94,-212.92 337.44,-219.47 340.75,-215.86"/>
+<text xml:space="preserve" text-anchor="middle" x="378.4" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">silence</text>
+</g>
+<!-- stt_endpoint -->
+<g id="node3" class="node">
+<title>stt_endpoint</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="662.17,-211.34 469,-211.34 469,-175.06 662.17,-175.06 662.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="505.21" y="-193.25" font-family="Geist Mono" font-size="11.00">STT provider endpointing</text>
+<text xml:space="preserve" text-anchor="start" x="481.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Cartesia ~300ms P50, Deepgram ~250ms P50</text>
+</g>
+<!-- audio&#45;&gt;stt_endpoint -->
+<g id="edge2" class="edge">
+<title>audio&#45;&gt;stt_endpoint</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M439.53,-262.01C464.47,-248.59 498.86,-230.09 525.41,-215.81"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="526.35,-218.09 531.35,-212.62 524.02,-213.77 526.35,-218.09"/>
+<text xml:space="preserve" text-anchor="middle" x="526.35" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">audio+transcript</text>
+</g>
+<!-- smart_turn -->
+<g id="node4" class="node">
+<title>smart_turn</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="151.17,-123.81 0,-123.81 0,-87.53 151.17,-87.53 151.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="32.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Smart Turn model</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">8MB, 58.9% recall, 68.4% precision</text>
+</g>
+<!-- vad&#45;&gt;smart_turn -->
+<g id="edge5" class="edge">
+<title>vad&#45;&gt;smart_turn</title>
+<path fill="none" stroke="#c8501f" d="M260.78,-174.45C243.04,-168.4 223.17,-161.53 205.09,-155.06 180.32,-146.2 153.02,-136.05 129.9,-127.35"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="131.05,-125.17 123.64,-124.99 129.33,-129.75 131.05,-125.17"/>
+<text xml:space="preserve" text-anchor="middle" x="240.34" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs during silence</text>
+</g>
+<!-- level1_out -->
+<g id="node5" class="node">
+<title>level1_out</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="336.17,-123.81 173,-123.81 173,-87.53 336.17,-87.53 336.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="206.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Fires on any silence</text>
+<text xml:space="preserve" text-anchor="start" x="185.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">cannot tell thought from breath pause</text>
+</g>
+<!-- vad&#45;&gt;level1_out -->
+<g id="edge3" class="edge">
+<title>vad&#45;&gt;level1_out</title>
+<path fill="none" stroke="#c8501f" d="M301.36,-174.48C292.74,-161.98 281.07,-145.07 271.55,-131.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="273.65,-129.99 267.65,-125.62 269.61,-132.77 273.65,-129.99"/>
+<text xml:space="preserve" text-anchor="middle" x="300.37" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">level 1</text>
+</g>
+<!-- vad_fallback -->
+<g id="node7" class="node">
+<title>vad_fallback</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="520.8,-123.81 358.38,-123.81 358.38,-87.53 520.8,-87.53 520.8,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="388.21" y="-105.72" font-family="Geist Mono" font-size="11.00">VAD timer safety net</text>
+<text xml:space="preserve" text-anchor="start" x="371.34" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">fires at configured latency, e.g. 300ms</text>
+</g>
+<!-- vad&#45;&gt;vad_fallback -->
+<g id="edge7" class="edge">
+<title>vad&#45;&gt;vad_fallback</title>
+<path fill="none" stroke="#c8501f" d="M339.69,-174.48C359.12,-161.29 385.78,-143.2 406.67,-129.02"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="407.84,-131.18 412.26,-125.22 405.09,-127.12 407.84,-131.18"/>
+<text xml:space="preserve" text-anchor="middle" x="403.25" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">safety net</text>
+</g>
+<!-- level2_out -->
+<g id="node6" class="node">
+<title>level2_out</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="716.42,-123.81 542.75,-123.81 542.75,-87.53 716.42,-87.53 716.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="583.84" y="-105.72" font-family="Geist Mono" font-size="11.00">Opaque turn event</text>
+<text xml:space="preserve" text-anchor="start" x="555.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">works well, unexplainable when it misfires</text>
+</g>
+<!-- stt_endpoint&#45;&gt;level2_out -->
+<g id="edge4" class="edge">
+<title>stt_endpoint&#45;&gt;level2_out</title>
+<path fill="none" stroke="#c8501f" d="M578.85,-174.48C588.29,-161.86 601.08,-144.76 611.46,-130.89"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="613.2,-132.65 615.43,-125.58 609.28,-129.72 613.2,-132.65"/>
+<text xml:space="preserve" text-anchor="middle" x="614.17" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">level 2</text>
+</g>
+<!-- final_turn -->
+<g id="node8" class="node">
+<title>final_turn</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="322.67,-36.28 192.5,-36.28 192.5,0 322.67,0 322.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="214.84" y="-18.19" font-family="Geist Mono" font-size="11.00">Turn&#45;end decision</text>
+<text xml:space="preserve" text-anchor="start" x="205.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">response pipeline starts here</text>
+</g>
+<!-- smart_turn&#45;&gt;final_turn -->
+<g id="edge6" class="edge">
+<title>smart_turn&#45;&gt;final_turn</title>
+<path fill="none" stroke="#c8501f" d="M113.3,-86.95C142.09,-73.42 181.88,-54.72 212.38,-40.38"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="213.26,-42.68 218.55,-37.48 211.18,-38.24 213.26,-42.68"/>
+<text xml:space="preserve" text-anchor="middle" x="204.11" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">confident: fire</text>
+</g>
+<!-- vad_fallback&#45;&gt;final_turn -->
+<g id="edge8" class="edge">
+<title>vad_fallback&#45;&gt;final_turn</title>
+<path fill="none" stroke="#c8501f" d="M401.87,-86.95C373.08,-73.42 333.29,-54.72 302.79,-40.38"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="303.99,-38.24 296.62,-37.48 301.91,-42.68 303.99,-38.24"/>
+<text xml:space="preserve" text-anchor="middle" x="401.86" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">not confident: fallback</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The three levels are not mutually exclusive escalation steps but three different ways to answer the same silence, with level three combining local VAD as a fallback under a Smart Turn model to get ownership without getting stuck (ours).</p></section>
 
 
 

@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Why Your AI UX Is Broken (and It&#x27;s Not the Model&#x27;s Fault) — Talk Brief</title>
+<title>Why Your AI UX Is Broken (and It&#x27;s Not the Model&#x27;s Fault) &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,104 @@ Quotes are verbatim from the talk transcript with the time they were said.</span
 <p class="deck" style="font-size:15px">Informs the architecture choice for building multi-device or resumable AI chat interfaces: whether to keep the default request-scoped SSE streaming pattern or invest in a shared, persistent &quot;durable session&quot; layer (here built on Ably cha...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Direct HTTP/SSE streaming ties an agent&#x27;s response to a single client connection, so it can&#x27;t survive disconnects, follow a user across tabs/devices, or support cancel without also breaking resume (per Vercel&#x27;s AI SDK docs, which state abort is incompatible with resume).</li><li>The pattern the speaker says the best AI products converge on is a &quot;durable session&quot; -- a shared, persistent resource between agents and clients, built here on Ably channels -- so any client can reconnect, replay, or steer the agent, and multiple sub-agents can write updates directly.</li><li>Swapping SSE for a bidirectional transport like WebSockets does not by itself fix multi-device visibility or multi-agent orchestration; clients still need a persistent connection to the shared session rather than to the agent&#x27;s single request.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Durable session decouples clients from agents (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">DURABLE SESSION DECOUPLES CLIENTS FROM AGENTS (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">CLIENTS</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Client Tab A</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">connects, no direct link to agent</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Client Tab B</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">second tab, needs same visibility</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">DURABLE SESSION (ABLY CHANNEL)</text><rect x="213" y="178" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">Durable Session</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">shared, persistent, stateful medium</text><rect x="437" y="178" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">Channel Persistence</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">messages outlive any one connection</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">AGENT LAYER</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Orchestrator Agent</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">delegates tasks to sub-agents</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Sub-agent</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">writes progress updates directly</text><path d="M318,118 V127 H279 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="280" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">connect/reconnect</text><path d="M542,118 V135 H305 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="424" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">connect/reconnect</text><path d="M292,178 V169 H318 V118" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="330" y="167" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replay/resume</text><path d="M318,178 V161 H542 V118" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="159" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replay/resume</text><path d="M318,296 V287 H331 V236" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="356" y="285" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">delegates task</text><path d="M542,296 V279 H357 V236" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="450" y="277" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">writes update</text><line x1="423" y1="207" x2="437" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">stores messages</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">The talk frames a durable session as the shared layer that lets any client reconnect or replay and lets sub-agents write updates directly, instead of routing everything through one request-scoped connection; we&#x27;ve simplified the multi-agent side to one orchestrator and one sub-agent (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">DURABLE SESSION DECOUPLES CLIENTS FROM AGENTS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 477.00 219.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 215.34)">
+<title>G</title>
+<!-- tabA -->
+<g id="node1" class="node">
+<title>tabA</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="140.67,-211.34 0,-211.34 0,-175.06 140.67,-175.06 140.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="41.08" y="-193.25" font-family="Geist Mono" font-size="11.00">Client Tab A</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">connects, no direct link to agent</text>
+</g>
+<!-- session -->
+<g id="node3" class="node">
+<title>session</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="274.04,-123.81 120.62,-123.81 120.62,-87.53 274.04,-87.53 274.04,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="158.33" y="-105.72" font-family="Geist Mono" font-size="11.00">Durable Session</text>
+<text xml:space="preserve" text-anchor="start" x="133.58" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">shared, persistent, stateful medium</text>
+</g>
+<!-- tabA&#45;&gt;session -->
+<g id="edge1" class="edge">
+<title>tabA&#45;&gt;session</title>
+<path fill="none" stroke="#c8501f" d="M61.64,-174.5C58.12,-164.57 56.24,-152.47 62.83,-143.81 69.73,-134.76 89.67,-127.35 112.15,-121.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="112.51,-124.03 118.72,-119.99 111.34,-119.27 112.51,-124.03"/>
+<text xml:space="preserve" text-anchor="middle" x="96.58" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">connect/reconnect</text>
+</g>
+<!-- tabB -->
+<g id="node2" class="node">
+<title>tabB</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="189.42,-36.28 47.25,-36.28 47.25,0 189.42,0 189.42,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="89.08" y="-18.19" font-family="Geist Mono" font-size="11.00">Client Tab B</text>
+<text xml:space="preserve" text-anchor="start" x="60.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">second tab, needs same visibility</text>
+</g>
+<!-- tabB&#45;&gt;session -->
+<g id="edge2" class="edge">
+<title>tabB&#45;&gt;session</title>
+<path fill="none" stroke="#c8501f" d="M148.92,-36.96C156.83,-42.49 164.92,-49.06 171.33,-56.28 177.32,-63.02 182.43,-71.38 186.49,-79.24"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="184.27,-80.28 189.54,-85.5 188.68,-78.13 184.27,-80.28"/>
+<text xml:space="preserve" text-anchor="middle" x="213.2" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">connect/reconnect</text>
+</g>
+<!-- session&#45;&gt;tabA -->
+<g id="edge3" class="edge">
+<title>session&#45;&gt;tabA</title>
+<path fill="none" stroke="#c8501f" d="M174.16,-124.41C161.66,-133.79 145.86,-145.34 131.33,-155.06 123.84,-160.08 115.68,-165.24 107.84,-170.06"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="106.75,-167.86 102.05,-173.59 109.3,-172.04 106.75,-167.86"/>
+<text xml:space="preserve" text-anchor="middle" x="173.1" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replay/resume</text>
+</g>
+<!-- session&#45;&gt;tabB -->
+<g id="edge4" class="edge">
+<title>session&#45;&gt;tabB</title>
+<path fill="none" stroke="#c8501f" d="M133.46,-86.91C125.11,-81.95 117.63,-75.62 112.33,-67.53 107.98,-60.87 107.63,-52.58 108.93,-44.75"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="111.3,-45.38 110.54,-38.01 106.53,-44.25 111.3,-45.38"/>
+<text xml:space="preserve" text-anchor="middle" x="139.33" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replay/resume</text>
+</g>
+<!-- persist -->
+<g id="node4" class="node">
+<title>persist</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="372.04,-36.28 212.62,-36.28 212.62,0 372.04,0 372.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="243.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Channel Persistence</text>
+<text xml:space="preserve" text-anchor="start" x="225.58" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">messages outlive any one connection</text>
+</g>
+<!-- session&#45;&gt;persist -->
+<g id="edge7" class="edge">
+<title>session&#45;&gt;persist</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M227.04,-86.86C235.58,-81.16 244.66,-74.5 252.33,-67.53 260.28,-60.32 268.03,-51.5 274.56,-43.37"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="276.42,-44.98 278.8,-37.95 272.56,-41.96 276.42,-44.98"/>
+<text xml:space="preserve" text-anchor="middle" x="294.38" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">stores messages</text>
+</g>
+<!-- orch -->
+<g id="node5" class="node">
+<title>orch</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="305.67,-211.34 171,-211.34 171,-175.06 305.67,-175.06 305.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="191.83" y="-193.25" font-family="Geist Mono" font-size="11.00">Orchestrator Agent</text>
+<text xml:space="preserve" text-anchor="start" x="183.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">delegates tasks to sub&#45;agents</text>
+</g>
+<!-- orch&#45;&gt;session -->
+<g id="edge5" class="edge">
+<title>orch&#45;&gt;session</title>
+<path fill="none" stroke="#c8501f" d="M229.84,-174.48C223.96,-162.21 216.04,-145.69 209.49,-132.03"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="211.71,-130.99 206.47,-125.73 207.29,-133.11 211.71,-130.99"/>
+<text xml:space="preserve" text-anchor="middle" x="247.66" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">delegates task</text>
+</g>
+<!-- sub -->
+<g id="node6" class="node">
+<title>sub</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="468.67,-211.34 328,-211.34 328,-175.06 468.67,-175.06 468.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="373.58" y="-193.25" font-family="Geist Mono" font-size="11.00">Sub&#45;agent</text>
+<text xml:space="preserve" text-anchor="start" x="340.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">writes progress updates directly</text>
+</g>
+<!-- sub&#45;&gt;session -->
+<g id="edge6" class="edge">
+<title>sub&#45;&gt;session</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M356.69,-174.48C324.62,-160.83 280.2,-141.93 246.4,-127.55"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="247.72,-125.45 240.32,-124.96 245.8,-129.96 247.72,-125.45"/>
+<text xml:space="preserve" text-anchor="middle" x="335.37" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">writes update</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The talk frames a durable session as the shared layer that lets any client reconnect or replay and lets sub-agents write updates directly, instead of routing everything through one request-scoped connection; we&#x27;ve simplified the multi-agent side to one orchestrator and one sub-agent (ours).</p></section>
 
 
 

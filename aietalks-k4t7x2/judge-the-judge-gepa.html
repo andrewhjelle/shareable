@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Judge the Judge: Building LLM Evaluators That Actually Work with GEPA — Talk Brief</title>
+<title>Judge the Judge: Building LLM Evaluators That Actually Work with GEPA &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,110 @@ Quotes are verbatim from the talk transcript with the time they were said.</span
 <p class="deck" style="font-size:15px">Gives concrete before/after accuracy numbers and cost figures for GEPA-optimizing an LLM-as-judge prompt against human annotations, useful for deciding whether prompt optimization is worth the token cost versus hand-tuning a judge prompt...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>The demo uses Tau-Bench&#x27;s airline-agent dataset: 599 total conversation traces, roughly balanced between compliant and non-compliant, split into 480 training and 112 validation traces by task (c1, c2, c3).</li><li>The seed LLM-as-judge starts at 61% validation accuracy; after GEPA optimization, validation accuracy improved by about 14 points and training accuracy by nine points, with per-task (Pareto frontier) coverage reaching 100% (c4, c5).</li><li>He warns these small optimization runs still cost roughly $200-300 in tokens and that a smaller/older model (transcribed &#x27;GPD40&#x27;) completely failed as either judge or refiner, and recommends building separate narrow judges per error type rather than one general judge (c6, c7, c8).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="GEPA-optimized LLM-as-judge pipeline (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">GEPA-OPTIMIZED LLM-AS-JUDGE PIPELINE (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">DATA</text><rect x="213" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Tau-Bench traces</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">599 traces, 62%/38% split</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Train/val split</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">480 train / 112 val, by task</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">JUDGE OPTIMIZATION</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Seed LLM judge</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">61% baseline accuracy</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">GEPA optimizer</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">+14pt val, +9pt train, 100% Pareto</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Small model swap</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">GPD40 as judge/refiner failed</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">OUTCOME &amp; LESSONS</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Token cost</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">$200-300 per optimization run</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Narrow judges</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">one judge per error type</text><line x1="423" y1="89" x2="437" y2="89" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><path d="M542,118 V127 H206 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="374" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">validation set</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">optimize</text><path d="M417,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="368" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">token spend</text><line x1="311" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">swap in GPD40</text><path d="M443,236 V253 H529 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="486" y="251" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">lesson</text><path d="M654,236 V261 H555 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="604" y="259" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">motivates</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s optimization loop from raw Tau-Bench traces through GEPA-tuned judge accuracy to the two practical warnings the speaker drew from it (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">GEPA-OPTIMIZED LLM-AS-JUDGE PIPELINE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 312.00 384.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 380.15)">
+<title>G</title>
+<!-- traces -->
+<g id="node1" class="node">
+<title>traces</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="217.54,-376.15 96.37,-376.15 96.37,-339.87 217.54,-339.87 217.54,-376.15"/>
+<text xml:space="preserve" text-anchor="start" x="114.58" y="-358.06" font-family="Geist Mono" font-size="11.00">Tau&#45;Bench traces</text>
+<text xml:space="preserve" text-anchor="start" x="109.33" y="-349.91" font-family="Geist Mono" font-size="8.00" fill="#807565">599 traces, 62%/38% split</text>
+</g>
+<!-- split -->
+<g id="node2" class="node">
+<title>split</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="217.17,-298.87 96.75,-298.87 96.75,-262.59 217.17,-262.59 217.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="124.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Train/val split</text>
+<text xml:space="preserve" text-anchor="start" x="109.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">480 train / 112 val, by task</text>
+</g>
+<!-- traces&#45;&gt;split -->
+<g id="edge1" class="edge">
+<title>traces&#45;&gt;split</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M156.96,-339.55C156.96,-330.12 156.96,-318.28 156.96,-307.78"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="159.41,-307.87 156.96,-300.87 154.51,-307.87 159.41,-307.87"/>
+</g>
+<!-- seed_judge -->
+<g id="node3" class="node">
+<title>seed_judge</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="210.79,-211.34 103.12,-211.34 103.12,-175.06 210.79,-175.06 210.79,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="118.33" y="-193.25" font-family="Geist Mono" font-size="11.00">Seed LLM judge</text>
+<text xml:space="preserve" text-anchor="start" x="116.08" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">61% baseline accuracy</text>
+</g>
+<!-- split&#45;&gt;seed_judge -->
+<g id="edge2" class="edge">
+<title>split&#45;&gt;seed_judge</title>
+<path fill="none" stroke="#c8501f" d="M156.96,-262.01C156.96,-249.97 156.96,-233.84 156.96,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="159.41,-220.41 156.96,-213.41 154.51,-220.41 159.41,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="182.46" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">validation set</text>
+</g>
+<!-- gepa -->
+<g id="node4" class="node">
+<title>gepa</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="151.92,-123.81 0,-123.81 0,-87.53 151.92,-87.53 151.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="39.21" y="-105.72" font-family="Geist Mono" font-size="11.00">GEPA optimizer</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">+14pt val, +9pt train, 100% Pareto</text>
+</g>
+<!-- seed_judge&#45;&gt;gepa -->
+<g id="edge3" class="edge">
+<title>seed_judge&#45;&gt;gepa</title>
+<path fill="none" stroke="#c8501f" d="M140.18,-174.48C128.12,-161.75 111.74,-144.45 98.54,-130.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="100.35,-128.87 93.76,-125.47 96.8,-132.24 100.35,-128.87"/>
+<text xml:space="preserve" text-anchor="middle" x="137.43" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">optimize</text>
+</g>
+<!-- small_model -->
+<g id="node5" class="node">
+<title>small_model</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="304.04,-123.81 173.88,-123.81 173.88,-87.53 304.04,-87.53 304.04,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="195.08" y="-105.72" font-family="Geist Mono" font-size="11.00">Small model swap</text>
+<text xml:space="preserve" text-anchor="start" x="186.83" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">GPD40 as judge/refiner failed</text>
+</g>
+<!-- seed_judge&#45;&gt;small_model -->
+<g id="edge5" class="edge">
+<title>seed_judge&#45;&gt;small_model</title>
+<path fill="none" stroke="#c8501f" d="M173.95,-174.48C186.15,-161.75 202.74,-144.45 216.11,-130.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="217.87,-132.21 220.94,-125.46 214.33,-128.82 217.87,-132.21"/>
+<text xml:space="preserve" text-anchor="middle" x="231.37" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">swap in GPD40</text>
+</g>
+<!-- cost -->
+<g id="node6" class="node">
+<title>cost</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="143.29,-36.28 8.62,-36.28 8.62,0 143.29,0 143.29,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="49.71" y="-18.19" font-family="Geist Mono" font-size="11.00">Token cost</text>
+<text xml:space="preserve" text-anchor="start" x="21.58" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">$200&#45;300 per optimization run</text>
+</g>
+<!-- gepa&#45;&gt;cost -->
+<g id="edge4" class="edge">
+<title>gepa&#45;&gt;cost</title>
+<path fill="none" stroke="#c8501f" d="M75.96,-86.95C75.96,-74.91 75.96,-58.78 75.96,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="78.41,-45.35 75.96,-38.35 73.51,-45.35 78.41,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="98.83" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">token spend</text>
+</g>
+<!-- narrow_judges -->
+<g id="node7" class="node">
+<title>narrow_judges</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="288.17,-36.28 173.75,-36.28 173.75,0 288.17,0 288.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="195.33" y="-18.19" font-family="Geist Mono" font-size="11.00">Narrow judges</text>
+<text xml:space="preserve" text-anchor="start" x="186.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">one judge per error type</text>
+</g>
+<!-- gepa&#45;&gt;narrow_judges -->
+<g id="edge6" class="edge">
+<title>gepa&#45;&gt;narrow_judges</title>
+<path fill="none" stroke="#c8501f" d="M108.08,-86.95C132.29,-73.59 165.62,-55.19 191.47,-40.93"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="192.61,-43.1 197.56,-37.57 190.25,-38.81 192.61,-43.1"/>
+<text xml:space="preserve" text-anchor="middle" x="174.37" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">lesson</text>
+</g>
+<!-- small_model&#45;&gt;narrow_judges -->
+<g id="edge7" class="edge">
+<title>small_model&#45;&gt;narrow_judges</title>
+<path fill="none" stroke="#c8501f" d="M237.3,-86.95C236.18,-74.91 234.67,-58.78 233.4,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="235.85,-45.09 232.76,-38.35 230.97,-45.54 235.85,-45.09"/>
+<text xml:space="preserve" text-anchor="middle" x="254.19" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">motivates</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s optimization loop from raw Tau-Bench traces through GEPA-tuned judge accuracy to the two practical warnings the speaker drew from it (ours).</p></section>
 
 
 

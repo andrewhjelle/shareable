@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Your Insecure MCP Server Won&#x27;t Survive Production — Talk Brief</title>
+<title>Your Insecure MCP Server Won&#x27;t Survive Production &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,132 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Gives MCP server builders a concrete checklist (tool consolidation, schema-constrained inputs, stdio-vs-HTTP transport limits, CIMD over DCR for auth) to run before exposing a server to untrusted agents, backed by a load-test number show...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Every MCP tool description is a prompt-injection surface, and agent retries broadcast the full conversation history (including prior tool-call data) over the wire with each round trip (c1, c2).</li><li>Recommends consolidating fine-grained API calls into fewer, coarse-grained, single-outcome tools to shrink the attack surface, plus constraining input schemas and stripping tool responses to only what&#x27;s needed (c3).</li><li>Long-lived, unscoped API keys still power more than 50% of MCP servers and stdio transport falls over under concurrency (20 of 22 requests failed at just 20 simultaneous connections in Lenses&#x27; own load test); the field is moving to OAuth 2.1 with CIMD, the preferred client-registration approach since November 2025, over the more phishing-prone DCR (c4, c5, c6, c7).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="The MCP security shadow (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">THE MCP SECURITY SHADOW (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">ATTACK SURFACE</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Tool poisoning</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Hidden instructions in descriptions</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">History leakage</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Full convo resent on every retry</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">DESIGN PRINCIPLES</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Coarse-grained tools</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">One tool per outcome, not per API call</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">TRANSPORT</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">stdio walled garden</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Single-user, no auth, no on-ramp</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Load test: 20/22 failed</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">20 simultaneous connections broke</text><text x="542" y="343" font-size="8.5" text-anchor="middle" fill="#807565">stdio</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">AUTH &amp; DATA CONTROLS</text><rect x="24" y="414" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="120" y="433" font-size="11" text-anchor="middle" fill="#14110D">Long-lived API keys</text><text x="120" y="449" font-size="8.5" text-anchor="middle" fill="#807565">&gt;50% of MCP servers today</text><rect x="230" y="414" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="327" y="433" font-size="11" text-anchor="middle" fill="#14110D">DCR phishing risk</text><text x="327" y="449" font-size="8.5" text-anchor="middle" fill="#807565">Anyone can hit the register</text><text x="327" y="461" font-size="8.5" text-anchor="middle" fill="#807565">endpoint</text><rect x="437" y="414" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="433" font-size="11" text-anchor="middle" fill="#14110D">CIMD</text><text x="533" y="449" font-size="8.5" text-anchor="middle" fill="#807565">Preferred registration since Nov</text><text x="533" y="461" font-size="8.5" text-anchor="middle" fill="#807565">2025</text><rect x="644" y="414" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="433" font-size="11" text-anchor="middle" fill="#14110D">PII masking</text><text x="740" y="449" font-size="8.5" text-anchor="middle" fill="#807565">Mask email, phone, NI numbers first</text><path d="M318,118 V127 H417 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="368" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">mitigated by</text><path d="M542,118 V135 H443 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="492" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">mitigated by</text><path d="M430,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="374" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">still needs</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">fails at 20 conns</text><path d="M542,354 V363 H120 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="331" y="361" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">prod needs auth too</text><line x1="216" y1="443" x2="230" y2="443" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="439" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replaced by</text><line x1="423" y1="443" x2="437" y2="443" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="439" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">superseded by</text><line x1="630" y1="443" x2="644" y2="443" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="636" y="439" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">plus</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s own throughline from tool-level threats to coarse-grained design, a production transport, and modern client auth, capped by enterprise data controls; the ordering is our synthesis of the speaker&#x27;s argument (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">THE MCP SECURITY SHADOW (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 316.00 657.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 652.99)">
+<title>G</title>
+<!-- tool_poison -->
+<g id="node1" class="node">
+<title>tool_poison</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="147.42,-648.99 0,-648.99 0,-612.71 147.42,-612.71 147.42,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="39.21" y="-630.9" font-family="Geist Mono" font-size="11.00">Tool poisoning</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">Hidden instructions in descriptions</text>
+</g>
+<!-- coarse_tools -->
+<g id="node3" class="node">
+<title>coarse_tools</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="237.29,-561.46 74.12,-561.46 74.12,-525.18 237.29,-525.18 237.29,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="105.46" y="-543.37" font-family="Geist Mono" font-size="11.00">Coarse&#45;grained tools</text>
+<text xml:space="preserve" text-anchor="start" x="87.08" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">One tool per outcome, not per API call</text>
+</g>
+<!-- tool_poison&#45;&gt;coarse_tools -->
+<g id="edge1" class="edge">
+<title>tool_poison&#45;&gt;coarse_tools</title>
+<path fill="none" stroke="#c8501f" d="M90.7,-612.13C102.9,-599.4 119.49,-582.1 132.86,-568.16"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="134.62,-569.86 137.69,-563.11 131.08,-566.47 134.62,-569.86"/>
+<text xml:space="preserve" text-anchor="middle" x="143.62" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#c8501f">mitigated by</text>
+</g>
+<!-- history_leak -->
+<g id="node2" class="node">
+<title>history_leak</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="308.29,-648.99 169.12,-648.99 169.12,-612.71 308.29,-612.71 308.29,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="201.21" y="-630.9" font-family="Geist Mono" font-size="11.00">History leakage</text>
+<text xml:space="preserve" text-anchor="start" x="182.08" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">Full convo resent on every retry</text>
+</g>
+<!-- history_leak&#45;&gt;coarse_tools -->
+<g id="edge2" class="edge">
+<title>history_leak&#45;&gt;coarse_tools</title>
+<path fill="none" stroke="#c8501f" d="M221.51,-612.13C209.05,-599.28 192.07,-581.79 178.48,-567.78"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="180.57,-566.42 173.94,-563.11 177.06,-569.84 180.57,-566.42"/>
+<text xml:space="preserve" text-anchor="middle" x="226.18" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#c8501f">mitigated by</text>
+</g>
+<!-- stdio_garden -->
+<g id="node4" class="node">
+<title>stdio_garden</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="227.54,-473.93 83.87,-473.93 83.87,-437.65 227.54,-437.65 227.54,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="108.08" y="-455.84" font-family="Geist Mono" font-size="11.00">stdio walled garden</text>
+<text xml:space="preserve" text-anchor="start" x="96.83" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">Single&#45;user, no auth, no on&#45;ramp</text>
+</g>
+<!-- coarse_tools&#45;&gt;stdio_garden -->
+<g id="edge3" class="edge">
+<title>coarse_tools&#45;&gt;stdio_garden</title>
+<path fill="none" stroke="#c8501f" d="M155.71,-524.6C155.71,-512.56 155.71,-496.43 155.71,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="158.16,-483 155.71,-476 153.26,-483 158.16,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="174.83" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">still needs</text>
+</g>
+<!-- load_test_fail -->
+<g id="node5" class="node">
+<title>load_test_fail</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="241.42,-386.4 70,-386.4 70,-350.12 241.42,-350.12 241.42,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="99.83" y="-368.31" font-family="Geist Mono" font-size="11.00">Load test: 20/22 failed</text>
+<text xml:space="preserve" text-anchor="start" x="82.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">20 simultaneous connections broke stdio</text>
+</g>
+<!-- stdio_garden&#45;&gt;load_test_fail -->
+<g id="edge4" class="edge">
+<title>stdio_garden&#45;&gt;load_test_fail</title>
+<path fill="none" stroke="#c8501f" d="M155.71,-437.07C155.71,-425.03 155.71,-408.9 155.71,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="158.16,-395.47 155.71,-388.47 153.26,-395.47 158.16,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="186.83" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">fails at 20 conns</text>
+</g>
+<!-- api_keys -->
+<g id="node6" class="node">
+<title>api_keys</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="218.54,-298.87 92.87,-298.87 92.87,-262.59 218.54,-262.59 218.54,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="108.46" y="-280.78" font-family="Geist Mono" font-size="11.00">Long&#45;lived API keys</text>
+<text xml:space="preserve" text-anchor="start" x="105.83" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">&gt;50% of MCP servers today</text>
+</g>
+<!-- load_test_fail&#45;&gt;api_keys -->
+<g id="edge5" class="edge">
+<title>load_test_fail&#45;&gt;api_keys</title>
+<path fill="none" stroke="#c8501f" d="M155.71,-349.54C155.71,-337.5 155.71,-321.37 155.71,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="158.16,-307.94 155.71,-300.94 153.26,-307.94 158.16,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="193.58" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">prod needs auth too</text>
+</g>
+<!-- dcr_phishing -->
+<g id="node7" class="node">
+<title>dcr_phishing</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="233.92,-211.34 77.5,-211.34 77.5,-175.06 233.92,-175.06 233.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="113.33" y="-193.25" font-family="Geist Mono" font-size="11.00">DCR phishing risk</text>
+<text xml:space="preserve" text-anchor="start" x="90.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Anyone can hit the register endpoint</text>
+</g>
+<!-- api_keys&#45;&gt;dcr_phishing -->
+<g id="edge6" class="edge">
+<title>api_keys&#45;&gt;dcr_phishing</title>
+<path fill="none" stroke="#c8501f" d="M155.71,-262.01C155.71,-249.97 155.71,-233.84 155.71,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="158.16,-220.41 155.71,-213.41 153.26,-220.41 158.16,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="177.46" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+<!-- cimd -->
+<g id="node8" class="node">
+<title>cimd</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="235.42,-123.81 76,-123.81 76,-87.53 235.42,-87.53 235.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="142.58" y="-105.72" font-family="Geist Mono" font-size="11.00">CIMD</text>
+<text xml:space="preserve" text-anchor="start" x="88.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Preferred registration since Nov 2025</text>
+</g>
+<!-- dcr_phishing&#45;&gt;cimd -->
+<g id="edge7" class="edge">
+<title>dcr_phishing&#45;&gt;cimd</title>
+<path fill="none" stroke="#c8501f" d="M155.71,-174.48C155.71,-162.44 155.71,-146.31 155.71,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="158.16,-132.88 155.71,-125.88 153.26,-132.88 158.16,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="182.71" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">superseded by</text>
+</g>
+<!-- pii_masking -->
+<g id="node9" class="node">
+<title>pii_masking</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="232.79,-36.28 78.62,-36.28 78.62,0 232.79,0 232.79,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="127.21" y="-18.19" font-family="Geist Mono" font-size="11.00">PII masking</text>
+<text xml:space="preserve" text-anchor="start" x="91.58" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Mask email, phone, NI numbers first</text>
+</g>
+<!-- cimd&#45;&gt;pii_masking -->
+<g id="edge8" class="edge">
+<title>cimd&#45;&gt;pii_masking</title>
+<path fill="none" stroke="#c8501f" d="M155.71,-86.95C155.71,-74.91 155.71,-58.78 155.71,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="158.16,-45.35 155.71,-38.35 153.26,-45.35 158.16,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="163.21" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">plus</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s own throughline from tool-level threats to coarse-grained design, a production transport, and modern client auth, capped by enterprise data controls; the ordering is our synthesis of the speaker&#x27;s argument (ours).</p></section>
 
 
 
@@ -171,7 +296,7 @@ Slides below are frames from that recording, reproduced for reference and study;
 </div>
 </section>
 
-<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The talk treats design and security as inseparable (&#x27;a badly designed MCP server is also a badly secured one&#x27;), which reframes OAuth/transport hardening as necessary but not sufficient — the five design principles are presented as the layer that has to come first, before any auth work.</p></div></section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The talk treats design and security as inseparable (&#x27;a badly designed MCP server is also a badly secured one&#x27;), which reframes OAuth/transport hardening as necessary but not sufficient, the five design principles are presented as the layer that has to come first, before any auth work.</p></div></section>
 
 <section class="block">
 <div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>

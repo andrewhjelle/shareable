@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>The State of Model Routing — Talk Brief</title>
+<title>The State of Model Routing &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,125 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Informs the architecture decision for teams building multi-model agent systems: whether routing simple tasks to cheap small models actually saves money (it can backfire badly on out-of-domain tasks), and how to preserve KV-cache savings ...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Cognition&#x27;s Devin Fusion cuts the cost of frontier-level intelligence by 40% by keeping a smart model in charge of planning while delegating implementation to cheaper models, but naive task-based routing to small models is &#x27;extremely fragile&#x27; since task complexity shifts mid-session. (c1,c2)</li><li>Routing to the wrong side of the in-domain/out-of-domain line can make small models more expensive, not less: on terminal-bench, Opus scored roughly 3x better than Haiku at 1/10 the cost, despite Haiku&#x27;s lower per-token price. (c3)</li><li>Compaction forces a cache miss and can make input tokens 10x more expensive, so the panel recommends compacting for intelligence reasons rather than cost savings, and generally staying under 200K tokens of context. (c5,c6)</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="The case against naive model routing (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">THE CASE AGAINST NAIVE MODEL ROUTING (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">PREMISE</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Frontier plans, cheap implements</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Devin Fusion cuts Fable-level cost 40%</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Task type shifts mid-session</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">explain to implement to debug in</text><text x="542" y="107" font-size="8.5" text-anchor="middle" fill="#807565">minutes</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">MECHANISM</text><rect x="24" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="197" font-size="11" text-anchor="middle" fill="#14110D">Naive type-based routing</text><text x="120" y="213" font-size="8.5" text-anchor="middle" fill="#807565">routes by apparent task type</text><rect x="230" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="197" font-size="11" text-anchor="middle" fill="#14110D">Out-of-domain small model</text><text x="327" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Haiku thrashes on unfamiliar tasks</text><rect x="437" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="197" font-size="11" text-anchor="middle" fill="#14110D">Disposable sub-agents</text><text x="533" y="213" font-size="8.5" text-anchor="middle" fill="#807565">re-provide context, no cache reuse</text><rect x="644" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="197" font-size="11" text-anchor="middle" fill="#14110D">Compaction event</text><text x="740" y="213" font-size="8.5" text-anchor="middle" fill="#807565">forces a cache miss on resend</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">CONSEQUENCE</text><rect x="24" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="315" font-size="11" text-anchor="middle" fill="#14110D">Fragile routing breaks</text><text x="120" y="331" font-size="8.5" text-anchor="middle" fill="#807565">routing is &#x27;extremely fragile&#x27;</text><text x="120" y="343" font-size="8.5" text-anchor="middle" fill="#807565">agentically</text><rect x="230" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="315" font-size="11" text-anchor="middle" fill="#14110D">Opus 3x better, 1/10 cost</text><text x="327" y="331" font-size="8.5" text-anchor="middle" fill="#807565">on terminal-bench vs Haiku</text><rect x="437" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="315" font-size="11" text-anchor="middle" fill="#14110D">Sidekick keeps cache warm</text><text x="533" y="331" font-size="8.5" text-anchor="middle" fill="#807565">one persistent sub-agent, not many</text><rect x="644" y="296" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="315" font-size="11" text-anchor="middle" fill="#14110D">Input tokens cost 10x more</text><text x="740" y="331" font-size="8.5" text-anchor="middle" fill="#807565">after a compaction-forced cache</text><text x="740" y="343" font-size="8.5" text-anchor="middle" fill="#807565">miss</text><path d="M318,118 V127 H107 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="213" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">assumes stable task</text><path d="M542,118 V135 H133 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="338" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">undermines premise</text><path d="M120,236 V245 H120 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="158" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">breaks agentically</text><path d="M327,236 V253 H327 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="365" y="251" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">measured on</text><path d="M533,236 V261 H533 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="571" y="259" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replaced by</text><path d="M740,236 V269 H740 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="778" y="267" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">causes</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">The panel&#x27;s argument is less &#x27;route to the cheapest model&#x27; and more &#x27;route to preserve cache and stay in-domain&#x27;; the numbers here are their own benchmarks, not independently verified (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">THE CASE AGAINST NAIVE MODEL ROUTING (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 931.00 219.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 215.34)">
+<title>G</title>
+<!-- n1 -->
+<g id="node1" class="node">
+<title>n1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="187.92,-211.34 0,-211.34 0,-175.06 187.92,-175.06 187.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Frontier plans, cheap implements</text>
+<text xml:space="preserve" text-anchor="start" x="25.33" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Devin Fusion cuts Fable&#45;level cost 40%</text>
+</g>
+<!-- n3 -->
+<g id="node3" class="node">
+<title>n3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="270.04,-123.81 121.87,-123.81 121.87,-87.53 270.04,-87.53 270.04,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="134.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Naive type&#45;based routing</text>
+<text xml:space="preserve" text-anchor="start" x="143.83" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">routes by apparent task type</text>
+</g>
+<!-- n1&#45;&gt;n3 -->
+<g id="edge1" class="edge">
+<title>n1&#45;&gt;n3</title>
+<path fill="none" stroke="#c8501f" d="M115.09,-174.48C130.55,-161.52 151.65,-143.82 168.43,-129.76"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="169.9,-131.72 173.69,-125.34 166.75,-127.96 169.9,-131.72"/>
+<text xml:space="preserve" text-anchor="middle" x="189.32" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">assumes stable task</text>
+</g>
+<!-- n2 -->
+<g id="node2" class="node">
+<title>n2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="383.79,-211.34 210.12,-211.34 210.12,-175.06 383.79,-175.06 383.79,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="228.33" y="-193.25" font-family="Geist Mono" font-size="11.00">Task type shifts mid&#45;session</text>
+<text xml:space="preserve" text-anchor="start" x="223.08" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">explain to implement to debug in minutes</text>
+</g>
+<!-- n2&#45;&gt;n3 -->
+<g id="edge2" class="edge">
+<title>n2&#45;&gt;n3</title>
+<path fill="none" stroke="#c8501f" d="M276.03,-174.48C260.73,-161.52 239.83,-143.82 223.22,-129.76"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="224.94,-128 218.02,-125.35 221.77,-131.74 224.94,-128"/>
+<text xml:space="preserve" text-anchor="middle" x="290.76" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">undermines premise</text>
+</g>
+<!-- n7 -->
+<g id="node7" class="node">
+<title>n7</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="277.54,-36.28 114.37,-36.28 114.37,0 277.54,0 277.54,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="143.08" y="-18.19" font-family="Geist Mono" font-size="11.00">Fragile routing breaks</text>
+<text xml:space="preserve" text-anchor="start" x="127.33" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">routing is &#39;extremely fragile&#39; agentically</text>
+</g>
+<!-- n3&#45;&gt;n7 -->
+<g id="edge3" class="edge">
+<title>n3&#45;&gt;n7</title>
+<path fill="none" stroke="#c8501f" d="M195.96,-86.95C195.96,-74.91 195.96,-58.78 195.96,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="198.41,-45.35 195.96,-38.35 193.51,-45.35 198.41,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="230.08" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">breaks agentically</text>
+</g>
+<!-- n4 -->
+<g id="node4" class="node">
+<title>n4</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="562.17,-211.34 405.75,-211.34 405.75,-175.06 562.17,-175.06 562.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="418.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Out&#45;of&#45;domain small model</text>
+<text xml:space="preserve" text-anchor="start" x="422.83" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Haiku thrashes on unfamiliar tasks</text>
+</g>
+<!-- n8 -->
+<g id="node8" class="node">
+<title>n8</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="559.17,-123.81 408.75,-123.81 408.75,-87.53 559.17,-87.53 559.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="421.71" y="-105.72" font-family="Geist Mono" font-size="11.00">Opus 3x better, 1/10 cost</text>
+<text xml:space="preserve" text-anchor="start" x="435.58" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">on terminal&#45;bench vs Haiku</text>
+</g>
+<!-- n4&#45;&gt;n8 -->
+<g id="edge4" class="edge">
+<title>n4&#45;&gt;n8</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M483.96,-174.48C483.96,-162.44 483.96,-146.31 483.96,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="486.41,-132.88 483.96,-125.88 481.51,-132.88 486.41,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="508.33" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">measured on</text>
+</g>
+<!-- n5 -->
+<g id="node5" class="node">
+<title>n5</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="736.55,-211.34 585.38,-211.34 585.38,-175.06 736.55,-175.06 736.55,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="605.84" y="-193.25" font-family="Geist Mono" font-size="11.00">Disposable sub&#45;agents</text>
+<text xml:space="preserve" text-anchor="start" x="598.34" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">re&#45;provide context, no cache reuse</text>
+</g>
+<!-- n9 -->
+<g id="node9" class="node">
+<title>n9</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="740.67,-123.81 581.25,-123.81 581.25,-87.53 740.67,-87.53 740.67,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="594.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Sidekick keeps cache warm</text>
+<text xml:space="preserve" text-anchor="start" x="596.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">one persistent sub&#45;agent, not many</text>
+</g>
+<!-- n5&#45;&gt;n9 -->
+<g id="edge5" class="edge">
+<title>n5&#45;&gt;n9</title>
+<path fill="none" stroke="#c8501f" d="M660.96,-174.48C660.96,-162.44 660.96,-146.31 660.96,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="663.41,-132.88 660.96,-125.88 658.51,-132.88 663.41,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="682.71" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+<!-- n6 -->
+<g id="node6" class="node">
+<title>n6</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="909.92,-211.34 776,-211.34 776,-175.06 909.92,-175.06 909.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="799.09" y="-193.25" font-family="Geist Mono" font-size="11.00">Compaction event</text>
+<text xml:space="preserve" text-anchor="start" x="788.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">forces a cache miss on resend</text>
+</g>
+<!-- n10 -->
+<g id="node10" class="node">
+<title>n10</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="923.42,-123.81 762.5,-123.81 762.5,-87.53 923.42,-87.53 923.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="775.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Input tokens cost 10x more</text>
+<text xml:space="preserve" text-anchor="start" x="775.84" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">after a compaction&#45;forced cache miss</text>
+</g>
+<!-- n6&#45;&gt;n10 -->
+<g id="edge6" class="edge">
+<title>n6&#45;&gt;n10</title>
+<path fill="none" stroke="#c8501f" d="M842.96,-174.48C842.96,-162.44 842.96,-146.31 842.96,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="845.41,-132.88 842.96,-125.88 840.51,-132.88 845.41,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="855.34" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">causes</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The panel&#x27;s argument is less &#x27;route to the cheapest model&#x27; and more &#x27;route to preserve cache and stay in-domain&#x27;; the numbers here are their own benchmarks, not independently verified (ours).</p></section>
 
 
 
@@ -149,7 +267,7 @@ Slides below are frames from that recording, reproduced for reference and study;
 <section class="block">
 <div class="seclabel"><span class="num">02</span><span>Why naive routing breaks on agentic tasks</span><span class="ln"></span></div>
 <div class="sec2"><div class="slidecol"><a href="#" data-slide="7" class="sl"><img loading="lazy" class="main" src="img/state-of-model-routing/s07_590.webp" alt="slide at 09:50"></a><div class="slidecap">Slide at 09:50 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/state-of-model-routing/s08_710.webp" alt="slide at 11:50"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/state-of-model-routing/s09_810.webp" alt="slide at 13:30"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/state-of-model-routing/s10_890.webp" alt="slide at 14:50"></a></div></div>
-<div class="textcol"><h2>Why naive routing breaks on agentic tasks</h2><ul class="takeaways"><li>Yan warns that routing based on a task&#x27;s apparent type is fragile once a session becomes agentic, because task complexity shifts over the course of a single conversation — a coding agent might move from explaining a codebase to implementing a feature to debugging a live test failure within minutes.</li></ul><div class="quote"><p>&ldquo;this kind of like naive like initial routing to based on the task type is extremely fragile, especially the more agentic the task you you work on is.&rdquo;</p><span class="at">said at 09:15</span></div></div>
+<div class="textcol"><h2>Why naive routing breaks on agentic tasks</h2><ul class="takeaways"><li>Yan warns that routing based on a task&#x27;s apparent type is fragile once a session becomes agentic, because task complexity shifts over the course of a single conversation, a coding agent might move from explaining a codebase to implementing a feature to debugging a live test failure within minutes.</li></ul><div class="quote"><p>&ldquo;this kind of like naive like initial routing to based on the task type is extremely fragile, especially the more agentic the task you you work on is.&rdquo;</p><span class="at">said at 09:15</span></div></div>
 </div>
 </section>
 <section class="block">

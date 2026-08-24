@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Using LLMs to Secure Source Code — Talk Brief</title>
+<title>Using LLMs to Secure Source Code &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,90 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">For a team deciding whether to stand up an agentic vulnerability-scanning pipeline, this talk lays out a concrete six-step workflow (threat model, sandbox, discovery, verification, triage, patching) and names the actual bottleneck: not f...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Frontier models produced a step change in cybersecurity capability: Mozilla&#x27;s monthly security bug fixes jumped 7x to 400 in April (20x the prior year&#x27;s average), and Anthropic&#x27;s own scan of open-source repos rated 6,200 of 23,000 candidate findings as high or critical (c1, c2, c3)</li><li>The bottleneck has shifted from finding vulnerabilities to verification, triage, and patching; a well-documented threat model can push true-positive rates to 90%, and giving agents tools (not just code-reading access) pushed one pentesting team&#x27;s true-positive rate to almost 100% (c4, c5, c6)</li><li>Verification agents work best kept independent and adversarial from discovery agents, prompts should get simpler as models improve, and Yan recommends starting interactively rather than aiming for full automation immediately (c7, c8, c9)</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Discovery-to-patch pipeline (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">DISCOVERY-TO-PATCH PIPELINE (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">SETUP</text><rect x="213" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Threat model</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">written doc, TP rate to 90%</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Sandbox setup</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">isolated env for agent runs</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">DISCOVERY</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Discovery agent</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">given tools, not just code read</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">VERIFY &amp; FIX</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Verification agent</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">independent, adversarial by default</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Triage</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">now the bottleneck, not discovery</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">Patch</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">org process, not a scanning step</text><path d="M318,118 V127 H417 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="368" y="125" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">context</text><path d="M542,118 V135 H443 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="492" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">run env</text><path d="M430,236 V245 H206 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">findings</text><line x1="311" y1="325" x2="325" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">confirmed</text><line x1="535" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">prioritized</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the six-step workflow Yan describes as a pipeline: a written threat model and sandbox feed a tooled discovery agent, whose findings pass to an intentionally independent, adversarial verification agent before triage and patching, the stage he says is now the real bottleneck (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">DISCOVERY-TO-PATCH PIPELINE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 278.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- threat_model -->
+<g id="node1" class="node">
+<title>threat_model</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="125.67,-386.4 0,-386.4 0,-350.12 125.67,-350.12 125.67,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="30.21" y="-368.31" font-family="Geist Mono" font-size="11.00">Threat model</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">written doc, TP rate to 90%</text>
+</g>
+<!-- discovery_agent -->
+<g id="node3" class="node">
+<title>discovery_agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="203.17,-298.87 68.5,-298.87 68.5,-262.59 203.17,-262.59 203.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="96.84" y="-280.78" font-family="Geist Mono" font-size="11.00">Discovery agent</text>
+<text xml:space="preserve" text-anchor="start" x="81.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">given tools, not just code read</text>
+</g>
+<!-- threat_model&#45;&gt;discovery_agent -->
+<g id="edge1" class="edge">
+<title>threat_model&#45;&gt;discovery_agent</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M77.96,-349.54C88.83,-336.81 103.59,-319.51 115.49,-305.57"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="117.07,-307.5 119.75,-300.58 113.34,-304.31 117.07,-307.5"/>
+<text xml:space="preserve" text-anchor="middle" x="117.58" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">context</text>
+</g>
+<!-- sandbox -->
+<g id="node2" class="node">
+<title>sandbox</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="269.8,-386.4 147.88,-386.4 147.88,-350.12 269.8,-350.12 269.8,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="172.84" y="-368.31" font-family="Geist Mono" font-size="11.00">Sandbox setup</text>
+<text xml:space="preserve" text-anchor="start" x="160.84" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">isolated env for agent runs</text>
+</g>
+<!-- sandbox&#45;&gt;discovery_agent -->
+<g id="edge2" class="edge">
+<title>sandbox&#45;&gt;discovery_agent</title>
+<path fill="none" stroke="#c8501f" d="M193.71,-349.54C182.84,-336.81 168.08,-319.51 156.18,-305.57"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="158.33,-304.31 151.92,-300.58 154.6,-307.5 158.33,-304.31"/>
+<text xml:space="preserve" text-anchor="middle" x="190.96" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">run env</text>
+</g>
+<!-- verify_agent -->
+<g id="node4" class="node">
+<title>verify_agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="211.8,-211.34 59.88,-211.34 59.88,-175.06 211.8,-175.06 211.8,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="93.84" y="-193.25" font-family="Geist Mono" font-size="11.00">Verification agent</text>
+<text xml:space="preserve" text-anchor="start" x="72.84" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">independent, adversarial by default</text>
+</g>
+<!-- discovery_agent&#45;&gt;verify_agent -->
+<g id="edge3" class="edge">
+<title>discovery_agent&#45;&gt;verify_agent</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M135.84,-262.01C135.84,-249.97 135.84,-233.84 135.84,-220.33"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="138.29,-220.41 135.84,-213.41 133.39,-220.41 138.29,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="150.46" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">findings</text>
+</g>
+<!-- triage -->
+<g id="node5" class="node">
+<title>triage</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="209.17,-123.81 62.5,-123.81 62.5,-87.53 209.17,-87.53 209.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="120.84" y="-105.72" font-family="Geist Mono" font-size="11.00">Triage</text>
+<text xml:space="preserve" text-anchor="start" x="75.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">now the bottleneck, not discovery</text>
+</g>
+<!-- verify_agent&#45;&gt;triage -->
+<g id="edge4" class="edge">
+<title>verify_agent&#45;&gt;triage</title>
+<path fill="none" stroke="#c8501f" d="M135.84,-174.48C135.84,-162.44 135.84,-146.31 135.84,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="138.29,-132.88 135.84,-125.88 133.39,-132.88 138.29,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="154.59" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">confirmed</text>
+</g>
+<!-- patch -->
+<g id="node6" class="node">
+<title>patch</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="207.3,-36.28 64.38,-36.28 64.38,0 207.3,0 207.3,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="122.34" y="-18.19" font-family="Geist Mono" font-size="11.00">Patch</text>
+<text xml:space="preserve" text-anchor="start" x="77.34" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">org process, not a scanning step</text>
+</g>
+<!-- triage&#45;&gt;patch -->
+<g id="edge5" class="edge">
+<title>triage&#45;&gt;patch</title>
+<path fill="none" stroke="#c8501f" d="M135.84,-86.95C135.84,-74.91 135.84,-58.78 135.84,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="138.29,-45.35 135.84,-38.35 133.39,-45.35 138.29,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="154.59" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">prioritized</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the six-step workflow Yan describes as a pipeline: a written threat model and sandbox feed a tooled discovery agent, whose findings pass to an intentionally independent, adversarial verification agent before triage and patching, the stage he says is now the real bottleneck (ours).</p></section>
 
 
 
@@ -171,7 +254,7 @@ Slides below are frames from that recording, reproduced for reference and study;
 </div>
 </section>
 
-<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The Mozilla and Anthropic-repo-scan figures come from Anthropic&#x27;s own telemetry and a partner&#x27;s public numbers rather than an independent audit, so the magnitude of the capability jump is plausible but not independently verified here. The prescriptive workflow (threat model, sandbox, discovery, verification, triage, patch) reads as Anthropic&#x27;s synthesis of pattern-matching across client engagements rather than a benchmarked methodology, so the 90%/100% true-positive figures likely reflect best-case, well-instrumented teams rather than a typical baseline.</p></div></section>
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The Mozilla and Anthropic-repo-scan figures come from Anthropic&#x27;s own telemetry and a partner&#x27;s public numbers rather than an independent audit, so the magnitude of the capability jump is plausible but not independently verified here.</p><p>The prescriptive workflow (threat model, sandbox, discovery, verification, triage, patch) reads as Anthropic&#x27;s synthesis of pattern-matching across client engagements rather than a benchmarked methodology, so the 90%/100% true-positive figures likely reflect best-case, well-instrumented teams rather than a typical baseline.</p></div></section>
 
 <section class="block">
 <div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>

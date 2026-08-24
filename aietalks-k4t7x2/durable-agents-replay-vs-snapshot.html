@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Two Roads to Durable Agents: Replay vs. Snapshot — Talk Brief</title>
+<title>Two Roads to Durable Agents: Replay vs. Snapshot &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,118 @@ Quotes are verbatim from the talk transcript with the time they were said.</span
 <p class="deck" style="font-size:15px">Lays out two competing architectures for making long-running agent sessions durable across crashes, code deploys, and idle time: replaying a cached step log versus snapshotting the whole machine</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Replay-based durable execution -- wrapping every side effect in a cached step -- works for bounded workflows but breaks down as agent conversation logs grow, and agent task length is reportedly doubling every 4-7 months (c2, c1)</li><li>Trigger.dev splits agent durability into two separately-persisted layers: an append-only context log (LLM/tool calls) and machine-state snapshot/restore for the execution sandbox (c3)</li><li>Moving from CRIU process-level snapshots to Firecracker microVM snapshots, then compressing them, brought a full VM snapshot down to about 14MB with sub-second snapshot and a few-hundred-millisecond restore (c4, c5, c6)</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Replay log vs snapshot/restore for agent durability (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">REPLAY LOG VS SNAPSHOT/RESTORE FOR AGENT DURABILITY (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">AGENT SESSION</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Agent session</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Needs full machine: files,</text><text x="430" y="107" font-size="8.5" text-anchor="middle" fill="#807565">subprocesses, servers</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">TRIGGER.DEV DURABILITY SPLIT</text><rect x="24" y="178" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="120" y="197" font-size="11" text-anchor="middle" fill="#14110D">Replay step log</text><text x="120" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Every side effect cached as it</text><text x="120" y="225" font-size="8.5" text-anchor="middle" fill="#807565">executes</text><rect x="230" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="197" font-size="11" text-anchor="middle" fill="#14110D">Log outgrows limits</text><text x="327" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Task length reportedly doubling</text><text x="327" y="225" font-size="8.5" text-anchor="middle" fill="#807565">every 4-7 months</text><rect x="437" y="178" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="533" y="197" font-size="11" text-anchor="middle" fill="#14110D">Context log</text><text x="533" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Append-only LLM/tool call history</text><rect x="644" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="197" font-size="11" text-anchor="middle" fill="#14110D">Snapshot/restore</text><text x="740" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Reconstructs machine state, not a</text><text x="740" y="225" font-size="8.5" text-anchor="middle" fill="#807565">log</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">SNAPSHOT TECH EVOLUTION</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">CRIU (2011)</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Process-level checkpoint from user</text><text x="206" y="343" font-size="8.5" text-anchor="middle" fill="#807565">space</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Firecracker microVM</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Snapshots a whole machine, fast</text><text x="430" y="343" font-size="8.5" text-anchor="middle" fill="#807565">run/fork</text><rect x="549" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">Compressed snapshot</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">~14MB, sub-second snapshot, ~200ms</text><text x="654" y="343" font-size="8.5" text-anchor="middle" fill="#807565">restore</text><path d="M404,118 V127 H120 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="262" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">old model</text><line x1="216" y1="207" x2="230" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">grows per turn</text><path d="M430,118 V135 H533 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="482" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">LLM/tool calls</text><path d="M456,118 V143 H740 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="598" y="141" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">machine state</text><path d="M740,236 V245 H417 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="578" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">uses</text><line x1="311" y1="325" x2="325" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replaced (2024)</text><line x1="535" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">layer + compress</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">Trigger.dev pairs an append-only context log for LLM and tool calls with Firecracker snapshot/restore for machine state, moving off CRIU and compressing snapshots to speed restores (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">REPLAY LOG VS SNAPSHOT/RESTORE FOR AGENT DURABILITY (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 735.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- session -->
+<g id="node1" class="node">
+<title>session</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="374.17,-298.87 178.75,-298.87 178.75,-262.59 374.17,-262.59 374.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="242.34" y="-280.78" font-family="Geist Mono" font-size="11.00">Agent session</text>
+<text xml:space="preserve" text-anchor="start" x="191.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Needs full machine: files, subprocesses, servers</text>
+</g>
+<!-- replay -->
+<g id="node2" class="node">
+<title>replay</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="183.42,-211.34 19.5,-211.34 19.5,-175.06 183.42,-175.06 183.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="63.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Replay step log</text>
+<text xml:space="preserve" text-anchor="start" x="32.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Every side effect cached as it executes</text>
+</g>
+<!-- session&#45;&gt;replay -->
+<g id="edge1" class="edge">
+<title>session&#45;&gt;replay</title>
+<path fill="none" stroke="#c8501f" d="M240.2,-262.01C212.63,-248.53 174.58,-229.94 145.3,-215.63"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="146.4,-213.44 139.03,-212.56 144.25,-217.84 146.4,-213.44"/>
+<text xml:space="preserve" text-anchor="middle" x="218.19" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">old model</text>
+</g>
+<!-- ctxlog -->
+<g id="node4" class="node">
+<title>ctxlog</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="347.55,-211.34 205.38,-211.34 205.38,-175.06 347.55,-175.06 347.55,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="248.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Context log</text>
+<text xml:space="preserve" text-anchor="start" x="218.34" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Append&#45;only LLM/tool call history</text>
+</g>
+<!-- session&#45;&gt;ctxlog -->
+<g id="edge3" class="edge">
+<title>session&#45;&gt;ctxlog</title>
+<path fill="none" stroke="#c8501f" d="M276.46,-262.01C276.46,-249.97 276.46,-233.84 276.46,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="278.91,-220.41 276.46,-213.41 274.01,-220.41 278.91,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="302.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">LLM/tool calls</text>
+</g>
+<!-- snaprestore -->
+<g id="node5" class="node">
+<title>snaprestore</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="531.67,-211.34 369.25,-211.34 369.25,-175.06 531.67,-175.06 531.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="408.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Snapshot/restore</text>
+<text xml:space="preserve" text-anchor="start" x="382.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Reconstructs machine state, not a log</text>
+</g>
+<!-- session&#45;&gt;snaprestore -->
+<g id="edge4" class="edge">
+<title>session&#45;&gt;snaprestore</title>
+<path fill="none" stroke="#c8501f" d="M312.51,-262.01C339.93,-248.53 377.76,-229.94 406.87,-215.63"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="407.89,-217.85 413.09,-212.57 405.73,-213.46 407.89,-217.85"/>
+<text xml:space="preserve" text-anchor="middle" x="400.5" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">machine state</text>
+</g>
+<!-- logbreak -->
+<g id="node3" class="node">
+<title>logbreak</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="202.92,-123.81 0,-123.81 0,-87.53 202.92,-87.53 202.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="54.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Log outgrows limits</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Task length reportedly doubling every 4&#45;7 months</text>
+</g>
+<!-- replay&#45;&gt;logbreak -->
+<g id="edge2" class="edge">
+<title>replay&#45;&gt;logbreak</title>
+<path fill="none" stroke="#c8501f" d="M101.46,-174.48C101.46,-162.44 101.46,-146.31 101.46,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="103.91,-132.88 101.46,-125.88 99.01,-132.88 103.91,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="128.84" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">grows per turn</text>
+</g>
+<!-- firecracker -->
+<g id="node7" class="node">
+<title>firecracker</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="632.67,-123.81 458.25,-123.81 458.25,-87.53 632.67,-87.53 632.67,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="496.34" y="-105.72" font-family="Geist Mono" font-size="11.00">Firecracker microVM</text>
+<text xml:space="preserve" text-anchor="start" x="471.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Snapshots a whole machine, fast run/fork</text>
+</g>
+<!-- snaprestore&#45;&gt;firecracker -->
+<g id="edge5" class="edge">
+<title>snaprestore&#45;&gt;firecracker</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M470.14,-174.48C484.54,-161.52 504.19,-143.82 519.81,-129.76"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="521.11,-131.89 524.68,-125.38 517.83,-128.24 521.11,-131.89"/>
+<text xml:space="preserve" text-anchor="middle" x="511.9" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">uses</text>
+</g>
+<!-- criu -->
+<g id="node6" class="node">
+<title>criu</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="726.92,-211.34 554,-211.34 554,-175.06 726.92,-175.06 726.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="609.71" y="-193.25" font-family="Geist Mono" font-size="11.00">CRIU (2011)</text>
+<text xml:space="preserve" text-anchor="start" x="566.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Process&#45;level checkpoint from user space</text>
+</g>
+<!-- criu&#45;&gt;firecracker -->
+<g id="edge6" class="edge">
+<title>criu&#45;&gt;firecracker</title>
+<path fill="none" stroke="#c8501f" d="M620.78,-174.48C606.38,-161.52 586.73,-143.82 571.11,-129.76"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="573.09,-128.24 566.24,-125.38 569.81,-131.89 573.09,-128.24"/>
+<text xml:space="preserve" text-anchor="middle" x="627.9" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced (2024)</text>
+</g>
+<!-- compressed -->
+<g id="node8" class="node">
+<title>compressed</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="643.17,-36.28 447.75,-36.28 447.75,0 643.17,0 643.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="491.46" y="-18.19" font-family="Geist Mono" font-size="11.00">Compressed snapshot</text>
+<text xml:space="preserve" text-anchor="start" x="460.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">~14MB, sub&#45;second snapshot, ~200ms restore</text>
+</g>
+<!-- firecracker&#45;&gt;compressed -->
+<g id="edge7" class="edge">
+<title>firecracker&#45;&gt;compressed</title>
+<path fill="none" stroke="#c8501f" d="M545.46,-86.95C545.46,-74.91 545.46,-58.78 545.46,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="547.91,-45.35 545.46,-38.35 543.01,-45.35 547.91,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="578.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">layer + compress</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Trigger.dev pairs an append-only context log for LLM and tool calls with Firecracker snapshot/restore for machine state, moving off CRIU and compressing snapshots to speed restores (ours).</p></section>
 
 
 

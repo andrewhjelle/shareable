@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Let LLMs Wander: Engineering RL Environments — Talk Brief</title>
+<title>Let LLMs Wander: Engineering RL Environments &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,125 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Gives a concrete, reproducible recipe (Verifiers library + SFT warm-up + GRPO/CISPO RL) and named failure modes (batch size instability, opponent-implementation bias) for building a task-specific RL environment to specialize a small open...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>DeepSeek and MiniMax technical reports describe using thousands of RL environments to scale model performance; RLVR differs from SFT by letting the model explore trajectories from its own pre-training rather than imitate curated examples (c1, c2, c3).</li><li>Using the open-source Verifiers library, a small open model (LFM-2) was SFT-warmed-up on synthetic data then RL-trained into a tic-tac-toe player that draws 85% of games against an optimal opponent, with invalid moves dropped to near zero (c6, c7).</li><li>Two named failure modes: batch sizes below ~256 caused unstable training and model collapse, and an unnoticed tie-breaking bias in the minimax opponent implementation let the model memorize one opponent&#x27;s pattern instead of learning general play (c4, c5).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="SFT warm-up into GRPO/CISPO RL loop (ours, from the talk)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">SFT WARM-UP INTO GRPO/CISPO RL LOOP (OURS, FROM THE TALK)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">WARM-UP</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">LFM-2 base model</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">small open instruct model, weak at</text><text x="206" y="107" font-size="8.5" text-anchor="middle" fill="#807565">valid moves</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">GPT-5 mini</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">generates 200 synthetic games, losses</text><text x="430" y="107" font-size="8.5" text-anchor="middle" fill="#807565">filtered</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">SFT warm-up</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">teaches move format and syntax, few</text><text x="654" y="107" font-size="8.5" text-anchor="middle" fill="#807565">minutes on 1 GPU</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">RL TRAINING LOOP</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Verifiers Tic-Tac-Toe env</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">minimax opponent, controllable</text><text x="206" y="225" font-size="8.5" text-anchor="middle" fill="#807565">random-move prob</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">GRPO/CISPO RL</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">compares grouped rollouts vs average</text><text x="430" y="225" font-size="8.5" text-anchor="middle" fill="#807565">reward</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Batch size &lt;256</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">too few games/opponents per update,</text><text x="654" y="225" font-size="8.5" text-anchor="middle" fill="#807565">causes collapse</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">FAILURE MODES &amp; RESULT</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Opponent tie-break bias</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">minimax always picks first free cell,</text><text x="318" y="343" font-size="8.5" text-anchor="middle" fill="#807565">model memorized it</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">85% draw vs optimal</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">dominates random players, invalid</text><text x="542" y="343" font-size="8.5" text-anchor="middle" fill="#807565">moves near zero</text><line x1="535" y1="89" x2="549" y2="89" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="542" y="85" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">synthetic data</text><line x1="311" y1="89" x2="549" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">warm-started</text><path d="M654,118 V127 H404 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="529" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">format-trained model</text><line x1="311" y1="207" x2="325" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">rollouts + reward</text><path d="M430,236 V245 H529 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="480" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">trained model</text><line x1="549" y1="207" x2="535" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">destabilizes</text><path d="M305,296 V287 H206 V236" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="256" y="285" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">hidden pattern</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">inflates benchmark</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">Our read of the recipe: a small open model is SFT-warmed on GPT-5-mini-generated games, then RL-trained inside a custom Verifiers environment, with two named pitfalls (batch size, opponent bias) sitting on the loop that produced the 85% result (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">SFT WARM-UP INTO GRPO/CISPO RL LOOP (OURS, FROM THE TALK)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 893.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- lfm2 -->
+<g id="node1" class="node">
+<title>lfm2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="193.17,-298.87 0,-298.87 0,-262.59 193.17,-262.59 193.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="51.96" y="-280.78" font-family="Geist Mono" font-size="11.00">LFM&#45;2 base model</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">small open instruct model, weak at valid moves</text>
+</g>
+<!-- sft -->
+<g id="node3" class="node">
+<title>sft</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="317.04,-211.34 90.12,-211.34 90.12,-175.06 317.04,-175.06 317.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="170.96" y="-193.25" font-family="Geist Mono" font-size="11.00">SFT warm&#45;up</text>
+<text xml:space="preserve" text-anchor="start" x="103.08" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">teaches move format and syntax, few minutes on 1 GPU</text>
+</g>
+<!-- lfm2&#45;&gt;sft -->
+<g id="edge2" class="edge">
+<title>lfm2&#45;&gt;sft</title>
+<path fill="none" stroke="#c8501f" d="M118.76,-262.01C135.11,-248.93 157.5,-231.04 175.17,-216.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="176.32,-219.13 180.26,-212.84 173.26,-215.3 176.32,-219.13"/>
+<text xml:space="preserve" text-anchor="middle" x="181.62" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">warm&#45;started</text>
+</g>
+<!-- gpt5 -->
+<g id="node2" class="node">
+<title>gpt5</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="407.79,-298.87 215.38,-298.87 215.38,-262.59 407.79,-262.59 407.79,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="285.33" y="-280.78" font-family="Geist Mono" font-size="11.00">GPT&#45;5 mini</text>
+<text xml:space="preserve" text-anchor="start" x="228.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">generates 200 synthetic games, losses filtered</text>
+</g>
+<!-- gpt5&#45;&gt;sft -->
+<g id="edge1" class="edge">
+<title>gpt5&#45;&gt;sft</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M289.21,-262.01C272.7,-248.93 250.1,-231.04 232.27,-216.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="234.13,-215.26 227.12,-212.84 231.09,-219.11 234.13,-215.26"/>
+<text xml:space="preserve" text-anchor="middle" x="290.68" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">synthetic data</text>
+</g>
+<!-- grpo -->
+<g id="node5" class="node">
+<title>grpo</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="697.05,-123.81 506.13,-123.81 506.13,-87.53 697.05,-87.53 697.05,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="562.59" y="-105.72" font-family="Geist Mono" font-size="11.00">GRPO/CISPO RL</text>
+<text xml:space="preserve" text-anchor="start" x="519.09" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">compares grouped rollouts vs average reward</text>
+</g>
+<!-- sft&#45;&gt;grpo -->
+<g id="edge3" class="edge">
+<title>sft&#45;&gt;grpo</title>
+<path fill="none" stroke="#c8501f" d="M285.76,-174.4C328.12,-165.23 380.61,-153.9 427.58,-143.81 454.27,-138.08 483.26,-131.88 509.79,-126.22"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="510.13,-128.65 516.46,-124.8 509.1,-123.86 510.13,-128.65"/>
+<text xml:space="preserve" text-anchor="middle" x="468.08" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">format&#45;trained model</text>
+</g>
+<!-- verifenv -->
+<g id="node4" class="node">
+<title>verifenv</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="548.04,-211.34 339.12,-211.34 339.12,-175.06 548.04,-175.06 548.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="385.08" y="-193.25" font-family="Geist Mono" font-size="11.00">Verifiers Tic&#45;Tac&#45;Toe env</text>
+<text xml:space="preserve" text-anchor="start" x="352.08" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">minimax opponent, controllable random&#45;move prob</text>
+</g>
+<!-- verifenv&#45;&gt;grpo -->
+<g id="edge4" class="edge">
+<title>verifenv&#45;&gt;grpo</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M476.32,-174.48C501.11,-161.06 535.28,-142.56 561.67,-128.28"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="562.57,-130.58 567.56,-125.09 560.24,-126.27 562.57,-130.58"/>
+<text xml:space="preserve" text-anchor="middle" x="564.67" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">rollouts + reward</text>
+</g>
+<!-- result -->
+<g id="node8" class="node">
+<title>result</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="859.05,-36.28 650.12,-36.28 650.12,0 859.05,0 859.05,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="702.84" y="-18.19" font-family="Geist Mono" font-size="11.00">85% draw vs optimal</text>
+<text xml:space="preserve" text-anchor="start" x="663.09" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">dominates random players, invalid moves near zero</text>
+</g>
+<!-- grpo&#45;&gt;result -->
+<g id="edge5" class="edge">
+<title>grpo&#45;&gt;result</title>
+<path fill="none" stroke="#c8501f" d="M633.29,-86.95C657.19,-73.59 690.09,-55.19 715.6,-40.93"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="716.69,-43.13 721.6,-37.58 714.3,-38.85 716.69,-43.13"/>
+<text xml:space="preserve" text-anchor="middle" x="713.5" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">trained model</text>
+</g>
+<!-- batch -->
+<g id="node6" class="node">
+<title>batch</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="792.8,-211.34 570.38,-211.34 570.38,-175.06 792.8,-175.06 792.8,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="641.84" y="-193.25" font-family="Geist Mono" font-size="11.00">Batch size &lt;256</text>
+<text xml:space="preserve" text-anchor="start" x="583.34" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">too few games/opponents per update, causes collapse</text>
+</g>
+<!-- batch&#45;&gt;grpo -->
+<g id="edge6" class="edge">
+<title>batch&#45;&gt;grpo</title>
+<path fill="none" stroke="#c8501f" d="M665.01,-174.48C653.1,-161.75 636.92,-144.45 623.88,-130.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="625.74,-128.91 619.17,-125.47 622.17,-132.26 625.74,-128.91"/>
+<text xml:space="preserve" text-anchor="middle" x="668.12" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">destabilizes</text>
+</g>
+<!-- bias -->
+<g id="node7" class="node">
+<title>bias</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="824.42,-298.87 602.75,-298.87 602.75,-262.59 824.42,-262.59 824.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="655.09" y="-280.78" font-family="Geist Mono" font-size="11.00">Opponent tie&#45;break bias</text>
+<text xml:space="preserve" text-anchor="start" x="615.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">minimax always picks first free cell, model memorized it</text>
+</g>
+<!-- bias&#45;&gt;verifenv -->
+<g id="edge7" class="edge">
+<title>bias&#45;&gt;verifenv</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M657.31,-261.9C613.72,-248.09 553.29,-228.95 507.81,-214.54"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="508.64,-212.24 501.23,-212.46 507.16,-216.91 508.64,-212.24"/>
+<text xml:space="preserve" text-anchor="middle" x="622.13" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">hidden pattern</text>
+</g>
+<!-- bias&#45;&gt;result -->
+<g id="edge8" class="edge">
+<title>bias&#45;&gt;result</title>
+<path fill="none" stroke="#c8501f" d="M750.68,-262.14C770.27,-250.67 792.51,-233.67 803.59,-211.34 831.42,-155.23 794.97,-81.84 771.53,-44.04"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="773.67,-42.84 767.85,-38.25 769.54,-45.47 773.67,-42.84"/>
+<text xml:space="preserve" text-anchor="middle" x="849.18" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">inflates benchmark</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Our read of the recipe: a small open model is SFT-warmed on GPT-5-mini-generated games, then RL-trained inside a custom Verifiers environment, with two named pitfalls (batch size, opponent bias) sitting on the loop that produced the 85% result (ours).</p></section>
 
 
 

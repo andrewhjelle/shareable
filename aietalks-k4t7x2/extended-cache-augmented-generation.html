@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>When All Context Matters: Extended Cache Augmented Generation — Talk Brief</title>
+<title>When All Context Matters: Extended Cache Augmented Generation &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,125 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Describes a concrete architecture for the case where every document in a fast-changing collection is potentially relevant to a query, so plain RAG&#x27;s top-k retrieval and GraphRAG&#x27;s expensive graph recomputation both break down</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>GraphRAG works well when documents rarely change, but recomputing the knowledge graph on every data refresh is computationally expensive.</li><li>The proposed fix distributes documents in no particular order across parallel cache-augmented-generation (CAG) buckets, and a supervisor model interrogates buckets and asks follow-ups, which is faster than GraphRAG and more accurate than simple RAG.</li><li>Organizing buckets by domain doesn&#x27;t work well because a supervisor tends to ignore domains that look irrelevant at first glance, given dense cross-document relationships.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Parallel CAG buckets with a supervisor model (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">PARALLEL CAG BUCKETS WITH A SUPERVISOR MODEL (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">DOCUMENTS</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Document collection</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Fast-changing, densely interconnected</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">No-order distribution</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Docs spread randomly, not by domain</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">PARALLEL CAG BUCKETS</text><rect x="101" y="178" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">CAG bucket 1</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Cache-augmented context, loaded in</text><text x="206" y="225" font-size="8.5" text-anchor="middle" fill="#807565">parallel</text><rect x="325" y="178" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">CAG bucket 2</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Cache-augmented context, loaded in</text><text x="430" y="225" font-size="8.5" text-anchor="middle" fill="#807565">parallel</text><rect x="549" y="178" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">CAG bucket N</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Cache-augmented context, loaded in</text><text x="654" y="225" font-size="8.5" text-anchor="middle" fill="#807565">parallel</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">SUPERVISOR</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Supervisor model</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Interrogates buckets, asks follow-ups</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Synthesized answer</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Faster than GraphRAG, more accurate</text><text x="542" y="343" font-size="8.5" text-anchor="middle" fill="#807565">than RAG</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">distribute</text><path d="M516,118 V127 H193 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="354" y="125" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">load</text><path d="M542,118 V135 H417 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="480" y="133" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">load</text><path d="M568,118 V143 H641 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="604" y="141" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">load</text><path d="M279,296 V287 H219 V236" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="241" y="285" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">query</text><path d="M305,296 V279 H443 V236" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="374" y="277" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">query</text><path d="M331,296 V271 H667 V236" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="499" y="269" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">query</text><path d="M206,236 V245 H318 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="262" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">follow-up</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">synthesize</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">Documents are spread across parallel CAG buckets in no particular order because domain-based bucketing made the supervisor skip domains that looked irrelevant at first glance (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">PARALLEL CAG BUCKETS WITH A SUPERVISOR MODEL (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 622.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- docs -->
+<g id="node1" class="node">
+<title>docs</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="369.04,-386.4 206.62,-386.4 206.62,-350.12 369.04,-350.12 369.04,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="238.71" y="-368.31" font-family="Geist Mono" font-size="11.00">Document collection</text>
+<text xml:space="preserve" text-anchor="start" x="219.58" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Fast&#45;changing, densely interconnected</text>
+</g>
+<!-- shuffle -->
+<g id="node2" class="node">
+<title>shuffle</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="368.29,-298.87 207.38,-298.87 207.38,-262.59 368.29,-262.59 368.29,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="237.96" y="-280.78" font-family="Geist Mono" font-size="11.00">No&#45;order distribution</text>
+<text xml:space="preserve" text-anchor="start" x="220.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Docs spread randomly, not by domain</text>
+</g>
+<!-- docs&#45;&gt;shuffle -->
+<g id="edge1" class="edge">
+<title>docs&#45;&gt;shuffle</title>
+<path fill="none" stroke="#c8501f" d="M287.83,-349.54C287.83,-337.5 287.83,-321.37 287.83,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="290.29,-307.94 287.84,-300.94 285.39,-307.94 290.29,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="305.46" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">distribute</text>
+</g>
+<!-- bucket1 -->
+<g id="node3" class="node">
+<title>bucket1</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="380.67,-211.34 195,-211.34 195,-175.06 380.67,-175.06 380.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="254.46" y="-193.25" font-family="Geist Mono" font-size="11.00">CAG bucket 1</text>
+<text xml:space="preserve" text-anchor="start" x="207.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Cache&#45;augmented context, loaded in parallel</text>
+</g>
+<!-- shuffle&#45;&gt;bucket1 -->
+<g id="edge2" class="edge">
+<title>shuffle&#45;&gt;bucket1</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M287.83,-262.01C287.83,-249.97 287.83,-233.84 287.83,-220.33"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="290.29,-220.41 287.84,-213.41 285.39,-220.41 290.29,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="295.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">load</text>
+</g>
+<!-- bucket2 -->
+<g id="node4" class="node">
+<title>bucket2</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="185.67,-36.28 0,-36.28 0,0 185.67,0 185.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="59.46" y="-18.19" font-family="Geist Mono" font-size="11.00">CAG bucket 2</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Cache&#45;augmented context, loaded in parallel</text>
+</g>
+<!-- shuffle&#45;&gt;bucket2 -->
+<g id="edge3" class="edge">
+<title>shuffle&#45;&gt;bucket2</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M250.95,-262.02C229.21,-250.11 202.41,-232.7 183.83,-211.34 139.51,-160.36 112.06,-84.06 100,-44.68"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="102.45,-44.32 98.1,-38.32 97.76,-45.72 102.45,-44.32"/>
+<text xml:space="preserve" text-anchor="middle" x="152.93" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">load</text>
+</g>
+<!-- bucketn -->
+<g id="node5" class="node">
+<title>bucketn</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="613.67,-36.28 428,-36.28 428,0 613.67,0 613.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="486.71" y="-18.19" font-family="Geist Mono" font-size="11.00">CAG bucket N</text>
+<text xml:space="preserve" text-anchor="start" x="440.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Cache&#45;augmented context, loaded in parallel</text>
+</g>
+<!-- shuffle&#45;&gt;bucketn -->
+<g id="edge4" class="edge">
+<title>shuffle&#45;&gt;bucketn</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M321.68,-262.1C343.32,-249.77 371.11,-231.87 391.83,-211.34 444.3,-159.37 487.91,-82.98 508.35,-44.01"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="510.38,-45.42 511.42,-38.07 506.03,-43.16 510.38,-45.42"/>
+<text xml:space="preserve" text-anchor="middle" x="455.66" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">load</text>
+</g>
+<!-- supervisor -->
+<g id="node6" class="node">
+<title>supervisor</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="386.92,-123.81 226.75,-123.81 226.75,-87.53 386.92,-87.53 386.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="265.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Supervisor model</text>
+<text xml:space="preserve" text-anchor="start" x="239.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Interrogates buckets, asks follow&#45;ups</text>
+</g>
+<!-- bucket1&#45;&gt;supervisor -->
+<g id="edge8" class="edge">
+<title>bucket1&#45;&gt;supervisor</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M272,-174.79C265.62,-165.6 260.72,-154.13 265.33,-143.81 267.51,-138.94 270.67,-134.45 274.3,-130.4"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="276.01,-132.15 279.23,-125.47 272.54,-128.69 276.01,-132.15"/>
+<text xml:space="preserve" text-anchor="middle" x="282.58" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">follow&#45;up</text>
+</g>
+<!-- supervisor&#45;&gt;bucket1 -->
+<g id="edge5" class="edge">
+<title>supervisor&#45;&gt;bucket1</title>
+<path fill="none" stroke="#c8501f" d="M307.73,-124.37C307.79,-133.63 307.23,-145.08 304.83,-155.06 303.89,-158.99 302.53,-163.01 300.97,-166.89"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="298.78,-165.79 298.21,-173.18 303.27,-167.76 298.78,-165.79"/>
+<text xml:space="preserve" text-anchor="middle" x="317.17" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">query</text>
+</g>
+<!-- supervisor&#45;&gt;bucket2 -->
+<g id="edge6" class="edge">
+<title>supervisor&#45;&gt;bucket2</title>
+<path fill="none" stroke="#c8501f" d="M262.23,-86.84C228.04,-73.18 180.78,-54.29 144.86,-39.93"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="146.19,-37.83 138.78,-37.5 144.37,-42.38 146.19,-37.83"/>
+<text xml:space="preserve" text-anchor="middle" x="223.15" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">query</text>
+</g>
+<!-- supervisor&#45;&gt;bucketn -->
+<g id="edge7" class="edge">
+<title>supervisor&#45;&gt;bucketn</title>
+<path fill="none" stroke="#c8501f" d="M335.74,-86.95C352.79,-77.01 375.04,-64.91 395.83,-56.28 411.02,-49.98 427.65,-44.26 443.68,-39.31"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="444.05,-41.75 450.04,-37.38 442.63,-37.07 444.05,-41.75"/>
+<text xml:space="preserve" text-anchor="middle" x="406.33" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">query</text>
+</g>
+<!-- answer -->
+<g id="node7" class="node">
+<title>answer</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="406.04,-36.28 207.62,-36.28 207.62,0 406.04,0 406.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="258.83" y="-18.19" font-family="Geist Mono" font-size="11.00">Synthesized answer</text>
+<text xml:space="preserve" text-anchor="start" x="220.58" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Faster than GraphRAG, more accurate than RAG</text>
+</g>
+<!-- supervisor&#45;&gt;answer -->
+<g id="edge9" class="edge">
+<title>supervisor&#45;&gt;answer</title>
+<path fill="none" stroke="#c8501f" d="M306.83,-86.95C306.83,-74.91 306.83,-58.78 306.83,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="309.29,-45.35 306.84,-38.35 304.39,-45.35 309.29,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="326.33" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">synthesize</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Documents are spread across parallel CAG buckets in no particular order because domain-based bucketing made the supervisor skip domains that looked irrelevant at first glance (ours).</p></section>
 
 
 

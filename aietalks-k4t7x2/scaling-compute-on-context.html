@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Scaling Compute on Context — Talk Brief</title>
+<title>Scaling Compute on Context &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,104 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Frames why models can&#x27;t know your private/company data (they&#x27;re trained only on public data) and walks through which technical approaches for teaching a model a fixed private dataset work versus collapse, including naive fine-tuning, KV ...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Models are trained only on public data, so they have no knowledge of what happened after their training cutoff and no knowledge of private context like your emails or a company&#x27;s internal data (c1, c2).</li><li>Naively fine-tuning a model on a fixed private dataset drives training loss to about 0.0001 but the model then collapses and loses normal generalization ability when generating (c3, c4).</li><li>Since the data set is fixed and training from scratch isn&#x27;t viable, the only usable scaling axis is compute-on-context itself; the most promising direction is self-improvement, where the model makes its own training data progressively harder as it improves, echoing AlphaGo (c5, c7, c6).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Why Compute Is the Only Scaling Axis Left (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">WHY COMPUTE IS THE ONLY SCALING AXIS LEFT (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">WHY DATA IS MISSING</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Public-data-only training</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Models trained only on public data</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">No post-cutoff knowledge</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">No knowledge of events after training</text><text x="542" y="107" font-size="8.5" text-anchor="middle" fill="#807565">cutoff</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">NAIVE ATTEMPTS THAT FAIL</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Naive fine-tuning</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Trains on fixed private data to</text><text x="206" y="225" font-size="8.5" text-anchor="middle" fill="#807565">~0.0001 loss</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Generation collapses</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Loses normal generalization ability</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Three scaling axes</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Data, compute/time, or model size</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">THE REMAINING PATH</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Compute is only axis left</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Data fixed, training from scratch not</text><text x="318" y="343" font-size="8.5" text-anchor="middle" fill="#807565">viable</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Self-improvement</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Model makes its own data harder, like</text><text x="542" y="343" font-size="8.5" text-anchor="middle" fill="#807565">AlphaGo</text><path d="M318,118 V127 H193 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="256" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">attempt to teach</text><path d="M542,118 V135 H219 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="380" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">motivates</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">results in</text><line x1="535" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">forces rethink</text><path d="M654,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="486" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">data/model fixed</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">Engram pursues</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Morris&#x27;s argument from why models lack private context to why naive fine-tuning collapses to why self-improvement is offered as the remaining path (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">WHY COMPUTE IS THE ONLY SCALING AXIS LEFT (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 360.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- pub -->
+<g id="node1" class="node">
+<title>pub</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="147.42,-473.93 0,-473.93 0,-437.65 147.42,-437.65 147.42,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="15.58" y="-455.84" font-family="Geist Mono" font-size="11.00">Public&#45;data&#45;only training</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">Models trained only on public data</text>
+</g>
+<!-- finetune -->
+<g id="node3" class="node">
+<title>finetune</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="256.92,-386.4 76.5,-386.4 76.5,-350.12 256.92,-350.12 256.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="125.46" y="-368.31" font-family="Geist Mono" font-size="11.00">Naive fine&#45;tuning</text>
+<text xml:space="preserve" text-anchor="start" x="89.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Trains on fixed private data to ~0.0001 loss</text>
+</g>
+<!-- pub&#45;&gt;finetune -->
+<g id="edge1" class="edge">
+<title>pub&#45;&gt;finetune</title>
+<path fill="none" stroke="#c8501f" d="M92.98,-437.07C107.07,-424.11 126.31,-406.41 141.6,-392.35"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="142.86,-394.53 146.35,-387.98 139.54,-390.92 142.86,-394.53"/>
+<text xml:space="preserve" text-anchor="middle" x="157.65" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">attempt to teach</text>
+</g>
+<!-- cutoff -->
+<g id="node2" class="node">
+<title>cutoff</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="352.04,-473.93 169.38,-473.93 169.38,-437.65 352.04,-437.65 352.04,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="197.71" y="-455.84" font-family="Geist Mono" font-size="11.00">No post&#45;cutoff knowledge</text>
+<text xml:space="preserve" text-anchor="start" x="182.33" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">No knowledge of events after training cutoff</text>
+</g>
+<!-- cutoff&#45;&gt;finetune -->
+<g id="edge2" class="edge">
+<title>cutoff&#45;&gt;finetune</title>
+<path fill="none" stroke="#c8501f" d="M241.23,-437.07C226.99,-424.11 207.54,-406.41 192.09,-392.35"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="194.11,-390.88 187.28,-387.98 190.81,-394.5 194.11,-390.88"/>
+<text xml:space="preserve" text-anchor="middle" x="238.09" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">motivates</text>
+</g>
+<!-- collapse -->
+<g id="node4" class="node">
+<title>collapse</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="240.79,-298.87 92.62,-298.87 92.62,-262.59 240.79,-262.59 240.79,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="116.08" y="-280.78" font-family="Geist Mono" font-size="11.00">Generation collapses</text>
+<text xml:space="preserve" text-anchor="start" x="105.58" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Loses normal generalization ability</text>
+</g>
+<!-- finetune&#45;&gt;collapse -->
+<g id="edge3" class="edge">
+<title>finetune&#45;&gt;collapse</title>
+<path fill="none" stroke="#c8501f" d="M166.71,-349.54C166.71,-337.5 166.71,-321.37 166.71,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="169.16,-307.94 166.71,-300.94 164.26,-307.94 169.16,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="183.96" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">results in</text>
+</g>
+<!-- axes -->
+<g id="node5" class="node">
+<title>axes</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="241.54,-211.34 91.87,-211.34 91.87,-175.06 241.54,-175.06 241.54,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="120.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Three scaling axes</text>
+<text xml:space="preserve" text-anchor="start" x="104.83" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Data, compute/time, or model size</text>
+</g>
+<!-- collapse&#45;&gt;axes -->
+<g id="edge4" class="edge">
+<title>collapse&#45;&gt;axes</title>
+<path fill="none" stroke="#c8501f" d="M166.71,-262.01C166.71,-249.97 166.71,-233.84 166.71,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="169.16,-220.41 166.71,-213.41 164.26,-220.41 169.16,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="192.58" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">forces rethink</text>
+</g>
+<!-- computeaxis -->
+<g id="node6" class="node">
+<title>computeaxis</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="255.42,-123.81 78,-123.81 78,-87.53 255.42,-87.53 255.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="106.71" y="-105.72" font-family="Geist Mono" font-size="11.00">Compute is only axis left</text>
+<text xml:space="preserve" text-anchor="start" x="90.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Data fixed, training from scratch not viable</text>
+</g>
+<!-- axes&#45;&gt;computeaxis -->
+<g id="edge5" class="edge">
+<title>axes&#45;&gt;computeaxis</title>
+<path fill="none" stroke="#c8501f" d="M166.71,-174.48C166.71,-162.44 166.71,-146.31 166.71,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="169.16,-132.88 166.71,-125.88 164.26,-132.88 169.16,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="198.96" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">data/model fixed</text>
+</g>
+<!-- selfimprove -->
+<g id="node7" class="node">
+<title>selfimprove</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="262.54,-36.28 70.87,-36.28 70.87,0 262.54,0 262.54,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="124.71" y="-18.19" font-family="Geist Mono" font-size="11.00">Self&#45;improvement</text>
+<text xml:space="preserve" text-anchor="start" x="83.83" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Model makes its own data harder, like AlphaGo</text>
+</g>
+<!-- computeaxis&#45;&gt;selfimprove -->
+<g id="edge6" class="edge">
+<title>computeaxis&#45;&gt;selfimprove</title>
+<path fill="none" stroke="#c8501f" d="M166.71,-86.95C166.71,-74.91 166.71,-58.78 166.71,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="169.16,-45.35 166.71,-38.35 164.26,-45.35 169.16,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="196.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">Engram pursues</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Morris&#x27;s argument from why models lack private context to why naive fine-tuning collapses to why self-improvement is offered as the remaining path (ours).</p></section>
 
 
 

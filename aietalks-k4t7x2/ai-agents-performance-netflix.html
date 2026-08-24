@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>AI Agents for Performance: Ship Faster, Pay Less — Talk Brief</title>
+<title>AI Agents for Performance: Ship Faster, Pay Less &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,125 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Describes a specific pipeline (feed raw profiler output to a coding agent, have it locate the code, propose a fix, verify with canary, then route to human review) that found a fleet-wide performance bug once and reused it across 7 services</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>An agent fed raw profiler output identified an O(n^2) pattern consuming 8.8% of CPU time and produced a mergeable code-review fix in under 5 minutes (c1, c3).</li><li>Once cataloged, the same anti-pattern was found reused across 7 different services via cross-repo search, with 0.5-4.6% CPU savings if fixed across all of them (c2).</li><li>Recommends a durable pattern catalog stored as plain markdown in a central git repo rather than a vector database, with canary verification and human approval kept as the final gate before any fix merges (c4, c5, c6).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Profiler-to-PR agent pipeline (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">PROFILER-TO-PR AGENT PIPELINE (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">INPUT</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Raw profiler output</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">call-stack data, ~20 min human read</text><text x="318" y="107" font-size="8.5" text-anchor="middle" fill="#807565">time</text><rect x="437" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Pattern catalog</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">markdown files in central git repo</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">AGENT ACTION</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Identify hot path</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">O(n^2) pattern, 8.8% of CPU time</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Locate + fix code</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">checks out repo, produces fix &lt;5 min</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Cross-repo search</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">same anti-pattern found in 7 services</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">GUARDRAIL</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Canary deploy</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">CPU/latency/error vs old code, ~10 min</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Code review, not push</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">confidence capped below auto-merge</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">Human merge decision</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">final gate before production</text><path d="M318,118 V127 H206 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="262" y="125" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">raw trace</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">hot path</text><path d="M417,178 V169 H542 V118" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="480" y="167" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">confirmed pattern</text><path d="M542,118 V135 H654 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="598" y="133" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">known pattern</text><path d="M654,236 V245 H193 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="424" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">candidate fixes</text><path d="M443,236 V253 H219 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="331" y="251" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">candidate fix</text><line x1="311" y1="325" x2="325" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">verified fix</text><line x1="535" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">review request</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s described loop from raw profiler data through agent identification, cross-repo reuse via a markdown catalog, and canary verification to a human-gated merge; the exact order of catalog lookup versus fix generation on a first-time pattern isn&#x27;t fully specified in the talk (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">PROFILER-TO-PR AGENT PIPELINE (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 243.00 657.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 652.99)">
+<title>G</title>
+<!-- profiler -->
+<g id="node1" class="node">
+<title>profiler</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="228.67,-648.99 52.75,-648.99 52.75,-612.71 228.67,-612.71 228.67,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="93.83" y="-630.9" font-family="Geist Mono" font-size="11.00">Raw profiler output</text>
+<text xml:space="preserve" text-anchor="start" x="65.71" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">call&#45;stack data, ~20 min human read time</text>
+</g>
+<!-- identify -->
+<g id="node3" class="node">
+<title>identify</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="215.17,-561.46 66.25,-561.46 66.25,-525.18 215.17,-525.18 215.17,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="99.83" y="-543.37" font-family="Geist Mono" font-size="11.00">Identify hot path</text>
+<text xml:space="preserve" text-anchor="start" x="79.21" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">O(n^2) pattern, 8.8% of CPU time</text>
+</g>
+<!-- profiler&#45;&gt;identify -->
+<g id="edge1" class="edge">
+<title>profiler&#45;&gt;identify</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M140.71,-612.13C140.71,-600.09 140.71,-583.96 140.71,-570.45"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="143.16,-570.53 140.71,-563.53 138.26,-570.53 143.16,-570.53"/>
+<text xml:space="preserve" text-anchor="middle" x="158.33" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">raw trace</text>
+</g>
+<!-- catalog -->
+<g id="node2" class="node">
+<title>catalog</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="157.92,-386.4 13.5,-386.4 13.5,-350.12 157.92,-350.12 157.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="48.58" y="-368.31" font-family="Geist Mono" font-size="11.00">Pattern catalog</text>
+<text xml:space="preserve" text-anchor="start" x="26.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">markdown files in central git repo</text>
+</g>
+<!-- crosssearch -->
+<g id="node5" class="node">
+<title>crosssearch</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="159.42,-298.87 0,-298.87 0,-262.59 159.42,-262.59 159.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="35.46" y="-280.78" font-family="Geist Mono" font-size="11.00">Cross&#45;repo search</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">same anti&#45;pattern found in 7 services</text>
+</g>
+<!-- catalog&#45;&gt;crosssearch -->
+<g id="edge4" class="edge">
+<title>catalog&#45;&gt;crosssearch</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M84.47,-349.54C83.62,-337.5 82.49,-321.37 81.54,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="83.99,-307.75 81.06,-300.94 79.1,-308.09 83.99,-307.75"/>
+<text xml:space="preserve" text-anchor="middle" x="110.07" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">known pattern</text>
+</g>
+<!-- locate -->
+<g id="node4" class="node">
+<title>locate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="219.67,-473.93 61.75,-473.93 61.75,-437.65 219.67,-437.65 219.67,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="97.58" y="-455.84" font-family="Geist Mono" font-size="11.00">Locate + fix code</text>
+<text xml:space="preserve" text-anchor="start" x="74.71" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">checks out repo, produces fix &lt;5 min</text>
+</g>
+<!-- identify&#45;&gt;locate -->
+<g id="edge2" class="edge">
+<title>identify&#45;&gt;locate</title>
+<path fill="none" stroke="#c8501f" d="M140.71,-524.6C140.71,-512.56 140.71,-496.43 140.71,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="143.16,-483 140.71,-476 138.26,-483 143.16,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="156.46" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">hot path</text>
+</g>
+<!-- locate&#45;&gt;catalog -->
+<g id="edge3" class="edge">
+<title>locate&#45;&gt;catalog</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M124.05,-436.99C118.95,-431.08 113.55,-424.31 109.21,-417.65 104.47,-410.37 100.07,-402 96.39,-394.28"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="98.75,-393.56 93.6,-388.23 94.3,-395.61 98.75,-393.56"/>
+<text xml:space="preserve" text-anchor="middle" x="142.96" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">confirmed pattern</text>
+</g>
+<!-- canary -->
+<g id="node6" class="node">
+<title>canary</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="219.79,-211.34 53.62,-211.34 53.62,-175.06 219.79,-175.06 219.79,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="102.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Canary deploy</text>
+<text xml:space="preserve" text-anchor="start" x="66.58" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">CPU/latency/error vs old code, ~10 min</text>
+</g>
+<!-- locate&#45;&gt;canary -->
+<g id="edge6" class="edge">
+<title>locate&#45;&gt;canary</title>
+<path fill="none" stroke="#c8501f" d="M164.04,-436.98C169.57,-431.45 174.72,-424.88 177.71,-417.65 179.62,-413.03 177.77,-411.4 177.71,-406.4 176.82,-328.58 204.24,-302.92 173.71,-231.34 171.65,-226.51 168.63,-221.96 165.2,-217.82"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="167.11,-216.28 160.56,-212.79 163.5,-219.6 167.11,-216.28"/>
+<text xml:space="preserve" text-anchor="middle" x="210.77" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">candidate fix</text>
+</g>
+<!-- crosssearch&#45;&gt;canary -->
+<g id="edge5" class="edge">
+<title>crosssearch&#45;&gt;canary</title>
+<path fill="none" stroke="#c8501f" d="M91.52,-262.01C99.85,-249.51 111.12,-232.6 120.32,-218.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="122.23,-220.34 124.08,-213.16 118.15,-217.62 122.23,-220.34"/>
+<text xml:space="preserve" text-anchor="middle" x="140.12" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">candidate fixes</text>
+</g>
+<!-- codereview -->
+<g id="node7" class="node">
+<title>codereview</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="217.17,-123.81 56.25,-123.81 56.25,-87.53 217.17,-87.53 217.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="81.96" y="-105.72" font-family="Geist Mono" font-size="11.00">Code review, not push</text>
+<text xml:space="preserve" text-anchor="start" x="69.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">confidence capped below auto&#45;merge</text>
+</g>
+<!-- canary&#45;&gt;codereview -->
+<g id="edge7" class="edge">
+<title>canary&#45;&gt;codereview</title>
+<path fill="none" stroke="#c8501f" d="M136.71,-174.48C136.71,-162.44 136.71,-146.31 136.71,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="139.16,-132.88 136.71,-125.88 134.26,-132.88 139.16,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="157.33" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">verified fix</text>
+</g>
+<!-- human -->
+<g id="node8" class="node">
+<title>human</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="205.54,-36.28 67.87,-36.28 67.87,0 205.54,0 205.54,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="80.83" y="-18.19" font-family="Geist Mono" font-size="11.00">Human merge decision</text>
+<text xml:space="preserve" text-anchor="start" x="87.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">final gate before production</text>
+</g>
+<!-- codereview&#45;&gt;human -->
+<g id="edge8" class="edge">
+<title>codereview&#45;&gt;human</title>
+<path fill="none" stroke="#c8501f" d="M136.71,-86.95C136.71,-74.91 136.71,-58.78 136.71,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="139.16,-45.35 136.71,-38.35 134.26,-45.35 139.16,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="164.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">review request</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s described loop from raw profiler data through agent identification, cross-repo reuse via a markdown catalog, and canary verification to a human-gated merge; the exact order of catalog lookup versus fix generation on a first-time pattern isn&#x27;t fully specified in the talk (ours).</p></section>
 
 
 

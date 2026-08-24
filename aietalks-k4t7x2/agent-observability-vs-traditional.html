@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>How Agent O11y Differs From Traditional O11y — Talk Brief</title>
+<title>How Agent O11y Differs From Traditional O11y &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,111 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Lays out concrete technical reasons agent traces need different infrastructure than tools like Grafana/Datadog: gigabyte-scale traces, 20MB individual spans, and the need for full-text indexing (Tantivy) rather than just metrics aggregation</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Agent observability differs from traditional observability because agents are non-deterministic and traces are far larger and messier (up to 1GB traces, 20MB individual spans) (c1, c2, c3).</li><li>Braintrust built a custom database with a forked Tantivy full-text index rather than using ClickHouse, because ClickHouse couldn&#x27;t handle the text-indexing workload needed to query trace content (c4, c5).</li><li>The best agent teams involve non-technical domain experts (clinicians, wealth advisors, lawyers) directly reviewing traces and writing natural-language grading justifications, unlike traditional observability&#x27;s purely technical audience (c6, c7).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Why agent traces broke traditional observability (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">WHY AGENT TRACES BROKE TRADITIONAL OBSERVABILITY (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">PREMISE</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Agents non-deterministic</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">vs deterministic traditional apps</text><rect x="437" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Traces are huge</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">up to 1GB traces, 20MB spans</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">MECHANISM</text><rect x="24" y="178" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="120" y="197" font-size="11" text-anchor="middle" fill="#14110D">ClickHouse dropped</text><text x="120" y="213" font-size="8.5" text-anchor="middle" fill="#807565">couldn&#x27;t do full-text indexing</text><rect x="230" y="178" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="327" y="197" font-size="11" text-anchor="middle" fill="#14110D">Built custom Tantivy DB</text><text x="327" y="213" font-size="8.5" text-anchor="middle" fill="#807565">forked Rust engine, full-text index</text><rect x="437" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="533" y="197" font-size="11" text-anchor="middle" fill="#14110D">Persona shifts</text><text x="533" y="213" font-size="8.5" text-anchor="middle" fill="#807565">non-technical, not just engineers</text><rect x="644" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="740" y="197" font-size="11" text-anchor="middle" fill="#14110D">Domain experts grade traces</text><text x="740" y="213" font-size="8.5" text-anchor="middle" fill="#807565">clinicians, nurses, advisors,</text><text x="740" y="225" font-size="8.5" text-anchor="middle" fill="#807565">lawyers</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">CONSEQUENCE</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Obs+evals unified</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">batch vs real-time, plus topic</text><text x="430" y="343" font-size="8.5" text-anchor="middle" fill="#807565">clustering</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">drives scale</text><path d="M542,118 V127 H120 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="331" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">outgrew</text><line x1="216" y1="207" x2="230" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replaced by</text><path d="M305,118 V135 H533 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="419" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">changes audience</text><line x1="630" y1="207" x2="644" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="636" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">enables</text><path d="M327,236 V245 H417 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="372" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">feeds</text><path d="M740,236 V253 H443 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="591" y="251" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">feeds</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s implicit argument: non-determinism and trace scale forced Braintrust off ClickHouse and pulled non-technical domain experts into the loop, which they now treat as one unified observability-and-evals system (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">WHY AGENT TRACES BROKE TRADITIONAL OBSERVABILITY (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 316.00 419.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 415.43)">
+<title>G</title>
+<!-- nondet -->
+<g id="node1" class="node">
+<title>nondet</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="218.92,-411.43 72.25,-411.43 72.25,-375.15 218.92,-375.15 218.92,-411.43"/>
+<text xml:space="preserve" text-anchor="start" x="85.21" y="-393.34" font-family="Geist Mono" font-size="11.00">Agents non&#45;deterministic</text>
+<text xml:space="preserve" text-anchor="start" x="88.96" y="-385.19" font-family="Geist Mono" font-size="8.00" fill="#807565">vs deterministic traditional apps</text>
+</g>
+<!-- huge -->
+<g id="node2" class="node">
+<title>huge</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="133.17,-323.9 0,-323.9 0,-287.62 133.17,-287.62 133.17,-323.9"/>
+<text xml:space="preserve" text-anchor="start" x="27.21" y="-305.81" font-family="Geist Mono" font-size="11.00">Traces are huge</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-297.66" font-family="Geist Mono" font-size="8.00" fill="#807565">up to 1GB traces, 20MB spans</text>
+</g>
+<!-- nondet&#45;&gt;huge -->
+<g id="edge1" class="edge">
+<title>nondet&#45;&gt;huge</title>
+<path fill="none" stroke="#c8501f" d="M129.22,-374.57C117.46,-361.84 101.48,-344.54 88.6,-330.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="90.51,-329.05 83.96,-325.57 86.91,-332.38 90.51,-329.05"/>
+<text xml:space="preserve" text-anchor="middle" x="132.94" y="-347.07" font-family="Geist Mono" font-size="8.50" fill="#c8501f">drives scale</text>
+</g>
+<!-- persona -->
+<g id="node5" class="node">
+<title>persona</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="298.42,-323.9 154.75,-323.9 154.75,-287.62 298.42,-287.62 298.42,-323.9"/>
+<text xml:space="preserve" text-anchor="start" x="192.08" y="-305.81" font-family="Geist Mono" font-size="11.00">Persona shifts</text>
+<text xml:space="preserve" text-anchor="start" x="167.71" y="-297.66" font-family="Geist Mono" font-size="8.00" fill="#807565">non&#45;technical, not just engineers</text>
+</g>
+<!-- nondet&#45;&gt;persona -->
+<g id="edge4" class="edge">
+<title>nondet&#45;&gt;persona</title>
+<path fill="none" stroke="#c8501f" d="M162.37,-374.57C174.42,-361.84 190.81,-344.54 204.01,-330.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="205.75,-332.33 208.78,-325.56 202.19,-328.96 205.75,-332.33"/>
+<text xml:space="preserve" text-anchor="middle" x="223.93" y="-347.07" font-family="Geist Mono" font-size="8.50" fill="#c8501f">changes audience</text>
+</g>
+<!-- ch_drop -->
+<g id="node3" class="node">
+<title>ch_drop</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="139.42,-236.37 13.75,-236.37 13.75,-200.09 139.42,-200.09 139.42,-236.37"/>
+<text xml:space="preserve" text-anchor="start" x="28.58" y="-218.28" font-family="Geist Mono" font-size="11.00">ClickHouse dropped</text>
+<text xml:space="preserve" text-anchor="start" x="26.71" y="-210.13" font-family="Geist Mono" font-size="8.00" fill="#807565">couldn&#39;t do full&#45;text indexing</text>
+</g>
+<!-- huge&#45;&gt;ch_drop -->
+<g id="edge2" class="edge">
+<title>huge&#45;&gt;ch_drop</title>
+<path fill="none" stroke="#c8501f" d="M68.66,-287.04C70.06,-275 71.95,-258.87 73.53,-245.36"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="75.96,-245.67 74.34,-238.43 71.09,-245.1 75.96,-245.67"/>
+<text xml:space="preserve" text-anchor="middle" x="87.18" y="-259.55" font-family="Geist Mono" font-size="8.50" fill="#c8501f">outgrew</text>
+</g>
+<!-- tantivy -->
+<g id="node4" class="node">
+<title>tantivy</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="170.54,-123.81 24.62,-123.81 24.62,-87.53 170.54,-87.53 170.54,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="39.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Built custom Tantivy DB</text>
+<text xml:space="preserve" text-anchor="start" x="37.58" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">forked Rust engine, full&#45;text index</text>
+</g>
+<!-- ch_drop&#45;&gt;tantivy -->
+<g id="edge3" class="edge">
+<title>ch_drop&#45;&gt;tantivy</title>
+<path fill="none" stroke="#c8501f" d="M78.01,-199.58C79.43,-184.62 81.98,-162.65 86.08,-143.81 86.9,-140.07 87.92,-136.17 89.01,-132.36"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="91.34,-133.12 91.02,-125.71 86.65,-131.7 91.34,-133.12"/>
+<text xml:space="preserve" text-anchor="middle" x="107.83" y="-159.5" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+<!-- unified -->
+<g id="node7" class="node">
+<title>unified</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="241.29,-36.28 75.87,-36.28 75.87,0 241.29,0 241.29,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="114.71" y="-18.19" font-family="Geist Mono" font-size="11.00">Obs+evals unified</text>
+<text xml:space="preserve" text-anchor="start" x="88.83" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">batch vs real&#45;time, plus topic clustering</text>
+</g>
+<!-- tantivy&#45;&gt;unified -->
+<g id="edge6" class="edge">
+<title>tantivy&#45;&gt;unified</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M110.22,-86.95C119.14,-74.45 131.2,-57.54 141.04,-43.74"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="143.01,-45.19 145.08,-38.07 139.02,-42.35 143.01,-45.19"/>
+<text xml:space="preserve" text-anchor="middle" x="141.86" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">feeds</text>
+</g>
+<!-- experts -->
+<g id="node6" class="node">
+<title>experts</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="308.42,-180.09 140.75,-180.09 140.75,-143.81 308.42,-143.81 308.42,-180.09"/>
+<text xml:space="preserve" text-anchor="start" x="153.71" y="-162" font-family="Geist Mono" font-size="11.00">Domain experts grade traces</text>
+<text xml:space="preserve" text-anchor="start" x="162.33" y="-153.85" font-family="Geist Mono" font-size="8.00" fill="#807565">clinicians, nurses, advisors, lawyers</text>
+</g>
+<!-- persona&#45;&gt;experts -->
+<g id="edge5" class="edge">
+<title>persona&#45;&gt;experts</title>
+<path fill="none" stroke="#c8501f" d="M226.34,-287.09C225.99,-262.32 225.35,-217.15 224.95,-188.67"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="227.4,-188.88 224.85,-181.91 222.5,-188.95 227.4,-188.88"/>
+<text xml:space="preserve" text-anchor="middle" x="240.29" y="-259.55" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+<!-- experts&#45;&gt;unified -->
+<g id="edge7" class="edge">
+<title>experts&#45;&gt;unified</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M216.36,-143.28C204.74,-118.3 183.45,-72.56 170.21,-44.12"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="172.52,-43.28 167.35,-37.96 168.08,-45.34 172.52,-43.28"/>
+<text xml:space="preserve" text-anchor="middle" x="216.75" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">feeds</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s implicit argument: non-determinism and trace scale forced Braintrust off ClickHouse and pulled non-technical domain experts into the loop, which they now treat as one unified observability-and-evals system (ours).</p></section>
 
 
 

@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Why, and how you need to sandbox AI-Generated Code? — Talk Brief</title>
+<title>Why, and how you need to sandbox AI-Generated Code? &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,146 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Walks through one security technique, capability-based sandboxing, in depth rather than a full multi-system architecture.</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Frames AI-generated code as untrusted code running with the app&#x27;s full privileges, illustrated with three threat scenarios: hallucinated imports/infinite loops, an &#x27;overhelpful&#x27; LLM reading env secrets, and prompt injection (c1, c2, c3).</li><li>Recommends capability-based security (default deny, explicitly grant only what&#x27;s needed) and choosing isolates vs. containers based on whether the code needs a real file system, processes, or package installs (c4, c5).</li><li>Recommends strict per-user sandbox isolation and proxying secrets through the application rather than ever passing them into the sandbox (c6, c7); a closing eight-item checklist is claimed to beat 95% of AI applications running code today (c8).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Capability-based sandboxing pipeline (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">CAPABILITY-BASED SANDBOXING PIPELINE (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">THREAT</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">AI code = untrusted code</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Runs with app&#x27;s file system, network,</text><text x="206" y="107" font-size="8.5" text-anchor="middle" fill="#807565">credentials</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Hallucinated code</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Bad imports, infinite loops, missing</text><text x="430" y="107" font-size="8.5" text-anchor="middle" fill="#807565">base cases</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">Overhelpful LLM reads secrets</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Reads API keys, DB credentials while</text><text x="654" y="107" font-size="8.5" text-anchor="middle" fill="#807565">&#x27;helping&#x27;</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">PRINCIPLE</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Capability-based deny</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Default deny; grant only needed</text><text x="430" y="225" font-size="8.5" text-anchor="middle" fill="#807565">capabilities</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">SANDBOX CHOICE</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">V8 isolates</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Sub-ms startup, no fs/process,</text><text x="318" y="343" font-size="8.5" text-anchor="middle" fill="#807565">JS/TS/Python/WASM</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Containers</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Full Linux, seconds to start,</text><text x="542" y="343" font-size="8.5" text-anchor="middle" fill="#807565">npm/git/dev servers</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">ISOLATION &amp; SECRETS</text><rect x="101" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="433" font-size="11" text-anchor="middle" fill="#14110D">Per-user isolation</text><text x="206" y="449" font-size="8.5" text-anchor="middle" fill="#807565">User ID is the isolation boundary,</text><text x="206" y="461" font-size="8.5" text-anchor="middle" fill="#807565">never shared</text><rect x="325" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="433" font-size="11" text-anchor="middle" fill="#14110D">Secrets proxy pattern</text><text x="430" y="449" font-size="8.5" text-anchor="middle" fill="#807565">Worker attaches real credential; key</text><text x="430" y="461" font-size="8.5" text-anchor="middle" fill="#807565">never enters sandbox</text><rect x="549" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="433" font-size="11" text-anchor="middle" fill="#14110D">8-item checklist</text><text x="654" y="449" font-size="8.5" text-anchor="middle" fill="#807565">8 items claimed to beat 95% of AI apps</text><text x="654" y="461" font-size="8.5" text-anchor="middle" fill="#807565">today</text><line x1="311" y1="89" x2="325" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">example</text><line x1="311" y1="89" x2="549" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">example</text><path d="M430,118 V127 H417 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="392" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">drives</text><path d="M654,118 V135 H443 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="548" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">drives</text><path d="M417,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="368" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">if no fs/proc</text><path d="M443,236 V253 H542 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="492" y="251" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">if fs/proc</text><path d="M318,354 V363 H193 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="256" y="361" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">isolate per user</text><path d="M542,354 V371 H219 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="380" y="369" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">isolate per user</text><line x1="311" y1="443" x2="325" y2="443" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="439" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">secrets via proxy</text><line x1="535" y1="443" x2="549" y2="443" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="439" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">codified as</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s throughline from threat to mitigation: hallucinated code and an overhelpful LLM justify default-deny capabilities, which pick isolates or containers, then per-user isolation and a secrets proxy close the loop (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">CAPABILITY-BASED SANDBOXING PIPELINE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 438.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- untrusted -->
+<g id="node1" class="node">
+<title>untrusted</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="316.79,-561.46 117.62,-561.46 117.62,-525.18 316.79,-525.18 316.79,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="153.83" y="-543.37" font-family="Geist Mono" font-size="11.00">AI code = untrusted code</text>
+<text xml:space="preserve" text-anchor="start" x="130.58" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">Runs with app&#39;s file system, network, credentials</text>
+</g>
+<!-- hallucination -->
+<g id="node2" class="node">
+<title>hallucination</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="207.29,-473.93 17.12,-473.93 17.12,-437.65 207.29,-437.65 207.29,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="69.08" y="-455.84" font-family="Geist Mono" font-size="11.00">Hallucinated code</text>
+<text xml:space="preserve" text-anchor="start" x="30.08" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">Bad imports, infinite loops, missing base cases</text>
+</g>
+<!-- untrusted&#45;&gt;hallucination -->
+<g id="edge1" class="edge">
+<title>untrusted&#45;&gt;hallucination</title>
+<path fill="none" stroke="#c8501f" d="M195.45,-524.6C179.4,-511.52 157.44,-493.63 140.1,-479.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="142.09,-477.97 135.11,-475.45 138.99,-481.77 142.09,-477.97"/>
+<text xml:space="preserve" text-anchor="middle" x="187.12" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">example</text>
+</g>
+<!-- overhelpful -->
+<g id="node3" class="node">
+<title>overhelpful</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="416.79,-473.93 229.62,-473.93 229.62,-437.65 416.79,-437.65 416.79,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="249.71" y="-455.84" font-family="Geist Mono" font-size="11.00">Overhelpful LLM reads secrets</text>
+<text xml:space="preserve" text-anchor="start" x="242.58" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">Reads API keys, DB credentials while &#39;helping&#39;</text>
+</g>
+<!-- untrusted&#45;&gt;overhelpful -->
+<g id="edge2" class="edge">
+<title>untrusted&#45;&gt;overhelpful</title>
+<path fill="none" stroke="#c8501f" d="M239.17,-524.6C255.38,-511.52 277.55,-493.63 295.06,-479.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="296.19,-481.74 300.1,-475.44 293.11,-477.93 296.19,-481.74"/>
+<text xml:space="preserve" text-anchor="middle" x="292.68" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">example</text>
+</g>
+<!-- principle -->
+<g id="node4" class="node">
+<title>principle</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="308.54,-386.4 125.87,-386.4 125.87,-350.12 308.54,-350.12 308.54,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="163.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Capability&#45;based deny</text>
+<text xml:space="preserve" text-anchor="start" x="138.83" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Default deny; grant only needed capabilities</text>
+</g>
+<!-- hallucination&#45;&gt;principle -->
+<g id="edge3" class="edge">
+<title>hallucination&#45;&gt;principle</title>
+<path fill="none" stroke="#c8501f" d="M133.97,-437.07C150.02,-423.99 171.98,-406.1 189.32,-391.98"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="190.43,-394.24 194.31,-387.92 187.33,-390.44 190.43,-394.24"/>
+<text xml:space="preserve" text-anchor="middle" x="182.25" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">drives</text>
+</g>
+<!-- overhelpful&#45;&gt;principle -->
+<g id="edge4" class="edge">
+<title>overhelpful&#45;&gt;principle</title>
+<path fill="none" stroke="#c8501f" d="M301.25,-437.07C285.04,-423.99 262.87,-406.1 245.36,-391.98"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="247.31,-390.4 240.32,-387.91 244.23,-394.21 247.31,-390.4"/>
+<text xml:space="preserve" text-anchor="middle" x="287.81" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">drives</text>
+</g>
+<!-- isolate -->
+<g id="node5" class="node">
+<title>isolate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="210.42,-298.87 0,-298.87 0,-262.59 210.42,-262.59 210.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="78.58" y="-280.78" font-family="Geist Mono" font-size="11.00">V8 isolates</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Sub&#45;ms startup, no fs/process, JS/TS/Python/WASM</text>
+</g>
+<!-- principle&#45;&gt;isolate -->
+<g id="edge5" class="edge">
+<title>principle&#45;&gt;isolate</title>
+<path fill="none" stroke="#c8501f" d="M194,-349.54C176.88,-336.46 153.45,-318.57 134.96,-304.45"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="136.64,-302.65 129.59,-300.35 133.67,-306.54 136.64,-302.65"/>
+<text xml:space="preserve" text-anchor="middle" x="190.79" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">if no fs/proc</text>
+</g>
+<!-- container -->
+<g id="node6" class="node">
+<title>container</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="430.04,-298.87 232.38,-298.87 232.38,-262.59 430.04,-262.59 430.04,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="305.33" y="-280.78" font-family="Geist Mono" font-size="11.00">Containers</text>
+<text xml:space="preserve" text-anchor="start" x="245.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Full Linux, seconds to start, npm/git/dev servers</text>
+</g>
+<!-- principle&#45;&gt;container -->
+<g id="edge6" class="edge">
+<title>principle&#45;&gt;container</title>
+<path fill="none" stroke="#c8501f" d="M240.83,-349.54C258.26,-336.46 282.11,-318.57 300.93,-304.45"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="302.28,-306.5 306.41,-300.34 299.34,-302.58 302.28,-306.5"/>
+<text xml:space="preserve" text-anchor="middle" x="297.91" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">if fs/proc</text>
+</g>
+<!-- peruser -->
+<g id="node7" class="node">
+<title>peruser</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="315.17,-211.34 121.25,-211.34 121.25,-175.06 315.17,-175.06 315.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="176.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Per&#45;user isolation</text>
+<text xml:space="preserve" text-anchor="start" x="134.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">User ID is the isolation boundary, never shared</text>
+</g>
+<!-- isolate&#45;&gt;peruser -->
+<g id="edge7" class="edge">
+<title>isolate&#45;&gt;peruser</title>
+<path fill="none" stroke="#c8501f" d="M128.62,-262.01C145.9,-248.93 169.54,-231.04 188.2,-216.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="189.52,-218.99 193.62,-212.81 186.56,-215.08 189.52,-218.99"/>
+<text xml:space="preserve" text-anchor="middle" x="197.73" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">isolate per user</text>
+</g>
+<!-- container&#45;&gt;peruser -->
+<g id="edge8" class="edge">
+<title>container&#45;&gt;peruser</title>
+<path fill="none" stroke="#c8501f" d="M307.8,-262.01C290.52,-248.93 266.88,-231.04 248.22,-216.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="249.86,-215.08 242.8,-212.81 246.9,-218.99 249.86,-215.08"/>
+<text xml:space="preserve" text-anchor="middle" x="310.73" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">isolate per user</text>
+</g>
+<!-- secretsproxy -->
+<g id="node8" class="node">
+<title>secretsproxy</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="336.17,-123.81 100.25,-123.81 100.25,-87.53 336.17,-87.53 336.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="165.71" y="-105.72" font-family="Geist Mono" font-size="11.00">Secrets proxy pattern</text>
+<text xml:space="preserve" text-anchor="start" x="113.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Worker attaches real credential; key never enters sandbox</text>
+</g>
+<!-- peruser&#45;&gt;secretsproxy -->
+<g id="edge9" class="edge">
+<title>peruser&#45;&gt;secretsproxy</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M218.21,-174.48C218.21,-162.44 218.21,-146.31 218.21,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="220.66,-132.88 218.21,-125.88 215.76,-132.88 220.66,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="250.46" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">secrets via proxy</text>
+</g>
+<!-- checklist -->
+<g id="node9" class="node">
+<title>checklist</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="312.92,-36.28 123.5,-36.28 123.5,0 312.92,0 312.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="180.33" y="-18.19" font-family="Geist Mono" font-size="11.00">8&#45;item checklist</text>
+<text xml:space="preserve" text-anchor="start" x="136.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">8 items claimed to beat 95% of AI apps today</text>
+</g>
+<!-- secretsproxy&#45;&gt;checklist -->
+<g id="edge10" class="edge">
+<title>secretsproxy&#45;&gt;checklist</title>
+<path fill="none" stroke="#c8501f" d="M218.21,-86.95C218.21,-74.91 218.21,-58.78 218.21,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="220.66,-45.35 218.21,-38.35 215.76,-45.35 220.66,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="238.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">codified as</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s throughline from threat to mitigation: hallucinated code and an overhelpful LLM justify default-deny capabilities, which pick isolates or containers, then per-user isolation and a secrets proxy close the loop (ours).</p></section>
 
 
 

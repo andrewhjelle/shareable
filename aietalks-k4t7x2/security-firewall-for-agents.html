@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Security Firewall for Agents — Talk Brief</title>
+<title>Security Firewall for Agents &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,125 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Informs where to put the security boundary for agents that have real write access to production systems (databases, Kubernetes, cloud infra)</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Every action an agent takes, malicious or benign, ultimately reaches the outside world as network bytes — that&#x27;s the real control point, not the agent&#x27;s file system access. (c2,c3)</li><li>Model alignment (Opus refusing harmful commands) and ACL/MCP-based permissions aren&#x27;t sufficient on their own; composing access across systems reopens holes. (c1,c4)</li><li>Deno&#x27;s answer is Claw Patrol, an open-source MIT proxy that parses agent traffic below the HTTP layer against a roughly 1,000-line HCL rule file, and it blocked a live demo attempt to drop a database table. (c5,c6,c8)</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="How Claw Patrol blocks a destructive agent action (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">HOW CLAW PATROL BLOCKS A DESTRUCTIVE AGENT ACTION (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">WHAT DOESN&#x27;T WORK</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Model alignment</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Opus refuses direct harmful asks</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">ACL/MCP permissions</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">composed access reopens holes</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">AGENT TRAFFIC</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">Agent (OpenClaw)</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">runs on isolated VM</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">Action as bytes</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">MCP, HTTP, or subprocess</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">CLAW PATROL ENFORCEMENT</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Claw Patrol proxy</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">parses traffic below HTTP</text><rect x="437" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">HCL rule file</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">~1,000 lines, tight change control</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">TARGET SYSTEM</text><rect x="213" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="433" font-size="11" text-anchor="middle" fill="#14110D">psql subprocess</text><text x="318" y="449" font-size="8.5" text-anchor="middle" fill="#807565">attempted to drop users table</text><rect x="437" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="433" font-size="11" text-anchor="middle" fill="#14110D">Action rejected</text><text x="542" y="449" font-size="8.5" text-anchor="middle" fill="#807565">destructive command blocked</text><path d="M318,118 V127 H279 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="280" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">insufficient</text><path d="M542,118 V135 H305 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="424" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">insufficient</text><line x1="423" y1="207" x2="437" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">spawns</text><path d="M542,236 V245 H331 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="436" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">inspected</text><line x1="437" y1="325" x2="423" y2="325" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">enforces</text><path d="M305,354 V363 H318 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="343" y="361" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">parses protocol</text><line x1="423" y1="443" x2="437" y2="443" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="439" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">drop table</text><path d="M331,354 V371 H529 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="369" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">rejects</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">Alignment and per-system ACLs alone did not stop composed access, so Deno&#x27;s team backstops with a byte-level proxy that inspects real traffic against one rule file (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW CLAW PATROL BLOCKS A DESTRUCTIVE AGENT ACTION (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 621.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- align -->
+<g id="node1" class="node">
+<title>align</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="142.92,-298.87 0,-298.87 0,-262.59 142.92,-262.59 142.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="31.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Model alignment</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Opus refuses direct harmful asks</text>
+</g>
+<!-- proxy -->
+<g id="node5" class="node">
+<title>proxy</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="348.79,-211.34 232.12,-211.34 232.12,-175.06 348.79,-175.06 348.79,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="248.08" y="-193.25" font-family="Geist Mono" font-size="11.00">Claw Patrol proxy</text>
+<text xml:space="preserve" text-anchor="start" x="245.08" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">parses traffic below HTTP</text>
+</g>
+<!-- align&#45;&gt;proxy -->
+<g id="edge1" class="edge">
+<title>align&#45;&gt;proxy</title>
+<path fill="none" stroke="#c8501f" d="M117.1,-261.9C152.1,-248.24 200.46,-229.35 237.22,-214.99"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="237.84,-217.38 243.47,-212.55 236.05,-212.82 237.84,-217.38"/>
+<text xml:space="preserve" text-anchor="middle" x="214.7" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">insufficient</text>
+</g>
+<!-- acl -->
+<g id="node2" class="node">
+<title>acl</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="306.17,-298.87 164.75,-298.87 164.75,-262.59 306.17,-262.59 306.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="182.96" y="-280.78" font-family="Geist Mono" font-size="11.00">ACL/MCP permissions</text>
+<text xml:space="preserve" text-anchor="start" x="177.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">composed access reopens holes</text>
+</g>
+<!-- acl&#45;&gt;proxy -->
+<g id="edge2" class="edge">
+<title>acl&#45;&gt;proxy</title>
+<path fill="none" stroke="#c8501f" d="M246.86,-262.01C254.89,-249.51 265.77,-232.6 274.64,-218.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="276.53,-220.39 278.26,-213.17 272.41,-217.73 276.53,-220.39"/>
+<text xml:space="preserve" text-anchor="middle" x="286.88" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">insufficient</text>
+</g>
+<!-- agent -->
+<g id="node3" class="node">
+<title>agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="444.42,-386.4 328.5,-386.4 328.5,-350.12 444.42,-350.12 444.42,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="341.46" y="-368.31" font-family="Geist Mono" font-size="11.00">Agent (OpenClaw)</text>
+<text xml:space="preserve" text-anchor="start" x="351.58" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">runs on isolated VM</text>
+</g>
+<!-- action -->
+<g id="node4" class="node">
+<title>action</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="444.42,-298.87 328.5,-298.87 328.5,-262.59 444.42,-262.59 444.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="348.96" y="-280.78" font-family="Geist Mono" font-size="11.00">Action as bytes</text>
+<text xml:space="preserve" text-anchor="start" x="341.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">MCP, HTTP, or subprocess</text>
+</g>
+<!-- agent&#45;&gt;action -->
+<g id="edge3" class="edge">
+<title>agent&#45;&gt;action</title>
+<path fill="none" stroke="#c8501f" d="M386.46,-349.54C386.46,-337.5 386.46,-321.37 386.46,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="388.91,-307.94 386.46,-300.94 384.01,-307.94 388.91,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="399.96" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">spawns</text>
+</g>
+<!-- action&#45;&gt;proxy -->
+<g id="edge4" class="edge">
+<title>action&#45;&gt;proxy</title>
+<path fill="none" stroke="#c8501f" d="M366.57,-262.01C352.02,-249.05 332.16,-231.35 316.38,-217.29"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="318.31,-215.73 311.46,-212.91 315.05,-219.39 318.31,-215.73"/>
+<text xml:space="preserve" text-anchor="middle" x="361.83" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">inspected</text>
+</g>
+<!-- psql -->
+<g id="node7" class="node">
+<title>psql</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="301.79,-123.81 167.12,-123.81 167.12,-87.53 301.79,-87.53 301.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="195.46" y="-105.72" font-family="Geist Mono" font-size="11.00">psql subprocess</text>
+<text xml:space="preserve" text-anchor="start" x="180.08" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">attempted to drop users table</text>
+</g>
+<!-- proxy&#45;&gt;psql -->
+<g id="edge6" class="edge">
+<title>proxy&#45;&gt;psql</title>
+<path fill="none" stroke="#c8501f" d="M278.86,-174.48C270.67,-161.98 259.6,-145.07 250.56,-131.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="252.76,-130.15 246.88,-125.64 248.66,-132.83 252.76,-130.15"/>
+<text xml:space="preserve" text-anchor="middle" x="294.31" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">parses protocol</text>
+</g>
+<!-- blocked -->
+<g id="node8" class="node">
+<title>blocked</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="355.67,-36.28 223.25,-36.28 223.25,0 355.67,0 355.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="252.71" y="-18.19" font-family="Geist Mono" font-size="11.00">Action rejected</text>
+<text xml:space="preserve" text-anchor="start" x="236.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">destructive command blocked</text>
+</g>
+<!-- proxy&#45;&gt;blocked -->
+<g id="edge8" class="edge">
+<title>proxy&#45;&gt;blocked</title>
+<path fill="none" stroke="#c8501f" d="M313.79,-174.39C319.32,-168.86 324.47,-162.29 327.46,-155.06 343,-117.43 322.36,-71.39 305.96,-43.71"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="308.23,-42.73 302.48,-38.04 304.05,-45.29 308.23,-42.73"/>
+<text xml:space="preserve" text-anchor="middle" x="345.29" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#c8501f">rejects</text>
+</g>
+<!-- rules -->
+<g id="node6" class="node">
+<title>rules</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="612.8,-298.87 466.13,-298.87 466.13,-262.59 612.8,-262.59 612.8,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="509.84" y="-280.78" font-family="Geist Mono" font-size="11.00">HCL rule file</text>
+<text xml:space="preserve" text-anchor="start" x="479.09" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">~1,000 lines, tight change control</text>
+</g>
+<!-- rules&#45;&gt;proxy -->
+<g id="edge5" class="edge">
+<title>rules&#45;&gt;proxy</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M487.56,-261.9C447.53,-248.15 392.1,-229.11 350.21,-214.72"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="351.14,-212.45 343.72,-212.49 349.54,-217.09 351.14,-212.45"/>
+<text xml:space="preserve" text-anchor="middle" x="445.62" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">enforces</text>
+</g>
+<!-- psql&#45;&gt;blocked -->
+<g id="edge7" class="edge">
+<title>psql&#45;&gt;blocked</title>
+<path fill="none" stroke="#c8501f" d="M245.86,-86.95C253.89,-74.45 264.77,-57.54 273.64,-43.74"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="275.53,-45.33 277.26,-38.11 271.41,-42.67 275.53,-45.33"/>
+<text xml:space="preserve" text-anchor="middle" x="284.38" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">drop table</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Alignment and per-system ACLs alone did not stop composed access, so Deno&#x27;s team backstops with a byte-level proxy that inspects real traffic against one rule file (ours).</p></section>
 
 
 
@@ -149,7 +267,7 @@ Slides below are frames from that recording, reproduced for reference and study;
 <section class="block">
 <div class="seclabel"><span class="num">02</span><span>Every action is bytes on the wire</span><span class="ln"></span></div>
 <div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/security-firewall-for-agents/s04_230.webp" alt="slide at 03:50"></a><div class="slidecap">Slide at 03:50 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/security-firewall-for-agents/s05_300.webp" alt="slide at 05:00"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/security-firewall-for-agents/s06_380.webp" alt="slide at 06:20"></a></div></div>
-<div class="textcol"><h2>Every action is bytes on the wire</h2><ul class="takeaways"><li>Because agents run on standalone, isolated VMs, Dahl&#x27;s team isn&#x27;t concerned with file-system access.</li><li>What matters is that every action an agent takes, good or bad, ultimately takes the form of network communication — bytes going out over the wire, whether via MCP, HTTP, or a spawned subprocess like psql.</li></ul><div class="quote"><p>&ldquo;effectively every nefarious action that that an agent could take every good action that it takes comes in the form of some network communication&rdquo;</p><span class="at">said at 04:09</span></div><div class="quote"><p>&ldquo;We run agents and I assume many of you do the same on standalone VMs.&rdquo;</p><span class="at">said at 03:39</span></div></div>
+<div class="textcol"><h2>Every action is bytes on the wire</h2><ul class="takeaways"><li>Because agents run on standalone, isolated VMs, Dahl&#x27;s team isn&#x27;t concerned with file-system access.</li><li>What matters is that every action an agent takes, good or bad, ultimately takes the form of network communication, bytes going out over the wire, whether via MCP, HTTP, or a spawned subprocess like psql.</li></ul><div class="quote"><p>&ldquo;effectively every nefarious action that that an agent could take every good action that it takes comes in the form of some network communication&rdquo;</p><span class="at">said at 04:09</span></div><div class="quote"><p>&ldquo;We run agents and I assume many of you do the same on standalone VMs.&rdquo;</p><span class="at">said at 03:39</span></div></div>
 </div>
 </section>
 <section class="block">

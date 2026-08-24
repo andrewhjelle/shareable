@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Building Turbopuffer — Talk Brief</title>
+<title>Building Turbopuffer &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,14 +136,97 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Informs infrastructure decisions for anyone evaluating a vector or search database: when object storage is viable for a latency-sensitive read path, why first-principles capacity math should override a vendor&#x27;s raw benchmark number, and ...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Eskildsen built a public &#x27;napkin math&#x27; reference table of hardware costs and latencies specifically to catch benchmarks that don&#x27;t match physical reality, rather than accept a vendor&#x27;s slow benchmark number at face value. (c1,c2)</li><li>Turbopuffer stores vectors in S3 (roughly 200ms P99 latency per object) instead of expensive in-memory stores, launched at a million vectors for a dollar versus the prior ~$100/million, and Cursor cut its database bill by 95% after switching. (c3,c4,c5,c6)</li><li>RL training workloads are consuming enough CPU capacity that CPUs, not just GPUs, are becoming scarce for AI labs. (c7)</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="How Turbopuffer bet on S3 for vectors (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">HOW TURBOPUFFER BET ON S3 FOR VECTORS (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">NAPKIN MATH CHECK</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Napkin math table</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">GitHub table of DRAM/S3/NVMe</text><text x="318" y="107" font-size="8.5" text-anchor="middle" fill="#807565">cost+latency</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Benchmark sanity check</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">10s claim should take 10ms by the math</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">TURBOPUFFER DESIGN</text><rect x="213" y="178" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">S3 vector storage</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Vectors clustered in S3, not DRAM</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">S3 read latency</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">~200ms P99 per 256-512KB object</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">OUTCOME</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">$1 per million vectors</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">vs roughly $100/million before</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Cursor migrates</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">DB bill cut 95% after switching</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">informs</text><path d="M542,118 V127 H318 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">justifies bet</text><line x1="423" y1="207" x2="437" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">accepts tradeoff</text><path d="M542,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">enables low cost</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">wins migration</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">Eskildsen used his own hardware-cost table to justify betting on S3 despite its 200ms latency, and that low-cost storage bet is what let Turbopuffer undercut Cursor prior vendor (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW TURBOPUFFER BET ON S3 FOR VECTORS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 194.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- napkin_table -->
+<g id="node1" class="node">
+<title>napkin_table</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="186.42,-473.93 0,-473.93 0,-437.65 186.42,-437.65 186.42,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="48.58" y="-455.84" font-family="Geist Mono" font-size="11.00">Napkin math table</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">GitHub table of DRAM/S3/NVMe cost+latency</text>
+</g>
+<!-- benchmark_check -->
+<g id="node2" class="node">
+<title>benchmark_check</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="178.17,-386.4 8.25,-386.4 8.25,-350.12 178.17,-350.12 178.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="34.33" y="-368.31" font-family="Geist Mono" font-size="11.00">Benchmark sanity check</text>
+<text xml:space="preserve" text-anchor="start" x="21.21" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">10s claim should take 10ms by the math</text>
+</g>
+<!-- napkin_table&#45;&gt;benchmark_check -->
+<g id="edge1" class="edge">
+<title>napkin_table&#45;&gt;benchmark_check</title>
+<path fill="none" stroke="#c8501f" d="M93.21,-437.07C93.21,-425.03 93.21,-408.9 93.21,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="95.66,-395.47 93.21,-388.47 90.76,-395.47 95.66,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="107.46" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">informs</text>
+</g>
+<!-- s3_storage -->
+<g id="node3" class="node">
+<title>s3_storage</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="166.54,-298.87 19.88,-298.87 19.88,-262.59 166.54,-262.59 166.54,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="50.08" y="-280.78" font-family="Geist Mono" font-size="11.00">S3 vector storage</text>
+<text xml:space="preserve" text-anchor="start" x="32.83" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Vectors clustered in S3, not DRAM</text>
+</g>
+<!-- benchmark_check&#45;&gt;s3_storage -->
+<g id="edge2" class="edge">
+<title>benchmark_check&#45;&gt;s3_storage</title>
+<path fill="none" stroke="#c8501f" d="M93.21,-349.54C93.21,-337.5 93.21,-321.37 93.21,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="95.66,-307.94 93.21,-300.94 90.76,-307.94 95.66,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="115.33" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">justifies bet</text>
+</g>
+<!-- s3_latency -->
+<g id="node4" class="node">
+<title>s3_latency</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="169.17,-211.34 17.25,-211.34 17.25,-175.06 169.17,-175.06 169.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="55.33" y="-193.25" font-family="Geist Mono" font-size="11.00">S3 read latency</text>
+<text xml:space="preserve" text-anchor="start" x="30.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">~200ms P99 per 256&#45;512KB object</text>
+</g>
+<!-- s3_storage&#45;&gt;s3_latency -->
+<g id="edge3" class="edge">
+<title>s3_storage&#45;&gt;s3_latency</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M93.21,-262.01C93.21,-249.97 93.21,-233.84 93.21,-220.33"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="95.66,-220.41 93.21,-213.41 90.76,-220.41 95.66,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="123.58" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">accepts tradeoff</text>
+</g>
+<!-- pricing -->
+<g id="node5" class="node">
+<title>pricing</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="159.42,-123.81 27,-123.81 27,-87.53 159.42,-87.53 159.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="41.08" y="-105.72" font-family="Geist Mono" font-size="11.00">$1 per million vectors</text>
+<text xml:space="preserve" text-anchor="start" x="39.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">vs roughly $100/million before</text>
+</g>
+<!-- s3_latency&#45;&gt;pricing -->
+<g id="edge4" class="edge">
+<title>s3_latency&#45;&gt;pricing</title>
+<path fill="none" stroke="#c8501f" d="M93.21,-174.48C93.21,-162.44 93.21,-146.31 93.21,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="95.66,-132.88 93.21,-125.88 90.76,-132.88 95.66,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="124.33" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables low cost</text>
+</g>
+<!-- cursor -->
+<g id="node6" class="node">
+<title>cursor</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="160.17,-36.28 26.25,-36.28 26.25,0 160.17,0 160.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="54.58" y="-18.19" font-family="Geist Mono" font-size="11.00">Cursor migrates</text>
+<text xml:space="preserve" text-anchor="start" x="39.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">DB bill cut 95% after switching</text>
+</g>
+<!-- pricing&#45;&gt;cursor -->
+<g id="edge5" class="edge">
+<title>pricing&#45;&gt;cursor</title>
+<path fill="none" stroke="#c8501f" d="M93.21,-86.95C93.21,-74.91 93.21,-58.78 93.21,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="95.66,-45.35 93.21,-38.35 90.76,-45.35 95.66,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="120.96" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">wins migration</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Eskildsen used his own hardware-cost table to justify betting on S3 despite its 200ms latency, and that low-cost storage bet is what let Turbopuffer undercut Cursor prior vendor (ours).</p></section>
 
 
 
 <section class="block">
 <div class="seclabel"><span class="num">01</span><span>Napkin math versus benchmarks</span><span class="ln"></span></div>
 <div class="sec2"><div class="slidecol"><a href="#" data-slide="13" class="sl"><img loading="lazy" class="main" src="img/building-turbopuffer/s13_960.webp" alt="slide at 16:00"></a><div class="slidecap">Slide at 16:00 &middot; click any slide to enlarge &middot; 5 more from this section below</div><div class=strip><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/building-turbopuffer/s14_1050.webp" alt="slide at 17:30"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/building-turbopuffer/s15_1130.webp" alt="slide at 18:50"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/building-turbopuffer/s16_1210.webp" alt="slide at 20:10"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/building-turbopuffer/s17_1280.webp" alt="slide at 21:20"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/building-turbopuffer/s18_1360.webp" alt="slide at 22:40"></a></div></div>
-<div class="textcol"><h2>Napkin math versus benchmarks</h2><ul class="takeaways"><li>While reviewing infrastructure decisions at Shopify, Eskildsen built a public reference table of hardware costs and latencies — DRAM bandwidth, S3 round-trip cost, NVMe throughput — so he could sanity-check vendor benchmarks against physical limits instead of accepting a slow benchmark number at face value.</li></ul><div class="quote"><p>&ldquo;napkin math was essentially just this table that I maintain on GitHub of how much bandwidth can you drive to DRAMM, what does a roundtrip to S3 cost, and how long does it take, how much bandwidth can you drive to an NVME SSD&rdquo;</p><span class="at">said at 16:00</span></div><div class="quote"><p>&ldquo;database A that you&#x27;re saying takes 10 seconds to do this should take 10 milliseconds if you do the napkin math right if it&#x27;s a search query right it&#x27;s like okay you&#x27;re searching for three terms&rdquo;</p><span class="at">said at 17:33</span></div></div>
+<div class="textcol"><h2>Napkin math versus benchmarks</h2><ul class="takeaways"><li>While reviewing infrastructure decisions at Shopify, Eskildsen built a public reference table of hardware costs and latencies, DRAM bandwidth, S3 round-trip cost, NVMe throughput, so he could sanity-check vendor benchmarks against physical limits instead of accepting a slow benchmark number at face value.</li></ul><div class="quote"><p>&ldquo;napkin math was essentially just this table that I maintain on GitHub of how much bandwidth can you drive to DRAMM, what does a roundtrip to S3 cost, and how long does it take, how much bandwidth can you drive to an NVME SSD&rdquo;</p><span class="at">said at 16:00</span></div><div class="quote"><p>&ldquo;database A that you&#x27;re saying takes 10 seconds to do this should take 10 milliseconds if you do the napkin math right if it&#x27;s a search query right it&#x27;s like okay you&#x27;re searching for three terms&rdquo;</p><span class="at">said at 17:33</span></div></div>
 </div>
 </section>
 <section class="block">
@@ -161,7 +244,7 @@ Slides below are frames from that recording, reproduced for reference and study;
 <section class="block">
 <div class="seclabel"><span class="num">04</span><span>CPUs are now the scarce resource</span><span class="ln"></span></div>
 <div class="sec2"><div class="slidecol"><a href="#" data-slide="30" class="sl"><img loading="lazy" class="main" src="img/building-turbopuffer/s30_2380.webp" alt="slide at 39:40"></a><div class="slidecap">Slide at 39:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="31" class="sl"><img loading="lazy" class="thumb" src="img/building-turbopuffer/s31_2430.webp" alt="slide at 40:30"></a><a href="#" data-slide="32" class="sl"><img loading="lazy" class="thumb" src="img/building-turbopuffer/s32_2520.webp" alt="slide at 42:00"></a><a href="#" data-slide="33" class="sl"><img loading="lazy" class="thumb" src="img/building-turbopuffer/s33_2590.webp" alt="slide at 43:10"></a><a href="#" data-slide="34" class="sl"><img loading="lazy" class="thumb" src="img/building-turbopuffer/s34_2670.webp" alt="slide at 44:30"></a><a href="#" data-slide="35" class="sl"><img loading="lazy" class="thumb" src="img/building-turbopuffer/s35_2710.webp" alt="slide at 45:10"></a><a href="#" data-slide="36" class="sl"><img loading="lazy" class="thumb" src="img/building-turbopuffer/s36_2780.webp" alt="slide at 46:20"></a><a href="#" data-slide="37" class="sl"><img loading="lazy" class="thumb" src="img/building-turbopuffer/s37_2830.webp" alt="slide at 47:10"></a><a href="#" data-slide="38" class="sl"><img loading="lazy" class="thumb" src="img/building-turbopuffer/s38_2870.webp" alt="slide at 47:50"></a></div></div>
-<div class="textcol"><h2>CPUs are now the scarce resource</h2><ul class="takeaways"><li>Eskildsen says GPU scarcity gets the attention, but RL training workloads — teaching models to search, use tools, and run real environments — are consuming a large and growing share of available CPU capacity, making CPUs hard to get even for well-funded AI labs.</li></ul><div class="quote"><p>&ldquo;the labs are sucking up a lot of CPUs because you need CPUs to be like, okay, we need to like teach this model how to how to search.&rdquo;</p><span class="at">said at 39:20</span></div></div>
+<div class="textcol"><h2>CPUs are now the scarce resource</h2><ul class="takeaways"><li>Eskildsen says GPU scarcity gets the attention, but RL training workloads, teaching models to search, use tools, and run real environments, are consuming a large and growing share of available CPU capacity, making CPUs hard to get even for well-funded AI labs.</li></ul><div class="quote"><p>&ldquo;the labs are sucking up a lot of CPUs because you need CPUs to be like, okay, we need to like teach this model how to how to search.&rdquo;</p><span class="at">said at 39:20</span></div></div>
 </div>
 </section>
 <section class="block">

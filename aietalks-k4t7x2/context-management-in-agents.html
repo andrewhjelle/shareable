@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>How we solved Context Management in Agents — Talk Brief</title>
+<title>How we solved Context Management in Agents &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,132 @@ Quotes are verbatim from the talk transcript with the time they were said.</span
 <p class="deck" style="font-size:15px">Documents a tested progression -- naive truncation, then summarization, then a head/tail truncation-plus-memory hybrid plus sub-agent offload -- for an agent (Alex) built on top of large observability trace data</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Building Alex (Arize&#x27;s agent) on its own trace data created a vicious loop: growing span data hit context limits and caused failures; naive truncation and LLM summarization both failed to fix it (c1, c2, c3)</li><li>The fix that stuck: &#x27;smart truncation memory&#x27; -- keep the first and last 100 characters, drop/store the middle in memory -- combined with moving heavy data retrieval into sub-agents so the main conversation stays light (c4, c5)</li><li>Conversations have grown from under 10 turns to regularly 20+ turns; the team catches late-session failures with evals that load 10 turns and test the 11th, and concludes agents fail from bad context, not bad prompts (c6, c7, c8)</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="How Alex&#x27;s context management evolved (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">HOW ALEX&#x27;S CONTEXT MANAGEMENT EVOLVED (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">PROBLEM</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">Alex runs on own traces</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">growing span data hits context limit,</text><text x="206" y="107" font-size="8.5" text-anchor="middle" fill="#807565">fails</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Naive truncation</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">keep first 100 chars, drop rest</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">LLM summarization</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">too inconsistent, no control over</text><text x="654" y="107" font-size="8.5" text-anchor="middle" fill="#807565">importance</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">FIXES TRIED</text><rect x="101" y="178" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Smart truncation memory</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">keep first+last 100 chars, store</text><text x="206" y="225" font-size="8.5" text-anchor="middle" fill="#807565">middle</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Sub-agent offload</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">heavy trace search moved out of main</text><text x="430" y="225" font-size="8.5" text-anchor="middle" fill="#807565">chat</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Long-session evals</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">load 10 turns, test the 11th</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">OUTCOME</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Conversations now 20+ turns</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">up from under 10 turns per session</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Context causes failures</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">not prompts, per closing takeaway</text><line x1="311" y1="89" x2="325" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">first fix</text><line x1="311" y1="89" x2="549" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">next try</text><path d="M430,118 V127 H193 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="312" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">kept, tuned</text><path d="M654,118 V135 H219 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="436" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replaced by</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">plus</text><line x1="535" y1="207" x2="549" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">surfaces bugs</text><path d="M654,236 V245 H318 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="486" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">explains growth</text><path d="M193,236 V253 H529 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="361" y="251" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">supports</text><path d="M417,236 V261 H555 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="486" y="259" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">supports</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">The team moved from one-shot fixes (truncate, then summarize) to a combined head/tail-plus-memory and sub-agent architecture, and long-session evals now catch the failures that motivated it (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW ALEX&#x27;S CONTEXT MANAGEMENT EVOLVED (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 368.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- loop -->
+<g id="node1" class="node">
+<title>loop</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="263.04,-473.93 91.62,-473.93 91.62,-437.65 263.04,-437.65 263.04,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="118.08" y="-455.84" font-family="Geist Mono" font-size="11.00">Alex runs on own traces</text>
+<text xml:space="preserve" text-anchor="start" x="104.58" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">growing span data hits context limit, fails</text>
+</g>
+<!-- trunc -->
+<g id="node2" class="node">
+<title>trunc</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="154.29,-386.4 20.37,-386.4 20.37,-350.12 154.29,-350.12 154.29,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="47.58" y="-368.31" font-family="Geist Mono" font-size="11.00">Naive truncation</text>
+<text xml:space="preserve" text-anchor="start" x="33.33" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">keep first 100 chars, drop rest</text>
+</g>
+<!-- loop&#45;&gt;trunc -->
+<g id="edge1" class="edge">
+<title>loop&#45;&gt;trunc</title>
+<path fill="none" stroke="#c8501f" d="M158.69,-437.07C145.17,-424.22 126.76,-406.73 112.02,-392.72"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="113.82,-391.05 107.06,-388 110.44,-394.6 113.82,-391.05"/>
+<text xml:space="preserve" text-anchor="middle" x="151.6" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">first fix</text>
+</g>
+<!-- summ -->
+<g id="node3" class="node">
+<title>summ</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="360.42,-386.4 176.25,-386.4 176.25,-350.12 360.42,-350.12 360.42,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="221.83" y="-368.31" font-family="Geist Mono" font-size="11.00">LLM summarization</text>
+<text xml:space="preserve" text-anchor="start" x="189.21" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">too inconsistent, no control over importance</text>
+</g>
+<!-- loop&#45;&gt;summ -->
+<g id="edge2" class="edge">
+<title>loop&#45;&gt;summ</title>
+<path fill="none" stroke="#c8501f" d="M196.19,-437.07C209.86,-424.22 228.47,-406.73 243.37,-392.72"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="244.98,-394.58 248.4,-388 241.62,-391 244.98,-394.58"/>
+<text xml:space="preserve" text-anchor="middle" x="243.28" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">next try</text>
+</g>
+<!-- smart -->
+<g id="node4" class="node">
+<title>smart</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="259.29,-298.87 95.37,-298.87 95.37,-262.59 259.29,-262.59 259.29,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="115.46" y="-280.78" font-family="Geist Mono" font-size="11.00">Smart truncation memory</text>
+<text xml:space="preserve" text-anchor="start" x="108.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">keep first+last 100 chars, store middle</text>
+</g>
+<!-- trunc&#45;&gt;smart -->
+<g id="edge3" class="edge">
+<title>trunc&#45;&gt;smart</title>
+<path fill="none" stroke="#c8501f" d="M105.98,-349.54C119.5,-336.69 137.91,-319.2 152.65,-305.19"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="154.23,-307.07 157.61,-300.47 150.85,-303.52 154.23,-307.07"/>
+<text xml:space="preserve" text-anchor="middle" x="159.1" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">kept, tuned</text>
+</g>
+<!-- summ&#45;&gt;smart -->
+<g id="edge4" class="edge">
+<title>summ&#45;&gt;smart</title>
+<path fill="none" stroke="#c8501f" d="M249.48,-349.54C235.81,-336.69 217.2,-319.2 202.3,-305.19"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="204.05,-303.47 197.27,-300.47 200.69,-307.05 204.05,-303.47"/>
+<text xml:space="preserve" text-anchor="middle" x="250.03" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+<!-- subagent -->
+<g id="node5" class="node">
+<title>subagent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="199.92,-211.34 18.75,-211.34 18.75,-175.06 199.92,-175.06 199.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="65.83" y="-193.25" font-family="Geist Mono" font-size="11.00">Sub&#45;agent offload</text>
+<text xml:space="preserve" text-anchor="start" x="31.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">heavy trace search moved out of main chat</text>
+</g>
+<!-- smart&#45;&gt;subagent -->
+<g id="edge5" class="edge">
+<title>smart&#45;&gt;subagent</title>
+<path fill="none" stroke="#c8501f" d="M163.25,-262.01C153.22,-249.39 139.62,-232.29 128.59,-218.42"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="130.62,-217.04 124.35,-213.08 126.79,-220.09 130.62,-217.04"/>
+<text xml:space="preserve" text-anchor="middle" x="154.91" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">plus</text>
+</g>
+<!-- takeaway -->
+<g id="node8" class="node">
+<title>takeaway</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="319.17,-123.81 169.5,-123.81 169.5,-87.53 319.17,-87.53 319.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="187.33" y="-105.72" font-family="Geist Mono" font-size="11.00">Context causes failures</text>
+<text xml:space="preserve" text-anchor="start" x="182.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">not prompts, per closing takeaway</text>
+</g>
+<!-- smart&#45;&gt;takeaway -->
+<g id="edge8" class="edge">
+<title>smart&#45;&gt;takeaway</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M187.06,-262.08C194.33,-248.47 204.19,-229.05 211.33,-211.34 221.97,-184.98 231.42,-153.79 237.45,-132.36"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="239.75,-133.23 239.26,-125.83 235.03,-131.92 239.75,-133.23"/>
+<text xml:space="preserve" text-anchor="middle" x="240.2" y="-190.75" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">supports</text>
+</g>
+<!-- eval -->
+<g id="node6" class="node">
+<title>eval</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="147.79,-123.81 22.87,-123.81 22.87,-87.53 147.79,-87.53 147.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="39.58" y="-105.72" font-family="Geist Mono" font-size="11.00">Long&#45;session evals</text>
+<text xml:space="preserve" text-anchor="start" x="35.83" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">load 10 turns, test the 11th</text>
+</g>
+<!-- subagent&#45;&gt;eval -->
+<g id="edge6" class="edge">
+<title>subagent&#45;&gt;eval</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M104.36,-174.48C100.95,-162.32 96.37,-146 92.56,-132.41"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="94.96,-131.9 90.71,-125.83 90.24,-133.23 94.96,-131.9"/>
+<text xml:space="preserve" text-anchor="middle" x="124.27" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">surfaces bugs</text>
+</g>
+<!-- subagent&#45;&gt;takeaway -->
+<g id="edge9" class="edge">
+<title>subagent&#45;&gt;takeaway</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M137.31,-174.48C158.21,-161.23 186.93,-143.04 209.36,-128.83"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="210.52,-131 215.12,-125.18 207.9,-126.86 210.52,-131"/>
+<text xml:space="preserve" text-anchor="middle" x="200.67" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">supports</text>
+</g>
+<!-- growth -->
+<g id="node7" class="node">
+<title>growth</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="170.67,-36.28 0,-36.28 0,0 170.67,0 170.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Conversations now 20+ turns</text>
+<text xml:space="preserve" text-anchor="start" x="22.33" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">up from under 10 turns per session</text>
+</g>
+<!-- eval&#45;&gt;growth -->
+<g id="edge7" class="edge">
+<title>eval&#45;&gt;growth</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M85.33,-86.95C85.33,-74.91 85.33,-58.78 85.33,-45.27"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="87.79,-45.35 85.34,-38.35 82.89,-45.35 87.79,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="114.96" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">explains growth</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The team moved from one-shot fixes (truncate, then summarize) to a combined head/tail-plus-memory and sub-agent architecture, and long-session evals now catch the failures that motivated it (ours).</p></section>
 
 
 

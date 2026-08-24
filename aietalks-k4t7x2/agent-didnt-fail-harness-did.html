@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Your Agent Didn&#x27;t Fail. Your Harness Did. — Talk Brief</title>
+<title>Your Agent Didn&#x27;t Fail. Your Harness Did. &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,160 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">This talk gives a checklist of concrete failure modes and a five-question audit for anyone operating a production agent, using real OpenClaw GitHub issues as case studies</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Core claim: most production agent failures are harness failures, not model failures; the most dangerous failure shape is a silent success, where the user-visible reply looks fine but the durable state was never recorded, leaving no error boundary to notice.</li><li>Using real OpenClaw issues, the talk documents five recurring failure modes: state holes (delivered but not remembered), overlapping writers (last-writer-wins silently erasing concurrent updates), dangling tool calls (the agent waits forever on an event that never arrives), approval drift (expired approvals treated as still valid), and missing edge proof (internal success without confirmed user-visible delivery).</li><li>Recommendation: audit one production agent trace with five questions -- what woke it up, what state did it inherit, what authority did it use, what executed, and what evidence survived -- because a transcript proves what the agent said, not what the system actually did.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="The harness contract and where it breaks (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">THE HARNESS CONTRACT AND WHERE IT BREAKS (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">PRODUCTION CONTRACT</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">Model proposes</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">an action, not an execution</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Harness commits</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">state transition and checks authority</text><rect x="549" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">Receipt proves</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">what actually happened</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">FAILURE MODES</text><rect x="24" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="100" y="197" font-size="11" text-anchor="middle" fill="#14110D">Silent success</text><text x="100" y="213" font-size="8.5" text-anchor="middle" fill="#807565">reply looked fine, state</text><text x="100" y="225" font-size="8.5" text-anchor="middle" fill="#807565">never persisted</text><rect x="189" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="265" y="197" font-size="11" text-anchor="middle" fill="#14110D">Overlapping writers</text><text x="265" y="213" font-size="8.5" text-anchor="middle" fill="#807565">last-writer-wins erases the</text><text x="265" y="225" font-size="8.5" text-anchor="middle" fill="#807565">first write</text><rect x="354" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Dangling tool call</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">tool call with no matching</text><text x="430" y="225" font-size="8.5" text-anchor="middle" fill="#807565">result</text><rect x="520" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="595" y="197" font-size="11" text-anchor="middle" fill="#14110D">Approval drift</text><text x="595" y="213" font-size="8.5" text-anchor="middle" fill="#807565">expired approval treated as</text><text x="595" y="225" font-size="8.5" text-anchor="middle" fill="#807565">still valid</text><rect x="685" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="760" y="197" font-size="11" text-anchor="middle" fill="#14110D">Missing edge proof</text><text x="760" y="213" font-size="8.5" text-anchor="middle" fill="#807565">internal success, no</text><text x="760" y="225" font-size="8.5" text-anchor="middle" fill="#807565">confirmed user delivery</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">AUDIT</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Five-question audit</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">woke, inherited, authority, executed,</text><text x="430" y="343" font-size="8.5" text-anchor="middle" fill="#807565">evidence</text><line x1="311" y1="89" x2="325" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">proposes</text><line x1="535" y1="89" x2="549" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">commits</text><path d="M365,118 V127 H100 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="232" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">breaks as</text><path d="M391,118 V135 H265 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="328" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">breaks as</text><path d="M417,118 V143 H430 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="455" y="141" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">breaks as</text><path d="M443,118 V151 H595 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="519" y="149" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">breaks as</text><path d="M469,118 V127 H760 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="615" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">breaks as</text><path d="M100,236 V245 H378 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="239" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">surfaced by</text><path d="M265,236 V253 H404 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="334" y="251" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">surfaced by</text><path d="M430,236 V261 H430 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="468" y="259" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">surfaced by</text><path d="M595,236 V269 H456 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="526" y="267" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">surfaced by</text><path d="M760,236 V245 H482 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="621" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">surfaced by</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s own three-part contract (propose, commit, receipt) into the five OpenClaw failure modes it catalogs as breaks in the commit step, closing with its five-question audit (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">THE HARNESS CONTRACT AND WHERE IT BREAKS (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 1026.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- propose -->
+<g id="node1" class="node">
+<title>propose</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="518.42,-298.87 395,-298.87 395,-262.59 518.42,-262.59 518.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="418.46" y="-280.78" font-family="Geist Mono" font-size="11.00">Model proposes</text>
+<text xml:space="preserve" text-anchor="start" x="407.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">an action, not an execution</text>
+</g>
+<!-- commit -->
+<g id="node2" class="node">
+<title>commit</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="535.3,-211.34 378.13,-211.34 378.13,-175.06 535.3,-175.06 535.3,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="414.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Harness commits</text>
+<text xml:space="preserve" text-anchor="start" x="391.09" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">state transition and checks authority</text>
+</g>
+<!-- propose&#45;&gt;commit -->
+<g id="edge1" class="edge">
+<title>propose&#45;&gt;commit</title>
+<path fill="none" stroke="#c8501f" d="M456.71,-262.01C456.71,-249.97 456.71,-233.84 456.71,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="459.16,-220.41 456.71,-213.41 454.26,-220.41 459.16,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="473.21" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">proposes</text>
+</g>
+<!-- receipt -->
+<g id="node3" class="node">
+<title>receipt</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="111.42,-123.81 0,-123.81 0,-87.53 111.42,-87.53 111.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="19.71" y="-105.72" font-family="Geist Mono" font-size="11.00">Receipt proves</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">what actually happened</text>
+</g>
+<!-- commit&#45;&gt;receipt -->
+<g id="edge2" class="edge">
+<title>commit&#45;&gt;receipt</title>
+<path fill="none" stroke="#c8501f" d="M377.52,-177.11C309.7,-163.91 209.52,-143.79 122.71,-123.81 121.83,-123.61 120.95,-123.4 120.06,-123.2"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="120.81,-120.86 113.43,-121.62 119.67,-125.62 120.81,-120.86"/>
+<text xml:space="preserve" text-anchor="middle" x="276.1" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">commits</text>
+</g>
+<!-- silent -->
+<g id="node4" class="node">
+<title>silent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="298.05,-123.81 133.38,-123.81 133.38,-87.53 298.05,-87.53 298.05,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="181.59" y="-105.72" font-family="Geist Mono" font-size="11.00">Silent success</text>
+<text xml:space="preserve" text-anchor="start" x="146.34" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">reply looked fine, state never persisted</text>
+</g>
+<!-- commit&#45;&gt;silent -->
+<g id="edge3" class="edge">
+<title>commit&#45;&gt;silent</title>
+<path fill="none" stroke="#c8501f" d="M406.48,-174.37C367.81,-160.65 314.3,-141.66 273.79,-127.28"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="274.72,-125.01 267.3,-124.98 273.08,-129.63 274.72,-125.01"/>
+<text xml:space="preserve" text-anchor="middle" x="368.64" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">breaks as</text>
+</g>
+<!-- writers -->
+<g id="node5" class="node">
+<title>writers</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="477.3,-123.81 320.13,-123.81 320.13,-87.53 477.3,-87.53 477.3,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="351.84" y="-105.72" font-family="Geist Mono" font-size="11.00">Overlapping writers</text>
+<text xml:space="preserve" text-anchor="start" x="333.09" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">last&#45;writer&#45;wins erases the first write</text>
+</g>
+<!-- commit&#45;&gt;writers -->
+<g id="edge4" class="edge">
+<title>commit&#45;&gt;writers</title>
+<path fill="none" stroke="#c8501f" d="M444.69,-174.48C436.22,-161.98 424.75,-145.07 415.39,-131.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="417.52,-130.04 411.56,-125.62 413.46,-132.79 417.52,-130.04"/>
+<text xml:space="preserve" text-anchor="middle" x="449.18" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">breaks as</text>
+</g>
+<!-- dangling -->
+<g id="node6" class="node">
+<title>dangling</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="638.3,-123.81 499.13,-123.81 499.13,-87.53 638.3,-87.53 638.3,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="527.09" y="-105.72" font-family="Geist Mono" font-size="11.00">Dangling tool call</text>
+<text xml:space="preserve" text-anchor="start" x="512.09" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">tool call with no matching result</text>
+</g>
+<!-- commit&#45;&gt;dangling -->
+<g id="edge5" class="edge">
+<title>commit&#45;&gt;dangling</title>
+<path fill="none" stroke="#c8501f" d="M479.92,-174.48C497.04,-161.4 520.47,-143.51 538.96,-129.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="540.25,-131.48 544.33,-125.29 537.28,-127.59 540.25,-131.48"/>
+<text xml:space="preserve" text-anchor="middle" x="537.42" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">breaks as</text>
+</g>
+<!-- approval -->
+<g id="node7" class="node">
+<title>approval</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="815.17,-123.81 660.25,-123.81 660.25,-87.53 815.17,-87.53 815.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="705.09" y="-105.72" font-family="Geist Mono" font-size="11.00">Approval drift</text>
+<text xml:space="preserve" text-anchor="start" x="673.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">expired approval treated as still valid</text>
+</g>
+<!-- commit&#45;&gt;approval -->
+<g id="edge6" class="edge">
+<title>commit&#45;&gt;approval</title>
+<path fill="none" stroke="#c8501f" d="M515.27,-174.37C560.74,-160.54 623.79,-141.34 671.16,-126.93"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="671.79,-129.3 677.77,-124.91 670.36,-124.61 671.79,-129.3"/>
+<text xml:space="preserve" text-anchor="middle" x="632.03" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">breaks as</text>
+</g>
+<!-- edge -->
+<g id="node8" class="node">
+<title>edge</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="1018.3,-123.81 837.12,-123.81 837.12,-87.53 1018.3,-87.53 1018.3,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="881.59" y="-105.72" font-family="Geist Mono" font-size="11.00">Missing edge proof</text>
+<text xml:space="preserve" text-anchor="start" x="850.09" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">internal success, no confirmed user delivery</text>
+</g>
+<!-- commit&#45;&gt;edge -->
+<g id="edge7" class="edge">
+<title>commit&#45;&gt;edge</title>
+<path fill="none" stroke="#c8501f" d="M535.81,-177.84C616.28,-163.22 741.2,-140.54 828.31,-124.72"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="828.68,-127.14 835.13,-123.48 827.8,-122.32 828.68,-127.14"/>
+<text xml:space="preserve" text-anchor="middle" x="738.41" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">breaks as</text>
+</g>
+<!-- audit -->
+<g id="node9" class="node">
+<title>audit</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="664.17,-36.28 473.25,-36.28 473.25,0 664.17,0 664.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="522.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Five&#45;question audit</text>
+<text xml:space="preserve" text-anchor="start" x="486.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">woke, inherited, authority, executed, evidence</text>
+</g>
+<!-- silent&#45;&gt;audit -->
+<g id="edge8" class="edge">
+<title>silent&#45;&gt;audit</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M289.28,-86.84C347.1,-72.83 427.57,-53.34 487.32,-38.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="487.54,-41.33 493.76,-37.3 486.38,-36.57 487.54,-41.33"/>
+<text xml:space="preserve" text-anchor="middle" x="435.09" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">surfaced by</text>
+</g>
+<!-- writers&#45;&gt;audit -->
+<g id="edge9" class="edge">
+<title>writers&#45;&gt;audit</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M433.93,-86.95C460.72,-73.47 497.68,-54.88 526.12,-40.57"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="527.03,-42.85 532.18,-37.52 524.82,-38.48 527.03,-42.85"/>
+<text xml:space="preserve" text-anchor="middle" x="515.64" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">surfaced by</text>
+</g>
+<!-- dangling&#45;&gt;audit -->
+<g id="edge10" class="edge">
+<title>dangling&#45;&gt;audit</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M568.71,-86.95C568.71,-74.91 568.71,-58.78 568.71,-45.27"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="571.16,-45.35 568.71,-38.35 566.26,-45.35 571.16,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="590.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">surfaced by</text>
+</g>
+<!-- approval&#45;&gt;audit -->
+<g id="edge11" class="edge">
+<title>approval&#45;&gt;audit</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M702.69,-86.95C676.07,-73.47 639.32,-54.88 611.05,-40.57"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="612.38,-38.5 605.03,-37.52 610.17,-42.87 612.38,-38.5"/>
+<text xml:space="preserve" text-anchor="middle" x="685.08" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">surfaced by</text>
+</g>
+<!-- edge&#45;&gt;audit -->
+<g id="edge12" class="edge">
+<title>edge&#45;&gt;audit</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M852.89,-86.84C794.09,-72.83 712.25,-53.34 651.49,-38.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="652.28,-36.53 644.91,-37.29 651.15,-41.3 652.28,-36.53"/>
+<text xml:space="preserve" text-anchor="middle" x="791.45" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">surfaced by</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s own three-part contract (propose, commit, receipt) into the five OpenClaw failure modes it catalogs as breaks in the commit step, closing with its five-question audit (ours).</p></section>
 
 
 

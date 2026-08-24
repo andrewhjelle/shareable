@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>One Login to Rule Them All: Cross-App Access for MCP — Talk Brief</title>
+<title>One Login to Rule Them All: Cross-App Access for MCP &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,146 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Directly relevant to anyone rolling out MCP servers/clients (Claude Code, Cursor) across a team: explains why per-tool OAuth consent doesn&#x27;t scale, why IT loses visibility into which MCP servers and AI agents are in use, and why leftover...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>MCP&#x27;s OAuth-based consent flow requires a separate approval per tool per user, and at team scale this becomes dozens of people managing dozens of consent screens with no IT visibility into which MCP servers or AI clients are in use.</li><li>Leftover OAuth access and refresh tokens can leave MCP server access valid for days, weeks, or months after an employee&#x27;s SSO access is revoked, since most companies don&#x27;t use SCIM for full revocation.</li><li>WorkOS&#x27;s cross-app access (XAA) fix uses the identity provider as a trust broker issuing short-lived ID Jag tokens (about 5 minutes) so access auto-expires if the SSO session is locked, but it only solves authentication, not authorization/scoping, and Microsoft Entra doesn&#x27;t support it yet.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="How cross-app access replaces per-tool OAuth consent (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">HOW CROSS-APP ACCESS REPLACES PER-TOOL OAUTH CONSENT (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">TODAY: PER-APP OAUTH</text><rect x="24" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="79" font-size="11" text-anchor="middle" fill="#14110D">Per-tool consent screen</text><text x="120" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Clicked through unread, repeated</text><text x="120" y="107" font-size="8.5" text-anchor="middle" fill="#807565">per tool</text><rect x="230" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="327" y="79" font-size="11" text-anchor="middle" fill="#14110D">Dozens of consent screens</text><text x="327" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Half a dozen to dozen MCP servers x</text><text x="327" y="107" font-size="8.5" text-anchor="middle" fill="#807565">team</text><rect x="437" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="533" y="79" font-size="11" text-anchor="middle" fill="#14110D">IT loses visibility</text><text x="533" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Can&#x27;t tell which AI clients</text><text x="533" y="107" font-size="8.5" text-anchor="middle" fill="#807565">employees use</text><rect x="644" y="60" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="740" y="79" font-size="11" text-anchor="middle" fill="#14110D">Leftover OAuth tokens</text><text x="740" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Valid days to months after SSO</text><text x="740" y="107" font-size="8.5" text-anchor="middle" fill="#807565">revoked</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">XAA TRUST BROKER FLOW</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">IDP as trust broker</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Okta/Entra already trusted via SSO</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Client gets ID Jag token</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Identity JWT authorization grant</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Exchange for access token</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">MCP server auth server issues token</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">WHAT XAA LEAVES UNSOLVED</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Access auto-expires</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">~5 min TTL, re-requested while SSO</text><text x="206" y="343" font-size="8.5" text-anchor="middle" fill="#807565">active</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">No authorization scoping</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Solves authN only, not authZ by</text><text x="430" y="343" font-size="8.5" text-anchor="middle" fill="#807565">default</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">Entra not supported yet</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Microsoft working with WorkOS on it</text><line x1="216" y1="89" x2="230" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">repeats per tool</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">no IT insight</text><line x1="630" y1="89" x2="644" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="636" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">still exposed</text><path d="M740,118 V127 H206 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="473" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">XAA fixes this</text><line x1="311" y1="207" x2="325" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">refresh token</text><line x1="535" y1="207" x2="549" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">ID Jag</text><path d="M654,236 V245 H206 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">~5 min TTL</text><line x1="311" y1="325" x2="325" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">still a gap</text><line x1="535" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">Entra pending</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s OAuth pain points into the ID Jag exchange and the gaps the speaker flagged in Q&amp;A; lane boundaries are our grouping of the claims (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW CROSS-APP ACCESS REPLACES PER-TOOL OAUTH CONSENT (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 187.00 832.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 828.05)">
+<title>G</title>
+<!-- consent -->
+<g id="node1" class="node">
+<title>consent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="177.42,-824.05 1.5,-824.05 1.5,-787.77 177.42,-787.77 177.42,-824.05"/>
+<text xml:space="preserve" text-anchor="start" x="31.71" y="-805.96" font-family="Geist Mono" font-size="11.00">Per&#45;tool consent screen</text>
+<text xml:space="preserve" text-anchor="start" x="14.46" y="-797.81" font-family="Geist Mono" font-size="8.00" fill="#807565">Clicked through unread, repeated per tool</text>
+</g>
+<!-- scale -->
+<g id="node2" class="node">
+<title>scale</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="177.79,-736.52 1.12,-736.52 1.12,-700.24 177.79,-700.24 177.79,-736.52"/>
+<text xml:space="preserve" text-anchor="start" x="23.46" y="-718.43" font-family="Geist Mono" font-size="11.00">Dozens of consent screens</text>
+<text xml:space="preserve" text-anchor="start" x="14.08" y="-710.28" font-family="Geist Mono" font-size="8.00" fill="#807565">Half a dozen to dozen MCP servers x team</text>
+</g>
+<!-- consent&#45;&gt;scale -->
+<g id="edge1" class="edge">
+<title>consent&#45;&gt;scale</title>
+<path fill="none" stroke="#c8501f" d="M89.46,-787.19C89.46,-775.15 89.46,-759.02 89.46,-745.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="91.91,-745.59 89.46,-738.59 87.01,-745.59 91.91,-745.59"/>
+<text xml:space="preserve" text-anchor="middle" x="119.46" y="-759.69" font-family="Geist Mono" font-size="8.50" fill="#c8501f">repeats per tool</text>
+</g>
+<!-- visibility -->
+<g id="node3" class="node">
+<title>visibility</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="174.04,-648.99 4.88,-648.99 4.88,-612.71 174.04,-612.71 174.04,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="49.71" y="-630.9" font-family="Geist Mono" font-size="11.00">IT loses visibility</text>
+<text xml:space="preserve" text-anchor="start" x="17.83" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">Can&#39;t tell which AI clients employees use</text>
+</g>
+<!-- scale&#45;&gt;visibility -->
+<g id="edge2" class="edge">
+<title>scale&#45;&gt;visibility</title>
+<path fill="none" stroke="#c8501f" d="M89.46,-699.66C89.46,-687.62 89.46,-671.49 89.46,-657.98"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="91.91,-658.06 89.46,-651.06 87.01,-658.06 91.91,-658.06"/>
+<text xml:space="preserve" text-anchor="middle" x="113.46" y="-672.16" font-family="Geist Mono" font-size="8.50" fill="#c8501f">no IT insight</text>
+</g>
+<!-- leftover -->
+<g id="node4" class="node">
+<title>leftover</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="172.92,-561.46 6,-561.46 6,-525.18 172.92,-525.18 172.92,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="34.71" y="-543.37" font-family="Geist Mono" font-size="11.00">Leftover OAuth tokens</text>
+<text xml:space="preserve" text-anchor="start" x="18.96" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">Valid days to months after SSO revoked</text>
+</g>
+<!-- visibility&#45;&gt;leftover -->
+<g id="edge3" class="edge">
+<title>visibility&#45;&gt;leftover</title>
+<path fill="none" stroke="#c8501f" d="M89.46,-612.13C89.46,-600.09 89.46,-583.96 89.46,-570.45"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="91.91,-570.53 89.46,-563.53 87.01,-570.53 91.91,-570.53"/>
+<text xml:space="preserve" text-anchor="middle" x="113.08" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#c8501f">still exposed</text>
+</g>
+<!-- idp -->
+<g id="node5" class="node">
+<title>idp</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="165.42,-473.93 13.5,-473.93 13.5,-437.65 165.42,-437.65 165.42,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="42.96" y="-455.84" font-family="Geist Mono" font-size="11.00">IDP as trust broker</text>
+<text xml:space="preserve" text-anchor="start" x="26.46" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">Okta/Entra already trusted via SSO</text>
+</g>
+<!-- leftover&#45;&gt;idp -->
+<g id="edge4" class="edge">
+<title>leftover&#45;&gt;idp</title>
+<path fill="none" stroke="#c8501f" d="M89.46,-524.6C89.46,-512.56 89.46,-496.43 89.46,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="91.91,-483 89.46,-476 87.01,-483 91.91,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="116.08" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">XAA fixes this</text>
+</g>
+<!-- idjag -->
+<g id="node6" class="node">
+<title>idjag</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="161.29,-386.4 17.62,-386.4 17.62,-350.12 161.29,-350.12 161.29,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="30.58" y="-368.31" font-family="Geist Mono" font-size="11.00">Client gets ID Jag token</text>
+<text xml:space="preserve" text-anchor="start" x="31.33" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Identity JWT authorization grant</text>
+</g>
+<!-- idp&#45;&gt;idjag -->
+<g id="edge5" class="edge">
+<title>idp&#45;&gt;idjag</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M89.46,-437.07C89.46,-425.03 89.46,-408.9 89.46,-395.39"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="91.91,-395.47 89.46,-388.47 87.01,-395.47 91.91,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="114.58" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">refresh token</text>
+</g>
+<!-- exchange -->
+<g id="node7" class="node">
+<title>exchange</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="168.04,-298.87 10.88,-298.87 10.88,-262.59 168.04,-262.59 168.04,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="23.83" y="-280.78" font-family="Geist Mono" font-size="11.00">Exchange for access token</text>
+<text xml:space="preserve" text-anchor="start" x="24.58" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">MCP server auth server issues token</text>
+</g>
+<!-- idjag&#45;&gt;exchange -->
+<g id="edge6" class="edge">
+<title>idjag&#45;&gt;exchange</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M89.46,-349.54C89.46,-337.5 89.46,-321.37 89.46,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="91.91,-307.94 89.46,-300.94 87.01,-307.94 91.91,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="101.83" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">ID Jag</text>
+</g>
+<!-- autoexpire -->
+<g id="node8" class="node">
+<title>autoexpire</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="178.92,-211.34 0,-211.34 0,-175.06 178.92,-175.06 178.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="40.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Access auto&#45;expires</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">~5 min TTL, re&#45;requested while SSO active</text>
+</g>
+<!-- exchange&#45;&gt;autoexpire -->
+<g id="edge7" class="edge">
+<title>exchange&#45;&gt;autoexpire</title>
+<path fill="none" stroke="#c8501f" d="M89.46,-262.01C89.46,-249.97 89.46,-233.84 89.46,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="91.91,-220.41 89.46,-213.41 87.01,-220.41 91.91,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="111.58" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">~5 min TTL</text>
+</g>
+<!-- authgap -->
+<g id="node9" class="node">
+<title>authgap</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="172.54,-123.81 6.38,-123.81 6.38,-87.53 172.54,-87.53 172.54,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="29.08" y="-105.72" font-family="Geist Mono" font-size="11.00">No authorization scoping</text>
+<text xml:space="preserve" text-anchor="start" x="19.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Solves authN only, not authZ by default</text>
+</g>
+<!-- autoexpire&#45;&gt;authgap -->
+<g id="edge8" class="edge">
+<title>autoexpire&#45;&gt;authgap</title>
+<path fill="none" stroke="#c8501f" d="M89.46,-174.48C89.46,-162.44 89.46,-146.31 89.46,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="91.91,-132.88 89.46,-125.88 87.01,-132.88 91.91,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="108.21" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">still a gap</text>
+</g>
+<!-- entragap -->
+<g id="node10" class="node">
+<title>entragap</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="166.54,-36.28 12.38,-36.28 12.38,0 166.54,0 166.54,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="31.33" y="-18.19" font-family="Geist Mono" font-size="11.00">Entra not supported yet</text>
+<text xml:space="preserve" text-anchor="start" x="25.33" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Microsoft working with WorkOS on it</text>
+</g>
+<!-- authgap&#45;&gt;entragap -->
+<g id="edge9" class="edge">
+<title>authgap&#45;&gt;entragap</title>
+<path fill="none" stroke="#c8501f" d="M89.46,-86.95C89.46,-74.91 89.46,-58.78 89.46,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="91.91,-45.35 89.46,-38.35 87.01,-45.35 91.91,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="115.33" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">Entra pending</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s OAuth pain points into the ID Jag exchange and the gaps the speaker flagged in Q&amp;A; lane boundaries are our grouping of the claims (ours).</p></section>
 
 
 

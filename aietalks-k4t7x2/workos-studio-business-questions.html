@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Why Can&#x27;t Anyone Answer Questions About the Business? — Talk Brief</title>
+<title>Why Can&#x27;t Anyone Answer Questions About the Business? &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,153 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Describes an internal agent (Studio, built on LangGraph and Opus) that lets non-technical teams query Snowflake/Linear/Notion directly and turn answers into reusable, non-LLM-dependent dashboard widgets</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Studio lets non-technical teams ask business questions directly against Snowflake/Linear/Notion via a LangGraph agent on Opus, replacing slow Slack-and-dashboard request cycles.</li><li>Answers can be turned into reusable &#x27;widgets&#x27; -- generated declarative code (UI, APIs, queries) that reruns live without invoking the LLM again, so cost and reliability don&#x27;t scale with usage.</li><li>Reliability came from three practices: injecting tool-specific context only at the moment a tool is invoked (not preloaded), layering base/org/tool-specific rules, and validating that generated queries actually return data before hardcoding them into widgets.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Studio: from Slack question to reusable widget (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">STUDIO: FROM SLACK QUESTION TO REUSABLE WIDGET (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">REQUEST</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Dashboard / Slack bot</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">Entry points for a business question</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">AGENT</text><rect x="24" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="100" y="197" font-size="11" text-anchor="middle" fill="#14110D">Pre-flight checks</text><text x="100" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Tool connectivity,</text><text x="100" y="225" font-size="8.5" text-anchor="middle" fill="#807565">sufficient context</text><rect x="189" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="265" y="197" font-size="11" text-anchor="middle" fill="#14110D">LangGraph agent (Opus)</text><text x="265" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Runs request, decides tools</text><text x="265" y="225" font-size="8.5" text-anchor="middle" fill="#807565">to call</text><rect x="354" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Just-in-time tool context</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Injected only when a tool</text><text x="430" y="225" font-size="8.5" text-anchor="middle" fill="#807565">is invoked</text><rect x="520" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="595" y="197" font-size="11" text-anchor="middle" fill="#14110D">Distrust pretrained knowledge</text><text x="595" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Looks up docs, not model</text><text x="595" y="225" font-size="8.5" text-anchor="middle" fill="#807565">memory</text><rect x="685" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="760" y="197" font-size="11" text-anchor="middle" fill="#14110D">Validate query returns data</text><text x="760" y="213" font-size="8.5" text-anchor="middle" fill="#807565">Runs query before</text><text x="760" y="225" font-size="8.5" text-anchor="middle" fill="#807565">hardcoding it</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">DATA SOURCES</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Snowflake / Linear / Notion</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Queried via integration proxy</text><rect x="437" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Convex session state</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">Persists context across sessions</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">OUTPUT</text><rect x="213" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="433" font-size="11" text-anchor="middle" fill="#14110D">Widget</text><text x="318" y="449" font-size="8.5" text-anchor="middle" fill="#807565">Sandboxed UI + API + query, reruns</text><text x="318" y="461" font-size="8.5" text-anchor="middle" fill="#807565">live</text><rect x="437" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="433" font-size="11" text-anchor="middle" fill="#14110D">Support self-serve in Slack</text><text x="542" y="449" font-size="8.5" text-anchor="middle" fill="#807565">No LLM call on refresh</text><path d="M430,118 V127 H100 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="265" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">asks question</text><line x1="175" y1="207" x2="189" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="182" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">passes request</text><line x1="340" y1="207" x2="354" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="347" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">on tool call</text><line x1="340" y1="207" x2="520" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">checks product facts</text><path d="M430,236 V245 H305 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="368" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">queries</text><path d="M595,236 V253 H331 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="463" y="251" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">looks up docs</text><path d="M239,236 V261 H542 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="390" y="259" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">persists state</text><path d="M318,296 V287 H760 V236" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="539" y="285" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">returns rows</text><path d="M760,236 V269 H318 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="539" y="267" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">hardcodes query</text><line x1="423" y1="443" x2="437" y2="443" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="439" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">reruns without LLM</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">Studio&#x27;s reliability comes from checking context before acting, injecting tool guidance late, and re-validating queries before they become permanent widgets (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">STUDIO: FROM SLACK QUESTION TO REUSABLE WIDGET (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 518.00 657.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 652.99)">
+<title>G</title>
+<!-- user -->
+<g id="node1" class="node">
+<title>user</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="338.42,-648.99 185,-648.99 185,-612.71 338.42,-612.71 338.42,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="207.34" y="-630.9" font-family="Geist Mono" font-size="11.00">Dashboard / Slack bot</text>
+<text xml:space="preserve" text-anchor="start" x="197.96" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">Entry points for a business question</text>
+</g>
+<!-- preflight -->
+<g id="node2" class="node">
+<title>preflight</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="336.55,-561.46 186.88,-561.46 186.88,-525.18 336.55,-525.18 336.55,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="221.59" y="-543.37" font-family="Geist Mono" font-size="11.00">Pre&#45;flight checks</text>
+<text xml:space="preserve" text-anchor="start" x="199.84" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">Tool connectivity, sufficient context</text>
+</g>
+<!-- user&#45;&gt;preflight -->
+<g id="edge1" class="edge">
+<title>user&#45;&gt;preflight</title>
+<path fill="none" stroke="#c8501f" d="M261.71,-612.13C261.71,-600.09 261.71,-583.96 261.71,-570.45"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="264.16,-570.53 261.71,-563.53 259.26,-570.53 264.16,-570.53"/>
+<text xml:space="preserve" text-anchor="middle" x="287.21" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#c8501f">asks question</text>
+</g>
+<!-- langgraph -->
+<g id="node3" class="node">
+<title>langgraph</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="335.8,-473.93 187.63,-473.93 187.63,-437.65 335.8,-437.65 335.8,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="200.96" y="-455.84" font-family="Geist Mono" font-size="11.00">LangGraph agent (Opus)</text>
+<text xml:space="preserve" text-anchor="start" x="200.59" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">Runs request, decides tools to call</text>
+</g>
+<!-- preflight&#45;&gt;langgraph -->
+<g id="edge2" class="edge">
+<title>preflight&#45;&gt;langgraph</title>
+<path fill="none" stroke="#c8501f" d="M261.71,-524.6C261.71,-512.56 261.71,-496.43 261.71,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="264.16,-483 261.71,-476 259.26,-483 264.16,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="289.46" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">passes request</text>
+</g>
+<!-- context -->
+<g id="node4" class="node">
+<title>context</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="153.42,-386.4 0,-386.4 0,-350.12 153.42,-350.12 153.42,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="17.84" y="-368.31" font-family="Geist Mono" font-size="11.00">Just&#45;in&#45;time tool context</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Injected only when a tool is invoked</text>
+</g>
+<!-- langgraph&#45;&gt;context -->
+<g id="edge3" class="edge">
+<title>langgraph&#45;&gt;context</title>
+<path fill="none" stroke="#c8501f" d="M223.38,-437.07C194.11,-423.54 153.66,-404.84 122.66,-390.5"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="123.75,-388.31 116.37,-387.59 121.69,-392.76 123.75,-388.31"/>
+<text xml:space="preserve" text-anchor="middle" x="201.29" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">on tool call</text>
+</g>
+<!-- distrust -->
+<g id="node5" class="node">
+<title>distrust</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="347.8,-386.4 175.63,-386.4 175.63,-350.12 347.8,-350.12 347.8,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="188.59" y="-368.31" font-family="Geist Mono" font-size="11.00">Distrust pretrained knowledge</text>
+<text xml:space="preserve" text-anchor="start" x="200.59" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Looks up docs, not model memory</text>
+</g>
+<!-- langgraph&#45;&gt;distrust -->
+<g id="edge4" class="edge">
+<title>langgraph&#45;&gt;distrust</title>
+<path fill="none" stroke="#c8501f" d="M261.71,-437.07C261.71,-425.03 261.71,-408.9 261.71,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="264.16,-395.47 261.71,-388.47 259.26,-395.47 264.16,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="299.96" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">checks product facts</text>
+</g>
+<!-- convex -->
+<g id="node8" class="node">
+<title>convex</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="509.67,-386.4 369.75,-386.4 369.75,-350.12 509.67,-350.12 509.67,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="387.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Convex session state</text>
+<text xml:space="preserve" text-anchor="start" x="382.71" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Persists context across sessions</text>
+</g>
+<!-- langgraph&#45;&gt;convex -->
+<g id="edge7" class="edge">
+<title>langgraph&#45;&gt;convex</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M301.9,-436.99C315.26,-430.96 330.18,-424.12 343.71,-417.65 361.52,-409.13 381.01,-399.39 397.74,-390.89"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="398.75,-393.13 403.87,-387.77 396.52,-388.76 398.75,-393.13"/>
+<text xml:space="preserve" text-anchor="middle" x="390.02" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">persists state</text>
+</g>
+<!-- sources -->
+<g id="node7" class="node">
+<title>sources</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="248.8,-298.87 88.63,-298.87 88.63,-262.59 248.8,-262.59 248.8,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="101.59" y="-280.78" font-family="Geist Mono" font-size="11.00">Snowflake / Linear / Notion</text>
+<text xml:space="preserve" text-anchor="start" x="116.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Queried via integration proxy</text>
+</g>
+<!-- context&#45;&gt;sources -->
+<g id="edge5" class="edge">
+<title>context&#45;&gt;sources</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M95.77,-349.54C109.59,-336.69 128.41,-319.2 143.47,-305.19"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="145.1,-307.02 148.56,-300.46 141.77,-303.43 145.1,-307.02"/>
+<text xml:space="preserve" text-anchor="middle" x="141.72" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">queries</text>
+</g>
+<!-- distrust&#45;&gt;sources -->
+<g id="edge6" class="edge">
+<title>distrust&#45;&gt;sources</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M242.44,-349.54C228.35,-336.58 209.11,-318.88 193.82,-304.82"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="195.88,-303.39 189.07,-300.45 192.56,-307 195.88,-303.39"/>
+<text xml:space="preserve" text-anchor="middle" x="246.28" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">looks up docs</text>
+</g>
+<!-- validate -->
+<g id="node6" class="node">
+<title>validate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="247.67,-211.34 89.75,-211.34 89.75,-175.06 247.67,-175.06 247.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="102.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Validate query returns data</text>
+<text xml:space="preserve" text-anchor="start" x="111.34" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Runs query before hardcoding it</text>
+</g>
+<!-- widget -->
+<g id="node9" class="node">
+<title>widget</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="254.05,-123.81 83.38,-123.81 83.38,-87.53 254.05,-87.53 254.05,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="151.84" y="-105.72" font-family="Geist Mono" font-size="11.00">Widget</text>
+<text xml:space="preserve" text-anchor="start" x="96.34" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Sandboxed UI + API + query, reruns live</text>
+</g>
+<!-- validate&#45;&gt;widget -->
+<g id="edge9" class="edge">
+<title>validate&#45;&gt;widget</title>
+<path fill="none" stroke="#c8501f" d="M168.71,-174.48C168.71,-162.44 168.71,-146.31 168.71,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="171.16,-132.88 168.71,-125.88 166.26,-132.88 171.16,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="199.46" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">hardcodes query</text>
+</g>
+<!-- sources&#45;&gt;validate -->
+<g id="edge8" class="edge">
+<title>sources&#45;&gt;validate</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M168.71,-262.01C168.71,-249.97 168.71,-233.84 168.71,-220.33"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="171.16,-220.41 168.71,-213.41 166.26,-220.41 171.16,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="191.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">returns rows</text>
+</g>
+<!-- support -->
+<g id="node10" class="node">
+<title>support</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="245.8,-36.28 91.63,-36.28 91.63,0 245.8,0 245.8,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="104.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Support self&#45;serve in Slack</text>
+<text xml:space="preserve" text-anchor="start" x="129.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">No LLM call on refresh</text>
+</g>
+<!-- widget&#45;&gt;support -->
+<g id="edge10" class="edge">
+<title>widget&#45;&gt;support</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M168.71,-86.95C168.71,-74.91 168.71,-58.78 168.71,-45.27"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="171.16,-45.35 168.71,-38.35 166.26,-45.35 171.16,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="205.09" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">reruns without LLM</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Studio&#x27;s reliability comes from checking context before acting, injecting tool guidance late, and re-validating queries before they become permanent widgets (ours).</p></section>
 
 
 

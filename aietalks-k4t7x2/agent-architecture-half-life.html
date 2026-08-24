@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Your agent architecture has a half-life of 6 months — Talk Brief</title>
+<title>Your agent architecture has a half-life of 6 months &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,160 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Gives a concrete layering model (execution/context/compute) and a specific anti-pattern (using an ephemeral sandbox for durability/state) for deciding what to build durably versus what to treat as disposable in an agent stack</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Agent systems have three layers with different decay rates: execution (the brain, lasts years if built right), context (models/prompts/tools, changes fastest), and compute/sandboxes (the hands) (c1, c2).</li><li>The fix for constant rewrites is to decouple these layers so a stable execution layer survives model and framework churn, rather than coupling everything together (c3, c6).</li><li>The execution layer must provide resumability with externally-held state, flexible invocation patterns, and full-session observability, while sandboxes should stay ephemeral and never be used for durability (c4, c5, c7).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Three-layer agent stack: context, execution, compute (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">THREE-LAYER AGENT STACK: CONTEXT, EXECUTION, COMPUTE (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">EXECUTION LAYER (STABLE CORE)</text><rect x="24" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="79" font-size="11" text-anchor="middle" fill="#14110D">Execution layer</text><text x="120" y="95" font-size="8.5" text-anchor="middle" fill="#807565">flow, state, durability, retries</text><text x="120" y="107" font-size="8.5" text-anchor="middle" fill="#807565">(years)</text><rect x="230" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="79" font-size="11" text-anchor="middle" fill="#14110D">Decouple layers</text><text x="327" y="95" font-size="8.5" text-anchor="middle" fill="#807565">stable core swaps models/tools</text><text x="327" y="107" font-size="8.5" text-anchor="middle" fill="#807565">freely</text><rect x="437" y="60" width="192" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="533" y="79" font-size="11" text-anchor="middle" fill="#14110D">External state</text><text x="533" y="95" font-size="8.5" text-anchor="middle" fill="#807565">3-hr run can&#x27;t hold state in</text><text x="533" y="107" font-size="8.5" text-anchor="middle" fill="#807565">memory/disk</text><rect x="644" y="60" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="79" font-size="11" text-anchor="middle" fill="#14110D">Inngest = exec layer</text><text x="740" y="95" font-size="8.5" text-anchor="middle" fill="#807565">pluggable w/ any model, framework,</text><text x="740" y="107" font-size="8.5" text-anchor="middle" fill="#807565">sandbox</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">CONTEXT LAYER (FASTEST CHURN)</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">Context layer</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">models, prompts, tools, memory</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">Half-life: wk vs months</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">prompts ~1wk, models ~months if lucky</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">COMPUTE LAYER (THE HANDS)</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Compute layer</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">sandboxes, runtimes, browsers (hands)</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Sandbox as durability</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">ephemeral+stateless; anti-pattern to</text><text x="430" y="343" font-size="8.5" text-anchor="middle" fill="#807565">hold state</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">Leaky harness logic</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">absorbs queues, workers, polling,</text><text x="654" y="343" font-size="8.5" text-anchor="middle" fill="#807565">backoff</text><path d="M318,178 V169 H55 V118" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="187" y="167" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">feeds</text><line x1="437" y1="207" x2="423" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">explains</text><path d="M107,118 V127 H193 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="150" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">dispatches</text><path d="M193,296 V287 H81 V118" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="137" y="285" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">returns</text><line x1="216" y1="89" x2="437" y2="89" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="327" y="85" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">persists</text><line x1="437" y1="89" x2="216" y2="89" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="327" y="85" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">resumes</text><line x1="230" y1="89" x2="216" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">stabilizes</text><path d="M301,118 V135 H305 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="339" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">swaps freely</text><path d="M327,118 V143 H219 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="273" y="141" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">swaps freely</text><line x1="311" y1="325" x2="325" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">misused as</text><path d="M654,296 V279 H107 V118" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="381" y="277" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">fills gap</text><line x1="644" y1="89" x2="216" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">implements</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This reads the talk&#x27;s own layering model as decoupled lanes, with the execution layer as stable core and sandboxes kept stateless (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">THREE-LAYER AGENT STACK: CONTEXT, EXECUTION, COMPUTE (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 707.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- exec -->
+<g id="node1" class="node">
+<title>exec</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="311.42,-211.34 155.75,-211.34 155.75,-175.06 311.42,-175.06 311.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="196.83" y="-193.25" font-family="Geist Mono" font-size="11.00">Execution layer</text>
+<text xml:space="preserve" text-anchor="start" x="168.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">flow, state, durability, retries (years)</text>
+</g>
+<!-- state -->
+<g id="node3" class="node">
+<title>state</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="374.17,-123.81 205,-123.81 205,-87.53 374.17,-87.53 374.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="255.83" y="-105.72" font-family="Geist Mono" font-size="11.00">External state</text>
+<text xml:space="preserve" text-anchor="start" x="217.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">3&#45;hr run can&#39;t hold state in memory/disk</text>
+</g>
+<!-- exec&#45;&gt;state -->
+<g id="edge5" class="edge">
+<title>exec&#45;&gt;state</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M229.95,-174.64C228.85,-164.99 229.05,-153.12 234.08,-143.81 236.97,-138.48 240.98,-133.78 245.55,-129.67"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="246.97,-131.68 250.89,-125.39 243.9,-127.86 246.97,-131.68"/>
+<text xml:space="preserve" text-anchor="middle" x="248.33" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">persists</text>
+</g>
+<!-- compute -->
+<g id="node7" class="node">
+<title>compute</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="183.42,-123.81 15.75,-123.81 15.75,-87.53 183.42,-87.53 183.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="64.33" y="-105.72" font-family="Geist Mono" font-size="11.00">Compute layer</text>
+<text xml:space="preserve" text-anchor="start" x="28.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">sandboxes, runtimes, browsers (hands)</text>
+</g>
+<!-- exec&#45;&gt;compute -->
+<g id="edge3" class="edge">
+<title>exec&#45;&gt;compute</title>
+<path fill="none" stroke="#c8501f" d="M205.82,-174.48C185.07,-161.23 156.56,-143.04 134.3,-128.83"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="135.81,-126.88 128.59,-125.18 133.17,-131.01 135.81,-126.88"/>
+<text xml:space="preserve" text-anchor="middle" x="194.11" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">dispatches</text>
+</g>
+<!-- decouple -->
+<g id="node2" class="node">
+<title>decouple</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="163.67,-386.4 3.5,-386.4 3.5,-350.12 163.67,-350.12 163.67,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="44.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Decouple layers</text>
+<text xml:space="preserve" text-anchor="start" x="16.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">stable core swaps models/tools freely</text>
+</g>
+<!-- decouple&#45;&gt;exec -->
+<g id="edge7" class="edge">
+<title>decouple&#45;&gt;exec</title>
+<path fill="none" stroke="#c8501f" d="M80.49,-349.57C77.6,-327.21 76.05,-288.53 94.08,-262.59 109.3,-240.71 133.55,-225.53 157.59,-215.14"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="158.44,-217.44 163.98,-212.51 156.58,-212.91 158.44,-217.44"/>
+<text xml:space="preserve" text-anchor="middle" x="111.33" y="-278.28" font-family="Geist Mono" font-size="8.50" fill="#c8501f">stabilizes</text>
+</g>
+<!-- ctx -->
+<g id="node5" class="node">
+<title>ctx</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="685.3,-298.87 543.88,-298.87 543.88,-262.59 685.3,-262.59 685.3,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="582.34" y="-280.78" font-family="Geist Mono" font-size="11.00">Context layer</text>
+<text xml:space="preserve" text-anchor="start" x="556.84" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">models, prompts, tools, memory</text>
+</g>
+<!-- decouple&#45;&gt;ctx -->
+<g id="edge8" class="edge">
+<title>decouple&#45;&gt;ctx</title>
+<path fill="none" stroke="#c8501f" d="M164.1,-356.35C254.13,-343.84 404.16,-322.05 532.59,-298.87 533.48,-298.71 534.38,-298.54 535.28,-298.38"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="535.6,-300.81 542.03,-297.11 534.7,-296 535.6,-300.81"/>
+<text xml:space="preserve" text-anchor="middle" x="433.23" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">swaps freely</text>
+</g>
+<!-- decouple&#45;&gt;compute -->
+<g id="edge9" class="edge">
+<title>decouple&#45;&gt;compute</title>
+<path fill="none" stroke="#c8501f" d="M76.92,-349.7C67.94,-323.83 53.79,-273.93 60.33,-231.34 65.75,-196.08 79.32,-157.1 88.99,-132.28"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="91.24,-133.24 91.54,-125.83 86.68,-131.44 91.24,-133.24"/>
+<text xml:space="preserve" text-anchor="middle" x="83.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">swaps freely</text>
+</g>
+<!-- state&#45;&gt;exec -->
+<g id="edge6" class="edge">
+<title>state&#45;&gt;exec</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M281.19,-124.14C276.43,-133.55 270.13,-145.21 263.58,-155.06 260.7,-159.41 257.41,-163.87 254.1,-168.12"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="252.34,-166.4 249.88,-173.4 256.17,-169.46 252.34,-166.4"/>
+<text xml:space="preserve" text-anchor="middle" x="285.69" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">resumes</text>
+</g>
+<!-- ingest -->
+<g id="node4" class="node">
+<title>ingest</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="327.54,-298.87 139.62,-298.87 139.62,-262.59 327.54,-262.59 327.54,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="182.58" y="-280.78" font-family="Geist Mono" font-size="11.00">Inngest = exec layer</text>
+<text xml:space="preserve" text-anchor="start" x="152.58" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">pluggable w/ any model, framework, sandbox</text>
+</g>
+<!-- ingest&#45;&gt;exec -->
+<g id="edge12" class="edge">
+<title>ingest&#45;&gt;exec</title>
+<path fill="none" stroke="#c8501f" d="M233.58,-262.01C233.58,-249.97 233.58,-233.84 233.58,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="236.04,-220.41 233.59,-213.41 231.14,-220.41 236.04,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="255.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">implements</text>
+</g>
+<!-- ctx&#45;&gt;exec -->
+<g id="edge1" class="edge">
+<title>ctx&#45;&gt;exec</title>
+<path fill="none" stroke="#c8501f" d="M543.37,-263.74C480.14,-249.55 387.58,-228.77 320.1,-213.62"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="320.85,-211.28 313.48,-212.14 319.77,-216.06 320.85,-211.28"/>
+<text xml:space="preserve" text-anchor="middle" x="457.02" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">feeds</text>
+</g>
+<!-- halflife -->
+<g id="node6" class="node">
+<title>halflife</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="699.17,-386.4 530,-386.4 530,-350.12 699.17,-350.12 699.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="558.71" y="-368.31" font-family="Geist Mono" font-size="11.00">Half&#45;life: wk vs months</text>
+<text xml:space="preserve" text-anchor="start" x="542.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">prompts ~1wk, models ~months if lucky</text>
+</g>
+<!-- halflife&#45;&gt;ctx -->
+<g id="edge2" class="edge">
+<title>halflife&#45;&gt;ctx</title>
+<path fill="none" stroke="#c8501f" d="M614.59,-349.54C614.59,-337.5 614.59,-321.37 614.59,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="617.04,-307.94 614.59,-300.94 612.14,-307.94 617.04,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="629.96" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">explains</text>
+</g>
+<!-- compute&#45;&gt;exec -->
+<g id="edge4" class="edge">
+<title>compute&#45;&gt;exec</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M106.1,-124.45C110.65,-134.66 117.65,-147.02 127.33,-155.06 134.91,-161.35 143.62,-166.61 152.72,-170.99"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="151.68,-173.2 159.07,-173.84 153.69,-168.74 151.68,-173.2"/>
+<text xml:space="preserve" text-anchor="middle" x="140.46" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">returns</text>
+</g>
+<!-- antipattern -->
+<g id="node8" class="node">
+<title>antipattern</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="199.17,-36.28 0,-36.28 0,0 199.17,0 199.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="47.83" y="-18.19" font-family="Geist Mono" font-size="11.00">Sandbox as durability</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">ephemeral+stateless; anti&#45;pattern to hold state</text>
+</g>
+<!-- compute&#45;&gt;antipattern -->
+<g id="edge10" class="edge">
+<title>compute&#45;&gt;antipattern</title>
+<path fill="none" stroke="#c8501f" d="M99.58,-86.95C99.58,-74.91 99.58,-58.78 99.58,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.04,-45.35 99.59,-38.35 97.14,-45.35 102.04,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="120.58" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">misused as</text>
+</g>
+<!-- harness -->
+<g id="node9" class="node">
+<title>harness</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="522.04,-298.87 349.12,-298.87 349.12,-262.59 522.04,-262.59 522.04,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="387.96" y="-280.78" font-family="Geist Mono" font-size="11.00">Leaky harness logic</text>
+<text xml:space="preserve" text-anchor="start" x="362.08" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">absorbs queues, workers, polling, backoff</text>
+</g>
+<!-- harness&#45;&gt;exec -->
+<g id="edge11" class="edge">
+<title>harness&#45;&gt;exec</title>
+<path fill="none" stroke="#c8501f" d="M393.73,-262.01C361.5,-248.36 316.86,-229.46 282.9,-215.08"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="284.18,-212.96 276.78,-212.49 282.27,-217.47 284.18,-212.96"/>
+<text xml:space="preserve" text-anchor="middle" x="361.68" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">fills gap</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This reads the talk&#x27;s own layering model as decoupled lanes, with the execution layer as stable core and sandboxes kept stateless (ours).</p></section>
 
 
 

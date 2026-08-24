@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Don&#x27;t Let the LLM Drive — Talk Brief</title>
+<title>Don&#x27;t Let the LLM Drive &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,130 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Describes the harness pattern behind Ace, a live AI voice tutor: the LLM only executes one step of an externally-defined state machine at a time and never tracks lesson progress itself</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Multi-step agent unreliability (skipping steps, looping, declaring done early) is framed as a control problem, not a prompting problem, so the fix is a harness/state-machine, not better prompts (c1, c2).</li><li>Because each step is tightly scoped by the harness, Ace runs on Haiku 4.5 rather than a larger model like Opus 4.7 and still performs at the expected level, saving cost, time, and latency (c3).</li><li>Ace&#x27;s harness is organized around three questions engineered outside the model: is the lesson done, did the student get it right, and what comes next (c4).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Model as talent, harness as director (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">MODEL AS TALENT, HARNESS AS DIRECTOR (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">HARNESS (STATE MACHINE)</text><rect x="101" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">Lesson state</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">intro, teach, check, grade, advance,</text><text x="206" y="107" font-size="8.5" text-anchor="middle" fill="#807565">wrap</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Narrow contract</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">sends one scoped action per step</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">Advance state</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">harness picks next step, not the model</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">MODEL</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">Haiku 4.5</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">executes only the current step</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">Step response</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">returned to the harness for validation</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">HARNESS (DECISION LOGIC)</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Lesson done?</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">engineered outside the model</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Student got it right?</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">engineered outside the model</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">What comes next?</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">engineered outside the model</text><line x1="311" y1="89" x2="325" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">current step</text><path d="M430,118 V127 H318 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="374" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">scoped action</text><line x1="423" y1="207" x2="437" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">one action</text><path d="M529,236 V245 H206 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="368" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">validate</text><path d="M555,236 V253 H430 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="492" y="251" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">validate</text><line x1="311" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><line x1="535" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><path d="M654,296 V287 H654 V118" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="692" y="285" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">decision</text><line x1="549" y1="89" x2="311" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">loop</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">The talk frames Ace&#x27;s reliability as coming from a harness that owns state and decision logic while the model only executes one narrow step at a time; this reconstructs that loop from the slides and may simplify the actual implementation (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">MODEL AS TALENT, HARNESS AS DIRECTOR (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 364.00 559.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 555.21)">
+<title>G</title>
+<!-- state -->
+<g id="node1" class="node">
+<title>state</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="356.42,-551.21 182.75,-551.21 182.75,-514.93 356.42,-514.93 356.42,-551.21"/>
+<text xml:space="preserve" text-anchor="start" x="238.46" y="-533.12" font-family="Geist Mono" font-size="11.00">Lesson state</text>
+<text xml:space="preserve" text-anchor="start" x="195.71" y="-524.97" font-family="Geist Mono" font-size="8.00" fill="#807565">intro, teach, check, grade, advance, wrap</text>
+</g>
+<!-- contract -->
+<g id="node2" class="node">
+<title>contract</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="287.92,-463.68 141.25,-463.68 141.25,-427.4 287.92,-427.4 287.92,-463.68"/>
+<text xml:space="preserve" text-anchor="start" x="175.21" y="-445.59" font-family="Geist Mono" font-size="11.00">Narrow contract</text>
+<text xml:space="preserve" text-anchor="start" x="154.21" y="-437.44" font-family="Geist Mono" font-size="8.00" fill="#807565">sends one scoped action per step</text>
+</g>
+<!-- state&#45;&gt;contract -->
+<g id="edge1" class="edge">
+<title>state&#45;&gt;contract</title>
+<path fill="none" stroke="#c8501f" d="M258.19,-514.35C250.15,-501.85 239.28,-484.94 230.4,-471.14"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="232.63,-470.07 226.79,-465.51 228.51,-472.73 232.63,-470.07"/>
+<text xml:space="preserve" text-anchor="middle" x="267.88" y="-486.85" font-family="Geist Mono" font-size="8.50" fill="#c8501f">current step</text>
+</g>
+<!-- haiku -->
+<g id="node4" class="node">
+<title>haiku</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="276.29,-376.15 140.88,-376.15 140.88,-339.87 276.29,-339.87 276.29,-376.15"/>
+<text xml:space="preserve" text-anchor="start" x="185.71" y="-358.06" font-family="Geist Mono" font-size="11.00">Haiku 4.5</text>
+<text xml:space="preserve" text-anchor="start" x="153.83" y="-349.91" font-family="Geist Mono" font-size="8.00" fill="#807565">executes only the current step</text>
+</g>
+<!-- contract&#45;&gt;haiku -->
+<g id="edge2" class="edge">
+<title>contract&#45;&gt;haiku</title>
+<path fill="none" stroke="#c8501f" d="M213.34,-426.82C212.5,-414.78 211.37,-398.65 210.42,-385.14"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="212.87,-385.03 209.93,-378.22 207.98,-385.37 212.87,-385.03"/>
+<text xml:space="preserve" text-anchor="middle" x="237.44" y="-399.32" font-family="Geist Mono" font-size="8.50" fill="#c8501f">scoped action</text>
+</g>
+<!-- advance -->
+<g id="node3" class="node">
+<title>advance</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="353.92,-36.28 189.25,-36.28 189.25,0 353.92,0 353.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="236.71" y="-18.19" font-family="Geist Mono" font-size="11.00">Advance state</text>
+<text xml:space="preserve" text-anchor="start" x="202.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">harness picks next step, not the model</text>
+</g>
+<!-- advance&#45;&gt;state -->
+<g id="edge9" class="edge">
+<title>advance&#45;&gt;state</title>
+<path fill="none" stroke="#c8501f" d="M289.71,-36.69C304.37,-52.83 322.58,-78.22 322.58,-104.67 322.58,-446.54 322.58,-446.54 322.58,-446.54 322.58,-469.98 308.02,-492.35 294.16,-508.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="292.62,-506.38 289.74,-513.22 296.25,-509.67 292.62,-506.38"/>
+<text xml:space="preserve" text-anchor="middle" x="330.46" y="-268.03" font-family="Geist Mono" font-size="8.50" fill="#c8501f">loop</text>
+</g>
+<!-- response -->
+<g id="node5" class="node">
+<title>response</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="278.29,-288.62 118.87,-288.62 118.87,-252.34 278.29,-252.34 278.29,-288.62"/>
+<text xml:space="preserve" text-anchor="start" x="163.71" y="-270.53" font-family="Geist Mono" font-size="11.00">Step response</text>
+<text xml:space="preserve" text-anchor="start" x="131.83" y="-262.38" font-family="Geist Mono" font-size="8.00" fill="#807565">returned to the harness for validation</text>
+</g>
+<!-- haiku&#45;&gt;response -->
+<g id="edge3" class="edge">
+<title>haiku&#45;&gt;response</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M206.51,-339.29C205.11,-327.25 203.22,-311.12 201.64,-297.61"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="204.08,-297.35 200.83,-290.68 199.21,-297.92 204.08,-297.35"/>
+<text xml:space="preserve" text-anchor="middle" x="223.68" y="-311.79" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">one action</text>
+</g>
+<!-- done -->
+<g id="node6" class="node">
+<title>done</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="133.17,-201.09 0,-201.09 0,-164.81 133.17,-164.81 133.17,-201.09"/>
+<text xml:space="preserve" text-anchor="start" x="33.21" y="-183" font-family="Geist Mono" font-size="11.00">Lesson done?</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-174.85" font-family="Geist Mono" font-size="8.00" fill="#807565">engineered outside the model</text>
+</g>
+<!-- response&#45;&gt;done -->
+<g id="edge4" class="edge">
+<title>response&#45;&gt;done</title>
+<path fill="none" stroke="#c8501f" d="M171.23,-251.76C150.79,-238.51 122.71,-220.32 100.79,-206.11"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.38,-204.22 95.17,-202.47 99.71,-208.33 102.38,-204.22"/>
+<text xml:space="preserve" text-anchor="middle" x="155.49" y="-224.26" font-family="Geist Mono" font-size="8.50" fill="#c8501f">validate</text>
+</g>
+<!-- correct -->
+<g id="node7" class="node">
+<title>correct</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="288.17,-201.09 155,-201.09 155,-164.81 288.17,-164.81 288.17,-201.09"/>
+<text xml:space="preserve" text-anchor="start" x="172.83" y="-183" font-family="Geist Mono" font-size="11.00">Student got it right?</text>
+<text xml:space="preserve" text-anchor="start" x="167.96" y="-174.85" font-family="Geist Mono" font-size="8.00" fill="#807565">engineered outside the model</text>
+</g>
+<!-- response&#45;&gt;correct -->
+<g id="edge5" class="edge">
+<title>response&#45;&gt;correct</title>
+<path fill="none" stroke="#c8501f" d="M203.35,-251.76C206.62,-239.6 211.01,-223.28 214.66,-209.69"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="216.98,-210.51 216.43,-203.11 212.25,-209.23 216.98,-210.51"/>
+<text xml:space="preserve" text-anchor="middle" x="226.46" y="-224.26" font-family="Geist Mono" font-size="8.50" fill="#c8501f">validate</text>
+</g>
+<!-- next -->
+<g id="node8" class="node">
+<title>next</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="288.17,-123.81 155,-123.81 155,-87.53 288.17,-87.53 288.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="176.21" y="-105.72" font-family="Geist Mono" font-size="11.00">What comes next?</text>
+<text xml:space="preserve" text-anchor="start" x="167.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">engineered outside the model</text>
+</g>
+<!-- done&#45;&gt;next -->
+<g id="edge6" class="edge">
+<title>done&#45;&gt;next</title>
+<path fill="none" stroke="#c8501f" d="M102.93,-164.3C125.21,-153.48 153.89,-139.55 177.47,-128.09"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="178.35,-130.39 183.57,-125.13 176.21,-125.99 178.35,-130.39"/>
+</g>
+<!-- correct&#45;&gt;next -->
+<g id="edge7" class="edge">
+<title>correct&#45;&gt;next</title>
+<path fill="none" stroke="#c8501f" d="M221.58,-164.49C221.58,-155.06 221.58,-143.22 221.58,-132.72"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="224.04,-132.81 221.59,-125.81 219.14,-132.81 224.04,-132.81"/>
+</g>
+<!-- next&#45;&gt;advance -->
+<g id="edge8" class="edge">
+<title>next&#45;&gt;advance</title>
+<path fill="none" stroke="#c8501f" d="M231.95,-86.95C239.19,-74.56 248.96,-57.85 256.98,-44.12"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="259.06,-45.43 260.47,-38.15 254.83,-42.95 259.06,-45.43"/>
+<text xml:space="preserve" text-anchor="middle" x="264.58" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">decision</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The talk frames Ace&#x27;s reliability as coming from a harness that owns state and decision logic while the model only executes one narrow step at a time; this reconstructs that loop from the slides and may simplify the actual implementation (ours).</p></section>
 
 
 

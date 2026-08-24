@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Building an ACP-Compatible Agent Live — Talk Brief</title>
+<title>Building an ACP-Compatible Agent Live &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,151 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Fenner live-codes a minimal coding agent into ACP (Agent Client Protocol) compatibility with the Zed editor, showing the exact JSON-RPC methods (initialize, session/new, session/prompt, session/update) needed</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>ACP is a JSON-RPC protocol, similar in spirit to MCP or LSP, that lets any coding agent talk to any client editor through a unified interface; roughly 40 clients including Zed, JetBrains, and Obsidian already support it (c1, c2)</li><li>A minimal ACP agent only needs to implement initialize, session/new, session/prompt, and cancellation, streaming model output back to the client as session updates (c3, c4)</li><li>ACP can proxy the client&#x27;s file system so the agent sees unsaved editor buffer changes, not just what&#x27;s on disk, and currently runs over standard IO with remote transport in progress (c5, c6)</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Minimal ACP agent wiring (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">MINIMAL ACP AGENT WIRING (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">EDITOR CLIENT</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Zed / JetBrains / Obsidian</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">~40 clients support ACP</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">ACP PROTOCOL</text><rect x="24" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="100" y="197" font-size="11" text-anchor="middle" fill="#14110D">initialize</text><text x="100" y="213" font-size="8.5" text-anchor="middle" fill="#807565">protocol version and</text><text x="100" y="225" font-size="8.5" text-anchor="middle" fill="#807565">capabilities</text><rect x="189" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="265" y="197" font-size="11" text-anchor="middle" fill="#14110D">session/new</text><text x="265" y="213" font-size="8.5" text-anchor="middle" fill="#807565">creates a session</text><rect x="354" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">session/prompt</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">handles prompt, runs tool</text><text x="430" y="225" font-size="8.5" text-anchor="middle" fill="#807565">loop</text><rect x="520" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="595" y="197" font-size="11" text-anchor="middle" fill="#14110D">session/update</text><text x="595" y="213" font-size="8.5" text-anchor="middle" fill="#807565">streams text and tool call</text><text x="595" y="225" font-size="8.5" text-anchor="middle" fill="#807565">state</text><rect x="685" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="760" y="197" font-size="11" text-anchor="middle" fill="#14110D">file-system proxy</text><text x="760" y="213" font-size="8.5" text-anchor="middle" fill="#807565">sees unsaved editor buffer</text><text x="760" y="225" font-size="8.5" text-anchor="middle" fill="#807565">edits</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">AGENT PROCESS</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">tool loop</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">read-file / edit-file tools</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Model API</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">stateless, replays conversation so far</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">terminal tool</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">added live by prompting the agent</text><path d="M430,118 V127 H100 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="265" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">connect</text><line x1="175" y1="207" x2="189" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><line x1="340" y1="207" x2="354" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><path d="M417,236 V245 H193 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="305" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">run loop</text><line x1="311" y1="325" x2="325" y2="325" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">call API</text><line x1="325" y1="325" x2="311" y2="325" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">response</text><path d="M180,296 V287 H595 V236" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="388" y="285" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">stream update</text><path d="M595,178 V169 H417 V118" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="506" y="167" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">render UI</text><line x1="506" y1="207" x2="685" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="595" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">file read</text><path d="M760,178 V161 H443 V118" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="602" y="159" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">buffer state</text><line x1="311" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">extend</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the four required functions Fenner live-codes into a minimal ACP agent, from session setup through the tool loop to streamed UI updates; exact wiring inside the reference library may differ (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">MINIMAL ACP AGENT WIRING (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 497.00 472.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 467.68)">
+<title>G</title>
+<!-- client -->
+<g id="node1" class="node">
+<title>client</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="406.04,-463.68 252.62,-463.68 252.62,-427.4 406.04,-427.4 406.04,-463.68"/>
+<text xml:space="preserve" text-anchor="start" x="265.58" y="-445.59" font-family="Geist Mono" font-size="11.00">Zed / JetBrains / Obsidian</text>
+<text xml:space="preserve" text-anchor="start" x="286.58" y="-437.44" font-family="Geist Mono" font-size="8.00" fill="#807565">~40 clients support ACP</text>
+</g>
+<!-- init -->
+<g id="node2" class="node">
+<title>init</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="295.29,-376.15 155.38,-376.15 155.38,-339.87 295.29,-339.87 295.29,-376.15"/>
+<text xml:space="preserve" text-anchor="start" x="206.58" y="-358.06" font-family="Geist Mono" font-size="11.00">initialize</text>
+<text xml:space="preserve" text-anchor="start" x="168.33" y="-349.91" font-family="Geist Mono" font-size="8.00" fill="#807565">protocol version and capabilities</text>
+</g>
+<!-- client&#45;&gt;init -->
+<g id="edge1" class="edge">
+<title>client&#45;&gt;init</title>
+<path fill="none" stroke="#c8501f" d="M307.56,-426.81C300.03,-420.67 291.56,-413.74 283.83,-407.4 273.82,-399.17 262.87,-390.13 253.18,-382.11"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="254.82,-380.28 247.87,-377.71 251.7,-384.06 254.82,-380.28"/>
+<text xml:space="preserve" text-anchor="middle" x="298.08" y="-399.32" font-family="Geist Mono" font-size="8.50" fill="#c8501f">connect</text>
+</g>
+<!-- session_new -->
+<g id="node3" class="node">
+<title>session_new</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="269.42,-298.87 181.25,-298.87 181.25,-262.59 269.42,-262.59 269.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="194.96" y="-280.78" font-family="Geist Mono" font-size="11.00">session/new</text>
+<text xml:space="preserve" text-anchor="start" x="194.21" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">creates a session</text>
+</g>
+<!-- init&#45;&gt;session_new -->
+<g id="edge2" class="edge">
+<title>init&#45;&gt;session_new</title>
+<path fill="none" stroke="#c8501f" d="M225.33,-339.55C225.33,-330.12 225.33,-318.28 225.33,-307.78"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="227.79,-307.87 225.34,-300.87 222.89,-307.87 227.79,-307.87"/>
+</g>
+<!-- session_prompt -->
+<g id="node4" class="node">
+<title>session_prompt</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="293.04,-211.34 157.62,-211.34 157.62,-175.06 293.04,-175.06 293.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="187.83" y="-193.25" font-family="Geist Mono" font-size="11.00">session/prompt</text>
+<text xml:space="preserve" text-anchor="start" x="170.58" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">handles prompt, runs tool loop</text>
+</g>
+<!-- session_new&#45;&gt;session_prompt -->
+<g id="edge3" class="edge">
+<title>session_new&#45;&gt;session_prompt</title>
+<path fill="none" stroke="#c8501f" d="M225.33,-262.01C225.33,-249.97 225.33,-233.84 225.33,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="227.79,-220.41 225.34,-213.41 222.89,-220.41 227.79,-220.41"/>
+</g>
+<!-- fs_proxy -->
+<g id="node6" class="node">
+<title>fs_proxy</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="386.67,-123.81 246,-123.81 246,-87.53 386.67,-87.53 386.67,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="275.08" y="-105.72" font-family="Geist Mono" font-size="11.00">file&#45;system proxy</text>
+<text xml:space="preserve" text-anchor="start" x="258.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">sees unsaved editor buffer edits</text>
+</g>
+<!-- session_prompt&#45;&gt;fs_proxy -->
+<g id="edge9" class="edge">
+<title>session_prompt&#45;&gt;fs_proxy</title>
+<path fill="none" stroke="#c8501f" d="M244.19,-174.48C257.86,-161.63 276.47,-144.14 291.37,-130.13"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="292.98,-131.99 296.4,-125.41 289.62,-128.41 292.98,-131.99"/>
+<text xml:space="preserve" text-anchor="middle" x="292.03" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">file read</text>
+</g>
+<!-- tool_loop -->
+<g id="node7" class="node">
+<title>tool_loop</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="224.17,-123.81 116.5,-123.81 116.5,-87.53 224.17,-87.53 224.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="149.33" y="-105.72" font-family="Geist Mono" font-size="11.00">tool loop</text>
+<text xml:space="preserve" text-anchor="start" x="129.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">read&#45;file / edit&#45;file tools</text>
+</g>
+<!-- session_prompt&#45;&gt;tool_loop -->
+<g id="edge4" class="edge">
+<title>session_prompt&#45;&gt;tool_loop</title>
+<path fill="none" stroke="#c8501f" d="M213.94,-174.48C205.9,-161.98 195.03,-145.07 186.15,-131.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="188.38,-130.2 182.54,-125.64 184.26,-132.86 188.38,-130.2"/>
+<text xml:space="preserve" text-anchor="middle" x="216.5" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">run loop</text>
+</g>
+<!-- session_update -->
+<g id="node5" class="node">
+<title>session_update</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="489.17,-36.28 351.5,-36.28 351.5,0 489.17,0 489.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="383.21" y="-18.19" font-family="Geist Mono" font-size="11.00">session/update</text>
+<text xml:space="preserve" text-anchor="start" x="364.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">streams text and tool call state</text>
+</g>
+<!-- session_update&#45;&gt;client -->
+<g id="edge8" class="edge">
+<title>session_update&#45;&gt;client</title>
+<path fill="none" stroke="#c8501f" d="M420.33,-36.83C420.33,-54.13 420.33,-81.21 420.33,-104.67 420.33,-359.01 420.33,-359.01 420.33,-359.01 420.33,-386.71 397.66,-408.07 374.95,-422.52"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="373.94,-420.27 369.22,-425.99 376.48,-424.46 373.94,-420.27"/>
+<text xml:space="preserve" text-anchor="middle" x="437.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">render UI</text>
+</g>
+<!-- fs_proxy&#45;&gt;client -->
+<g id="edge10" class="edge">
+<title>fs_proxy&#45;&gt;client</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M320.59,-124.24C324.38,-141.45 329.33,-168.47 329.33,-192.2 329.33,-359.01 329.33,-359.01 329.33,-359.01 329.33,-378.99 329.33,-401.59 329.33,-418.54"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="326.89,-418.34 329.34,-425.34 331.79,-418.34 326.89,-418.34"/>
+<text xml:space="preserve" text-anchor="middle" x="351.46" y="-278.28" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">buffer state</text>
+</g>
+<!-- tool_loop&#45;&gt;session_update -->
+<g id="edge7" class="edge">
+<title>tool_loop&#45;&gt;session_update</title>
+<path fill="none" stroke="#c8501f" d="M222.44,-86.84C262.64,-73.09 318.29,-54.05 360.34,-39.66"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="361.04,-42.02 366.87,-37.43 359.45,-37.38 361.04,-42.02"/>
+<text xml:space="preserve" text-anchor="middle" x="337.68" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">stream update</text>
+</g>
+<!-- model_api -->
+<g id="node8" class="node">
+<title>model_api</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="158.67,-36.28 0,-36.28 0,0 158.67,0 158.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="54.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Model API</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">stateless, replays conversation so far</text>
+</g>
+<!-- tool_loop&#45;&gt;model_api -->
+<g id="edge5" class="edge">
+<title>tool_loop&#45;&gt;model_api</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M155.08,-87.08C146.62,-77.64 135.74,-65.98 125.33,-56.28 120.16,-51.45 114.43,-46.53 108.82,-41.91"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="110.49,-40.11 103.51,-37.61 107.41,-43.92 110.49,-40.11"/>
+<text xml:space="preserve" text-anchor="middle" x="149.95" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">call API</text>
+</g>
+<!-- terminal_tool -->
+<g id="node9" class="node">
+<title>terminal_tool</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="329.79,-36.28 180.88,-36.28 180.88,0 329.79,0 329.79,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="224.96" y="-18.19" font-family="Geist Mono" font-size="11.00">terminal tool</text>
+<text xml:space="preserve" text-anchor="start" x="193.83" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">added live by prompting the agent</text>
+</g>
+<!-- tool_loop&#45;&gt;terminal_tool -->
+<g id="edge11" class="edge">
+<title>tool_loop&#45;&gt;terminal_tool</title>
+<path fill="none" stroke="#c8501f" d="M187.95,-86.95C200.71,-74.1 218.1,-56.61 232.02,-42.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="233.48,-44.6 236.68,-37.91 230.01,-41.15 233.48,-44.6"/>
+<text xml:space="preserve" text-anchor="middle" x="230.67" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">extend</text>
+</g>
+<!-- model_api&#45;&gt;tool_loop -->
+<g id="edge6" class="edge">
+<title>model_api&#45;&gt;tool_loop</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M78.34,-36.86C78.68,-46.8 80.68,-58.9 87.33,-67.53 93.06,-74.95 100.59,-80.93 108.79,-85.73"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="107.14,-87.63 114.47,-88.78 109.46,-83.31 107.14,-87.63"/>
+<text xml:space="preserve" text-anchor="middle" x="103.83" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">response</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the four required functions Fenner live-codes into a minimal ACP agent, from session setup through the tool loop to streamed UI updates; exact wiring inside the reference library may differ (ours).</p></section>
 
 
 

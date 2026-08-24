@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>You Didn&#x27;t Ship a Bug. You Just Wrote It for a Human. — Talk Brief</title>
+<title>You Didn&#x27;t Ship a Bug. You Just Wrote It for a Human. &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,139 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Madabhushi names a specific, checkable failure mode: MCP servers and OAuth scopes built for human actors don&#x27;t constrain what an agent can do once it&#x27;s authenticated, so agents end up over-permissioned by default</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Most agents get more permissions and scopes than their actual job requires, because existing auth primitives don&#x27;t support fine-grained scoping.</li><li>Traditional auth assumes whoever authenticates is who acts, and that the actor is deterministic; agents break both assumptions since they act on behalf of a user and behave non-deterministically.</li><li>Most MCP servers surface all available tools regardless of which user authorized the agent, letting the agent pick the wrong tool for its context.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Binding agents to principals (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">BINDING AGENTS TO PRINCIPALS (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">OLD AUTH MODEL</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Human/service auth</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">authenticator=actor, fixed perms at</text><text x="430" y="107" font-size="8.5" text-anchor="middle" fill="#807565">registration</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">WHERE AGENTS BREAK IT</text><rect x="24" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="100" y="197" font-size="11" text-anchor="middle" fill="#14110D">Agents over-scoped</text><text x="100" y="213" font-size="8.5" text-anchor="middle" fill="#807565">way more perms/scopes than</text><text x="100" y="225" font-size="8.5" text-anchor="middle" fill="#807565">job needs</text><rect x="189" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="265" y="197" font-size="11" text-anchor="middle" fill="#14110D">Actor != principal</text><text x="265" y="213" font-size="8.5" text-anchor="middle" fill="#807565">agent acts on behalf of</text><text x="265" y="225" font-size="8.5" text-anchor="middle" fill="#807565">user, needs delegated</text><rect x="354" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Non-deterministic behavior</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">past runs don&#x27;t guarantee</text><text x="430" y="225" font-size="8.5" text-anchor="middle" fill="#807565">future runs</text><rect x="520" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="595" y="197" font-size="11" text-anchor="middle" fill="#14110D">MCP surfaces all tools</text><text x="595" y="213" font-size="8.5" text-anchor="middle" fill="#807565">no limit by which user</text><text x="595" y="225" font-size="8.5" text-anchor="middle" fill="#807565">authorized agent</text><rect x="685" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="760" y="197" font-size="11" text-anchor="middle" fill="#14110D">Real incidents</text><text x="760" y="213" font-size="8.5" text-anchor="middle" fill="#807565">agents have deleted</text><text x="760" y="225" font-size="8.5" text-anchor="middle" fill="#807565">production databases</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">THE FIX</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Bind actor to principal</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">agent gets own identity, fine-grained</text><text x="206" y="343" font-size="8.5" text-anchor="middle" fill="#807565">creds</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Least privilege + JIT</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">least privileged by default, ask for</text><text x="430" y="343" font-size="8.5" text-anchor="middle" fill="#807565">elevation</text><rect x="549" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">Full audit visibility</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">who authorized what, for how long</text><path d="M430,118 V127 H100 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="265" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">breaks under agents</text><line x1="175" y1="207" x2="189" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="182" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">root cause</text><line x1="340" y1="207" x2="354" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="347" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">plus</text><line x1="340" y1="207" x2="520" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">agent picks tool</text><line x1="671" y1="207" x2="685" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="678" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">wrong tool used</text><line x1="506" y1="207" x2="685" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="595" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">unpredictable</text><path d="M760,236 V245 H206 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="483" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">fix</text><line x1="311" y1="325" x2="325" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">then</text><line x1="535" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">plus</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces, in our reading, how Madabhushi&#x27;s talk moves from the old actor-equals-principal assumption through the specific ways agents break it to his recommended fix (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">BINDING AGENTS TO PRINCIPALS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 358.00 657.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 652.99)">
+<title>G</title>
+<!-- human_auth -->
+<g id="node1" class="node">
+<title>human_auth</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="272.67,-648.99 75,-648.99 75,-612.71 272.67,-612.71 272.67,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="124.71" y="-630.9" font-family="Geist Mono" font-size="11.00">Human/service auth</text>
+<text xml:space="preserve" text-anchor="start" x="87.96" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">authenticator=actor, fixed perms at registration</text>
+</g>
+<!-- over_scoped -->
+<g id="node2" class="node">
+<title>over_scoped</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="258.79,-561.46 88.87,-561.46 88.87,-525.18 258.79,-525.18 258.79,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="125.46" y="-543.37" font-family="Geist Mono" font-size="11.00">Agents over&#45;scoped</text>
+<text xml:space="preserve" text-anchor="start" x="101.83" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">way more perms/scopes than job needs</text>
+</g>
+<!-- human_auth&#45;&gt;over_scoped -->
+<g id="edge1" class="edge">
+<title>human_auth&#45;&gt;over_scoped</title>
+<path fill="none" stroke="#c8501f" d="M173.83,-612.13C173.83,-600.09 173.83,-583.96 173.83,-570.45"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="176.29,-570.53 173.84,-563.53 171.39,-570.53 176.29,-570.53"/>
+<text xml:space="preserve" text-anchor="middle" x="212.08" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#c8501f">breaks under agents</text>
+</g>
+<!-- actor_ne_principal -->
+<g id="node3" class="node">
+<title>actor_ne_principal</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="282.04,-473.93 65.62,-473.93 65.62,-437.65 282.04,-437.65 282.04,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="131.46" y="-455.84" font-family="Geist Mono" font-size="11.00">Actor != principal</text>
+<text xml:space="preserve" text-anchor="start" x="78.58" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">agent acts on behalf of user, needs delegated access</text>
+</g>
+<!-- over_scoped&#45;&gt;actor_ne_principal -->
+<g id="edge2" class="edge">
+<title>over_scoped&#45;&gt;actor_ne_principal</title>
+<path fill="none" stroke="#c8501f" d="M173.83,-524.6C173.83,-512.56 173.83,-496.43 173.83,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="176.29,-483 173.84,-476 171.39,-483 176.29,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="193.33" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">root cause</text>
+</g>
+<!-- nondeterministic -->
+<g id="node4" class="node">
+<title>nondeterministic</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="161.67,-386.4 0,-386.4 0,-350.12 161.67,-350.12 161.67,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="15.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Non&#45;deterministic behavior</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">past runs don&#39;t guarantee future runs</text>
+</g>
+<!-- actor_ne_principal&#45;&gt;nondeterministic -->
+<g id="edge3" class="edge">
+<title>actor_ne_principal&#45;&gt;nondeterministic</title>
+<path fill="none" stroke="#c8501f" d="M154.57,-437.07C140.47,-424.11 121.23,-406.41 105.94,-392.35"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="108,-390.92 101.19,-387.98 104.69,-394.53 108,-390.92"/>
+<text xml:space="preserve" text-anchor="middle" x="140.4" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">plus</text>
+</g>
+<!-- mcp_exposure -->
+<g id="node5" class="node">
+<title>mcp_exposure</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="349.92,-386.4 183.75,-386.4 183.75,-350.12 349.92,-350.12 349.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="213.21" y="-368.31" font-family="Geist Mono" font-size="11.00">MCP surfaces all tools</text>
+<text xml:space="preserve" text-anchor="start" x="196.71" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">no limit by which user authorized agent</text>
+</g>
+<!-- actor_ne_principal&#45;&gt;mcp_exposure -->
+<g id="edge4" class="edge">
+<title>actor_ne_principal&#45;&gt;mcp_exposure</title>
+<path fill="none" stroke="#c8501f" d="M193.1,-437.07C207.2,-424.11 226.44,-406.41 241.73,-392.35"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="242.98,-394.53 246.48,-387.98 239.67,-390.92 242.98,-394.53"/>
+<text xml:space="preserve" text-anchor="middle" x="255.9" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">agent picks tool</text>
+</g>
+<!-- incidents -->
+<g id="node6" class="node">
+<title>incidents</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="262.67,-298.87 83,-298.87 83,-262.59 262.67,-262.59 262.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="139.08" y="-280.78" font-family="Geist Mono" font-size="11.00">Real incidents</text>
+<text xml:space="preserve" text-anchor="start" x="95.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">agents have deleted production databases</text>
+</g>
+<!-- nondeterministic&#45;&gt;incidents -->
+<g id="edge6" class="edge">
+<title>nondeterministic&#45;&gt;incidents</title>
+<path fill="none" stroke="#c8501f" d="M99.9,-349.54C113.71,-336.69 132.53,-319.2 147.6,-305.19"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="149.23,-307.02 152.69,-300.46 145.89,-303.43 149.23,-307.02"/>
+<text xml:space="preserve" text-anchor="middle" x="157.47" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">unpredictable</text>
+</g>
+<!-- mcp_exposure&#45;&gt;incidents -->
+<g id="edge5" class="edge">
+<title>mcp_exposure&#45;&gt;incidents</title>
+<path fill="none" stroke="#c8501f" d="M247.36,-349.54C233.12,-336.58 213.67,-318.88 198.21,-304.82"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="200.23,-303.35 193.41,-300.45 196.94,-306.97 200.23,-303.35"/>
+<text xml:space="preserve" text-anchor="middle" x="255.46" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">wrong tool used</text>
+</g>
+<!-- bind_identity -->
+<g id="node7" class="node">
+<title>bind_identity</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="262.67,-211.34 83,-211.34 83,-175.06 262.67,-175.06 262.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="119.58" y="-193.25" font-family="Geist Mono" font-size="11.00">Bind actor to principal</text>
+<text xml:space="preserve" text-anchor="start" x="95.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">agent gets own identity, fine&#45;grained creds</text>
+</g>
+<!-- incidents&#45;&gt;bind_identity -->
+<g id="edge7" class="edge">
+<title>incidents&#45;&gt;bind_identity</title>
+<path fill="none" stroke="#c8501f" d="M172.83,-262.01C172.83,-249.97 172.83,-233.84 172.83,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="175.29,-220.41 172.84,-213.41 170.39,-220.41 175.29,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="177.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">fix</text>
+</g>
+<!-- jit_elevation -->
+<g id="node8" class="node">
+<title>jit_elevation</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="262.29,-123.81 83.37,-123.81 83.37,-87.53 262.29,-87.53 262.29,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="122.58" y="-105.72" font-family="Geist Mono" font-size="11.00">Least privilege + JIT</text>
+<text xml:space="preserve" text-anchor="start" x="96.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">least privileged by default, ask for elevation</text>
+</g>
+<!-- bind_identity&#45;&gt;jit_elevation -->
+<g id="edge8" class="edge">
+<title>bind_identity&#45;&gt;jit_elevation</title>
+<path fill="none" stroke="#c8501f" d="M172.83,-174.48C172.83,-162.44 172.83,-146.31 172.83,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="175.29,-132.88 172.84,-125.88 170.39,-132.88 175.29,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="181.08" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">then</text>
+</g>
+<!-- audit_visibility -->
+<g id="node9" class="node">
+<title>audit_visibility</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="248.04,-36.28 97.62,-36.28 97.62,0 248.04,0 248.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="130.46" y="-18.19" font-family="Geist Mono" font-size="11.00">Full audit visibility</text>
+<text xml:space="preserve" text-anchor="start" x="110.58" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">who authorized what, for how long</text>
+</g>
+<!-- jit_elevation&#45;&gt;audit_visibility -->
+<g id="edge9" class="edge">
+<title>jit_elevation&#45;&gt;audit_visibility</title>
+<path fill="none" stroke="#c8501f" d="M172.83,-86.95C172.83,-74.91 172.83,-58.78 172.83,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="175.29,-45.35 172.84,-38.35 170.39,-45.35 175.29,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="180.33" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">plus</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces, in our reading, how Madabhushi&#x27;s talk moves from the old actor-equals-principal assumption through the specific ways agents break it to his recommended fix (ours).</p></section>
 
 
 

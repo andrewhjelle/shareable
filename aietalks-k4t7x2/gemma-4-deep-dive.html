@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Gemma 4 Deep Dive — Talk Brief</title>
+<title>Gemma 4 Deep Dive &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,104 @@ Quotes are verbatim from the talk transcript with the time they were said.</span
 <p class="deck" style="font-size:15px">Gives concrete architecture numbers -- sliding-window sizes, grouped-query-attention ratios, and flash-memory-resident per-layer embeddings -- for anyone estimating VRAM and latency budgets before deploying a small on-device model</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Gemma 4 ships in four sizes -- two on-device effective models, a 26B MoE with 3.9B active parameters, and a 31B dense model -- with the 31B and 26B both ranking in the top six of open-source models on LM Arena, all under an Apache 2.0 license.</li><li>Attention changes include a 5:1 local-to-global layer ratio, 512/1,024-token sliding windows, and grouped-query attention (2 queries per KV head locally, 8 globally) to cut serving cost on the expensive global layers.</li><li>On-device models store per-layer embedding tables in flash memory instead of VRAM, and vision now handles variable aspect ratios/resolutions directly instead of Gemma 3&#x27;s pan-and-scan image splitting.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Gemma 4 efficiency stack: lineup to attention to memory (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">GEMMA 4 EFFICIENCY STACK: LINEUP TO ATTENTION TO MEMORY (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">MODEL LINEUP</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">4 model sizes</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">2 on-device, 26B MoE, 31B dense</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Apache 2.0 license</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">license move eases developer</text><text x="542" y="107" font-size="8.5" text-anchor="middle" fill="#807565">integration</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">ATTENTION EFFICIENCY</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">5:1 local:global ratio</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">interleaved local/global attention</text><text x="206" y="225" font-size="8.5" text-anchor="middle" fill="#807565">layers</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Sliding window 512/1024</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">512 tokens small models, 1024 large</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">GQA 2 vs 8 queries/KV</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">2 queries/KV local, 8 queries/KV</text><text x="654" y="225" font-size="8.5" text-anchor="middle" fill="#807565">global</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">MOE ROUTING</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">MoE: 128 experts, 8 active</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">1 shared router plus 128 total experts</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">ON-DEVICE MEMORY</text><rect x="325" y="414" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="433" font-size="11" text-anchor="middle" fill="#14110D">PLE tables in flash</text><text x="430" y="449" font-size="8.5" text-anchor="middle" fill="#807565">per-layer embeddings moved off VRAM</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">ships with</text><path d="M279,118 V127 H206 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="242" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">shapes design</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">sets window size</text><line x1="535" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">paired with</text><path d="M305,118 V135 H430 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="368" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">26B MoE model</text><path d="M331,118 V143 H430 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="380" y="141" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">on-device models</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces how the four-model lineup drives the attention redesign (5:1 layer ratio, sliding windows, GQA), the MoE routing, and on-device flash-resident embeddings; the connections are our synthesis of how these pieces relate, not stated as a single pipeline in the talk (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">GEMMA 4 EFFICIENCY STACK: LINEUP TO ATTENTION TO MEMORY (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 740.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- sizes -->
+<g id="node1" class="node">
+<title>sizes</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="490.05,-298.87 345.63,-298.87 345.63,-262.59 490.05,-262.59 490.05,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="384.84" y="-280.78" font-family="Geist Mono" font-size="11.00">4 model sizes</text>
+<text xml:space="preserve" text-anchor="start" x="358.59" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">2 on&#45;device, 26B MoE, 31B dense</text>
+</g>
+<!-- license -->
+<g id="node2" class="node">
+<title>license</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="173.67,-211.34 0,-211.34 0,-175.06 173.67,-175.06 173.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="41.09" y="-193.25" font-family="Geist Mono" font-size="11.00">Apache 2.0 license</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">license move eases developer integration</text>
+</g>
+<!-- sizes&#45;&gt;license -->
+<g id="edge1" class="edge">
+<title>sizes&#45;&gt;license</title>
+<path fill="none" stroke="#c8501f" d="M348.85,-261.9C294.85,-247.95 219.79,-228.56 163.84,-214.1"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="164.59,-211.76 157.2,-212.38 163.36,-216.5 164.59,-211.76"/>
+<text xml:space="preserve" text-anchor="middle" x="290.9" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">ships with</text>
+</g>
+<!-- ratio -->
+<g id="node3" class="node">
+<title>ratio</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="361.92,-211.34 195.75,-211.34 195.75,-175.06 361.92,-175.06 361.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="229.34" y="-193.25" font-family="Geist Mono" font-size="11.00">5:1 local:global ratio</text>
+<text xml:space="preserve" text-anchor="start" x="208.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">interleaved local/global attention layers</text>
+</g>
+<!-- sizes&#45;&gt;ratio -->
+<g id="edge2" class="edge">
+<title>sizes&#45;&gt;ratio</title>
+<path fill="none" stroke="#c8501f" d="M389.03,-262.01C367.51,-248.76 337.94,-230.57 314.85,-216.36"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="316.13,-214.27 308.89,-212.69 313.57,-218.45 316.13,-214.27"/>
+<text xml:space="preserve" text-anchor="middle" x="382.91" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">shapes design</text>
+</g>
+<!-- moe -->
+<g id="node6" class="node">
+<title>moe</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="546.05,-211.34 383.63,-211.34 383.63,-175.06 546.05,-175.06 546.05,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="399.59" y="-193.25" font-family="Geist Mono" font-size="11.00">MoE: 128 experts, 8 active</text>
+<text xml:space="preserve" text-anchor="start" x="396.59" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">1 shared router plus 128 total experts</text>
+</g>
+<!-- sizes&#45;&gt;moe -->
+<g id="edge5" class="edge">
+<title>sizes&#45;&gt;moe</title>
+<path fill="none" stroke="#c8501f" d="M427.57,-262.01C434.38,-249.62 443.56,-232.91 451.11,-219.18"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="453.16,-220.54 454.38,-213.23 448.86,-218.18 453.16,-220.54"/>
+<text xml:space="preserve" text-anchor="middle" x="473.77" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">26B MoE model</text>
+</g>
+<!-- ple -->
+<g id="node7" class="node">
+<title>ple</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="731.8,-211.34 567.88,-211.34 567.88,-175.06 731.8,-175.06 731.8,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="605.21" y="-193.25" font-family="Geist Mono" font-size="11.00">PLE tables in flash</text>
+<text xml:space="preserve" text-anchor="start" x="580.84" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">per&#45;layer embeddings moved off VRAM</text>
+</g>
+<!-- sizes&#45;&gt;ple -->
+<g id="edge6" class="edge">
+<title>sizes&#45;&gt;ple</title>
+<path fill="none" stroke="#c8501f" d="M466.19,-261.9C503.41,-248.18 554.92,-229.19 593.92,-214.81"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="594.4,-217.25 600.12,-212.53 592.71,-212.65 594.4,-217.25"/>
+<text xml:space="preserve" text-anchor="middle" x="580.73" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">on&#45;device models</text>
+</g>
+<!-- window -->
+<g id="node4" class="node">
+<title>window</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="357.05,-123.81 200.63,-123.81 200.63,-87.53 357.05,-87.53 357.05,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="218.09" y="-105.72" font-family="Geist Mono" font-size="11.00">Sliding window 512/1024</text>
+<text xml:space="preserve" text-anchor="start" x="213.59" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">512 tokens small models, 1024 large</text>
+</g>
+<!-- ratio&#45;&gt;window -->
+<g id="edge3" class="edge">
+<title>ratio&#45;&gt;window</title>
+<path fill="none" stroke="#c8501f" d="M278.84,-174.48C278.84,-162.44 278.84,-146.31 278.84,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="281.29,-132.88 278.84,-125.88 276.39,-132.88 281.29,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="310.34" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">sets window size</text>
+</g>
+<!-- gqa -->
+<g id="node5" class="node">
+<title>gqa</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="359.67,-36.28 198,-36.28 198,0 359.67,0 359.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="222.59" y="-18.19" font-family="Geist Mono" font-size="11.00">GQA 2 vs 8 queries/KV</text>
+<text xml:space="preserve" text-anchor="start" x="210.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">2 queries/KV local, 8 queries/KV global</text>
+</g>
+<!-- window&#45;&gt;gqa -->
+<g id="edge4" class="edge">
+<title>window&#45;&gt;gqa</title>
+<path fill="none" stroke="#c8501f" d="M278.84,-86.95C278.84,-74.91 278.84,-58.78 278.84,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="281.29,-45.35 278.84,-38.35 276.39,-45.35 281.29,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="299.84" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">paired with</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces how the four-model lineup drives the attention redesign (5:1 layer ratio, sliding windows, GQA), the MoE routing, and on-device flash-resident embeddings; the connections are our synthesis of how these pieces relate, not stated as a single pipeline in the talk (ours).</p></section>
 
 
 

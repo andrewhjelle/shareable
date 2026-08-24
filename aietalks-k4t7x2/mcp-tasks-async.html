@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>MCP Tasks (async): Why Aren&#x27;t Any Agents Supporting Them? — Talk Brief</title>
+<title>MCP Tasks (async): Why Aren&#x27;t Any Agents Supporting Them? &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,146 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Explains, with a working demo, exactly what an MCP client has to implement to support long-running async tool calls (approvals, invoice processing) that survive network drops and server restarts</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>The MCP tasks spec was marked experimental in November and is genuinely complex to implement durably, which is the real reason no client supports it yet (c1, c2).</li><li>V1&#x27;s task-list endpoint has no filter, so it breaks down once an agent has a million tasks running (c4).</li><li>V2 (coming July) drops task list and the long-running session in favor of a stateless client-update endpoint, but shifts the durability burden onto the client, which must persist task IDs itself; scaling to millions of tasks is still unsolved (c6, c7, c8, c9).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="MCP tasks: durability from V1 to V2 (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">MCP TASKS: DURABILITY FROM V1 TO V2 (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">CLIENT</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Client submits task</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">PO submitted while backend was down</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Client persists task ID</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">no ID means task unrecoverable</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">MCP TASK PROTOCOL</text><rect x="24" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="100" y="197" font-size="11" text-anchor="middle" fill="#14110D">Task must be durable</text><text x="100" y="213" font-size="8.5" text-anchor="middle" fill="#807565">survives crashes and</text><text x="100" y="225" font-size="8.5" text-anchor="middle" fill="#807565">disconnects</text><rect x="189" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="265" y="197" font-size="11" text-anchor="middle" fill="#14110D">Task lifecycle states</text><text x="265" y="213" font-size="8.5" text-anchor="middle" fill="#807565">working, input-required,</text><text x="265" y="225" font-size="8.5" text-anchor="middle" fill="#807565">then done or fail</text><rect x="354" y="178" width="151" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">V1 task list</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">no filter, breaks at 1</text><text x="430" y="225" font-size="8.5" text-anchor="middle" fill="#807565">million tasks</text><rect x="520" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="595" y="197" font-size="11" text-anchor="middle" fill="#14110D">V2 core goes stateless</text><text x="595" y="213" font-size="8.5" text-anchor="middle" fill="#807565">update endpoint replaces</text><text x="595" y="225" font-size="8.5" text-anchor="middle" fill="#807565">long-run session</text><rect x="685" y="178" width="151" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="760" y="197" font-size="11" text-anchor="middle" fill="#14110D">V2 removes task list</text><text x="760" y="213" font-size="8.5" text-anchor="middle" fill="#807565">wasn&#x27;t useful at large</text><text x="760" y="225" font-size="8.5" text-anchor="middle" fill="#807565">scale</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">SERVER (TEMPORAL)</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Temporal backend</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">resumes after restart, completes task</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Still doesn&#x27;t scale</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">clients poll each task individually</text><path d="M318,118 V127 H100 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="209" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">launches task</text><line x1="175" y1="207" x2="189" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="182" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">governs states</text><path d="M239,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="278" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">runs on</text><path d="M318,296 V287 H318 V118" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="356" y="285" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">task completes</text><line x1="340" y1="207" x2="354" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="347" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">recover via (V1)</text><line x1="506" y1="207" x2="685" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="595" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">removed in V2</text><line x1="340" y1="207" x2="520" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">V2 replaces session</text><path d="M595,178 V169 H542 V118" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="557" y="167" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">burden shifts to</text><path d="M760,236 V253 H529 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="645" y="251" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">no batch recovery</text><path d="M542,118 V135 H555 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="580" y="133" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">still polls per task</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces how Davis&#x27;s demo enforces task durability today and how V2&#x27;s stateless redesign shifts that burden onto the client, though neither version yet handles millions of tasks (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">MCP TASKS: DURABILITY FROM V1 TO V2 (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 534.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- client_submit -->
+<g id="node1" class="node">
+<title>client_submit</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="468.79,-473.93 303.38,-473.93 303.38,-437.65 468.79,-437.65 468.79,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="339.96" y="-455.84" font-family="Geist Mono" font-size="11.00">Client submits task</text>
+<text xml:space="preserve" text-anchor="start" x="316.33" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">PO submitted while backend was down</text>
+</g>
+<!-- durable_req -->
+<g id="node3" class="node">
+<title>durable_req</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="402.29,-386.4 257.88,-386.4 257.88,-350.12 402.29,-350.12 402.29,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="277.58" y="-368.31" font-family="Geist Mono" font-size="11.00">Task must be durable</text>
+<text xml:space="preserve" text-anchor="start" x="270.83" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">survives crashes and disconnects</text>
+</g>
+<!-- client_submit&#45;&gt;durable_req -->
+<g id="edge1" class="edge">
+<title>client_submit&#45;&gt;durable_req</title>
+<path fill="none" stroke="#c8501f" d="M374.48,-437.07C366.3,-424.57 355.23,-407.66 346.19,-393.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="348.39,-392.74 342.5,-388.23 344.29,-395.42 348.39,-392.74"/>
+<text xml:space="preserve" text-anchor="middle" x="386.94" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">launches task</text>
+</g>
+<!-- persist_id -->
+<g id="node2" class="node">
+<title>persist_id</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="320.17,-123.81 178,-123.81 178,-87.53 320.17,-87.53 320.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="195.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Client persists task ID</text>
+<text xml:space="preserve" text-anchor="start" x="190.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">no ID means task unrecoverable</text>
+</g>
+<!-- still_unsolved -->
+<g id="node9" class="node">
+<title>still_unsolved</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="236.67,-36.28 97.5,-36.28 97.5,0 236.67,0 236.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="125.08" y="-18.19" font-family="Geist Mono" font-size="11.00">Still doesn&#39;t scale</text>
+<text xml:space="preserve" text-anchor="start" x="110.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">clients poll each task individually</text>
+</g>
+<!-- persist_id&#45;&gt;still_unsolved -->
+<g id="edge10" class="edge">
+<title>persist_id&#45;&gt;still_unsolved</title>
+<path fill="none" stroke="#c8501f" d="M233.9,-86.88C225.82,-77.59 215.61,-66.14 206.08,-56.28 201.8,-51.84 197.13,-47.22 192.56,-42.81"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="194.29,-41.07 187.53,-38.01 190.9,-44.62 194.29,-41.07"/>
+<text xml:space="preserve" text-anchor="middle" x="249.56" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">still polls per task</text>
+</g>
+<!-- lifecycle -->
+<g id="node4" class="node">
+<title>lifecycle</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="391.79,-298.87 220.38,-298.87 220.38,-262.59 391.79,-262.59 391.79,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="257.33" y="-280.78" font-family="Geist Mono" font-size="11.00">Task lifecycle states</text>
+<text xml:space="preserve" text-anchor="start" x="233.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">working, input&#45;required, then done or fail</text>
+</g>
+<!-- durable_req&#45;&gt;lifecycle -->
+<g id="edge2" class="edge">
+<title>durable_req&#45;&gt;lifecycle</title>
+<path fill="none" stroke="#c8501f" d="M325.11,-349.54C321.7,-337.38 317.12,-321.06 313.31,-307.47"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="315.71,-306.96 311.46,-300.89 310.99,-308.29 315.71,-306.96"/>
+<text xml:space="preserve" text-anchor="middle" x="346.9" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">governs states</text>
+</g>
+<!-- v1_list -->
+<g id="node5" class="node">
+<title>v1_list</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="142.17,-211.34 0,-211.34 0,-175.06 142.17,-175.06 142.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="44.08" y="-193.25" font-family="Geist Mono" font-size="11.00">V1 task list</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">no filter, breaks at 1 million tasks</text>
+</g>
+<!-- lifecycle&#45;&gt;v1_list -->
+<g id="edge5" class="edge">
+<title>lifecycle&#45;&gt;v1_list</title>
+<path fill="none" stroke="#c8501f" d="M257.11,-261.9C219.4,-248.18 167.22,-229.19 127.72,-214.81"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="128.84,-212.61 121.42,-212.52 127.16,-217.22 128.84,-212.61"/>
+<text xml:space="preserve" text-anchor="middle" x="233.03" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">recover via (V1)</text>
+</g>
+<!-- v2_stateless -->
+<g id="node6" class="node">
+<title>v2_stateless</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="342.17,-211.34 164,-211.34 164,-175.06 342.17,-175.06 342.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="197.21" y="-193.25" font-family="Geist Mono" font-size="11.00">V2 core goes stateless</text>
+<text xml:space="preserve" text-anchor="start" x="176.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">update endpoint replaces long&#45;run session</text>
+</g>
+<!-- lifecycle&#45;&gt;v2_stateless -->
+<g id="edge7" class="edge">
+<title>lifecycle&#45;&gt;v2_stateless</title>
+<path fill="none" stroke="#c8501f" d="M294.79,-262.01C290.9,-255.87 286.53,-248.94 282.58,-242.59 277.74,-234.78 272.5,-226.23 267.8,-218.52"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="270.18,-217.72 264.45,-213.01 265.99,-220.26 270.18,-217.72"/>
+<text xml:space="preserve" text-anchor="middle" x="319.33" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">V2 replaces session</text>
+</g>
+<!-- server_temporal -->
+<g id="node8" class="node">
+<title>server_temporal</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="525.92,-211.34 364.25,-211.34 364.25,-175.06 525.92,-175.06 525.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="400.83" y="-193.25" font-family="Geist Mono" font-size="11.00">Temporal backend</text>
+<text xml:space="preserve" text-anchor="start" x="377.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">resumes after restart, completes task</text>
+</g>
+<!-- lifecycle&#45;&gt;server_temporal -->
+<g id="edge3" class="edge">
+<title>lifecycle&#45;&gt;server_temporal</title>
+<path fill="none" stroke="#c8501f" d="M334.89,-262.01C356.41,-248.76 385.98,-230.57 409.07,-216.36"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="410.35,-218.45 415.03,-212.69 407.79,-214.27 410.35,-218.45"/>
+<text xml:space="preserve" text-anchor="middle" x="397.78" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs on</text>
+</g>
+<!-- v2_list_removed -->
+<g id="node7" class="node">
+<title>v2_list_removed</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="152.54,-123.81 27.62,-123.81 27.62,-87.53 152.54,-87.53 152.54,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="40.58" y="-105.72" font-family="Geist Mono" font-size="11.00">V2 removes task list</text>
+<text xml:space="preserve" text-anchor="start" x="41.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">wasn&#39;t useful at large scale</text>
+</g>
+<!-- v1_list&#45;&gt;v2_list_removed -->
+<g id="edge6" class="edge">
+<title>v1_list&#45;&gt;v2_list_removed</title>
+<path fill="none" stroke="#c8501f" d="M75.02,-174.48C77.72,-162.32 81.35,-146 84.37,-132.41"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="86.7,-133.21 85.82,-125.85 81.92,-132.15 86.7,-133.21"/>
+<text xml:space="preserve" text-anchor="middle" x="109.47" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">removed in V2</text>
+</g>
+<!-- v2_stateless&#45;&gt;persist_id -->
+<g id="edge8" class="edge">
+<title>v2_stateless&#45;&gt;persist_id</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M252.26,-174.48C251.69,-162.44 250.94,-146.31 250.31,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="252.76,-132.76 249.98,-125.88 247.86,-132.99 252.76,-132.76"/>
+<text xml:space="preserve" text-anchor="middle" x="280.95" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">burden shifts to</text>
+</g>
+<!-- v2_list_removed&#45;&gt;still_unsolved -->
+<g id="edge9" class="edge">
+<title>v2_list_removed&#45;&gt;still_unsolved</title>
+<path fill="none" stroke="#c8501f" d="M106.04,-86.95C117.5,-74.22 133.07,-56.92 145.62,-42.98"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="147.28,-44.81 150.14,-37.96 143.63,-41.53 147.28,-44.81"/>
+<text xml:space="preserve" text-anchor="middle" x="166.95" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">no batch recovery</text>
+</g>
+<!-- server_temporal&#45;&gt;client_submit -->
+<g id="edge4" class="edge">
+<title>server_temporal&#45;&gt;client_submit</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M446.15,-211.89C447.82,-250.85 448.1,-346.3 417.08,-417.65 415.11,-422.19 412.4,-426.61 409.4,-430.72"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="407.54,-429.13 405.1,-436.13 411.37,-432.18 407.54,-429.13"/>
+<text xml:space="preserve" text-anchor="middle" x="470.48" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">task completes</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces how Davis&#x27;s demo enforces task durability today and how V2&#x27;s stateless redesign shifts that burden onto the client, though neither version yet handles millions of tasks (ours).</p></section>
 
 
 

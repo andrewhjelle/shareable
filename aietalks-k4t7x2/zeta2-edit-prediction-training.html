@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>How We Built Zeta2: Training an Edit Prediction Model in Production — Talk Brief</title>
+<title>How We Built Zeta2: Training an Edit Prediction Model in Production &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,146 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Documents a concrete production recipe for training a small, fast, keystroke-latency edit-prediction model via distillation from a frontier model, including a repair step for bad teacher predictions and a way to filter noisy &#x27;what the us...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Zeta2 is distilled from a frontier &#x27;teacher&#x27; model whose predictions get auto-repaired against heuristics before becoming training targets, at up to 100,000 examples per run (c2, c4, c5).</li><li>Filtering &#x27;settled&#x27; training data by generating 10 teacher predictions per example would cost ~1M frontier calls per 100k examples, so Zed now runs 50 cheap predictions from its own student model instead (c7, c8).</li><li>Settled-state data -- what the user actually typed -- is noisy, judged &#x27;settled&#x27; after 10 seconds of no edits, and used to filter rather than train on directly (c6, c9).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Zeta2 distillation and self-filtering loop (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">ZETA2 DISTILLATION AND SELF-FILTERING LOOP (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">INPUT</text><rect x="325" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Cursor context</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">region+edits+cursor+types+diagnostics</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">TEACHER DISTILLATION</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Frontier teacher</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">inconsistent on repeated asks</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Heuristic checks</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">flags undo or boundary-ignoring preds</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Repair pass</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">2nd frontier call fixes bad</text><text x="654" y="225" font-size="8.5" text-anchor="middle" fill="#807565">predictions</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">STUDENT TRAINING</text><rect x="213" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Training set</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">~100,000 examples per run at peak</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Zeta2 student</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">small fast model, near-teacher quality</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">FILTERING &amp; EVAL</text><rect x="101" y="414" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="206" y="433" font-size="11" text-anchor="middle" fill="#14110D">Settled data</text><text x="206" y="449" font-size="8.5" text-anchor="middle" fill="#807565">user edit after 10s untouched, noisy</text><rect x="325" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="433" font-size="11" text-anchor="middle" fill="#14110D">Student filtering</text><text x="430" y="449" font-size="8.5" text-anchor="middle" fill="#807565">50 cheap preds vs 1M frontier calls</text><rect x="549" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="433" font-size="11" text-anchor="middle" fill="#14110D">Offline eval</text><text x="654" y="449" font-size="8.5" text-anchor="middle" fill="#807565">Levenshtein n-gram + reversal ratio</text><path d="M430,118 V127 H206 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="125" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">production input</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">raw prediction</text><line x1="535" y1="207" x2="549" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">failing preds</text><path d="M654,236 V245 H292 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="473" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">repaired target</text><path d="M417,236 V253 H318 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="368" y="251" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">passing preds</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">trains</text><line x1="311" y1="443" x2="325" y2="443" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="439" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">candidate example</text><path d="M529,354 V363 H417 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="473" y="361" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">50 predictions</text><path d="M430,414 V405 H344 V354" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="387" y="403" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">filtered examples</text><path d="M555,354 V371 H654 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="604" y="369" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">predictions</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">Zeta2 is trained on frontier-model predictions that get heuristically repaired, then Zed reuses the resulting student model to cheaply filter a second, noisier data source instead of paying for more frontier calls; the loop is our read of how the pieces connect, not a claim Zed made explicitly as a diagram (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">ZETA2 DISTILLATION AND SELF-FILTERING LOOP (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 493.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- ctx -->
+<g id="node1" class="node">
+<title>ctx</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="266.17,-561.46 94.75,-561.46 94.75,-525.18 266.17,-525.18 266.17,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="144.83" y="-543.37" font-family="Geist Mono" font-size="11.00">Cursor context</text>
+<text xml:space="preserve" text-anchor="start" x="107.71" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">region+edits+cursor+types+diagnostics</text>
+</g>
+<!-- teacher -->
+<g id="node2" class="node">
+<title>teacher</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="247.04,-473.93 113.87,-473.93 113.87,-437.65 247.04,-437.65 247.04,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="141.46" y="-455.84" font-family="Geist Mono" font-size="11.00">Frontier teacher</text>
+<text xml:space="preserve" text-anchor="start" x="126.83" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">inconsistent on repeated asks</text>
+</g>
+<!-- ctx&#45;&gt;teacher -->
+<g id="edge1" class="edge">
+<title>ctx&#45;&gt;teacher</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M180.46,-524.6C180.46,-512.56 180.46,-496.43 180.46,-482.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="182.91,-483 180.46,-476 178.01,-483 182.91,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="210.83" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">production input</text>
+</g>
+<!-- heuristics -->
+<g id="node3" class="node">
+<title>heuristics</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="261.67,-386.4 99.25,-386.4 99.25,-350.12 261.67,-350.12 261.67,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="141.08" y="-368.31" font-family="Geist Mono" font-size="11.00">Heuristic checks</text>
+<text xml:space="preserve" text-anchor="start" x="112.21" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">flags undo or boundary&#45;ignoring preds</text>
+</g>
+<!-- teacher&#45;&gt;heuristics -->
+<g id="edge2" class="edge">
+<title>teacher&#45;&gt;heuristics</title>
+<path fill="none" stroke="#c8501f" d="M180.46,-437.07C180.46,-425.03 180.46,-408.9 180.46,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="182.91,-395.47 180.46,-388.47 178.01,-395.47 182.91,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="207.08" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">raw prediction</text>
+</g>
+<!-- repair -->
+<g id="node4" class="node">
+<title>repair</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="197.67,-298.87 41.25,-298.87 41.25,-262.59 197.67,-262.59 197.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="90.96" y="-280.78" font-family="Geist Mono" font-size="11.00">Repair pass</text>
+<text xml:space="preserve" text-anchor="start" x="54.21" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">2nd frontier call fixes bad predictions</text>
+</g>
+<!-- heuristics&#45;&gt;repair -->
+<g id="edge3" class="edge">
+<title>heuristics&#45;&gt;repair</title>
+<path fill="none" stroke="#c8501f" d="M167.82,-349.54C158.91,-337.04 146.85,-320.13 137,-306.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="139.02,-304.94 132.96,-300.66 135.03,-307.78 139.02,-304.94"/>
+<text xml:space="preserve" text-anchor="middle" x="176.86" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">failing preds</text>
+</g>
+<!-- trainset -->
+<g id="node5" class="node">
+<title>trainset</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="257.92,-211.34 103,-211.34 103,-175.06 257.92,-175.06 257.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="152.33" y="-193.25" font-family="Geist Mono" font-size="11.00">Training set</text>
+<text xml:space="preserve" text-anchor="start" x="115.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">~100,000 examples per run at peak</text>
+</g>
+<!-- heuristics&#45;&gt;trainset -->
+<g id="edge5" class="edge">
+<title>heuristics&#45;&gt;trainset</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M194.83,-349.72C198.94,-343.82 202.97,-336.99 205.46,-330.12 220.47,-288.67 230.43,-272.43 214.46,-231.34 212.67,-226.75 210.03,-222.37 206.98,-218.35"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="208.93,-216.86 202.54,-213.08 205.18,-220.02 208.93,-216.86"/>
+<text xml:space="preserve" text-anchor="middle" x="248.1" y="-278.28" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">passing preds</text>
+</g>
+<!-- repair&#45;&gt;trainset -->
+<g id="edge4" class="edge">
+<title>repair&#45;&gt;trainset</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M132.1,-262.01C141.01,-249.51 153.07,-232.6 162.92,-218.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="164.89,-220.25 166.96,-213.13 160.9,-217.41 164.89,-220.25"/>
+<text xml:space="preserve" text-anchor="middle" x="181.74" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">repaired target</text>
+</g>
+<!-- zeta2 -->
+<g id="node6" class="node">
+<title>zeta2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="198.92,-123.81 38,-123.81 38,-87.53 198.92,-87.53 198.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="84.33" y="-105.72" font-family="Geist Mono" font-size="11.00">Zeta2 student</text>
+<text xml:space="preserve" text-anchor="start" x="50.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">small fast model, near&#45;teacher quality</text>
+</g>
+<!-- trainset&#45;&gt;zeta2 -->
+<g id="edge6" class="edge">
+<title>trainset&#45;&gt;zeta2</title>
+<path fill="none" stroke="#c8501f" d="M167.61,-174.48C158.47,-161.86 146.07,-144.76 136.01,-130.89"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="138.27,-129.82 132.18,-125.59 134.3,-132.7 138.27,-129.82"/>
+<text xml:space="preserve" text-anchor="middle" x="163.67" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">trains</text>
+</g>
+<!-- filter -->
+<g id="node8" class="node">
+<title>filter</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="326.29,-36.28 176.62,-36.28 176.62,0 326.29,0 326.29,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="212.83" y="-18.19" font-family="Geist Mono" font-size="11.00">Student filtering</text>
+<text xml:space="preserve" text-anchor="start" x="189.58" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">50 cheap preds vs 1M frontier calls</text>
+</g>
+<!-- zeta2&#45;&gt;filter -->
+<g id="edge8" class="edge">
+<title>zeta2&#45;&gt;filter</title>
+<path fill="none" stroke="#c8501f" d="M135.58,-87.17C145.82,-77.31 159.45,-65.21 172.96,-56.28 181.59,-50.57 191.24,-45.26 200.74,-40.53"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="201.71,-42.79 206.94,-37.53 199.57,-38.37 201.71,-42.79"/>
+<text xml:space="preserve" text-anchor="middle" x="199.21" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">50 predictions</text>
+</g>
+<!-- eval -->
+<g id="node9" class="node">
+<title>eval</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="154.92,-36.28 0,-36.28 0,0 154.92,0 154.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="50.08" y="-18.19" font-family="Geist Mono" font-size="11.00">Offline eval</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Levenshtein n&#45;gram + reversal ratio</text>
+</g>
+<!-- zeta2&#45;&gt;eval -->
+<g id="edge10" class="edge">
+<title>zeta2&#45;&gt;eval</title>
+<path fill="none" stroke="#c8501f" d="M106.81,-86.9C103.1,-80.88 99.14,-74.03 95.96,-67.53 92.42,-60.29 89.09,-52.19 86.26,-44.72"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="88.63,-44.08 83.92,-38.35 84.03,-45.77 88.63,-44.08"/>
+<text xml:space="preserve" text-anchor="middle" x="116.21" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">predictions</text>
+</g>
+<!-- settled -->
+<g id="node7" class="node">
+<title>settled</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="484.92,-123.81 330,-123.81 330,-87.53 484.92,-87.53 484.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="377.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Settled data</text>
+<text xml:space="preserve" text-anchor="start" x="342.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">user edit after 10s untouched, noisy</text>
+</g>
+<!-- settled&#45;&gt;filter -->
+<g id="edge7" class="edge">
+<title>settled&#45;&gt;filter</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M375.14,-86.95C350.66,-73.53 316.93,-55.03 290.87,-40.75"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="292.38,-38.78 285.07,-37.57 290.03,-43.08 292.38,-38.78"/>
+<text xml:space="preserve" text-anchor="middle" x="374.43" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">candidate example</text>
+</g>
+<!-- filter&#45;&gt;trainset -->
+<g id="edge9" class="edge">
+<title>filter&#45;&gt;trainset</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M244.43,-36.96C236.17,-57.83 222.01,-93.4 209.46,-123.81 203.55,-138.13 196.81,-154.06 191.31,-166.94"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="189.16,-165.74 188.66,-173.14 193.67,-167.66 189.16,-165.74"/>
+<text xml:space="preserve" text-anchor="middle" x="256.77" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">filtered examples</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Zeta2 is trained on frontier-model predictions that get heuristically repaired, then Zed reuses the resulting student model to cheaply filter a second, noisier data source instead of paying for more frontier calls; the loop is our read of how the pieces connect, not a claim Zed made explicitly as a diagram (ours).</p></section>
 
 
 

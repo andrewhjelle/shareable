@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Your Agents Need a Save Button — Talk Brief</title>
+<title>Your Agents Need a Save Button &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,139 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">For teams debugging or optimizing agents in production, this talk lays out a checkpoint-replay-diff-decide workflow for answering counterfactual questions -- would a cheaper model, a mocked tool, or a different policy have produced the s...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Traces alone are read-only telemetry disconnected from the runtime state (variables, filesystem, code) that produced them; a durable runtime layer beneath the harness can checkpoint that state so executions can be replayed and altered at any point (c1, c9)</li><li>DoorDash&#x27;s replay-based simulation of customer bots cut a multi-hour manual review process to about 5 minutes with hundreds of simulations and 90% fewer hallucinations, staying within two points of production behavior (c3)</li><li>A naive single-replay model swap can look cheaper but mislead: on a Tau-bench-style measure a model that passes 60% of the time is only self-consistent about a quarter of the time, so the speaker recommends replaying cohorts of real production runs -- not one-off tests -- before shipping a change; in the demo cohort the verdict was don&#x27;t ship the cheaper model (c5, c6, c7, c8)</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Checkpoint, replay, diff, decide (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">CHECKPOINT, REPLAY, DIFF, DECIDE (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">CAPTURE</text><rect x="101" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">Trace: telemetry only</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">tool inputs/outputs only</text><rect x="325" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Checkpoint runtime state</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">vars, filesystem, code path</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">Kitaru runtime layer</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">checkpoints each tool call</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">REPLAY</text><rect x="24" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="197" font-size="11" text-anchor="middle" fill="#14110D">Cohort replay</text><text x="120" y="213" font-size="8.5" text-anchor="middle" fill="#807565">expensive/long/risky runs</text><rect x="230" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="197" font-size="11" text-anchor="middle" fill="#14110D">Model/tool swap fork</text><text x="327" y="213" font-size="8.5" text-anchor="middle" fill="#807565">e.g. swap to GPT-5 Nano</text><rect x="437" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="533" y="197" font-size="11" text-anchor="middle" fill="#14110D">DoorDash case study</text><text x="533" y="213" font-size="8.5" text-anchor="middle" fill="#807565">hours to 5 min, 90% fewer</text><text x="533" y="225" font-size="8.5" text-anchor="middle" fill="#807565">hallucinations</text><rect x="644" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="197" font-size="11" text-anchor="middle" fill="#14110D">Diff vs baseline</text><text x="740" y="213" font-size="8.5" text-anchor="middle" fill="#807565">checkpoint replay diff decide</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">DECIDE</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Self-consistency check</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">60% pass = 25% consistent</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Ship/no-ship decision</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">verdict: don&#x27;t ship cheaper model</text><line x1="311" y1="89" x2="325" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">augments</text><line x1="535" y1="89" x2="549" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">feeds</text><path d="M654,118 V127 H120 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="387" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">replays</text><line x1="216" y1="207" x2="230" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">forks</text><line x1="216" y1="207" x2="644" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">results</text><line x1="423" y1="207" x2="644" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="533" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">results</text><line x1="630" y1="207" x2="644" y2="207" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="636" y="203" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">precedent</text><path d="M740,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="529" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">checks</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">informs</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the workflow the talk proposes for turning read-only agent traces into a replayable, decidable process; the DoorDash and Tau-bench figures are cited secondhand by the speaker (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">CHECKPOINT, REPLAY, DIFF, DECIDE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 398.00 657.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 652.99)">
+<title>G</title>
+<!-- trace -->
+<g id="node1" class="node">
+<title>trace</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="182.67,-648.99 54,-648.99 54,-612.71 182.67,-612.71 182.67,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="66.96" y="-630.9" font-family="Geist Mono" font-size="11.00">Trace: telemetry only</text>
+<text xml:space="preserve" text-anchor="start" x="75.96" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">tool inputs/outputs only</text>
+</g>
+<!-- checkpoint -->
+<g id="node2" class="node">
+<title>checkpoint</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="192.42,-561.46 44.25,-561.46 44.25,-525.18 192.42,-525.18 192.42,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="57.21" y="-543.37" font-family="Geist Mono" font-size="11.00">Checkpoint runtime state</text>
+<text xml:space="preserve" text-anchor="start" x="71.08" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">vars, filesystem, code path</text>
+</g>
+<!-- trace&#45;&gt;checkpoint -->
+<g id="edge1" class="edge">
+<title>trace&#45;&gt;checkpoint</title>
+<path fill="none" stroke="#c8501f" d="M118.33,-612.13C118.33,-600.09 118.33,-583.96 118.33,-570.45"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="120.79,-570.53 118.34,-563.53 115.89,-570.53 120.79,-570.53"/>
+<text xml:space="preserve" text-anchor="middle" x="136.71" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#c8501f">augments</text>
+</g>
+<!-- kitaru -->
+<g id="node3" class="node">
+<title>kitaru</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="179.29,-473.93 57.37,-473.93 57.37,-437.65 179.29,-437.65 179.29,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="70.33" y="-455.84" font-family="Geist Mono" font-size="11.00">Kitaru runtime layer</text>
+<text xml:space="preserve" text-anchor="start" x="72.96" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">checkpoints each tool call</text>
+</g>
+<!-- checkpoint&#45;&gt;kitaru -->
+<g id="edge2" class="edge">
+<title>checkpoint&#45;&gt;kitaru</title>
+<path fill="none" stroke="#c8501f" d="M118.33,-524.6C118.33,-512.56 118.33,-496.43 118.33,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="120.79,-483 118.34,-476 115.89,-483 120.79,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="128.46" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">feeds</text>
+</g>
+<!-- cohort -->
+<g id="node4" class="node">
+<title>cohort</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="176.29,-386.4 60.37,-386.4 60.37,-350.12 176.29,-350.12 176.29,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="85.71" y="-368.31" font-family="Geist Mono" font-size="11.00">Cohort replay</text>
+<text xml:space="preserve" text-anchor="start" x="73.33" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">expensive/long/risky runs</text>
+</g>
+<!-- kitaru&#45;&gt;cohort -->
+<g id="edge3" class="edge">
+<title>kitaru&#45;&gt;cohort</title>
+<path fill="none" stroke="#c8501f" d="M118.33,-437.07C118.33,-425.03 118.33,-408.9 118.33,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="120.79,-395.47 118.34,-388.47 115.89,-395.47 120.79,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="131.83" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replays</text>
+</g>
+<!-- swap -->
+<g id="node5" class="node">
+<title>swap</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="128.67,-298.87 0,-298.87 0,-262.59 128.67,-262.59 128.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-280.78" font-family="Geist Mono" font-size="11.00">Model/tool swap fork</text>
+<text xml:space="preserve" text-anchor="start" x="19.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">e.g. swap to GPT&#45;5 Nano</text>
+</g>
+<!-- cohort&#45;&gt;swap -->
+<g id="edge4" class="edge">
+<title>cohort&#45;&gt;swap</title>
+<path fill="none" stroke="#c8501f" d="M107.15,-349.54C99.25,-337.04 88.58,-320.13 79.86,-306.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="82.13,-305.32 76.32,-300.71 77.98,-307.94 82.13,-305.32"/>
+<text xml:space="preserve" text-anchor="middle" x="103.94" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">forks</text>
+</g>
+<!-- diff -->
+<g id="node7" class="node">
+<title>diff</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="235.54,-211.34 109.12,-211.34 109.12,-175.06 235.54,-175.06 235.54,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="134.83" y="-193.25" font-family="Geist Mono" font-size="11.00">Diff vs baseline</text>
+<text xml:space="preserve" text-anchor="start" x="122.08" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">checkpoint replay diff decide</text>
+</g>
+<!-- cohort&#45;&gt;diff -->
+<g id="edge5" class="edge">
+<title>cohort&#45;&gt;diff</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M123.81,-349.71C133.39,-319.01 153.24,-255.41 164.35,-219.79"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="166.65,-220.65 166.39,-213.24 161.97,-219.19 166.65,-220.65"/>
+<text xml:space="preserve" text-anchor="middle" x="163.08" y="-278.28" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">results</text>
+</g>
+<!-- swap&#45;&gt;diff -->
+<g id="edge6" class="edge">
+<title>swap&#45;&gt;diff</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M86.71,-262.01C103.22,-248.93 125.82,-231.04 143.65,-216.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="144.83,-219.11 148.8,-212.84 141.79,-215.26 144.83,-219.11"/>
+<text xml:space="preserve" text-anchor="middle" x="137.18" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">results</text>
+</g>
+<!-- doordash -->
+<g id="node6" class="node">
+<title>doordash</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="390.04,-298.87 218.62,-298.87 218.62,-262.59 390.04,-262.59 390.04,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="252.21" y="-280.78" font-family="Geist Mono" font-size="11.00">DoorDash case study</text>
+<text xml:space="preserve" text-anchor="start" x="231.58" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">hours to 5 min, 90% fewer hallucinations</text>
+</g>
+<!-- doordash&#45;&gt;diff -->
+<g id="edge7" class="edge">
+<title>doordash&#45;&gt;diff</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M276.98,-262.01C256.54,-248.76 228.46,-230.57 206.54,-216.36"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="208.13,-214.47 200.92,-212.72 205.46,-218.58 208.13,-214.47"/>
+<text xml:space="preserve" text-anchor="middle" x="264.61" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">precedent</text>
+</g>
+<!-- selfconsist -->
+<g id="node8" class="node">
+<title>selfconsist</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="239.67,-123.81 105,-123.81 105,-87.53 239.67,-87.53 239.67,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="117.96" y="-105.72" font-family="Geist Mono" font-size="11.00">Self&#45;consistency check</text>
+<text xml:space="preserve" text-anchor="start" x="121.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">60% pass = 25% consistent</text>
+</g>
+<!-- diff&#45;&gt;selfconsist -->
+<g id="edge8" class="edge">
+<title>diff&#45;&gt;selfconsist</title>
+<path fill="none" stroke="#c8501f" d="M172.33,-174.48C172.33,-162.44 172.33,-146.31 172.33,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="174.79,-132.88 172.34,-125.88 169.89,-132.88 174.79,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="184.71" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">checks</text>
+</g>
+<!-- decision -->
+<g id="node9" class="node">
+<title>decision</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="244.92,-36.28 99.75,-36.28 99.75,0 244.92,0 244.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="120.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Ship/no&#45;ship decision</text>
+<text xml:space="preserve" text-anchor="start" x="112.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">verdict: don&#39;t ship cheaper model</text>
+</g>
+<!-- selfconsist&#45;&gt;decision -->
+<g id="edge9" class="edge">
+<title>selfconsist&#45;&gt;decision</title>
+<path fill="none" stroke="#c8501f" d="M172.33,-86.95C172.33,-74.91 172.33,-58.78 172.33,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="174.79,-45.35 172.34,-38.35 169.89,-45.35 174.79,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="186.58" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">informs</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the workflow the talk proposes for turning read-only agent traces into a replayable, decidable process; the DoorDash and Tau-bench figures are cited secondhand by the speaker (ours).</p></section>
 
 
 

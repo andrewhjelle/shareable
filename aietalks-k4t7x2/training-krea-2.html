@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Training Krea 2: What Matters in Generative Model Training — Talk Brief</title>
+<title>Training Krea 2: What Matters in Generative Model Training &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,119 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Names the concrete data-curation levers (large-scale dedup at 2-10 billion images, ~30-40 custom filters, deliberately excluding AI-generated images) and the training-pipeline stages (low-to-high-res pretraining, mid-training, SFT, prefe...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Krea open-sourced Create 2 medium, built to optimize for fast, stylistically diverse generation rather than the slower, highly consistent but mode-collapsed output the speaker attributes to big-lab models like ChatGPT and Nano Banana (c1, c2).</li><li>Data curation, not architecture, was the team&#x27;s main lever: large-scale deduplication (2 to 10 billion images, hash-based then embedding-based), roughly 30 to 40 custom in-house classifiers/filters, and a deliberate refusal to train on AI-generated images (c5, c6, c7).</li><li>Training follows a staged pipeline: low-to-high-resolution pretraining (256 to 1K), mid-training, SFT, preference optimization, and a GRPO-inspired reinforcement learning stage using reward servers to improve text rendering and anatomy (c8, c9).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Krea&#x27;s data-curation and training pipeline (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">KREA&#x27;S DATA-CURATION AND TRAINING PIPELINE (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">RAW DATA</text><rect x="325" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">2-10B image corpus</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">raw images before curation</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">CURATION</text><rect x="24" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="120" y="197" font-size="11" text-anchor="middle" fill="#14110D">Hash dedup</text><text x="120" y="213" font-size="8.5" text-anchor="middle" fill="#807565">pHash/MD5 first pass</text><rect x="230" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="327" y="197" font-size="11" text-anchor="middle" fill="#14110D">Embedding dedup</text><text x="327" y="213" font-size="8.5" text-anchor="middle" fill="#807565">SigLip/SSCD near-duplicates</text><rect x="437" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="533" y="197" font-size="11" text-anchor="middle" fill="#14110D">30-40 custom filters</text><text x="533" y="213" font-size="8.5" text-anchor="middle" fill="#807565">in-house classifiers/heuristics</text><rect x="644" y="178" width="192" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="740" y="197" font-size="11" text-anchor="middle" fill="#14110D">Exclude AI images</text><text x="740" y="213" font-size="8.5" text-anchor="middle" fill="#807565">avoids distilled big-lab aesthetic</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">TRAINING PIPELINE</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Low-to-high-res pretrain</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">256 to 1K resolution</text><rect x="325" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">Mid-train, SFT, pref opt</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">pairwise preference optimization</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">GRPO-style RL</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">reward servers score images</text><path d="M430,118 V127 H120 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="275" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">dedup pass 1</text><line x1="216" y1="207" x2="230" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="224" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">dedup pass 2</text><line x1="423" y1="207" x2="437" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><line x1="423" y1="207" x2="644" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><path d="M533,236 V245 H193 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><path d="M740,236 V253 H219 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><line x1="311" y1="325" x2="325" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><line x1="535" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces how the talk says raw images get deduplicated and filtered before feeding a staged training pipeline that ends in reward-server RL; the exact boundary between mid-training, SFT, and preference optimization wasn&#x27;t detailed on screen (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">KREA&#x27;S DATA-CURATION AND TRAINING PIPELINE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 298.00 528.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 524.46)">
+<title>G</title>
+<!-- corpus -->
+<g id="node1" class="node">
+<title>corpus</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="203.42,-520.46 80,-520.46 80,-484.18 203.42,-484.18 203.42,-520.46"/>
+<text xml:space="preserve" text-anchor="start" x="92.96" y="-502.37" font-family="Geist Mono" font-size="11.00">2&#45;10B image corpus</text>
+<text xml:space="preserve" text-anchor="start" x="92.96" y="-494.22" font-family="Geist Mono" font-size="8.00" fill="#807565">raw images before curation</text>
+</g>
+<!-- hash_dedup -->
+<g id="node2" class="node">
+<title>hash_dedup</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="192.54,-432.93 90.87,-432.93 90.87,-396.65 192.54,-396.65 192.54,-432.93"/>
+<text xml:space="preserve" text-anchor="start" x="112.46" y="-414.84" font-family="Geist Mono" font-size="11.00">Hash dedup</text>
+<text xml:space="preserve" text-anchor="start" x="103.83" y="-406.69" font-family="Geist Mono" font-size="8.00" fill="#807565">pHash/MD5 first pass</text>
+</g>
+<!-- corpus&#45;&gt;hash_dedup -->
+<g id="edge1" class="edge">
+<title>corpus&#45;&gt;hash_dedup</title>
+<path fill="none" stroke="#c8501f" d="M141.71,-483.6C141.71,-471.56 141.71,-455.43 141.71,-441.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="144.16,-442 141.71,-435 139.26,-442 144.16,-442"/>
+<text xml:space="preserve" text-anchor="middle" x="166.46" y="-456.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">dedup pass 1</text>
+</g>
+<!-- embed_dedup -->
+<g id="node3" class="node">
+<title>embed_dedup</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="204.54,-345.4 78.87,-345.4 78.87,-309.12 204.54,-309.12 204.54,-345.4"/>
+<text xml:space="preserve" text-anchor="start" x="98.21" y="-327.31" font-family="Geist Mono" font-size="11.00">Embedding dedup</text>
+<text xml:space="preserve" text-anchor="start" x="91.83" y="-319.16" font-family="Geist Mono" font-size="8.00" fill="#807565">SigLip/SSCD near&#45;duplicates</text>
+</g>
+<!-- hash_dedup&#45;&gt;embed_dedup -->
+<g id="edge2" class="edge">
+<title>hash_dedup&#45;&gt;embed_dedup</title>
+<path fill="none" stroke="#c8501f" d="M141.71,-396.07C141.71,-384.03 141.71,-367.9 141.71,-354.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="144.16,-354.47 141.71,-347.47 139.26,-354.47 144.16,-354.47"/>
+<text xml:space="preserve" text-anchor="middle" x="166.46" y="-368.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">dedup pass 2</text>
+</g>
+<!-- filters -->
+<g id="node4" class="node">
+<title>filters</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="129.42,-268.12 0,-268.12 0,-231.84 129.42,-231.84 129.42,-268.12"/>
+<text xml:space="preserve" text-anchor="start" x="15.96" y="-250.03" font-family="Geist Mono" font-size="11.00">30&#45;40 custom filters</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-241.88" font-family="Geist Mono" font-size="8.00" fill="#807565">in&#45;house classifiers/heuristics</text>
+</g>
+<!-- embed_dedup&#45;&gt;filters -->
+<g id="edge3" class="edge">
+<title>embed_dedup&#45;&gt;filters</title>
+<path fill="none" stroke="#c8501f" d="M123.85,-308.8C113.43,-298.61 100.14,-285.62 88.81,-274.54"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="90.54,-272.81 83.82,-269.66 87.11,-276.31 90.54,-272.81"/>
+</g>
+<!-- exclude_ai -->
+<g id="node5" class="node">
+<title>exclude_ai</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="289.92,-268.12 151.5,-268.12 151.5,-231.84 289.92,-231.84 289.92,-268.12"/>
+<text xml:space="preserve" text-anchor="start" x="176.08" y="-250.03" font-family="Geist Mono" font-size="11.00">Exclude AI images</text>
+<text xml:space="preserve" text-anchor="start" x="164.46" y="-241.88" font-family="Geist Mono" font-size="8.00" fill="#807565">avoids distilled big&#45;lab aesthetic</text>
+</g>
+<!-- embed_dedup&#45;&gt;exclude_ai -->
+<g id="edge4" class="edge">
+<title>embed_dedup&#45;&gt;exclude_ai</title>
+<path fill="none" stroke="#c8501f" d="M160.03,-308.8C170.82,-298.52 184.61,-285.38 196.31,-274.23"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="197.74,-276.25 201.12,-269.65 194.36,-272.71 197.74,-276.25"/>
+</g>
+<!-- pretrain -->
+<g id="node6" class="node">
+<title>pretrain</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="213.17,-190.84 70.25,-190.84 70.25,-154.56 213.17,-154.56 213.17,-190.84"/>
+<text xml:space="preserve" text-anchor="start" x="83.21" y="-172.75" font-family="Geist Mono" font-size="11.00">Low&#45;to&#45;high&#45;res pretrain</text>
+<text xml:space="preserve" text-anchor="start" x="105.71" y="-164.6" font-family="Geist Mono" font-size="8.00" fill="#807565">256 to 1K resolution</text>
+</g>
+<!-- filters&#45;&gt;pretrain -->
+<g id="edge5" class="edge">
+<title>filters&#45;&gt;pretrain</title>
+<path fill="none" stroke="#c8501f" d="M82.57,-231.52C92.99,-221.33 106.28,-208.34 117.61,-197.26"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="119.31,-199.03 122.6,-192.38 115.88,-195.53 119.31,-199.03"/>
+</g>
+<!-- exclude_ai&#45;&gt;pretrain -->
+<g id="edge6" class="edge">
+<title>exclude_ai&#45;&gt;pretrain</title>
+<path fill="none" stroke="#c8501f" d="M202.39,-231.52C191.6,-221.24 177.81,-208.1 166.11,-196.95"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="168.06,-195.43 161.3,-192.37 164.68,-198.97 168.06,-195.43"/>
+</g>
+<!-- mid_sft_pref -->
+<g id="node7" class="node">
+<title>mid_sft_pref</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="212.79,-113.56 70.62,-113.56 70.62,-77.28 212.79,-77.28 212.79,-113.56"/>
+<text xml:space="preserve" text-anchor="start" x="85.83" y="-95.47" font-family="Geist Mono" font-size="11.00">Mid&#45;train, SFT, pref opt</text>
+<text xml:space="preserve" text-anchor="start" x="83.58" y="-87.32" font-family="Geist Mono" font-size="8.00" fill="#807565">pairwise preference optimization</text>
+</g>
+<!-- pretrain&#45;&gt;mid_sft_pref -->
+<g id="edge7" class="edge">
+<title>pretrain&#45;&gt;mid_sft_pref</title>
+<path fill="none" stroke="#c8501f" d="M141.71,-154.24C141.71,-144.81 141.71,-132.97 141.71,-122.47"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="144.16,-122.56 141.71,-115.56 139.26,-122.56 144.16,-122.56"/>
+</g>
+<!-- rl_reward -->
+<g id="node8" class="node">
+<title>rl_reward</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="206.42,-36.28 77,-36.28 77,0 206.42,0 206.42,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="106.83" y="-18.19" font-family="Geist Mono" font-size="11.00">GRPO&#45;style RL</text>
+<text xml:space="preserve" text-anchor="start" x="89.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">reward servers score images</text>
+</g>
+<!-- mid_sft_pref&#45;&gt;rl_reward -->
+<g id="edge8" class="edge">
+<title>mid_sft_pref&#45;&gt;rl_reward</title>
+<path fill="none" stroke="#c8501f" d="M141.71,-76.96C141.71,-67.53 141.71,-55.69 141.71,-45.19"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="144.16,-45.28 141.71,-38.28 139.26,-45.28 144.16,-45.28"/>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces how the talk says raw images get deduplicated and filtered before feeding a staged training pipeline that ends in reward-server RL; the exact boundary between mid-training, SFT, and preference optimization wasn&#x27;t detailed on screen (ours).</p></section>
 
 
 

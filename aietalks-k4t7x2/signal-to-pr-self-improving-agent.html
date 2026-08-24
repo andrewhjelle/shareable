@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>From Signal to PR: Anatomy of a Self-Improving Agent — Talk Brief</title>
+<title>From Signal to PR: Anatomy of a Self-Improving Agent &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,125 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Describes a concrete pattern for wiring an observability platform&#x27;s own agent (Signal) to periodically read traces and logs through composable skills and open a PR, rather than treating autofix as a black box</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Observability is shifting from human-clicked dashboards toward agents that read traces and logs and propose fixes themselves, since the bottleneck is no longer generating a fix but trusting it (c1, c2)</li><li>As that shifts, the job moves from responder to reviewer, which requires logging and tracing orders of magnitude more than before so agents have the code-path data to work from (c3, c4)</li><li>Getting an agent to debug well isn&#x27;t just pointing it at the data -- it requires well-designed skills that pull the right traces and logs into files in the repo, and evals function as pre-processed data layered onto traces that a diagnosis agent also consumes (c6, c7, c8)</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="From traces to a reviewed PR (ours, from the slides)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">FROM TRACES TO A REVIEWED PR (OURS, FROM THE SLIDES)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">TELEMETRY</text><rect x="101" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">Traces &amp; logs</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">logged orders of magnitude more than</text><text x="206" y="107" font-size="8.5" text-anchor="middle" fill="#807565">today</text><rect x="325" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Evals</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">LLM-as-judge data layered onto traces</text><rect x="549" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">New eval built</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">built once a failure type has been</text><text x="654" y="107" font-size="8.5" text-anchor="middle" fill="#807565">seen</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">SKILLS &amp; AGENT</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">Skills</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">pull the right traces/evals into repo</text><text x="318" y="225" font-size="8.5" text-anchor="middle" fill="#807565">files</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">Signal agent</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">diagnoses via skills, not raw data</text><text x="542" y="225" font-size="8.5" text-anchor="middle" fill="#807565">access</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">OUTPUT</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Draft fix / PR</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">goal: systems that fix themselves</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Human reviewer</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">role moves from responder to reviewer</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">DEPLOYMENT</text><rect x="325" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="433" font-size="11" text-anchor="middle" fill="#14110D">Customer VPC</text><text x="430" y="449" font-size="8.5" text-anchor="middle" fill="#807565">e.g. Uber, Booking.com run it in-house</text><path d="M206,118 V127 H305 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="256" y="125" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">raw traces</text><path d="M430,118 V135 H331 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="380" y="133" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">eval data</text><line x1="423" y1="207" x2="437" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">repo files</text><path d="M542,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">diagnosis</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">review</text><path d="M542,296 V287 H654 V118" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="598" y="285" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">seen failure</text><line x1="549" y1="89" x2="535" y2="89" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="542" y="85" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">adds eval</text><path d="M430,414 V405 H529 V236" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="480" y="403" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">hosts agent</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s stated pattern from raw telemetry to a human-reviewed fix; the specific skill implementations are not shown in the talk (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">FROM TRACES TO A REVIEWED PR (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 368.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- traces -->
+<g id="node1" class="node">
+<title>traces</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="187.17,-561.46 0,-561.46 0,-525.18 187.17,-525.18 187.17,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="60.59" y="-543.37" font-family="Geist Mono" font-size="11.00">Traces &amp; logs</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">logged orders of magnitude more than today</text>
+</g>
+<!-- skills -->
+<g id="node4" class="node">
+<title>skills</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="176.67,-473.93 10.5,-473.93 10.5,-437.65 176.67,-437.65 176.67,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="81.96" y="-455.84" font-family="Geist Mono" font-size="11.00">Skills</text>
+<text xml:space="preserve" text-anchor="start" x="23.46" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">pull the right traces/evals into repo files</text>
+</g>
+<!-- traces&#45;&gt;skills -->
+<g id="edge1" class="edge">
+<title>traces&#45;&gt;skills</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M93.59,-524.6C93.59,-512.56 93.59,-496.43 93.59,-482.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="96.04,-483 93.59,-476 91.14,-483 96.04,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="113.09" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">raw traces</text>
+</g>
+<!-- evals -->
+<g id="node2" class="node">
+<title>evals</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="194.92,-36.28 30.25,-36.28 30.25,0 194.92,0 194.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="100.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Evals</text>
+<text xml:space="preserve" text-anchor="start" x="43.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">LLM&#45;as&#45;judge data layered onto traces</text>
+</g>
+<!-- evals&#45;&gt;skills -->
+<g id="edge2" class="edge">
+<title>evals&#45;&gt;skills</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M106.26,-36.91C100.73,-54.03 93.59,-80.79 93.59,-104.67 93.59,-369.26 93.59,-369.26 93.59,-369.26 93.59,-389.24 93.59,-411.84 93.59,-428.79"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="91.14,-428.59 93.59,-435.59 96.04,-428.59 91.14,-428.59"/>
+<text xml:space="preserve" text-anchor="middle" x="111.21" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">eval data</text>
+</g>
+<!-- new_eval -->
+<g id="node3" class="node">
+<title>new_eval</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="291.55,-123.81 127.63,-123.81 127.63,-87.53 291.55,-87.53 291.55,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="175.09" y="-105.72" font-family="Geist Mono" font-size="11.00">New eval built</text>
+<text xml:space="preserve" text-anchor="start" x="140.59" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">built once a failure type has been seen</text>
+</g>
+<!-- new_eval&#45;&gt;evals -->
+<g id="edge7" class="edge">
+<title>new_eval&#45;&gt;evals</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M189.49,-86.95C174.79,-73.99 154.72,-56.29 138.77,-42.23"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="140.66,-40.63 133.79,-37.84 137.42,-44.31 140.66,-40.63"/>
+<text xml:space="preserve" text-anchor="middle" x="184.89" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">adds eval</text>
+</g>
+<!-- signal -->
+<g id="node5" class="node">
+<title>signal</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="295.8,-386.4 127.38,-386.4 127.38,-350.12 295.8,-350.12 295.8,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="181.59" y="-368.31" font-family="Geist Mono" font-size="11.00">Signal agent</text>
+<text xml:space="preserve" text-anchor="start" x="140.34" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">diagnoses via skills, not raw data access</text>
+</g>
+<!-- skills&#45;&gt;signal -->
+<g id="edge3" class="edge">
+<title>skills&#45;&gt;signal</title>
+<path fill="none" stroke="#c8501f" d="M118.03,-437.07C136.15,-423.94 160.98,-405.94 180.5,-391.79"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="181.71,-393.94 185.94,-387.85 178.84,-389.97 181.71,-393.94"/>
+<text xml:space="preserve" text-anchor="middle" x="177.27" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">repo files</text>
+</g>
+<!-- pr -->
+<g id="node6" class="node">
+<title>pr</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="283.17,-298.87 138,-298.87 138,-262.59 283.17,-262.59 283.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="178.34" y="-280.78" font-family="Geist Mono" font-size="11.00">Draft fix / PR</text>
+<text xml:space="preserve" text-anchor="start" x="150.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">goal: systems that fix themselves</text>
+</g>
+<!-- signal&#45;&gt;pr -->
+<g id="edge4" class="edge">
+<title>signal&#45;&gt;pr</title>
+<path fill="none" stroke="#c8501f" d="M211.38,-349.54C211.24,-337.5 211.05,-321.37 210.89,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="213.34,-307.91 210.81,-300.94 208.44,-307.97 213.34,-307.91"/>
+<text xml:space="preserve" text-anchor="middle" x="228.39" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">diagnosis</text>
+</g>
+<!-- reviewer -->
+<g id="node7" class="node">
+<title>reviewer</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="293.3,-211.34 127.88,-211.34 127.88,-175.06 293.3,-175.06 293.3,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="170.84" y="-193.25" font-family="Geist Mono" font-size="11.00">Human reviewer</text>
+<text xml:space="preserve" text-anchor="start" x="140.84" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">role moves from responder to reviewer</text>
+</g>
+<!-- pr&#45;&gt;reviewer -->
+<g id="edge5" class="edge">
+<title>pr&#45;&gt;reviewer</title>
+<path fill="none" stroke="#c8501f" d="M210.59,-262.01C210.59,-249.97 210.59,-233.84 210.59,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="213.04,-220.41 210.59,-213.41 208.14,-220.41 213.04,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="222.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">review</text>
+</g>
+<!-- reviewer&#45;&gt;new_eval -->
+<g id="edge6" class="edge">
+<title>reviewer&#45;&gt;new_eval</title>
+<path fill="none" stroke="#c8501f" d="M210.38,-174.48C210.24,-162.44 210.05,-146.31 209.89,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="212.34,-132.85 209.81,-125.88 207.44,-132.91 212.34,-132.85"/>
+<text xml:space="preserve" text-anchor="middle" x="232.27" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">seen failure</text>
+</g>
+<!-- vpc -->
+<g id="node8" class="node">
+<title>vpc</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="360.42,-473.93 198.75,-473.93 198.75,-437.65 360.42,-437.65 360.42,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="244.71" y="-455.84" font-family="Geist Mono" font-size="11.00">Customer VPC</text>
+<text xml:space="preserve" text-anchor="start" x="211.71" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">e.g. Uber, Booking.com run it in&#45;house</text>
+</g>
+<!-- vpc&#45;&gt;signal -->
+<g id="edge8" class="edge">
+<title>vpc&#45;&gt;signal</title>
+<path fill="none" stroke="#c8501f" d="M265.5,-437.07C255.47,-424.45 241.87,-407.35 230.84,-393.48"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="232.87,-392.1 226.6,-388.14 229.04,-395.15 232.87,-392.1"/>
+<text xml:space="preserve" text-anchor="middle" x="271.41" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">hosts agent</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s stated pattern from raw telemetry to a human-reviewed fix; the specific skill implementations are not shown in the talk (ours).</p></section>
 
 
 

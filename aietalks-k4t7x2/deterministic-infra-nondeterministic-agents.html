@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Deterministic Infra for Non-Deterministic AI Agents — Talk Brief</title>
+<title>Deterministic Infra for Non-Deterministic AI Agents &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,104 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Argues the production risk in agentic systems is mostly infrastructure failure (retry loops, memory poisoning, cost explosions) rather than model hallucination, and gives a concrete architecture rule -- the model proposes, infrastructure...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Infrastructure failures, not hallucinations, are the real production risk: recursive reasoning loops, workflow deadlocks, retry amplification, context corruption, and memory poisoning can turn a small model mistake into a compute incident or outage.</li><li>Core architecture rule: never let the model directly control production systems -- the model generates proposals, infrastructure validates them, a policy engine approves them, and an execution gateway enforces them.</li><li>The industry has moved through prompts-as-differentiator, then models-as-differentiator, both now commoditizing; the next competitive frontier is infrastructure reliability, requiring an &#x27;agentic control plane&#x27; analogous to Kubernetes for containers.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Model proposes, infrastructure decides (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">MODEL PROPOSES, INFRASTRUCTURE DECIDES (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">MODEL</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">Agent model</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">generates proposals, never acts</text><text x="318" y="107" font-size="8.5" text-anchor="middle" fill="#807565">directly</text><rect x="437" y="60" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Shared memory</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">probabilistic, retrieval-based state</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">CONTROL PLANE</text><rect x="101" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="197" font-size="11" text-anchor="middle" fill="#14110D">Validation layer</text><text x="206" y="213" font-size="8.5" text-anchor="middle" fill="#807565">checks each model proposal</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Policy engine</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">approves validated proposals</text><rect x="549" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="654" y="197" font-size="11" text-anchor="middle" fill="#14110D">Human reviewer</text><text x="654" y="213" font-size="8.5" text-anchor="middle" fill="#807565">permanent exception handler</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">PRODUCTION</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Execution gateway</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">enforces approved actions</text><rect x="437" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">Production systems</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">stateful, long-running, dynamic</text><path d="M318,118 V127 H193 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="256" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">proposal</text><path d="M542,118 V135 H219 V178" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="380" y="133" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">context</text><line x1="311" y1="207" x2="325" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">validated</text><line x1="549" y1="207" x2="535" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">reviews</text><path d="M430,236 V245 H318 V296" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="374" y="243" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">approved</text><line x1="423" y1="325" x2="437" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">enforced action</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">Reconstructed from the talk&#x27;s architecture rule: the model only proposes, and a validation/policy/gateway chain (with humans as permanent exception handlers) stands between it and production (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">MODEL PROPOSES, INFRASTRUCTURE DECIDES (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 399.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- model -->
+<g id="node1" class="node">
+<title>model</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="169.17,-386.4 0,-386.4 0,-350.12 169.17,-350.12 169.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="53.84" y="-368.31" font-family="Geist Mono" font-size="11.00">Agent model</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">generates proposals, never acts directly</text>
+</g>
+<!-- validate -->
+<g id="node3" class="node">
+<title>validate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="237.8,-298.87 111.38,-298.87 111.38,-262.59 237.8,-262.59 237.8,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="138.21" y="-280.78" font-family="Geist Mono" font-size="11.00">Validation layer</text>
+<text xml:space="preserve" text-anchor="start" x="124.34" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">checks each model proposal</text>
+</g>
+<!-- model&#45;&gt;validate -->
+<g id="edge1" class="edge">
+<title>model&#45;&gt;validate</title>
+<path fill="none" stroke="#c8501f" d="M103.23,-349.54C116.75,-336.69 135.16,-319.2 149.9,-305.19"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="151.48,-307.07 154.86,-300.47 148.1,-303.52 151.48,-307.07"/>
+<text xml:space="preserve" text-anchor="middle" x="150.72" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">proposal</text>
+</g>
+<!-- memory -->
+<g id="node2" class="node">
+<title>memory</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="337.92,-386.4 191.25,-386.4 191.25,-350.12 337.92,-350.12 337.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="226.34" y="-368.31" font-family="Geist Mono" font-size="11.00">Shared memory</text>
+<text xml:space="preserve" text-anchor="start" x="204.21" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">probabilistic, retrieval&#45;based state</text>
+</g>
+<!-- memory&#45;&gt;validate -->
+<g id="edge2" class="edge">
+<title>memory&#45;&gt;validate</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M245.94,-349.54C232.42,-336.69 214.01,-319.2 199.27,-305.19"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="201.07,-303.52 194.31,-300.47 197.69,-307.07 201.07,-303.52"/>
+<text xml:space="preserve" text-anchor="middle" x="238.85" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">context</text>
+</g>
+<!-- policy -->
+<g id="node4" class="node">
+<title>policy</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="315.3,-211.34 185.88,-211.34 185.88,-175.06 315.3,-175.06 315.3,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="219.09" y="-193.25" font-family="Geist Mono" font-size="11.00">Policy engine</text>
+<text xml:space="preserve" text-anchor="start" x="198.84" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">approves validated proposals</text>
+</g>
+<!-- validate&#45;&gt;policy -->
+<g id="edge3" class="edge">
+<title>validate&#45;&gt;policy</title>
+<path fill="none" stroke="#c8501f" d="M190.33,-262.01C201.64,-249.28 217.02,-231.98 229.4,-218.04"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="231.03,-219.89 233.85,-213.03 227.37,-216.64 231.03,-219.89"/>
+<text xml:space="preserve" text-anchor="middle" x="234.39" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">validated</text>
+</g>
+<!-- gateway -->
+<g id="node6" class="node">
+<title>gateway</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="310.8,-123.81 190.38,-123.81 190.38,-87.53 310.8,-87.53 310.8,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="204.84" y="-105.72" font-family="Geist Mono" font-size="11.00">Execution gateway</text>
+<text xml:space="preserve" text-anchor="start" x="203.34" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">enforces approved actions</text>
+</g>
+<!-- policy&#45;&gt;gateway -->
+<g id="edge5" class="edge">
+<title>policy&#45;&gt;gateway</title>
+<path fill="none" stroke="#c8501f" d="M250.59,-174.48C250.59,-162.44 250.59,-146.31 250.59,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="253.04,-132.88 250.59,-125.88 248.14,-132.88 253.04,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="267.84" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">approved</text>
+</g>
+<!-- human -->
+<g id="node5" class="node">
+<title>human</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="391.42,-298.87 259.75,-298.87 259.75,-262.59 391.42,-262.59 391.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="285.84" y="-280.78" font-family="Geist Mono" font-size="11.00">Human reviewer</text>
+<text xml:space="preserve" text-anchor="start" x="272.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">permanent exception handler</text>
+</g>
+<!-- human&#45;&gt;policy -->
+<g id="edge4" class="edge">
+<title>human&#45;&gt;policy</title>
+<path fill="none" stroke="#c8501f" d="M310.04,-262.01C298.88,-249.28 283.71,-231.98 271.49,-218.04"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="273.56,-216.68 267.1,-213.04 269.88,-219.92 273.56,-216.68"/>
+<text xml:space="preserve" text-anchor="middle" x="306.83" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reviews</text>
+</g>
+<!-- prod -->
+<g id="node7" class="node">
+<title>prod</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="318.67,-36.28 182.5,-36.28 182.5,0 318.67,0 318.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="203.34" y="-18.19" font-family="Geist Mono" font-size="11.00">Production systems</text>
+<text xml:space="preserve" text-anchor="start" x="195.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">stateful, long&#45;running, dynamic</text>
+</g>
+<!-- gateway&#45;&gt;prod -->
+<g id="edge6" class="edge">
+<title>gateway&#45;&gt;prod</title>
+<path fill="none" stroke="#c8501f" d="M250.59,-86.95C250.59,-74.91 250.59,-58.78 250.59,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="253.04,-45.35 250.59,-38.35 248.14,-45.35 253.04,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="279.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enforced action</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Reconstructed from the talk&#x27;s architecture rule: the model only proposes, and a validation/policy/gateway chain (with humans as permanent exception handlers) stands between it and production (ours).</p></section>
 
 
 

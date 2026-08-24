@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Modern Post-Training: A Deep Dive — Talk Brief</title>
+<title>Modern Post-Training: A Deep Dive &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,132 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">Lays out Prime Intellect&#x27;s open-source post-training stack (Verifiers V1, Prime RL) and gives concrete cost/throughput numbers for large-scale async RL runs, useful for deciding whether to build in-house RL post-training infrastructure v...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>A full-scale async RL run on GLM-5 (28 nodes, 131K context, coding tasks) costs about $50K for a 1,000-step run over 3 days, which the speaker frames as cheap relative to typical enterprise token spend.</li><li>Async RL lets rollouts finish long after they start and still land in a training batch, with the team typically operating around 16 steps off-policy on average.</li><li>Verifiers V1 splits environments into a task set, harness, and runtime so any real coding-agent harness (Codex, Claude Code, custom Python) can be dropped into RL, eval, or SFT without modification.</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Prime Intellect&#x27;s async RL training loop (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">PRIME INTELLECT&#x27;S ASYNC RL TRAINING LOOP (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">ENVIRONMENT (VERIFIERS V1)</text><rect x="101" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="79" font-size="11" text-anchor="middle" fill="#14110D">Task set</text><text x="206" y="95" font-size="8.5" text-anchor="middle" fill="#807565">data + scoring rules, harness-agnostic</text><rect x="325" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="430" y="79" font-size="11" text-anchor="middle" fill="#14110D">Harness</text><text x="430" y="95" font-size="8.5" text-anchor="middle" fill="#807565">agent loop: Codex, Claude Code, custom</text><rect x="549" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="79" font-size="11" text-anchor="middle" fill="#14110D">Runtime</text><text x="654" y="95" font-size="8.5" text-anchor="middle" fill="#807565">runs locally or in sandboxes</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">ASYNC ROLLOUTS</text><rect x="325" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="430" y="197" font-size="11" text-anchor="middle" fill="#14110D">Rollouts</text><text x="430" y="213" font-size="8.5" text-anchor="middle" fill="#807565">30s to 3hrs, long tail</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">TRAINING LOOP</text><rect x="101" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="206" y="315" font-size="11" text-anchor="middle" fill="#14110D">Async trainer</text><text x="206" y="331" font-size="8.5" text-anchor="middle" fill="#807565">doesn&#x27;t wait for slowest rollout</text><rect x="325" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="430" y="315" font-size="11" text-anchor="middle" fill="#14110D">~16 steps off-policy</text><text x="430" y="331" font-size="8.5" text-anchor="middle" fill="#807565">average staleness tolerated</text><rect x="549" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="654" y="315" font-size="11" text-anchor="middle" fill="#14110D">GLM-5 training step</text><text x="654" y="331" font-size="8.5" text-anchor="middle" fill="#807565">28 nodes, 131K ctx, under 5 min</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">OUTCOME</text><rect x="213" y="414" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="318" y="433" font-size="11" text-anchor="middle" fill="#14110D">$50K / 1,000 steps</text><text x="318" y="449" font-size="8.5" text-anchor="middle" fill="#807565">3 days, frontier-size run</text><rect x="437" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="433" font-size="11" text-anchor="middle" fill="#14110D">Distill to 1 checkpoint</text><text x="542" y="449" font-size="8.5" text-anchor="middle" fill="#807565">merges per-skill RL experts</text><line x1="311" y1="89" x2="325" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="318" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">defines behavior</text><line x1="535" y1="89" x2="549" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">executes in</text><path d="M654,118 V127 H430 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="542" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">produces</text><path d="M430,236 V245 H206 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="243" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">stream into batch</text><line x1="311" y1="325" x2="325" y2="325" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="318" y="321" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">tolerates</text><line x1="311" y1="325" x2="549" y2="325" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">runs as</text><path d="M654,354 V363 H318 V414" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="486" y="361" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">costs</text><path d="M180,354 V371 H542 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="361" y="369" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">experts merge into</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">This traces how Verifiers V1 environments feed long-tail rollouts into Prime RL&#x27;s async trainer, which tolerates about 16 steps of staleness to reach the reported GLM-5 throughput and cost numbers (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">PRIME INTELLECT&#x27;S ASYNC RL TRAINING LOOP (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 450.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- task_set -->
+<g id="node1" class="node">
+<title>task_set</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="301.17,-561.46 137.25,-561.46 137.25,-525.18 301.17,-525.18 301.17,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="198.96" y="-543.37" font-family="Geist Mono" font-size="11.00">Task set</text>
+<text xml:space="preserve" text-anchor="start" x="150.21" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">data + scoring rules, harness&#45;agnostic</text>
+</g>
+<!-- harness -->
+<g id="node2" class="node">
+<title>harness</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="304.54,-473.93 133.88,-473.93 133.88,-437.65 304.54,-437.65 304.54,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="199.33" y="-455.84" font-family="Geist Mono" font-size="11.00">Harness</text>
+<text xml:space="preserve" text-anchor="start" x="146.83" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">agent loop: Codex, Claude Code, custom</text>
+</g>
+<!-- task_set&#45;&gt;harness -->
+<g id="edge1" class="edge">
+<title>task_set&#45;&gt;harness</title>
+<path fill="none" stroke="#c8501f" d="M219.21,-524.6C219.21,-512.56 219.21,-496.43 219.21,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="221.66,-483 219.21,-476 216.76,-483 221.66,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="250.33" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">defines behavior</text>
+</g>
+<!-- runtime -->
+<g id="node3" class="node">
+<title>runtime</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="280.92,-386.4 157.5,-386.4 157.5,-350.12 280.92,-350.12 280.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="199.33" y="-368.31" font-family="Geist Mono" font-size="11.00">Runtime</text>
+<text xml:space="preserve" text-anchor="start" x="170.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">runs locally or in sandboxes</text>
+</g>
+<!-- harness&#45;&gt;runtime -->
+<g id="edge2" class="edge">
+<title>harness&#45;&gt;runtime</title>
+<path fill="none" stroke="#c8501f" d="M219.21,-437.07C219.21,-425.03 219.21,-408.9 219.21,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="221.66,-395.47 219.21,-388.47 216.76,-395.47 221.66,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="240.58" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">executes in</text>
+</g>
+<!-- rollouts -->
+<g id="node4" class="node">
+<title>rollouts</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="268.54,-298.87 169.87,-298.87 169.87,-262.59 268.54,-262.59 268.54,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="200.08" y="-280.78" font-family="Geist Mono" font-size="11.00">Rollouts</text>
+<text xml:space="preserve" text-anchor="start" x="182.83" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">30s to 3hrs, long tail</text>
+</g>
+<!-- runtime&#45;&gt;rollouts -->
+<g id="edge3" class="edge">
+<title>runtime&#45;&gt;rollouts</title>
+<path fill="none" stroke="#c8501f" d="M219.21,-349.54C219.21,-337.5 219.21,-321.37 219.21,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="221.66,-307.94 219.21,-300.94 216.76,-307.94 221.66,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="235.71" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">produces</text>
+</g>
+<!-- async_trainer -->
+<g id="node5" class="node">
+<title>async_trainer</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="286.92,-211.34 151.5,-211.34 151.5,-175.06 286.92,-175.06 286.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="187.33" y="-193.25" font-family="Geist Mono" font-size="11.00">Async trainer</text>
+<text xml:space="preserve" text-anchor="start" x="164.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">doesn&#39;t wait for slowest rollout</text>
+</g>
+<!-- rollouts&#45;&gt;async_trainer -->
+<g id="edge4" class="edge">
+<title>rollouts&#45;&gt;async_trainer</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M219.21,-262.01C219.21,-249.97 219.21,-233.84 219.21,-220.33"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="221.66,-220.41 219.21,-213.41 216.76,-220.41 221.66,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="252.58" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">stream into batch</text>
+</g>
+<!-- offpolicy -->
+<g id="node6" class="node">
+<title>offpolicy</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="126.42,-123.81 0,-123.81 0,-87.53 126.42,-87.53 126.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="14.46" y="-105.72" font-family="Geist Mono" font-size="11.00">~16 steps off&#45;policy</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">average staleness tolerated</text>
+</g>
+<!-- async_trainer&#45;&gt;offpolicy -->
+<g id="edge5" class="edge">
+<title>async_trainer&#45;&gt;offpolicy</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M186.89,-174.48C162.41,-161.06 128.68,-142.56 102.62,-128.28"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="104.13,-126.31 96.82,-125.1 101.78,-130.61 104.13,-126.31"/>
+<text xml:space="preserve" text-anchor="middle" x="167.05" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">tolerates</text>
+</g>
+<!-- step -->
+<g id="node7" class="node">
+<title>step</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="289.92,-123.81 148.5,-123.81 148.5,-87.53 289.92,-87.53 289.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="171.58" y="-105.72" font-family="Geist Mono" font-size="11.00">GLM&#45;5 training step</text>
+<text xml:space="preserve" text-anchor="start" x="161.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">28 nodes, 131K ctx, under 5 min</text>
+</g>
+<!-- async_trainer&#45;&gt;step -->
+<g id="edge6" class="edge">
+<title>async_trainer&#45;&gt;step</title>
+<path fill="none" stroke="#c8501f" d="M219.21,-174.48C219.21,-162.44 219.21,-146.31 219.21,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="221.66,-132.88 219.21,-125.88 216.76,-132.88 221.66,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="232.71" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs as</text>
+</g>
+<!-- distill -->
+<g id="node9" class="node">
+<title>distill</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="442.29,-123.81 312.12,-123.81 312.12,-87.53 442.29,-87.53 442.29,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="325.08" y="-105.72" font-family="Geist Mono" font-size="11.00">Distill to 1 checkpoint</text>
+<text xml:space="preserve" text-anchor="start" x="328.83" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">merges per&#45;skill RL experts</text>
+</g>
+<!-- async_trainer&#45;&gt;distill -->
+<g id="edge8" class="edge">
+<title>async_trainer&#45;&gt;distill</title>
+<path fill="none" stroke="#c8501f" d="M251.95,-174.48C276.73,-161.06 310.9,-142.56 337.29,-128.28"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="338.19,-130.58 343.18,-125.09 335.86,-126.27 338.19,-130.58"/>
+<text xml:space="preserve" text-anchor="middle" x="343.67" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">experts merge into</text>
+</g>
+<!-- cost -->
+<g id="node8" class="node">
+<title>cost</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="279.04,-36.28 159.37,-36.28 159.37,0 279.04,0 279.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="172.33" y="-18.19" font-family="Geist Mono" font-size="11.00">$50K / 1,000 steps</text>
+<text xml:space="preserve" text-anchor="start" x="176.83" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">3 days, frontier&#45;size run</text>
+</g>
+<!-- step&#45;&gt;cost -->
+<g id="edge7" class="edge">
+<title>step&#45;&gt;cost</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M219.21,-86.95C219.21,-74.91 219.21,-58.78 219.21,-45.27"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="221.66,-45.35 219.21,-38.35 216.76,-45.35 221.66,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="228.58" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">costs</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces how Verifiers V1 environments feed long-tail rollouts into Prime RL&#x27;s async trainer, which tolerates about 16 steps of staleness to reach the reported GLM-5 throughput and cost numbers (ours).</p></section>
 
 
 

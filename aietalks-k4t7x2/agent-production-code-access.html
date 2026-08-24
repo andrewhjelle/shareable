@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>We Gave an Agent Production Code Access and Then Tried to Sleep at Night — Talk Brief</title>
+<title>We Gave an Agent Production Code Access and Then Tried to Sleep at Night &middot; Talk Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
@@ -136,7 +136,118 @@ Slides below are frames from that recording, reproduced for reference and study;
 <p class="deck" style="font-size:15px">A concrete case study of running a CVE-remediation agent (Patch Pilot) against production repos: which credentials it withholds from the agent versus its deterministic controller, why Docker-socket access defeats standard agent sandboxes...</p>
 <div class="tldr"><h3>If you only read one thing</h3><ul><li>Thesis: a useful coding agent with production access is a supply chain actor whether you plan for it or not, and needs the same guardrails you&#x27;d apply to an engineer (c1).</li><li>Patch Pilot splits work into a deterministic Go controller (holds GitHub write and CI-trigger credentials) and an agentic layer that only edits files on disk, explicitly withholding push/PR/CI-trigger credentials from the agent to limit blast radius (c2, c4).</li><li>Giving the agent a Docker socket for self-verification defeats standard agent sandboxes (&quot;game over&quot;), so Form3 moved to a Firecracker microVM with its own kernel around the Docker socket instead (c5, c6).</li></ul></div>
 </section>
-<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><svg viewBox="0 0 860 518" xmlns="http://www.w3.org/2000/svg" font-family="Geist Mono,monospace" role="img" aria-label="Credential split around a sandboxed agent (ours)"><text x="10" y="18" font-size="11" letter-spacing="2" fill="#807565">CREDENTIAL SPLIT AROUND A SANDBOXED AGENT (OURS)</text><rect x="10" y="34" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="48" font-size="9" letter-spacing="1.5" fill="#807565">AGENTIC LAYER</text><rect x="213" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="79" font-size="11" text-anchor="middle" fill="#14110D">CVE-remediation agent</text><text x="318" y="95" font-size="8.5" text-anchor="middle" fill="#807565">edits files on disk only</text><rect x="437" y="60" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="542" y="79" font-size="11" text-anchor="middle" fill="#14110D">Retrospective</text><text x="542" y="95" font-size="8.5" text-anchor="middle" fill="#807565">what went well/wrong/missing</text><rect x="10" y="152" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="166" font-size="9" letter-spacing="1.5" fill="#807565">ISOLATION BOUNDARY</text><rect x="213" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="197" font-size="11" text-anchor="middle" fill="#14110D">Firecracker microVM</text><text x="318" y="213" font-size="8.5" text-anchor="middle" fill="#807565">own kernel around Docker socket</text><rect x="437" y="178" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="197" font-size="11" text-anchor="middle" fill="#14110D">Docker socket</text><text x="542" y="213" font-size="8.5" text-anchor="middle" fill="#807565">needed for self-verify builds</text><rect x="10" y="270" width="840" height="110" fill="none" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="284" font-size="9" letter-spacing="1.5" fill="#807565">DETERMINISTIC CONTROLLER</text><rect x="213" y="296" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5"/><text x="318" y="315" font-size="11" text-anchor="middle" fill="#14110D">Go controller</text><text x="318" y="331" font-size="8.5" text-anchor="middle" fill="#807565">deterministic orchestration</text><rect x="437" y="296" width="210" height="58" fill="#F6F3EA" stroke="#14110D" stroke-width="1.5"/><text x="542" y="315" font-size="11" text-anchor="middle" fill="#14110D">GitHub + CI credentials</text><text x="542" y="331" font-size="8.5" text-anchor="middle" fill="#807565">withheld from the agent</text><rect x="10" y="388" width="840" height="110" fill="#F6F3EA" stroke="#D9D2C3" stroke-dasharray="3 3"/><text x="18" y="402" font-size="9" letter-spacing="1.5" fill="#807565">EXTERNAL SYSTEMS</text><rect x="213" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="318" y="433" font-size="11" text-anchor="middle" fill="#14110D">GitHub / CI</text><text x="318" y="449" font-size="8.5" text-anchor="middle" fill="#807565">commit, PR, trigger CI</text><rect x="437" y="414" width="210" height="58" fill="#FFFFFF" stroke="#14110D" stroke-width="1.5" stroke-dasharray="5 3"/><text x="542" y="433" font-size="11" text-anchor="middle" fill="#14110D">70k lines in one PR</text><text x="542" y="449" font-size="8.5" text-anchor="middle" fill="#807565">scale of a single dependency bump</text><path d="M279,118 V127 H318 V178" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="317" y="125" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">runs inside</text><line x1="423" y1="207" x2="437" y2="207" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="203" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">contains escape</text><line x1="423" y1="89" x2="437" y2="89" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="85" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">end of run</text><path d="M305,118 V135 H318 V296" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="343" y="133" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">file edits</text><line x1="423" y1="325" x2="437" y2="325" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="430" y="321" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">holds</text><path d="M542,354 V363 H318 V414" fill="none" stroke="#C8501F" stroke-width="1.3" marker-end="url(#dga)"/><text x="430" y="361" font-size="8.5" text-anchor="middle" fill="#C8501F" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">push/PR/CI</text><path d="M331,118 V143 H542 V414" fill="none" stroke="#1F3F5C" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#dgb)"/><text x="436" y="141" font-size="8.5" text-anchor="middle" fill="#1F3F5C" stroke="#FFFFFF" stroke-width="3" paint-order="stroke" stroke-linejoin="round">attack surface</text><defs><marker id="dga" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#C8501F"/></marker><marker id="dgb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#1F3F5C"/></marker></defs></svg></div><p class="deck" style="font-size:15px;margin-top:12px">Form3&#x27;s Patch Pilot keeps the agent confined to file edits inside a Firecracker microVM around the Docker socket, while a separate deterministic controller holds the credentials that can actually push code or trigger CI (ours).</p></section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">CREDENTIAL SPLIT AROUND A SANDBOXED AGENT (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 627.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- agent -->
+<g id="node1" class="node">
+<title>agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="395.17,-298.87 257.5,-298.87 257.5,-262.59 395.17,-262.59 395.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="270.46" y="-280.78" font-family="Geist Mono" font-size="11.00">CVE&#45;remediation agent</text>
+<text xml:space="preserve" text-anchor="start" x="288.08" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">edits files on disk only</text>
+</g>
+<!-- retro -->
+<g id="node2" class="node">
+<title>retro</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="134.67,-211.34 0,-211.34 0,-175.06 134.67,-175.06 134.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="34.33" y="-193.25" font-family="Geist Mono" font-size="11.00">Retrospective</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">what went well/wrong/missing</text>
+</g>
+<!-- agent&#45;&gt;retro -->
+<g id="edge3" class="edge">
+<title>agent&#45;&gt;retro</title>
+<path fill="none" stroke="#c8501f" d="M272.36,-261.9C230.63,-248.12 172.81,-229.03 129.21,-214.63"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="130.1,-212.35 122.68,-212.48 128.56,-217 130.1,-212.35"/>
+<text xml:space="preserve" text-anchor="middle" x="231.84" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">end of run</text>
+</g>
+<!-- firecracker -->
+<g id="node3" class="node">
+<title>firecracker</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="301.92,-211.34 156.75,-211.34 156.75,-175.06 301.92,-175.06 301.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="180.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Firecracker microVM</text>
+<text xml:space="preserve" text-anchor="start" x="169.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">own kernel around Docker socket</text>
+</g>
+<!-- agent&#45;&gt;firecracker -->
+<g id="edge1" class="edge">
+<title>agent&#45;&gt;firecracker</title>
+<path fill="none" stroke="#c8501f" d="M306.24,-262.01C291.54,-249.05 271.47,-231.35 255.52,-217.29"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="257.41,-215.69 250.54,-212.9 254.17,-219.37 257.41,-215.69"/>
+<text xml:space="preserve" text-anchor="middle" x="303.89" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs inside</text>
+</g>
+<!-- controller -->
+<g id="node5" class="node">
+<title>controller</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="446.29,-211.34 324.38,-211.34 324.38,-175.06 446.29,-175.06 446.29,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="354.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Go controller</text>
+<text xml:space="preserve" text-anchor="start" x="337.33" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">deterministic orchestration</text>
+</g>
+<!-- agent&#45;&gt;controller -->
+<g id="edge4" class="edge">
+<title>agent&#45;&gt;controller</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M338.56,-262.01C347.18,-249.51 358.85,-232.6 368.37,-218.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="370.31,-220.3 372.27,-213.15 366.27,-217.52 370.31,-220.3"/>
+<text xml:space="preserve" text-anchor="middle" x="375.87" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">file edits</text>
+</g>
+<!-- blast -->
+<g id="node8" class="node">
+<title>blast</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="618.55,-211.34 468.13,-211.34 468.13,-175.06 618.55,-175.06 618.55,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="496.84" y="-193.25" font-family="Geist Mono" font-size="11.00">70k lines in one PR</text>
+<text xml:space="preserve" text-anchor="start" x="481.09" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">scale of a single dependency bump</text>
+</g>
+<!-- agent&#45;&gt;blast -->
+<g id="edge7" class="edge">
+<title>agent&#45;&gt;blast</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M371.56,-261.9C406.23,-248.24 454.16,-229.35 490.58,-214.99"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="491.14,-217.4 496.76,-212.56 489.35,-212.85 491.14,-217.4"/>
+<text xml:space="preserve" text-anchor="middle" x="474.45" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">attack surface</text>
+</g>
+<!-- dockersock -->
+<g id="node4" class="node">
+<title>dockersock</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="291.04,-123.81 167.62,-123.81 167.62,-87.53 291.04,-87.53 291.04,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="194.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Docker socket</text>
+<text xml:space="preserve" text-anchor="start" x="180.58" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">needed for self&#45;verify builds</text>
+</g>
+<!-- firecracker&#45;&gt;dockersock -->
+<g id="edge2" class="edge">
+<title>firecracker&#45;&gt;dockersock</title>
+<path fill="none" stroke="#c8501f" d="M229.33,-174.48C229.33,-162.44 229.33,-146.31 229.33,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="231.79,-132.88 229.34,-125.88 226.89,-132.88 231.79,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="258.96" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">contains escape</text>
+</g>
+<!-- creds -->
+<g id="node6" class="node">
+<title>creds</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="456.04,-123.81 314.62,-123.81 314.62,-87.53 456.04,-87.53 456.04,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="327.58" y="-105.72" font-family="Geist Mono" font-size="11.00">GitHub + CI credentials</text>
+<text xml:space="preserve" text-anchor="start" x="342.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">withheld from the agent</text>
+</g>
+<!-- controller&#45;&gt;creds -->
+<g id="edge5" class="edge">
+<title>controller&#45;&gt;creds</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M385.33,-174.48C385.33,-162.44 385.33,-146.31 385.33,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="387.79,-132.88 385.34,-125.88 382.89,-132.88 387.79,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="395.08" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">holds</text>
+</g>
+<!-- github -->
+<g id="node7" class="node">
+<title>github</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="437.67,-36.28 333,-36.28 333,0 437.67,0 437.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="357.58" y="-18.19" font-family="Geist Mono" font-size="11.00">GitHub / CI</text>
+<text xml:space="preserve" text-anchor="start" x="345.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">commit, PR, trigger CI</text>
+</g>
+<!-- creds&#45;&gt;github -->
+<g id="edge6" class="edge">
+<title>creds&#45;&gt;github</title>
+<path fill="none" stroke="#c8501f" d="M385.33,-86.95C385.33,-74.91 385.33,-58.78 385.33,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="387.79,-45.35 385.34,-38.35 382.89,-45.35 387.79,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="405.96" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">push/PR/CI</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Form3&#x27;s Patch Pilot keeps the agent confined to file edits inside a Firecracker microVM around the Docker socket, while a separate deterministic controller holds the credentials that can actually push code or trigger CI (ours).</p></section>
 
 
 
