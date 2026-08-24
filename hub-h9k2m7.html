@@ -11,6 +11,11 @@
 .tasks .rm{margin-left:auto;background:none;border:0;color:var(--mut);font-size:15px;line-height:1;cursor:pointer;padding:0 4px}
 .tasks .rm:hover{color:var(--lip2)}
 #custom-tasks:empty{display:none}
+.tasks .defer{margin-left:auto;flex:none;border:1px solid currentColor;background:none;color:inherit;opacity:.45;font:inherit;font-size:.62rem;letter-spacing:.06em;padding:1px 6px;cursor:pointer;border-radius:3px}
+.tasks .defer:hover{opacity:1}
+.tasks .t .defer{margin-left:6px}
+.pushedline{font-size:.68rem;opacity:.6;margin-top:8px;letter-spacing:.04em}
+.pushedline button{border:none;background:none;color:inherit;text-decoration:underline;cursor:pointer;font:inherit;padding:0 2px}
 </style>
 
 <style>
@@ -253,10 +258,7 @@ ul.tasks li .t:hover b{color:var(--lip2)}
 <div class="ep">TODAY · SUN 8/23</div>
 <h2>Top <i>3</i></h2>
 <ul class="tasks">
-<li><div class="t"><b>Open the 4th-floor ceiling + moisture meter</b><span class="when">AM · 1 HR</span></div><div class="sub">Gates the drywall crew; Mike Coloma is Wed 9:30. Under 15% = dry; over 19% = water still arriving.</div>
-<details><summary hidden></summary><div class="inner"><ol><li>Kill the ceiling circuit if wiring is near the stain.</li><li>Find joists with a rare-earth magnet line.</li><li>Rectangle: joist centerline to centerline, ~2&quot; past the stain.</li><li>Mist the lines &mdash; damp gypsum cuts near dust-free.</li><li>Score 3&ndash;4 passes, shop-vac trailing. Blade &le; 3/4&quot; (wires).</li><li>Palm-punch, pull gently, slice back paper.</li><li>Bag it &mdash; but LOOK at the back face first. Evidence.</li><li>Photograph everything.</li><li>Meter the framing, then the other two areas.</li></ol></div></details></li>
 <li><div class="t"><b>Text Ben: get the ladder back</b><span class="when">1 MIN</span></div><div class="sub">Needed for the roof recoat weekend.</div></li>
-<li><div class="t"><b>Fix the HVAC</b><span class="when">TODAY</span></div></li>
 <li><div class="t"><b>Finish washing Zada&rsquo;s backpack</b><span class="when">TODAY</span></div></li>
 </ul>
 </article>
@@ -279,6 +281,9 @@ ul.tasks li .t:hover b{color:var(--lip2)}
 <li><div class="t"><b>Homework diagnostic, both kids</b><span class="when">TUE · 20&ndash;30 MIN EACH</span></div><div class="sub">Last spring&rsquo;s returned work + summer workbooks; watch a page cold. Note fluent / shaky / forgotten.</div></li>
 <li><div class="t"><b>Cook: Nando&rsquo;s peri-peri chicken on the grill</b><span class="when">TUE OR THU · MARINATE THE NIGHT BEFORE</span></div><div class="sub">Two bowls: kids mild, adults hot. Recipe is on the Recipes page; corn on the grill alongside.</div></li>
 <li><div class="t"><b>Clean for the roofers</b><span class="when">TUE EVE</span></div></li>
+<li><div class="t"><b>Open the 4th-floor ceiling + moisture meter</b><span class="when">TUE · 1 HR · GATES MIKE WED 9:30</span></div><div class="sub">Gates the drywall crew; Mike Coloma is Wed 9:30. Under 15% = dry; over 19% = water still arriving.</div>
+<details><summary hidden></summary><div class="inner"><ol><li>Kill the ceiling circuit if wiring is near the stain.</li><li>Find joists with a rare-earth magnet line.</li><li>Rectangle: joist centerline to centerline, ~2&quot; past the stain.</li><li>Mist the lines &mdash; damp gypsum cuts near dust-free.</li><li>Score 3&ndash;4 passes, shop-vac trailing. Blade &le; 3/4&quot; (wires).</li><li>Palm-punch, pull gently, slice back paper.</li><li>Bag it &mdash; but LOOK at the back face first. Evidence.</li><li>Photograph everything.</li><li>Meter the framing, then the other two areas.</li></ol></div></details></li>
+<li><div class="t"><b>Fix the HVAC</b><span class="when">TUE</span></div></li>
 </ul>
 
 <div class="grp">Wed 8/26</div>
@@ -424,7 +429,11 @@ var tc=document.getElementById('tc');
 document.getElementById('xall').onclick=function(){document.querySelectorAll('details').forEach(function(d){d.open=true})};
 document.getElementById('call').onclick=function(){document.querySelectorAll('details').forEach(function(d){d.open=false})};
 // checkboxes + hide done (persisted)
-var KEY='kaset-hub-done',HKEY='kaset-hub-hidedone',CKEY='kaset-hub-custom';
+var KEY='kaset-hub-done',HKEY='kaset-hub-hidedone',CKEY='kaset-hub-custom',DKEY='kaset-hub-defer';
+var defer={};try{defer=JSON.parse(localStorage.getItem(DKEY)||'{}')}catch(e){}
+function saveDefer(){try{localStorage.setItem(DKEY,JSON.stringify(defer))}catch(e){}}
+function ymd(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function fmtDay(s){var p=s.split('-');var d=new Date(+p[0],+p[1]-1,+p[2]);return ['SUN','MON','TUE','WED','THU','FRI','SAT'][d.getDay()]+' '+(+p[1])+'/'+(+p[2])}
 var done={};try{done=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
 var custom=[];try{custom=JSON.parse(localStorage.getItem(CKEY)||'[]')}catch(e){}
 function saveDone(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}}
@@ -442,6 +451,25 @@ function attach(li){
   if(cb.checked)li.classList.add('done');
   cb.addEventListener('change',function(){li.classList.toggle('done',cb.checked);if(cb.checked){done[id]=1}else{delete done[id]}saveDone()});
   t.insertBefore(cb,t.firstChild);
+  var urgent=li.closest('.card.urgent');
+  if(urgent&&!li.getAttribute('data-id')){
+    var todayS=ymd(new Date());
+    if(defer[id]&&defer[id]<=todayS){delete defer[id];saveDefer();}
+    var btn=document.createElement('button');btn.type='button';btn.className='defer';btn.title='Push to tomorrow';btn.textContent='⏭';
+    t.appendChild(btn);
+    function pushedBox(){var b=urgent.querySelector('.pushedline');if(!b){b=document.createElement('div');b.className='pushedline';urgent.appendChild(b);}return b;}
+    function showPushed(){
+      li.style.display='none';
+      var row=document.createElement('span');row.style.display='block';
+      var tt=(li.querySelector(':scope > .t b')||{}).textContent||'task';
+      row.appendChild(document.createTextNode('⏭ '+tt+' → '+fmtDay(defer[id])+' '));
+      var u=document.createElement('button');u.type='button';u.textContent='undo';
+      u.onclick=function(){delete defer[id];saveDefer();li.style.display='';row.remove();};
+      row.appendChild(u);pushedBox().appendChild(row);
+    }
+    btn.onclick=function(){var d=new Date();d.setDate(d.getDate()+1);defer[id]=ymd(d);saveDefer();showPushed();};
+    if(defer[id])showPushed();
+  }
 }
 /* custom tasks: typed at the bottom of Today, kept in this browser */
 var cul=document.getElementById('custom-tasks'),form=document.getElementById('addtask'),inp=document.getElementById('addtask-in');
