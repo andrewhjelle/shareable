@@ -1,0 +1,695 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Service Map &middot; the talk-brief engine, functionally</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--paper:#fff;--ink:#14110D;--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14)}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:Geist,-apple-system,sans-serif;background:var(--bg);color:var(--ink);padding:40px 28px}
+.frame{max-width:1400px;margin:0 auto}h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(34px,5vw,54px);margin-bottom:12px}
+h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:29px;margin:0 0 14px}
+.mono{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink4)}
+section{padding:42px 0;border-bottom:1px solid var(--rule)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:20px 24px;max-width:920px;margin:16px 0}
+.tldr li{font-size:15px;line-height:1.6;margin:0 0 9px 18px;color:#2A241D}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:24px;margin:18px 0;max-width:1160px}
+.svgwrap svg{width:100%;height:auto}
+.cap{font-size:12.5px;color:var(--ink4);line-height:1.5;margin-top:10px;max-width:90ch}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid rgba(20,17,13,.32)}
+td{padding:11px 10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.55;color:#2A241D}
+td a{color:var(--mark2)}
+.pill{display:inline-block;font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;border-radius:999px;padding:3px 10px}
+.pill.now{background:var(--mark);color:#fff}.pill.exp{border:1px solid var(--mark2);color:var(--mark2)}.pill.watch{border:1px solid rgba(20,17,13,.3);color:var(--ink4)}
+.note{font-size:13px;color:var(--ink4);line-height:1.6;max-width:88ch}
+</style></head><body><div class="frame">
+<div class="mono">Service map &middot; ongoing functional diagrams &middot; updated 2026-08-24</div>
+<h1>The talk-brief engine, <em style="color:var(--mark)">and how the talks would change it</em></h1>
+<p class="note">This service turns a conference channel into a working corpus of talk-briefs. yt-dlp pulls videos and captions on a slow pace to dodge the sign-in bot check, extract_slides samples frames and pHashes duplicates out, crop_slides finds the slide box by the edges that persist across a whole deck, and camera_frames marks the stage shots so they never land in a slide slot. The authoring side is a wave of one claude -p call per talk, each writing a content json against a fixed schema, with depth triage from a separate Opus pass steering the tier. A deterministic grader checks the quotes are verbatim, the timestamps fall in the right block, and the themes match a controlled vocabulary. build_site and build_corpus_site then render one page per talk plus a cross-corpus today and timeline. We are cautious about the pieces we have not yet stress tested at scale, especially the sidecar judge and the context graph proposals (ours).</p>
+
+<section><div class="mono">If you only read one thing &middot; 5 adopt-now proposals</div>
+<div class="tldr"><ul><li><strong>Sidecar judge alongside verbatim grader</strong>: A second model in a fresh context grades the same content file with a narrower rubric per error type, its verdict is joined onto the verbatim check.</li><li><strong>Harden grader against gamed quotes and IDs</strong>: Assume the wave will try to fake fixes, hash real transcript spans, refuse block-boundary quotes, and reject --fix rewrites that swap wording rather than source.</li><li><strong>Event-sourced, resumable wave receipts</strong>: Treat runs/waves/*.jsonl as the durable log of the run, snapshot every task boundary so a killed wave resumes without re-billing completed ids.</li><li><strong>Weekly slop-purge on prompt templates</strong>: Every model bump triggers a one-hour pass that deletes rubric rules and prompt fragments the new model no longer needs, before the next wave runs.</li><li><strong>Filesystem-first context for authoring agents</strong>: Stop building bespoke retrieval into the wave, dump transcript, slides, and neighbor content to a scratch dir the agent greps, most speed wins are already there.</li></ul></div></section>
+
+<section><h2>The full flow</h2><div class="svgwrap"><svg style="width:100%;height:auto;display:block"  
+
+ viewBox="0.00 0.00 775.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+
+<title>G</title>
+
+<!-- yt_channel -->
+
+<g id="node1" class="node">
+
+<title>yt_channel</title>
+
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="562.04,-561.46 359.88,-561.46 359.88,-525.18 562.04,-525.18 562.04,-561.46"/>
+
+<text xml:space="preserve" text-anchor="start" x="419.71" y="-543.37" font-family="Geist Mono" font-size="11.00">YouTube channel</text>
+
+<text xml:space="preserve" text-anchor="start" x="372.83" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">AI Engineer conference uploads, source of record</text>
+
+</g>
+
+<!-- fetch_videos -->
+
+<g id="node2" class="node">
+
+<title>fetch_videos</title>
+
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="545.92,-473.93 376,-473.93 376,-437.65 545.92,-437.65 545.92,-473.93"/>
+
+<text xml:space="preserve" text-anchor="start" x="399.46" y="-455.84" font-family="Geist Mono" font-size="11.00">dates.py, build_corpus.py</text>
+
+<text xml:space="preserve" text-anchor="start" x="388.96" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">yt&#45;dlp with 3s pacing to dodge bot&#45;check</text>
+
+</g>
+
+<!-- yt_channel&#45;&gt;fetch_videos -->
+
+<g id="edge1" class="edge">
+
+<title>yt_channel&#45;&gt;fetch_videos</title>
+
+<path fill="none" stroke="#c8501f" d="M460.96,-524.6C460.96,-512.56 460.96,-496.43 460.96,-482.92"/>
+
+<polygon fill="#c8501f" stroke="#c8501f" points="463.41,-483 460.96,-476 458.51,-483 463.41,-483"/>
+
+<text xml:space="preserve" text-anchor="middle" x="484.96" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">channel scan</text>
+
+</g>
+
+<!-- transcripts -->
+
+<g id="node3" class="node">
+
+<title>transcripts</title>
+
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="722.05,-386.4 579.88,-386.4 579.88,-350.12 722.05,-350.12 722.05,-386.4"/>
+
+<text xml:space="preserve" text-anchor="start" x="611.21" y="-368.31" font-family="Geist Mono" font-size="11.00">transcripts store</text>
+
+<text xml:space="preserve" text-anchor="start" x="592.84" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">transcripts/&lt;vid&gt;.txt, 30s blocks</text>
+
+</g>
+
+<!-- fetch_videos&#45;&gt;transcripts -->
+
+<g id="edge2" class="edge">
+
+<title>fetch_videos&#45;&gt;transcripts</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M500.33,-437.07C530.52,-423.48 572.28,-404.68 604.17,-390.32"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="604.88,-392.69 610.26,-387.58 602.87,-388.22 604.88,-392.69"/>
+
+<text xml:space="preserve" text-anchor="middle" x="582.71" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">captions</text>
+
+</g>
+
+<!-- extract_slides -->
+
+<g id="node4" class="node">
+
+<title>extract_slides</title>
+
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="371.92,-386.4 172,-386.4 172,-350.12 371.92,-350.12 371.92,-386.4"/>
+
+<text xml:space="preserve" text-anchor="start" x="231.46" y="-368.31" font-family="Geist Mono" font-size="11.00">extract_slides.py</text>
+
+<text xml:space="preserve" text-anchor="start" x="184.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">fps=1/10 sample, pHash dedupe, min&#45;gap prune</text>
+
+</g>
+
+<!-- fetch_videos&#45;&gt;extract_slides -->
+
+<g id="edge3" class="edge">
+
+<title>fetch_videos&#45;&gt;extract_slides</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M421.8,-437.07C391.77,-423.48 350.23,-404.68 318.5,-390.32"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="319.84,-388.24 312.45,-387.58 317.82,-392.7 319.84,-388.24"/>
+
+<text xml:space="preserve" text-anchor="middle" x="395.4" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">video file</text>
+
+</g>
+
+<!-- run_wave -->
+
+<g id="node8" class="node">
+
+<title>run_wave</title>
+
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="703.3,-298.87 538.62,-298.87 538.62,-262.59 703.3,-262.59 703.3,-298.87"/>
+
+<text xml:space="preserve" text-anchor="start" x="590.21" y="-280.78" font-family="Geist Mono" font-size="11.00">run_wave.py</text>
+
+<text xml:space="preserve" text-anchor="start" x="551.59" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">sequential claude &#45;p, per&#45;call cost jsonl</text>
+
+</g>
+
+<!-- transcripts&#45;&gt;run_wave -->
+
+<g id="edge9" class="edge">
+
+<title>transcripts&#45;&gt;run_wave</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M644.74,-349.54C640.44,-337.27 634.65,-320.75 629.85,-307.09"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="632.3,-306.65 627.67,-300.86 627.67,-308.27 632.3,-306.65"/>
+
+<text xml:space="preserve" text-anchor="middle" x="662.13" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">prompt input</text>
+
+</g>
+
+<!-- slide_store -->
+
+<g id="node7" class="node">
+
+<title>slide_store</title>
+
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="355.04,-298.87 188.88,-298.87 188.88,-262.59 355.04,-262.59 355.04,-298.87"/>
+
+<text xml:space="preserve" text-anchor="start" x="226.96" y="-280.78" font-family="Geist Mono" font-size="11.00">img_out, img_crop</text>
+
+<text xml:space="preserve" text-anchor="start" x="201.83" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">sNN_&lt;t&gt;.webp plus crop.json per deck</text>
+
+</g>
+
+<!-- extract_slides&#45;&gt;slide_store -->
+
+<g id="edge4" class="edge">
+
+<title>extract_slides&#45;&gt;slide_store</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M271.96,-349.54C271.96,-337.5 271.96,-321.37 271.96,-307.86"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="274.41,-307.94 271.96,-300.94 269.51,-307.94 274.41,-307.94"/>
+
+<text xml:space="preserve" text-anchor="middle" x="293.33" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">raw frames</text>
+
+</g>
+
+<!-- crop_slides -->
+
+<g id="node5" class="node">
+
+<title>crop_slides</title>
+
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="391.54,-211.34 210.38,-211.34 210.38,-175.06 391.54,-175.06 391.54,-211.34"/>
+
+<text xml:space="preserve" text-anchor="start" x="266.83" y="-193.25" font-family="Geist Mono" font-size="11.00">crop_slides.py</text>
+
+<text xml:space="preserve" text-anchor="start" x="223.33" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">persistent&#45;edge box, no per&#45;conf templates</text>
+
+</g>
+
+<!-- crop_slides&#45;&gt;slide_store -->
+
+<g id="edge6" class="edge">
+
+<title>crop_slides&#45;&gt;slide_store</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M306.02,-211.74C307.85,-221.16 308.67,-232.82 304.96,-242.59 303.23,-247.14 300.67,-251.48 297.71,-255.49"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="295.96,-253.77 293.42,-260.73 299.75,-256.87 295.96,-253.77"/>
+
+<text xml:space="preserve" text-anchor="middle" x="333.16" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">cropped webp</text>
+
+</g>
+
+<!-- camera_flag -->
+
+<g id="node6" class="node">
+
+<title>camera_flag</title>
+
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="187.92,-211.34 0,-211.34 0,-175.06 187.92,-175.06 187.92,-211.34"/>
+
+<text xml:space="preserve" text-anchor="start" x="48.96" y="-193.25" font-family="Geist Mono" font-size="11.00">camera_frames.py</text>
+
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">flags low&#45;edge&#45;density frames as stage shots</text>
+
+</g>
+
+<!-- camera_flag&#45;&gt;slide_store -->
+
+<g id="edge8" class="edge">
+
+<title>camera_flag&#45;&gt;slide_store</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M87.59,-211.67C85.11,-221.77 84.3,-234.11 91.21,-242.59 103.02,-257.08 141.63,-266.07 180.14,-271.58"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="179.58,-273.97 186.85,-272.49 180.24,-269.12 179.58,-273.97"/>
+
+<text xml:space="preserve" text-anchor="middle" x="129.08" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">cam list in crop.json</text>
+
+</g>
+
+<!-- slide_store&#45;&gt;crop_slides -->
+
+<g id="edge5" class="edge">
+
+<title>slide_store&#45;&gt;crop_slides</title>
+
+<path fill="none" stroke="#c8501f" d="M269.11,-262.25C268.25,-252.84 268.3,-241.18 271.71,-231.34 273.22,-226.98 275.48,-222.74 278.09,-218.78"/>
+
+<polygon fill="#c8501f" stroke="#c8501f" points="280.01,-220.31 282.17,-213.21 276.05,-217.41 280.01,-220.31"/>
+
+<text xml:space="preserve" text-anchor="middle" x="287.83" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">per deck</text>
+
+</g>
+
+<!-- slide_store&#45;&gt;camera_flag -->
+
+<g id="edge7" class="edge">
+
+<title>slide_store&#45;&gt;camera_flag</title>
+
+<path fill="none" stroke="#c8501f" d="M235.08,-262.01C206.92,-248.48 168,-229.78 138.17,-215.44"/>
+
+<polygon fill="#c8501f" stroke="#c8501f" points="139.53,-213.38 132.16,-212.55 137.41,-217.79 139.53,-213.38"/>
+
+<text xml:space="preserve" text-anchor="middle" x="217.62" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">edge density</text>
+
+</g>
+
+<!-- build_site -->
+
+<g id="node12" class="node">
+
+<title>build_site</title>
+
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="532.92,-123.81 339,-123.81 339,-87.53 532.92,-87.53 532.92,-123.81"/>
+
+<text xml:space="preserve" text-anchor="start" x="359.08" y="-105.72" font-family="Geist Mono" font-size="11.00">build_site.py plus build_corpus_</text>
+
+<text xml:space="preserve" text-anchor="start" x="351.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">index, per&#45;talk pages, today.html, timeline.html</text>
+
+</g>
+
+<!-- slide_store&#45;&gt;build_site -->
+
+<g id="edge15" class="edge">
+
+<title>slide_store&#45;&gt;build_site</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M333.59,-261.94C359.14,-251.39 386.58,-235.26 402.96,-211.34 419.3,-187.47 427.87,-155.09 432.13,-132.7"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="434.54,-133.16 433.35,-125.84 429.71,-132.3 434.54,-133.16"/>
+
+<text xml:space="preserve" text-anchor="middle" x="434.1" y="-190.75" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">images</text>
+
+</g>
+
+<!-- content_json -->
+
+<g id="node10" class="node">
+
+<title>content_json</title>
+
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="700.67,-211.34 493.25,-211.34 493.25,-175.06 700.67,-175.06 700.67,-211.34"/>
+
+<text xml:space="preserve" text-anchor="start" x="552.34" y="-193.25" font-family="Geist Mono" font-size="11.00">content/&lt;id&gt;.json</text>
+
+<text xml:space="preserve" text-anchor="start" x="506.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">per&#45;talk schema: tldr, sections, claims, diagram, viz</text>
+
+</g>
+
+<!-- run_wave&#45;&gt;content_json -->
+
+<g id="edge11" class="edge">
+
+<title>run_wave&#45;&gt;content_json</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M615.99,-262.01C612.58,-249.85 608,-233.53 604.18,-219.94"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="606.59,-219.43 602.34,-213.36 601.87,-220.76 606.59,-219.43"/>
+
+<text xml:space="preserve" text-anchor="middle" x="638.9" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">authored briefs</text>
+
+</g>
+
+<!-- apply_triage -->
+
+<g id="node9" class="node">
+
+<title>apply_triage</title>
+
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="557.92,-386.4 394,-386.4 394,-350.12 557.92,-350.12 557.92,-386.4"/>
+
+<text xml:space="preserve" text-anchor="start" x="439.21" y="-368.31" font-family="Geist Mono" font-size="11.00">apply_triage.py</text>
+
+<text xml:space="preserve" text-anchor="start" x="406.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">writes depth tiers, emits worker id lists</text>
+
+</g>
+
+<!-- apply_triage&#45;&gt;run_wave -->
+
+<g id="edge10" class="edge">
+
+<title>apply_triage&#45;&gt;run_wave</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M506,-349.54C528.56,-336.24 559.57,-317.94 583.7,-303.71"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="584.87,-305.86 589.65,-300.2 582.38,-301.64 584.87,-305.86"/>
+
+<text xml:space="preserve" text-anchor="middle" x="583.77" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">worker id lists</text>
+
+</g>
+
+<!-- apply_triage&#45;&gt;content_json -->
+
+<g id="edge12" class="edge">
+
+<title>apply_triage&#45;&gt;content_json</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M473.46,-349.45C471.29,-327.31 470.73,-289.21 487.46,-262.59 500.31,-242.14 521.75,-226.79 542.26,-215.86"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="543.29,-218.09 548.41,-212.73 541.06,-213.72 543.29,-218.09"/>
+
+<text xml:space="preserve" text-anchor="middle" x="507.71" y="-278.28" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">depth tiers</text>
+
+</g>
+
+<!-- grade_content -->
+
+<g id="node11" class="node">
+
+<title>grade_content</title>
+
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="766.55,-123.81 555.38,-123.81 555.38,-87.53 766.55,-87.53 766.55,-123.81"/>
+
+<text xml:space="preserve" text-anchor="start" x="618.59" y="-105.72" font-family="Geist Mono" font-size="11.00">grade_content.py</text>
+
+<text xml:space="preserve" text-anchor="start" x="568.34" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">verbatim quotes, timestamp windows, theme vocab</text>
+
+</g>
+
+<!-- content_json&#45;&gt;grade_content -->
+
+<g id="edge13" class="edge">
+
+<title>content_json&#45;&gt;grade_content</title>
+
+<path fill="none" stroke="#c8501f" d="M610.22,-174.48C619.66,-161.86 632.46,-144.76 642.84,-130.89"/>
+
+<polygon fill="#c8501f" stroke="#c8501f" points="644.58,-132.65 646.81,-125.58 640.65,-129.72 644.58,-132.65"/>
+
+<text xml:space="preserve" text-anchor="middle" x="643.29" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">check</text>
+
+</g>
+
+<!-- content_json&#45;&gt;build_site -->
+
+<g id="edge14" class="edge">
+
+<title>content_json&#45;&gt;build_site</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M563.6,-174.48C538.34,-161.06 503.53,-142.56 476.64,-128.28"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="477.94,-126.2 470.61,-125.08 475.65,-130.53 477.94,-126.2"/>
+
+<text xml:space="preserve" text-anchor="middle" x="548.97" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">render input</text>
+
+</g>
+
+<!-- site -->
+
+<g id="node13" class="node">
+
+<title>site</title>
+
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="519.42,-36.28 352.5,-36.28 352.5,0 519.42,0 519.42,-36.28"/>
+
+<text xml:space="preserve" text-anchor="start" x="385.33" y="-18.19" font-family="Geist Mono" font-size="11.00">shareable Pages site</text>
+
+<text xml:space="preserve" text-anchor="start" x="365.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">GitHub Pages, gated by env branch rule</text>
+
+</g>
+
+<!-- build_site&#45;&gt;site -->
+
+<g id="edge16" class="edge">
+
+<title>build_site&#45;&gt;site</title>
+
+<path fill="none" stroke="#c8501f" d="M435.96,-86.95C435.96,-74.91 435.96,-58.78 435.96,-45.27"/>
+
+<polygon fill="#c8501f" stroke="#c8501f" points="438.41,-45.35 435.96,-38.35 433.51,-45.35 438.41,-45.35"/>
+
+<text xml:space="preserve" text-anchor="middle" x="449.08" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">publish</text>
+
+</g>
+
+</g>
+
+</svg>
+
+<div class="mono" style="font-size:9px;margin-top:8px">solid orange = flow &middot; dashed blue = data &middot; shaded = store &middot; dashed box = external</div><p class="cap">End to end path from a channel scan to a published page (ours). Diamond boxes are stores, not steps.</p></div></section>
+
+<section><h2>The quality harness</h2><div class="svgwrap"><svg style="width:100%;height:auto;display:block"  
+
+ viewBox="0.00 0.00 565.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+
+<title>G</title>
+
+<!-- critic_rubric -->
+
+<g id="node1" class="node">
+
+<title>critic_rubric</title>
+
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="181.92,-298.87 0,-298.87 0,-262.59 181.92,-262.59 181.92,-298.87"/>
+
+<text xml:space="preserve" text-anchor="start" x="55.33" y="-280.78" font-family="Geist Mono" font-size="11.00">critic&#45;rubric.md</text>
+
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">human&#45;written thresholds the grader reads</text>
+
+</g>
+
+<!-- grader -->
+
+<g id="node2" class="node">
+
+<title>grader</title>
+
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="181.17,-211.34 0.75,-211.34 0.75,-175.06 181.17,-175.06 181.17,-211.34"/>
+
+<text xml:space="preserve" text-anchor="start" x="48.58" y="-193.25" font-family="Geist Mono" font-size="11.00">grade_content.py</text>
+
+<text xml:space="preserve" text-anchor="start" x="13.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">PASS or FAIL with reasons, one line per talk</text>
+
+</g>
+
+<!-- critic_rubric&#45;&gt;grader -->
+
+<g id="edge1" class="edge">
+
+<title>critic_rubric&#45;&gt;grader</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M90.96,-262.01C90.96,-249.97 90.96,-233.84 90.96,-220.33"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="93.41,-220.41 90.96,-213.41 88.51,-220.41 93.41,-220.41"/>
+
+<text xml:space="preserve" text-anchor="middle" x="121.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">reads thresholds</text>
+
+</g>
+
+<!-- wave_receipts -->
+
+<g id="node5" class="node">
+
+<title>wave_receipts</title>
+
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="344.79,-123.81 159.12,-123.81 159.12,-87.53 344.79,-87.53 344.79,-123.81"/>
+
+<text xml:space="preserve" text-anchor="start" x="205.83" y="-105.72" font-family="Geist Mono" font-size="11.00">runs/waves/*.jsonl</text>
+
+<text xml:space="preserve" text-anchor="start" x="172.08" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">total_cost_usd plus usage per call, chartable</text>
+
+</g>
+
+<!-- grader&#45;&gt;wave_receipts -->
+
+<g id="edge3" class="edge">
+
+<title>grader&#45;&gt;wave_receipts</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M124.32,-174.48C149.58,-161.06 184.39,-142.56 211.28,-128.28"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="212.27,-130.53 217.31,-125.08 209.98,-126.2 212.27,-130.53"/>
+
+<text xml:space="preserve" text-anchor="middle" x="210.35" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">pass or fail line</text>
+
+</g>
+
+<!-- lessons_ledger -->
+
+<g id="node8" class="node">
+
+<title>lessons_ledger</title>
+
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="345.17,-36.28 158.75,-36.28 158.75,0 345.17,0 345.17,-36.28"/>
+
+<text xml:space="preserve" text-anchor="start" x="191.58" y="-18.19" font-family="Geist Mono" font-size="11.00">loop3_*.json, skeptic md</text>
+
+<text xml:space="preserve" text-anchor="start" x="171.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">attention, context, evals, harness lesson logs</text>
+
+</g>
+
+<!-- grader&#45;&gt;lessons_ledger -->
+
+<g id="edge8" class="edge">
+
+<title>grader&#45;&gt;lessons_ledger</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M87.91,-174.41C85.08,-151.96 83.72,-113.18 102.21,-87.53 118.19,-65.37 143.12,-50.22 168.09,-39.94"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="168.8,-42.29 174.42,-37.45 167.01,-37.73 168.8,-42.29"/>
+
+<text xml:space="preserve" text-anchor="middle" x="125.08" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">fail patterns</text>
+
+</g>
+
+<!-- diagram_qa -->
+
+<g id="node3" class="node">
+
+<title>diagram_qa</title>
+
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="557.42,-123.81 366.5,-123.81 366.5,-87.53 557.42,-87.53 557.42,-123.81"/>
+
+<text xml:space="preserve" text-anchor="start" x="397.83" y="-105.72" font-family="Geist Mono" font-size="11.00">diagram_gv.py crossings()</text>
+
+<text xml:space="preserve" text-anchor="start" x="379.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">counts edge intersections, before&#45;after metric</text>
+
+</g>
+
+<!-- diagram_qa&#45;&gt;lessons_ledger -->
+
+<g id="edge5" class="edge">
+
+<title>diagram_qa&#45;&gt;lessons_ledger</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M418.19,-86.84C384.78,-73.24 338.65,-54.45 303.46,-40.11"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="304.48,-37.89 297.07,-37.51 302.63,-42.42 304.48,-37.89"/>
+
+<text xml:space="preserve" text-anchor="middle" x="397.28" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">crossings delta</text>
+
+</g>
+
+<!-- run_wave -->
+
+<g id="node4" class="node">
+
+<title>run_wave</title>
+
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="396.92,-211.34 203,-211.34 203,-175.06 396.92,-175.06 396.92,-211.34"/>
+
+<text xml:space="preserve" text-anchor="start" x="269.21" y="-193.25" font-family="Geist Mono" font-size="11.00">run_wave.py</text>
+
+<text xml:space="preserve" text-anchor="start" x="215.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">one claude &#45;p per task, resumable via wave log</text>
+
+</g>
+
+<!-- run_wave&#45;&gt;wave_receipts -->
+
+<g id="edge2" class="edge">
+
+<title>run_wave&#45;&gt;wave_receipts</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M290.01,-174.48C283.06,-162.09 273.68,-145.38 265.98,-131.65"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="268.2,-130.59 262.63,-125.69 263.92,-132.99 268.2,-130.59"/>
+
+<text xml:space="preserve" text-anchor="middle" x="299.83" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">per&#45;call log</text>
+
+</g>
+
+<!-- wave_receipts&#45;&gt;lessons_ledger -->
+
+<g id="edge4" class="edge">
+
+<title>wave_receipts&#45;&gt;lessons_ledger</title>
+
+<path fill="none" stroke="#c8501f" d="M251.96,-86.95C251.96,-74.91 251.96,-58.78 251.96,-45.27"/>
+
+<polygon fill="#c8501f" stroke="#c8501f" points="254.41,-45.35 251.96,-38.35 249.51,-45.35 254.41,-45.35"/>
+
+<text xml:space="preserve" text-anchor="middle" x="279.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">distilled lesson</text>
+
+</g>
+
+<!-- depth_triage -->
+
+<g id="node6" class="node">
+
+<title>depth_triage</title>
+
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="395.42,-386.4 204.5,-386.4 204.5,-350.12 395.42,-350.12 395.42,-386.4"/>
+
+<text xml:space="preserve" text-anchor="start" x="257.58" y="-368.31" font-family="Geist Mono" font-size="11.00">depth_triage.json</text>
+
+<text xml:space="preserve" text-anchor="start" x="217.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Opus&#45;set tier per talk: blueprint, pattern, take</text>
+
+</g>
+
+<!-- apply_triage -->
+
+<g id="node7" class="node">
+
+<title>apply_triage</title>
+
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="392.79,-298.87 207.12,-298.87 207.12,-262.59 392.79,-262.59 392.79,-298.87"/>
+
+<text xml:space="preserve" text-anchor="start" x="263.21" y="-280.78" font-family="Geist Mono" font-size="11.00">apply_triage.py</text>
+
+<text xml:space="preserve" text-anchor="start" x="220.08" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">propagates tiers, splits work into worker lists</text>
+
+</g>
+
+<!-- depth_triage&#45;&gt;apply_triage -->
+
+<g id="edge6" class="edge">
+
+<title>depth_triage&#45;&gt;apply_triage</title>
+
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M299.96,-349.54C299.96,-337.5 299.96,-321.37 299.96,-307.86"/>
+
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="302.41,-307.94 299.96,-300.94 297.51,-307.94 302.41,-307.94"/>
+
+<text xml:space="preserve" text-anchor="middle" x="317.21" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">tier table</text>
+
+</g>
+
+<!-- apply_triage&#45;&gt;run_wave -->
+
+<g id="edge7" class="edge">
+
+<title>apply_triage&#45;&gt;run_wave</title>
+
+<path fill="none" stroke="#c8501f" d="M299.96,-262.01C299.96,-249.97 299.96,-233.84 299.96,-220.33"/>
+
+<polygon fill="#c8501f" stroke="#c8501f" points="302.41,-220.41 299.96,-213.41 297.51,-220.41 302.41,-220.41"/>
+
+<text xml:space="preserve" text-anchor="middle" x="316.83" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">id shards</text>
+
+</g>
+
+</g>
+
+</svg>
+
+<div class="mono" style="font-size:9px;margin-top:8px">solid orange = flow &middot; dashed blue = data &middot; shaded = store &middot; dashed box = external</div><p class="cap">How the pipeline checks its own work (ours). Gate on the left, receipts in the middle, learning ledger on the right.</p></div></section>
+
+<section><h2>Proposed changes, traced to talks</h2>
+<p class="note">Each row is an idea from the corpus mapped onto a concrete component above. Statuses are ours; every source links to the talk page it came from.</p>
+<table><tr><th>Status</th><th>Idea</th><th>Component</th><th>What it would change</th><th>Cost</th><th>Source talks</th></tr><tr><td><span class="pill now">Adopt now</span></td><td><strong>Sidecar judge alongside verbatim grader</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">grader</td><td>A second model in a fresh context grades the same content file with a narrower rubric per error type, its verdict is joined onto the verbatim check.</td><td>one extra claude -p per talk</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/judge-the-judge-gepa.html">judge-the-judge-gepa</a> &middot; <a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/agents-that-run-for-hours.html">agents-that-run-for-hours</a></td></tr><tr><td><span class="pill now">Adopt now</span></td><td><strong>Harden grader against gamed quotes and IDs</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">grader</td><td>Assume the wave will try to fake fixes, hash real transcript spans, refuse block-boundary quotes, and reject --fix rewrites that swap wording rather than source.</td><td>one afternoon, no infra</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/deleted-95-percent-agent-skills.html">deleted-95-percent-agent-skills</a> &middot; <a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/building-pi-world-of-slop.html">building-pi-world-of-slop</a></td></tr><tr><td><span class="pill now">Adopt now</span></td><td><strong>Event-sourced, resumable wave receipts</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">wave_receipts</td><td>Treat runs/waves/*.jsonl as the durable log of the run, snapshot every task boundary so a killed wave resumes without re-billing completed ids.</td><td>small refactor, no new deps</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/agents-that-run-for-hours.html">agents-that-run-for-hours</a></td></tr><tr><td><span class="pill now">Adopt now</span></td><td><strong>Weekly slop-purge on prompt templates</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">critic_rubric</td><td>Every model bump triggers a one-hour pass that deletes rubric rules and prompt fragments the new model no longer needs, before the next wave runs.</td><td>one hour per model bump</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/harness-engineering-openai.html">harness-engineering-openai</a> &middot; <a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/building-pi-world-of-slop.html">building-pi-world-of-slop</a></td></tr><tr><td><span class="pill now">Adopt now</span></td><td><strong>Filesystem-first context for authoring agents</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">content_json</td><td>Stop building bespoke retrieval into the wave, dump transcript, slides, and neighbor content to a scratch dir the agent greps, most speed wins are already there.</td><td>trivial, deletes code</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/fighting-ai-with-ai-incident-debugging.html">fighting-ai-with-ai-incident-debugging</a> &middot; <a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/give-your-agent-a-computer.html">give-your-agent-a-computer</a></td></tr><tr><td><span class="pill exp">Experiment</span></td><td><strong>Skills-first author kit over MCP tools</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">run_wave</td><td>Replace long tool spec preambles with a handful of skill files (quote_tool, viz spec, diagram spec) loaded on demand, cutting the per-task prompt.</td><td>half a day to migrate</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/future-of-mcp.html">future-of-mcp</a> &middot; <a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/replacing-loc-with-skill-cursor.html">replacing-loc-with-skill-cursor</a></td></tr><tr><td><span class="pill exp">Experiment</span></td><td><strong>Context graph across talks, not per-agent files</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">content_json</td><td>Promote claim ids, speakers, and themes into a small graph the author agent can traverse, so a new brief cites peers instead of restating them.</td><td>one weekend, sqlite fine</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/connecting-dots-context-graphs.html">connecting-dots-context-graphs</a> &middot; <a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/agentic-sdlc-at-uber.html">agentic-sdlc-at-uber</a></td></tr><tr><td><span class="pill exp">Experiment</span></td><td><strong>Code-execution sandbox for the wave</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">run_wave</td><td>Instead of many tool calls, let the agent write a short script the sandbox runs (quote checks, slide picks, diagram render), collapsing round trips per task.</td><td>sandbox harness, days</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/code-mode-let-code-talk.html">code-mode-let-code-talk</a> &middot; <a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/give-your-agent-a-computer.html">give-your-agent-a-computer</a></td></tr><tr><td><span class="pill exp">Experiment</span></td><td><strong>Progressive tool disclosure in the prompt</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">run_wave</td><td>Advertise only a search-and-execute pair up front, load full tool specs only when the agent asks, mirroring the token savings the corpus reports.</td><td>prompt refactor</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/mcp-mega-context-problem.html">mcp-mega-context-problem</a> &middot; <a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/future-of-mcp.html">future-of-mcp</a></td></tr><tr><td><span class="pill exp">Experiment</span></td><td><strong>Ralph-loop reviewer per content file</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">grader</td><td>After grader PASS, spin a fixed-topic reviewer that reads the brief cold and lists soft spots, feeding a queue the next wave picks up.</td><td>one extra pass per file</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/ralph-loops-dumb-ai-loops-ship.html">ralph-loops-dumb-ai-loops-ship</a></td></tr><tr><td><span class="pill exp">Experiment</span></td><td><strong>Cap content files by structural line budget</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">content_json</td><td>Add a grader check that fails any content file above a set line count, so briefs stay context-efficient the way the OpenAI harness caps source files.</td><td>one grader rule</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/harness-engineering-openai.html">harness-engineering-openai</a></td></tr><tr><td><span class="pill watch">Watch</span></td><td><strong>Continual-learning loop from stuck sessions</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">lessons_ledger</td><td>Mine wave receipts for repeat fail modes each week, promote the top two into new critic-rubric lines and new blueprint prompts.</td><td>unclear, needs volume</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/continual-learning-durable-improvements.html">continual-learning-durable-improvements</a> &middot; <a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/engineering-rl-environments.html">engineering-rl-environments</a></td></tr><tr><td><span class="pill watch">Watch</span></td><td><strong>Local MCP registry as pipeline root of trust</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">run_wave</td><td>Publish the wave&#x27;s tools through a small local registry with lineage, so each brief carries a trace of which tools and models produced it.</td><td>premature at n=1 pipeline</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/amplifon-mcp-a2a-registry.html">amplifon-mcp-a2a-registry</a> &middot; <a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/agentic-sdlc-at-uber.html">agentic-sdlc-at-uber</a></td></tr><tr><td><span class="pill watch">Watch</span></td><td><strong>Sandboxed diagram render check</strong></td><td class="mono" style="text-transform:none;letter-spacing:0;font-size:11px">diagram_qa</td><td>Render each proposed diagram spec inside a locked sandbox and count crossings before it ever touches the site, cheaper than post-publish QA.</td><td>small, once sandbox exists</td><td><a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/sandboxing-ai-generated-code.html">sandboxing-ai-generated-code</a></td></tr></table></section>
+
+<div class="mono" style="padding:28px 0">specs: _shared/briefs/ai-engineer-talks/research/service-map.json &middot; rebuild: python build_service_map.py</div>
+</div></body></html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<title>ResearchBot Architecture &middot; layers, skills, evals, harness laws</title>
+<style>
+:root{--bg:#e7dfca;--panel:#f1ead7;--panel2:#e3dac1;--line:#b9ad8f;--txt:#23283a;--dim:#6f6754;--red:#d14b28;--blue:#527383;--green:#5d7f8a;--gold:#c98a3e;--ink:#23283a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{color:var(--txt);font:14px/1.55 'Bahnschrift','Segoe UI',system-ui,sans-serif;padding:24px;max-width:1180px;margin:0 auto;background:var(--bg)}
+.streak{height:5px;margin:8px 0 18px;background:linear-gradient(90deg,var(--red) 0 220px,var(--ink) 220px 234px,rgba(35,40,58,.25) 234px 100%)}
+h1{font-size:24px;color:var(--ink);text-transform:uppercase;letter-spacing:3px} h1 small{color:var(--dim);font-weight:400;font-size:13px;display:block;margin-top:4px;text-transform:none;letter-spacing:0}
+h2{font-size:15px;color:var(--red);margin:26px 0 8px;text-transform:uppercase;letter-spacing:1.5px}
+p{margin:6px 0 10px;max-width:900px}
+.card{background:var(--panel);border:1.5px solid var(--ink);border-radius:4px;padding:16px;margin:14px 0;box-shadow:7px 7px 0 rgba(35,40,58,.2)}
+.svgwrap{background:#f6f1e2;border:1px solid var(--line);padding:10px;margin:10px 0;overflow-x:auto}
+svg{width:100%;height:auto;display:block;font-family:'Consolas','Cascadia Mono',monospace}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:8px 0}
+th,td{border:1px solid var(--line);padding:6px 8px;vertical-align:top;text-align:left}
+th{background:var(--panel2);text-transform:uppercase;letter-spacing:1px;font-size:11px}
+td.st{white-space:nowrap;font-weight:700}
+.code{background:var(--panel2);border:1px solid var(--line);padding:1px 5px;border-radius:2px;font-family:Consolas,monospace;font-size:12px}
+.ok{color:var(--green)} .paper{color:var(--gold)} .gap{color:var(--red)}
+.muted{color:var(--dim);font-size:12px}
+ul{margin:4px 0 8px 20px}
+.ours{border-left:4px solid var(--blue);padding:8px 12px;background:#eee6d2;margin:10px 0}
+a{color:var(--blue)}
+</style>
+</head>
+<body>
+<h1>ResearchBot Architecture <small>How the stack works &middot; layers, scheduled pipelines, skills, evals, and the harness laws behind them. Updated 2026-08-22 after AIE corpus round 3. Status column is honest: <span class="ok">code</span> = enforced by a script, <span class="paper">paper</span> = a rule in a skill/prompt that a model is asked to follow, <span class="gap">gap</span> = not done.</small></h1>
+<div class="streak"></div>
+
+<p><strong>What it is.</strong> A local-first, single-reviewer research stack: scheduled pipelines fetch and render daily briefs, a YouTube digest, and a forecasting world model; Claude Code skills do the judgment-bearing stages; a thin harness (logs, graders, receipts, a kill switch, a weekly meta-check) keeps the whole thing inspectable by one person. The flow itself lives in ResearchBot/_kg/PIPELINE.md; this page is the map of the machinery around it.</p>
+
+<h2>1. System layers</h2>
+<div class="svgwrap"><svg viewBox="0 0 1100 430" xmlns="http://www.w3.org/2000/svg">
+<text x="10" y="18" font-size="11" letter-spacing="2" fill="#6f6754">RESEARCHBOT &middot; LAYERS (AUG 2026)</text>
+<!-- row 1: data flow -->
+<rect x="10" y="40" width="200" height="86" fill="#f1ead7" stroke="#23283a" stroke-width="1.5"/>
+<text x="110" y="62" font-size="11" text-anchor="middle" font-weight="bold" fill="#23283a">SOURCES</text>
+<text x="110" y="80" font-size="9" text-anchor="middle" fill="#6f6754">AI Engineer channel (349 talks)</text>
+<text x="110" y="94" font-size="9" text-anchor="middle" fill="#6f6754">youtube-intel channels · news agents</text>
+<text x="110" y="108" font-size="9" text-anchor="middle" fill="#6f6754">test inbox (artifact rule) · OneDrive</text>
+<rect x="260" y="40" width="260" height="86" fill="#f1ead7" stroke="#23283a" stroke-width="1.5"/>
+<text x="390" y="62" font-size="11" text-anchor="middle" font-weight="bold" fill="#23283a">SCHEDULED PIPELINES (scripts)</text>
+<text x="390" y="80" font-size="9" text-anchor="middle" fill="#6f6754">run_landscape.ps1 (06:00 task → claude -p)</text>
+<text x="390" y="94" font-size="9" text-anchor="middle" fill="#6f6754">youtube-intel run_pipeline.sh (yt-dlp → Gemma → digest)</text>
+<text x="390" y="108" font-size="9" text-anchor="middle" fill="#6f6754">talk-brief corpus engine · kg_build.py</text>
+<rect x="570" y="40" width="260" height="86" fill="#f1ead7" stroke="#23283a" stroke-width="1.5"/>
+<text x="700" y="62" font-size="11" text-anchor="middle" font-weight="bold" fill="#23283a">JUDGMENT STAGES (skills)</text>
+<text x="700" y="80" font-size="9" text-anchor="middle" fill="#6f6754">/world-model-daily · /world-model-weekly</text>
+<text x="700" y="94" font-size="9" text-anchor="middle" fill="#6f6754">/atlas-update · /beauty-co-daily</text>
+<text x="700" y="108" font-size="9" text-anchor="middle" fill="#6f6754">one owner per synthesis; bounded sub-lookups</text>
+<rect x="880" y="40" width="210" height="86" fill="#f1ead7" stroke="#23283a" stroke-width="1.5"/>
+<text x="985" y="62" font-size="11" text-anchor="middle" font-weight="bold" fill="#23283a">OUTPUTS → ANDREW</text>
+<text x="985" y="80" font-size="9" text-anchor="middle" fill="#6f6754">Landscape HTML · digests · Atlas</text>
+<text x="985" y="94" font-size="9" text-anchor="middle" fill="#6f6754">state/ POV pages · Chamber · board</text>
+<text x="985" y="108" font-size="9" text-anchor="middle" fill="#6f6754">one question per cycle (ASK)</text>
+<line x1="210" y1="83" x2="260" y2="83" stroke="#23283a" stroke-width="1.2"/>
+<line x1="520" y1="83" x2="570" y2="83" stroke="#23283a" stroke-width="1.2"/>
+<line x1="830" y1="83" x2="880" y2="83" stroke="#23283a" stroke-width="1.2"/>
+<!-- row 2: harness -->
+<rect x="10" y="160" width="1080" height="100" fill="#fff8e8" stroke="#d14b28" stroke-width="2"/>
+<text x="550" y="180" font-size="11" text-anchor="middle" font-weight="bold" fill="#d14b28">HARNESS &middot; the layer that makes one reviewer enough</text>
+<text x="120" y="204" font-size="9.5" text-anchor="middle" fill="#23283a">SESSION LOG</text>
+<text x="120" y="218" font-size="8.5" text-anchor="middle" fill="#6f6754">ResearchBot/runs/*.jsonl</text>
+<text x="120" y="231" font-size="8.5" text-anchor="middle" fill="#6f6754">+ talk pipeline runs/</text>
+<text x="330" y="204" font-size="9.5" text-anchor="middle" fill="#23283a">GRADERS</text>
+<text x="330" y="218" font-size="8.5" text-anchor="middle" fill="#6f6754">grade_content.py (mechanical)</text>
+<text x="330" y="231" font-size="8.5" text-anchor="middle" fill="#6f6754">weekly lint (fresh-context verifier)</text>
+<text x="545" y="204" font-size="9.5" text-anchor="middle" fill="#23283a">RECEIPTS + KILL SWITCH</text>
+<text x="545" y="218" font-size="8.5" text-anchor="middle" fill="#6f6754">artifact re-read: exists · bytes · sha256</text>
+<text x="545" y="231" font-size="8.5" text-anchor="middle" fill="#6f6754">ResearchBot/_HALT stops scheduled runs</text>
+<text x="760" y="204" font-size="9.5" text-anchor="middle" fill="#23283a">SCORING</text>
+<text x="760" y="218" font-size="8.5" text-anchor="middle" fill="#6f6754">kg_build.py Brier + calibration</text>
+<text x="760" y="231" font-size="8.5" text-anchor="middle" fill="#6f6754">look-ahead guard in code</text>
+<text x="965" y="204" font-size="9.5" text-anchor="middle" fill="#23283a">WEEKLY META-CHECK</text>
+<text x="965" y="218" font-size="8.5" text-anchor="middle" fill="#6f6754">9-layer score · staleness audit</text>
+<text x="965" y="231" font-size="8.5" text-anchor="middle" fill="#6f6754">model cooling-off · judge audit</text>
+<line x1="390" y1="126" x2="390" y2="160" stroke="#6f6754" stroke-width="1"/>
+<line x1="700" y1="126" x2="700" y2="160" stroke="#6f6754" stroke-width="1"/>
+<!-- row 3: store + loop -->
+<rect x="10" y="290" width="520" height="120" fill="#f1ead7" stroke="#527383" stroke-width="1.5"/>
+<text x="270" y="310" font-size="11" text-anchor="middle" font-weight="bold" fill="#527383">THE STORE &middot; plain files, by decision (law 9)</text>
+<text x="270" y="330" font-size="9" text-anchor="middle" fill="#6f6754">_kg/kg.json · state/&lt;domain&gt;.md · beliefs/ · forecasts/ + resolutions/ · _calibration.md</text>
+<text x="270" y="345" font-size="9" text-anchor="middle" fill="#6f6754">_lessons.md (lessons → law ledger) · memory files + MEMORY.md index</text>
+<text x="270" y="360" font-size="9" text-anchor="middle" fill="#6f6754">_shared/briefs/ai-engineer-talks/{content,talks.json,claims_aggregate.md}</text>
+<text x="270" y="380" font-size="8.5" text-anchor="middle" fill="#6f6754">git-diffable · hand-editable · no vector DB without a measured reason</text>
+<rect x="570" y="290" width="520" height="120" fill="#f1ead7" stroke="#527383" stroke-width="1.5"/>
+<text x="830" y="310" font-size="11" text-anchor="middle" font-weight="bold" fill="#527383">THE IMPROVEMENT LOOP (lessons → law → file)</text>
+<text x="830" y="330" font-size="9" text-anchor="middle" fill="#6f6754">error / dissent / corpus claim → proposal (ranked, evidence-cited)</text>
+<text x="830" y="345" font-size="9" text-anchor="middle" fill="#6f6754">→ skeptic pass in a FRESH context (verifier ≠ author) → law in PIPELINE.md</text>
+<text x="830" y="360" font-size="9" text-anchor="middle" fill="#6f6754">→ enforced in a script or skill (cited) → measured in the meta-check</text>
+<text x="830" y="380" font-size="8.5" text-anchor="middle" fill="#d14b28">a lesson that didn't change a file is a regret, not a lesson</text>
+<line x1="120" y1="260" x2="120" y2="290" stroke="#6f6754" stroke-width="1" stroke-dasharray="4 3"/>
+<line x1="965" y1="260" x2="965" y2="290" stroke="#6f6754" stroke-width="1" stroke-dasharray="4 3"/>
+</svg></div>
+
+<h2>2. Scheduled pipelines &middot; proof of run</h2>
+<div class="card"><table>
+<tr><th>Pipeline</th><th>Trigger</th><th>Proof of run</th><th>Halt file</th><th>Session log</th><th>Receipt</th></tr>
+<tr><td><span class="code">_shared/briefs/landscape/run_landscape.ps1</span> &middot; The Landscape daily</td><td>Windows task 06:00 CT (fires only when logged in)</td><td class="ok">code &middot; artifact must exist or the run FAILs; <span class="code">logs/last_success.txt</span></td><td class="ok">code (2026-08-22)</td><td class="ok">code &middot; <span class="code">ResearchBot/runs/&lt;date&gt;.jsonl</span></td><td class="ok">code &middot; bytes + sha256 of the re-read HTML</td></tr>
+<tr><td><span class="code">_shared/briefs/youtube-intel/run_pipeline.sh</span> &middot; transcripts → Gemma → digest</td><td>manual / atlas-update when ≥3 days behind</td><td class="ok">code &middot; newest digest must be non-empty</td><td class="ok">code (2026-08-22)</td><td class="ok">code &middot; same runs/ file</td><td class="ok">code &middot; bytes + sha256 of the digest</td></tr>
+<tr><td><span class="code">_shared/briefs/ai-engineer-talks/</span> &middot; corpus engine (fetch → extract → grade → decks → build)</td><td>manual waves (agent fan-out)</td><td class="ok">code &middot; grader exit code; static QA sweep</td><td class="gap">gap &middot; scripts don't check _HALT</td><td class="ok">code &middot; <span class="code">runs/*.jsonl</span> via session_log.py</td><td class="paper">partial &middot; push verified by hand (curl 200s)</td></tr>
+<tr><td><span class="code">ResearchBot/_scripts/kg_build.py</span> &middot; Brier / calibration rebuild</td><td>after any forecast or resolution change (skill step)</td><td class="ok">code &middot; prints OK; look-ahead guard voids post-date estimates</td><td>n/a (not scheduled)</td><td class="gap">gap &middot; no jsonl event</td><td class="paper">paper &middot; skill says "verify it prints OK"</td></tr>
+<tr><td>/world-model-daily · /world-model-weekly · /atlas-update · /beauty-co-daily</td><td>Claude skills, run by hand or by the 6am prompt</td><td class="paper">paper &middot; artifacts + change-log lines; no script gate</td><td class="paper">paper &middot; law says scheduled agents honor _HALT; skills don't check it</td><td class="gap">gap &middot; skills write no runs/ events</td><td class="paper">paper &middot; beauty-co-daily has a "verify before done" step; others rely on the agent's report</td></tr>
+</table>
+<p class="muted">Reading the table honestly: the two script-driven pipelines are now fully harnessed; the skill-driven stages are still governed by prose. Closing that gap is the next engineering item (a tiny <span class="code">session_log.py</span> call at the top and bottom of each skill, and a receipt step that re-reads what the skill claims it wrote).</p></div>
+
+<h2>3. Skills &middot; who owns which stage</h2>
+<div class="card"><table>
+<tr><th>Skill</th><th>Owns (PIPELINE stages)</th><th>Trigger</th><th>Key laws it enforces</th></tr>
+<tr><td><span class="code">/world-model-daily</span></td><td>1 INGEST · 2 CLASSIFY (priors first, CONFIRMS/CONTRADICTS/NEW) · 3 RESOLVE · 4 SCORE · 7 ASK</td><td>with/after the daily briefs</td><td>prior-diff (anti-recency) · pre-registration · sourced-data-only resolution · one question per cycle</td></tr>
+<tr><td><span class="code">/world-model-weekly</span></td><td>5 SYNTHESIZE · contradiction sweep · repetition lint · camp re-ranking · benchmark backtest · lessons→law review · next Chamber pick</td><td>weekly / "corpus pass"</td><td>verifier ≠ author (fresh-context lint) · binary checks with one-line reason · each section must ADD</td></tr>
+<tr><td><span class="code">/atlas-update</span></td><td>Atlas refresh: news delta · inbox decompose · youtube-intel catch-up · fold into cards/TAKES · mirror to OneDrive</td><td>"update the Atlas" / standard updates</td><td>state check first (last_success.txt, digest age) · patch-and-verify-by-content, Playwright opt-in</td></tr>
+<tr><td><span class="code">/beauty-co-daily</span></td><td>client-facing daily + deep dives (Codex atelier), image verification, OneDrive mirror + stable pointer</td><td>"update Beauty Co"</td><td>inbox artifact rule · verified official images only · mirror + pointer, never dated copies</td></tr>
+</table>
+<p class="muted">Description budget (round 1): every skill description is one line; detail lives in the body and loads only on invocation. Next: size caps + on/off evals per skill (round 3 proposal, experiment).</p></div>
+
+<h2>4. Evals &middot; what gets measured, by what</h2>
+<div class="card"><table>
+<tr><th>Eval</th><th>Measures</th><th>Mechanism</th><th>Status</th></tr>
+<tr><td>Mechanical brief grader</td><td>quotes verbatim in transcript · timestamp within block · schema · theme vocabulary · claim-id traceability</td><td><span class="code">grade_content.py</span> (deterministic; <span class="code">--fix</span> repairs spacing/t; check-only first on sweeps)</td><td class="ok">code &middot; 347/347 pass; caught a corpus-wide transcript bug and ~15 agent quote errors</td></tr>
+<tr><td>Forecast scoring</td><td>Brier per expert and for Andrew · calibration · look-ahead</td><td><span class="code">kg_build.py</span> → <span class="code">_calibration.md</span></td><td class="ok">code &middot; deterministic; first resolution 2026-06-09</td></tr>
+<tr><td>Weekly lint</td><td>repetition · assertions without dated data · experts not engaging · missing if-right/if-wrong</td><td>fresh-context verifier, binary items + one-line reason (round 3)</td><td class="paper">paper &middot; in the weekly skill</td></tr>
+<tr><td>Benchmark backtest</td><td>what the briefs caught vs. The Innermost Loop / the Alex email</td><td>weekly skill §5; misses folded in and noted</td><td class="paper">paper &middot; ran 2026-06-07; cadence not yet proven</td></tr>
+<tr><td>Weekly meta-check</td><td>routines alive · metric reconstructed from raw · QC gates · feedback closures · drift · staleness · model cooling-off · judge audit</td><td>prompt lines 0–9 in meta-stack-evaluator.html</td><td class="paper">paper &middot; score /40; judge audit is a 2-week experiment</td></tr>
+<tr><td>Static site QA</td><td>broken images · dead links · malformed ontology JSON across all pages</td><td>qa_sweep.py + Playwright spot-check</td><td class="ok">code &middot; 351 pages, 0/0/0 at last build</td></tr>
+</table>
+<div class="ours"><strong>The measurement gap (ours).</strong> Everything above measures artifacts; nothing yet measures whether a harness change improved a brief. Three rounds of changes have zero before/after numbers. The judge audit (agreement rate) and the session-log failure count per week are the first two series that can show a trend &middot; they start now.</div></div>
+
+<h2>5. Harness laws &middot; and where each is actually enforced</h2>
+<div class="card"><table>
+<tr><th>#</th><th>Law</th><th>Enforced where</th><th>Status</th><th>Source claims</th></tr>
+<tr><td>1</td><td>Session log per run</td><td>run_landscape.ps1 · run_pipeline.sh · talk pipeline session_log.py</td><td class="ok">code (scripts) · <span class="gap">gap</span> (skills) &middot; <em>skeptic: the Landscape script was unparseable Jun 12–Aug 22 (cp1252 vs UTF-8), so no scheduled run had ever logged; first receipt written Aug 22 02:16</em></td><td>as3, as5</td></tr>
+<tr><td>2</td><td>Grader before ship; binary rubric lines with a reason</td><td>grade_content.py · weekly skill §2</td><td class="ok">code (talk pipeline) · <span class="paper">paper</span> (briefs)</td><td>as9, cx7 · evals-that-matter c6 · eval-maturity-phases c2</td></tr>
+<tr><td>3</td><td>Verifier ≠ author</td><td>weekly skill §2 · this loop's skeptic pass</td><td class="paper">paper &middot; the weekly skill has never produced an output file; the skeptic pass on round 3 is the only real instance</td><td>paperclip-liveness-model-done c8 · develop-at-idea-velocity c4 · claude-long-horizon-tasks c3</td></tr>
+<tr><td>4</td><td>Done = receipt, not claim</td><td>run_landscape.ps1 · run_pipeline.sh</td><td class="ok">code (scripts) · <span class="paper">paper</span> (skills)</td><td>agent-didnt-fail-harness-did c2/c7 · missing-layer-after-launch c4/c5</td></tr>
+<tr><td>5</td><td>Halt file = kill switch; write scope limited to output dirs</td><td>run_landscape.ps1 · run_pipeline.sh (halt) · write scope: prose only</td><td class="ok">code (halt, scripts) · <span class="paper">paper</span> (write scope)</td><td>agents-need-feature-flags c8 · know-where-your-agents-are c5 · auth-for-agents c8</td></tr>
+<tr><td>6</td><td>One owner per synthesis; no handoff chains</td><td>PIPELINE.md · weekly skill design (single long-context job)</td><td class="paper">paper &middot; already the shape of the weekly pass</td><td>killed-multi-agent-pipeline c3/c5 · agent-evolved-evals-didnt c4</td></tr>
+<tr><td>7</td><td>Hand agents the anomaly, not the haystack</td><td>meta-check wording</td><td class="paper">paper</td><td>designing-agents-floor-is-frontier c6/c7</td></tr>
+<tr><td>8</td><td>Staleness audit + model cooling-off</td><td>meta-check lines 7–8</td><td class="paper">paper</td><td>as1 · evals-broken-use-anyway c2/c3 · benchmarks-good-bad-ugly c4</td></tr>
+<tr><td>9</td><td>Files are the store &middot; a decision</td><td>PIPELINE.md · this page</td><td class="ok">code by absence &middot; nothing to build · <span class="gap">caveat</span>: <span class="code">/ResearchBot/</span> is gitignored, so "git-diffable" is false for exactly this store</td><td>evaluating-continual-learning c6 · memory-harnesses-research-agents c4 · second-brain-research-os c2 · ai-agents-performance-netflix c4</td></tr>
+<tr><td>10</td><td>A harness edit to a script is not "built" until one manual run has produced a receipt</td><td>_lessons.md #11 · PIPELINE.md</td><td class="paper">paper &middot; born Aug 22 from the skeptic's finding; first applied to run_landscape.ps1 the same night</td><td>skeptic audit (loop3_skeptic.md) · agent-didnt-fail-harness-did c2</td></tr>
+<tr><td>11</td><td>Eyeball the input before the fan-out; one polite worker for anything external</td><td>_lessons.md #13 · PIPELINE.md · dates.py / build_corpus.py fail-stops · research-talks/reconvert.py</td><td class="ok">code (fail-stops, dedupe converter) · <span class="paper">paper</span> (the eyeball step)</td><td>overnight Aug 21–22: 3x-repeated VTT captions under 44 briefs; 2.5-hour YouTube bot block from three parallel workers</td></tr>
+</table>
+<div class="ours"><strong>Skeptic scorecard (fresh-context audit, Aug 22 02:10).</strong> Of the nine laws: 0 enforced on the pipelines Andrew reads; 1 enforced for the talk corpus only (grader); 3 paper-only; 4 contradicted by the running system (session log, receipt, halt/write-scope, anomaly-not-haystack); 1 vacuous (one-owner &middot; no handoff chain existed). Full audit: <span class="code">_shared/briefs/ai-engineer-talks/loop3_skeptic.md</span>.</div>
+<p class="muted">Claim ids resolve in the public talk briefs: <a href="https://andrewhjelle.github.io/shareable/aietalks-k4t7x2/">aietalks corpus</a> (slug → page, claim id → its claims table). as/cx ids are the two flagship talks.</p></div>
+
+<h2>6. Change log &middot; the three corpus rounds</h2>
+<div class="card">
+<table>
+<tr><th>Round</th><th>Input</th><th>Built</th><th>Open experiments</th><th>Rejected / watch</th></tr>
+<tr><td>1 (Aug 19)</td><td>2 flagship talks (Codex harness, Anthropic surfaces)</td><td>session log · staleness audit · skills budget · grader (talk pipeline)</td><td>dreaming pass (propose-only memory edits)</td><td>managed agents (privacy) · auto-review (premature at n=1)</td></tr>
+<tr><td>2 (Aug 20)</td><td>52-talk corpus, 430 claims</td><td>keep memory minimal (decision) · anomaly-not-haystack wording</td><td>retire Gemma summarize step · critic-findings registry</td><td>, </td></tr>
+<tr><td>3 (Aug 22)</td><td>349-talk corpus, 2,893 claims; 4 lens miners → 28 proposals → skeptic pass</td><td>verifier ≠ author · binary rubric + reason · receipts · halt file · model cooling-off · one-owner synthesis · files-as-store decision · harness laws section in PIPELINE.md</td><td>judge audit (monthly, ~15 min) · failure-harvest into grader cases · hybrid keyword+semantic retrieval · skill size caps + on/off eval · replayable failures · MCP tool-schema token audit · deterministic untrusted-content filter</td><td>reject: benchmark/leaderboard practice · watch: reward-hacking checks (no self-optimizing loop exists) · concurrent-session cap (discipline, not code) · provenance edges · decisions ledger · graph traversal for absence questions · third-party skill vetting</td></tr>
+</table>
+<div class="ours"><strong>Self-critique of the loop (ours, round 3).</strong>
+<ul>
+<li><strong>It documented more than it measured.</strong> Rounds 1–2 reported "built" for the session log; in fact only the talk pipeline had one. Worse, the skeptic found the one scheduled pipeline (6am Landscape) had produced nothing for 72 days because the script could not parse under Windows PowerShell 5.1 &middot; and round 3's own patch added more parse errors and was auto-synced four minutes later. Three rounds wrote laws about logs and receipts for a pipeline nobody had executed. Fix applied the same night: encoding repaired, manual run, first receipt (which logged FAIL &middot; no artifact &middot; correctly), law 10 above.</li>
+<li><strong>Nobody verified the proposer.</strong> 10 of 28 round-3 proposals described machinery this stack does not have (context compaction, semantic search, a 4pm brief, handoff chains, graph "nodes"); 8 of 12 adopt-now items were downgraded; 5 claim ids were hand-abbreviated and did not resolve. Fix: rubric F1 (verify the current-state description against the repo) is applied to miner output before ranking; a proposal naming a file or behavior that does not exist is discarded.</li>
+<li><strong>"Built" does not survive a round.</strong> Round 2's four builds were one-off, pending, never-run, or partial, and became round 3's unexamined premises. Fix: the change-log row for each round now links to the receipt that proves each "built" item; no receipt, no "built".</li>
+<li><strong>Lessons→law went stale.</strong> <span class="code">_lessons.md</span> had no entry after June 9 while three rounds of laws accumulated elsewhere. Fix: round-3 laws are logged there with "enforced where" (see ledger entries 11+).</li>
+<li><strong>Miners recycle talk-speak.</strong> Several of the 28 proposals addressed machinery this system doesn't have (context compaction in scheduled runs, a 4pm brief). Next round feeds miners the real file tree and PIPELINE.md before the claims, and asks for the file each change would touch.</li>
+<li><strong>Skills are the unharnessed half.</strong> Every Claude-run stage still has no log, no receipt, no halt check. That is the single highest-value gap on this page.</li>
+</ul></div>
+</div>
+
+<h2>7. The corpus engine, now multi-corpus (built overnight Aug 21–22)</h2>
+<div class="card"><p>The talk-brief pipeline (manifest → transcripts → claim extraction against a fixed theme vocabulary → mechanical grader → synthesis → site) now runs on three corpora with one engine and one grader. Each corpus is a directory with its own <span class="code">content-schema.md</span> (theme vocabulary), <span class="code">corpus.json</span> (manifest with upload dates), <span class="code">transcripts/</span>, <span class="code">content/</span> (graded briefs), and <span class="code">runs/*.jsonl</span> (session log). <span class="code">build_corpus_site.py</span> renders all three into one site: a <strong>Today</strong> page (what changed since the previous build, computed from the previous build's receipt, not from memory), a <strong>Timeline</strong> per corpus (weekly volume, theme share by month, rising vs falling themes, stance mix, and a month-by-month narrative whose evidence refs are verified against the briefs before the file is accepted), and a sub-site per corpus.</p>
+<table>
+<tr><th>Corpus</th><th>Sources / window</th><th>Manifest → transcripts → graded briefs</th><th>Synthesis</th><th>Honest caveats</th></tr>
+<tr><td><strong>AI Engineer</strong> (<span class="code">ai-engineer-talks/</span>)</td><td>one YouTube channel; six-month window from Feb 20</td><td>752 listed → 461 in the six-month window → 459 briefs + 2 flagship slide briefs, 3,884 claims (112 briefs added Aug 21–22; every in-window upload is now briefed); 349 slide decks; all 752 talks dated after the 03:38 backfill</td><td>refreshed Aug 22 by a fresh-context agent in two passes (423 talks, then +36): convergences / divergences / trend signals with every evidence ref machine-verified; KEPT / REVISED / RETIRED / ADDED changelog rendered on Today</td><td>the 112 new briefs have no slide decks yet (slide extraction needs video downloads, deliberately not attempted while the bot block was live); the window's first channel upload is in April, so the timeline has five months, not six</td></tr>
+<tr><td><strong>Beauty industry</strong> (<span class="code">beauty-talks/</span>)</td><td>earnings calls (Estée Lauder, L'Oréal, e.l.f., Sally), CEW / industry keynotes, founder interviews; 22-theme ontology; client rule enforced in the schema and grep-checked before publish</td><td>36 → 31 (5 had no captions) → extraction waves running at 02:50</td><td>first synthesis scheduled after the waves; first Today receipt = this build</td><td>a 36-talk corpus is thin &middot; enough for an ontology and a first read, not for rising/falling statistics (the chart hides itself below 15 mentions per window); the client's own talks are excluded by the manifest filter</td></tr>
+<tr><td><strong>Broader research</strong> (<span class="code">research-talks/</span>)</td><td>7 youtube-intel channels (All-In, Moonshots, Lenny, Nate B Jones, AI Daily Brief, BG2, Dwarkesh); Feb 20 – Jun 4 (the VTT store's last fetch)</td><td>355 → 260 → ~100 briefs after two waves (wave 1: 50, wave 2: 50 stratified by channel and month)</td><td>synthesis + month narrative scheduled after wave 2</td><td>the transcript converter repeated every caption up to three times; 47 briefs were extracted against that text (their quotes still verify), the other 213 transcripts were re-converted before wave 2 (lessons ledger #13); the window ends Jun 4 because the youtube-intel fetch was never re-run &middot; the last 11 weeks are missing from this corpus</td></tr>
+</table>
+<p class="muted">Harness state for the engine after tonight: grader = code (every brief); session log = code (<span class="code">runs/*.jsonl</span> per corpus, plus <span class="code">corpus-site</span> build events); receipt = code for the site (<span class="code">site_state.json</span> + <span class="code">history/</span> snapshots are what Today diffs against); halt file = still a gap (the Python scripts do not check <span class="code">_HALT</span>); push verification = by hand (curl 200s), not yet a script.</p>
+<p><strong>Aug 22–23 layer: depth tiers, diagrams, and a measurable wave harness.</strong> After Andrew rated a talk page "3 out of 10" (no slides, no elevation of dense talks), the engine grew four pieces. <em>Depth tiers:</em> an Opus triage tiered all 459 AIE briefs (34 blueprint / 317 pattern / 108 take, <span class="code">depth_triage.json</span>); blueprint talks carry a slide-grounded architecture table, an agent-drawn system diagram, and a replicate-first evaluation. <em>Diagrams for every talk:</em> agents write a JSON spec (lanes / nodes / edges, time-linked), <span class="code">build_site.py</span> draws it deterministically; 459/459 briefs now have one. <em>Readable slides:</em> <span class="code">crop_slides.py</span> finds the slide rectangle (persistent-edge box, activity fallback) and <span class="code">camera_frames.py</span> flags stage shots; decks re-extracted at 1080p and cropped at native resolution (375 decks, 4 failures). <em>The harness became measurable:</em> <span class="code">run_wave.py</span> replaces agent fan-outs with scripted headless <span class="code">claude -p</span> calls, one receipt per talk in <span class="code">runs/waves/*.jsonl</span>; the diagram wave ran 455 talks at $0.36 / 3.9k output tokens / 42 s per talk, 100% grader pass, ~$163 total (<span class="code">wave_report.py</span> prints the series). Honest note: the per-talk cost is flat across waves so far; the gains over the overnight run came from cheaper tooling and cleaner inputs, not from the loop learning. The cost series now exists so that claim can be tested instead of asserted.</p>
+<p><strong>Aug 24 layer: layout became an engine plus an eval.</strong> The hand-rolled diagram renderer drew spaghetti on dense specs, so layout moved to Graphviz (<span class="code">diagram_gv.py</span>): agents still only name boxes and arrows, dot places them. The change is measured, not asserted: <span class="code">eval_crossings.py</span> renders all 459 specs both ways and counts edge crossings; legacy mean 1.44 / max 36 / 238 zero-crossing pages became Graphviz mean 0.03 / max 4 / 450 zero-crossing, with one 0-to-1 regression. A viz layer (<span class="code">viz_render.py</span>: steps / compare / split / loop / stat) gives blueprint briefs 7-8 small visuals each, wave-authored and grader-checked. Two new hub pages render from specs: <span class="code">skills-atlas.html</span> (clean-room functional research on 19 vendor skills, 14 capability classes, a 12-item replication queue, zero copied code) and <span class="code">service-map.html</span> (the engine's own flow and quality harness as functional diagrams, plus 14 talk-traced change proposals ranked adopt-now / experiment / watch).</p>
+<div class="ours"><strong>What tonight taught the loop (ours).</strong> The Landscape run that had never executed now has a receipted artifact (debug run 02:38, 60,471 bytes; the 06:00 scheduled run is the real proof). The two things that cost the most time were not model work: a YouTube bot check that stalled dates, transcripts and decks for three hours, and a transcript converter nobody had eyeballed before fanning out 50 agents. Both are now laws: serialize external fetches to one polite worker and stop on the first burst of failures; read twenty lines of any converted artifact before spending agent-hours on it.</div></div>
+
+<script type="application/json" id="ontology">{
+ "page":"researchbot-architecture","updated":"2026-08-24","layers":["sources","scheduled-pipelines","judgment-stages-skills","outputs","harness","store","improvement-loop"],
+ "pipelines":[{"name":"landscape","runner":"run_landscape.ps1","halt":"code","session_log":"code","receipt":"code"},{"name":"youtube-intel","runner":"run_pipeline.sh","halt":"code","session_log":"code","receipt":"code"},{"name":"talk-corpus-engine","halt":"gap","session_log":"code","receipt":"code (site_state.json); push verified by hand"},{"name":"kg_build","session_log":"gap","receipt":"paper"},{"name":"skills","halt":"paper","session_log":"gap","receipt":"paper"}],
+ "skills":["world-model-daily","world-model-weekly","atlas-update","beauty-co-daily"],
+ "evals":["grade_content","kg_build-brier","weekly-lint","benchmark-backtest","weekly-meta-check","static-site-qa"],
+ "laws":10,"rounds":3,"measurement_gap":"cost series live (runs/waves/*.jsonl) and first quality eval live (eval_crossings.py: legacy mean 1.44 max 36 -> graphviz mean 0.03 max 4 over 459 diagrams); judge-audit agreement + weekly failure count still pending",
+ "diagram_engine":{"renderer":"diagram_gv.py (Graphviz dot)","eval":"eval_crossings.py","legacy_mean":1.44,"gv_mean":0.03,"legacy_max":36,"gv_max":4,"zero_crossing":"238->450 of 459"},
+ "viz_layer":{"module":"viz_render.py","types":["steps","compare","split","loop","stat"],"target":"7-8 per blueprint brief","wave":"viz-blueprints"},
+ "hub_pages":["skills-atlas.html","service-map.html"],
+ "wave_harness":{"runner":"run_wave.py","receipts":"runs/waves/*.jsonl","diagram_wave":{"talks":455,"usd_per_talk":0.36,"pass_rate":1.0}},
+ "depth_tiers":{"blueprint":34,"pattern":317,"take":108},
+ "corpora":[{"key":"aie","dir":"ai-engineer-talks","status":"complete-for-window","briefs":459,"claims":3884},{"key":"beauty","dir":"beauty-talks","status":"first-pass","briefs":31,"claims":263},{"key":"research","dir":"research-talks","status":"two-waves","briefs":97,"claims":896,"transcripts":260}],
+ "site":{"builder":"build_corpus_site.py","pages":["today","timeline","beauty/","research/"],"receipt":"site_state.json"}
+}</script>
+
+</body>
+</html>
