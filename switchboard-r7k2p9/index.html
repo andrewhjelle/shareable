@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<title>Switchboard Prior Art &middot; deep dive with real screenshots</title>
+<style>
+:root{--bg:#e7dfca;--panel:#f1ead7;--panel2:#e3dac1;--line:#b9ad8f;--txt:#23283a;--dim:#6f6754;--red:#d14b28;--blue:#527383;--green:#4a7a58;--gold:#c98a3e;--ink:#23283a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{color:var(--txt);font:14px/1.55 'Bahnschrift','Segoe UI',system-ui,sans-serif;padding:24px;max-width:1240px;margin:0 auto;background:var(--bg)}
+.streak{height:5px;margin:8px 0 18px;background:linear-gradient(90deg,var(--blue) 0 220px,var(--ink) 220px 234px,rgba(35,40,58,.25) 234px 100%)}
+h1{font-size:24px;color:var(--ink);text-transform:uppercase;letter-spacing:3px} h1 small{color:var(--dim);font-weight:400;font-size:13px;display:block;margin-top:4px;text-transform:none;letter-spacing:0}
+h2{font-size:15px;color:var(--red);margin:26px 0 8px;text-transform:uppercase;letter-spacing:1.5px}
+h3{font-size:14px;color:var(--ink);margin:0 0 6px}
+p{margin:6px 0 10px}
+.card{background:var(--panel);border:1.5px solid var(--ink);border-radius:4px;padding:16px;margin:14px 0;box-shadow:7px 7px 0 rgba(35,40,58,.2)}
+.row{display:flex;gap:20px;align-items:flex-start;border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.row:first-of-type{border-top:none;padding-top:0;margin-top:0}
+.shots{flex:0 0 400px;display:flex;flex-direction:column;gap:10px}
+.shots figure{margin:0;background:#f6f1e2;border:1px solid var(--line);padding:6px}
+.shots img{width:100%;display:block;cursor:zoom-in;border:1px solid var(--line);background:#fff}
+.shots figcaption{font-size:11px;color:var(--dim);padding-top:4px;line-height:1.4}
+.notes{flex:1;min-width:0}
+.notes ul{margin:4px 0 8px 18px}
+.copy{color:var(--green);font-weight:700}.avoid{color:var(--red);font-weight:700}
+.take{border-left:4px solid var(--green);padding:6px 10px;background:#e9efe4;margin:8px 0;font-size:13px}
+.warn{border-left:4px solid var(--red);padding:6px 10px;background:#f4e4dc;margin:8px 0;font-size:13px}
+.ours{border-left:4px solid var(--blue);padding:8px 12px;background:#eee6d2;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:8px 0}
+th,td{border:1px solid var(--line);padding:6px 8px;vertical-align:top;text-align:left}
+th{background:var(--panel2);text-transform:uppercase;letter-spacing:1px;font-size:11px}
+.code{background:var(--panel2);border:1px solid var(--line);padding:1px 5px;border-radius:2px;font-family:Consolas,monospace;font-size:12px}
+.muted{color:var(--dim);font-size:12px}
+a{color:var(--blue)}
+.tag{display:inline-block;font-size:10.5px;border:1px solid var(--line);border-radius:3px;padding:0 5px;margin-left:6px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;vertical-align:middle}
+#lightbox{display:none;position:fixed;inset:0;background:rgba(20,22,30,.93);z-index:99;cursor:zoom-out;align-items:center;justify-content:center;padding:24px}
+#lightbox img{max-width:96vw;max-height:92vh;box-shadow:0 8px 40px rgba(0,0,0,.6);background:#fff}
+#lightbox .cap{position:fixed;bottom:10px;left:0;right:0;text-align:center;color:#e7dfca;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.grid figure{margin:0;background:#f6f1e2;border:1px solid var(--line);padding:5px}
+.grid img{width:100%;height:130px;object-fit:cover;object-position:top;display:block;cursor:zoom-in;border:1px solid var(--line);background:#fff}
+.grid figcaption{font-size:10.5px;color:var(--dim);padding-top:3px;line-height:1.35}
+</style>
+</head>
+<body>
+<h1>Switchboard Prior Art <small>Deep dive into how the field designed local chat, model management, routing, and quota UX &middot; real screenshots (click any to enlarge), what to copy, what to avoid &middot; 2026-08-25 &middot; companions: <span class="code">switchboard-design-brief.html</span> (our proposal) and <span class="code">projects/switchboard-spec.md</span> (the written spec)</small></h1>
+<div class="streak"></div>
+<p><strong>Purpose.</strong> Show Claude Design a variety of real experiences before it draws ours. Screenshots left, notes right; green boxes = steal this, red boxes = the documented mistake. Images are local copies in <span class="code">switchboard-shots/</span> reproduced for design research from official docs, readmes, release notes, and hands-on reviews; all screenshots and product marks belong to their respective owners.</p>
+
+<h2>1. The chat apps</h2>
+<div class="card">
+
+<div class="row"><div class="shots">
+<figure><img src="switchboard-shots/openwebui-demo.png" alt="Open WebUI home"><figcaption>Home: sectioned sidebar (Notes, Workspace, Channels, Folders, Chats), model name top-left with "Set as default", centered composer with suggestions.</figcaption></figure>
+<figure><img src="switchboard-shots/openwebui-blog-02.png" alt="Open WebUI hover preview"><figcaption>Hovering a sidebar chat opens a read-only preview card of its last messages, without opening the chat.</figcaption></figure>
+<figure><img src="switchboard-shots/openwebui-blog-01.png" alt="Open WebUI model picker"><figcaption>The model picker (moved into the composer in v0.11): searchable list of LOCAL models with parameter sizes right on the rows.</figcaption></figure>
+<figure><img src="switchboard-shots/openwebui-blog-00.png" alt="Open WebUI usage page"><figcaption>Usage page: per-model token heatmap across a year, lifetime tokens, top models, avg tokens per chat.</figcaption></figure>
+</div><div class="notes">
+<h3>Open WebUI <span class="tag">web · self-hosted · the category leader</span></h3>
+<ul>
+<li>Sidebar has typed sections; folders paginate and sort; chats pin and search. The information architecture scales to hundreds of chats.</li>
+<li>Model switchable mid-conversation; Compare toggle fans one prompt to two models, both answers labeled.</li>
+<li>Per-chat variables: a small form (tone, audience) filled once and carried through the conversation and its forks.</li>
+<li><span class="code">/status</span> panel shows context usage, queued messages, running tasks.</li>
+</ul>
+<div class="take"><span class="copy">STEAL</span> The hover preview card (find the right chat without opening it), model sizes printed in the picker rows, and the usage heatmap-by-model as an idea for our usage page's by-lane view.</div>
+<div class="take"><span class="copy">STEAL</span> Picker lives in the composer, not a distant toolbar: the decision point sits where you type. Our override chip does the same.</div>
+</div></div>
+
+<div class="row"><div class="shots">
+<figure><img src="switchboard-shots/lmstudio-app.webp" alt="LM Studio Bionic"><figcaption>LM Studio Bionic: projects tree left, agent chat center, generated-PDF artifact pane right. Note the composer: model pill (Kimi K3, High) and a live "Context: 231.7K" counter.</figcaption></figure>
+</div><div class="notes">
+<h3>LM Studio <span class="tag">desktop &middot; the model-manager benchmark</span></h3>
+<ul>
+<li>The Discover tab is the signature: staff-picked models front and center, and every model and quantization carries a colored hardware-fit badge computed against YOUR detected GPU/RAM (green rocket = runs well) BEFORE you download. No official screenshot was fetchable; see the <a href="https://lmstudio.ai/docs/app/basics/download-model">docs</a> live.</li>
+<li>Chat view: system-prompt panel + live sampling controls beside the thread; two chats side by side by dragging tabs.</li>
+<li>The Bionic shot shows their agent-era layout: three panes with a real artifact viewer, and capacity surfaced in the composer.</li>
+</ul>
+<div class="take"><span class="copy">STEAL</span> Fit-before-download is the roster manager's core interaction. Our device profile adds the state LM Studio lacks: "fits when the GPU is idle" (overnight lane).</div>
+<div class="take"><span class="copy">STEAL</span> Context counter directly in the composer, exact and numeric.</div>
+</div></div>
+
+<div class="row"><div class="shots">
+<figure><img src="switchboard-shots/jan-app.png" alt="Jan"><figcaption>Jan: the calmest layout in the category. Projects + chats in one soft sidebar, centered composer, model pill top-left, nothing else.</figcaption></figure>
+</div><div class="notes">
+<h3>Jan <span class="tag">desktop &middot; the minimalist</span></h3>
+<ul>
+<li>Hub groups each model's quantizations into Small / Balanced / Large with a Recommended tag and live VRAM/RAM estimates before download.</li>
+<li>Drop a .gguf into the models folder and it appears in the picker: zero-friction bring-your-own-model.</li>
+<li>Every conversation auto-saves as a named thread; local API server is first-class.</li>
+</ul>
+<div class="take"><span class="copy">STEAL</span> The overall calm: this is closest to the "simple and fast" north star. Also the Small/Balanced/Large + Recommended grouping for quants.</div>
+</div></div>
+
+<div class="row"><div class="shots">
+<figure><img src="switchboard-shots/librechat-chat-interface.png" alt="LibreChat message anatomy"><figcaption>Message anatomy: model avatar + name on the answer, response-version navigation (3/3), edit/copy/fork actions on hover.</figcaption></figure>
+<figure><img src="switchboard-shots/librechat-artifacts-example.png" alt="LibreChat artifacts"><figcaption>Artifacts pane: generated React login screen rendering live, Preview/Code tabs, its own close control.</figcaption></figure>
+<figure><img src="switchboard-shots/librechat-select-model.png" alt="LibreChat model select"><figcaption>Endpoint + model dropdown with search; switchable mid-conversation.</figcaption></figure>
+</div><div class="notes">
+<h3>LibreChat <span class="tag">web &middot; the artifacts benchmark</span></h3>
+<ul>
+<li>Fullest preview pane in the category: React/HTML/SVG/Mermaid/Markdown, inline cards that expand, fullscreen, SVG/PNG export.</li>
+<li><span class="code">contextUsage</span> / <span class="code">contextCost</span> config: a real-time context and cost gauge inside the conversation UI. The clearest live meter of any app here.</li>
+<li>Presets save endpoint+model+parameter combos next to the picker.</li>
+</ul>
+<div class="take"><span class="copy">STEAL</span> Model identity printed on every answer (avatar + name), response versioning, and the artifacts pane behavior (expand, fullscreen, export).</div>
+<div class="warn"><span class="avoid">AVOID</span> Their documented layout bug: Parameters and Artifacts share one right-panel slot, and hiding one hides both. Our rule: independent surfaces, independent close controls.</div>
+</div></div>
+
+<div class="row"><div class="shots">
+<figure><img src="switchboard-shots/msty-00.png" alt="Msty split chat"><figcaption>Split Chat: one prompt answered by gemma3:1b (left) and Qwen3 (right) simultaneously; each pane owns a labeled composer.</figcaption></figure>
+<figure><img src="switchboard-shots/msty-18.png" alt="Msty split with instructions"><figcaption>Per-pane "Edit Model Instructions": each split half can carry its own persona; thinking models show their reasoning trace.</figcaption></figure>
+<figure><img src="switchboard-shots/msty-15.png" alt="Msty model browser"><figcaption>Local AI Models browser: featured cards with size, capability tags (coding/vision/reasoning), a circular fit gauge per model, and "Import GGUF".</figcaption></figure>
+</div><div class="notes">
+<h3>Msty <span class="tag">desktop &middot; the split-view benchmark</span></h3>
+<ul>
+<li>"Add Split Chat" divides the window per model; one prompt fans to all panes in real time, labeled. Local and cloud models mix freely in one view.</li>
+<li>Now a 4-product suite (Studio chat / Go agents / Nexus gateway+usage / Stack knowledge): the same chat-vs-governance separation our spec makes.</li>
+</ul>
+<div class="take"><span class="copy">STEAL</span> The split mechanic IS our "multiple windows" requirement, and doubles as a live mini-gauntlet: same prompt, local vs Fable, side by side. Also note their circular fit gauge on model cards.</div>
+</div></div>
+
+<div class="row"><div class="shots">
+<figure><img src="switchboard-shots/chatbox-light.png" alt="Chatbox"><figcaption>Chatbox: persona-first sidebar (Translator, Software Developer, Travel Guide as saved copilots), per-message word/token counts, KaTeX rendering.</figcaption></figure>
+<figure><img src="switchboard-shots/anythingllm-step-model.webp" alt="AnythingLLM model step"><figcaption>AnythingLLM onboarding: "Pick a model (or let us pick)" is the only auto-selection offer in the local category.</figcaption></figure>
+</div><div class="notes">
+<h3>Chatbox + AnythingLLM <span class="tag">the two ideas worth keeping</span></h3>
+<ul>
+<li>Chatbox: provider-first setup with a "Check" button that verifies the connection before you can create a chat; personas as the sidebar's organizing unit.</li>
+<li>AnythingLLM: Workspace = isolation boundary. Documents, vectors, conversations, AND the model binding scoped together; one workspace local-only, another cloud.</li>
+</ul>
+<div class="take"><span class="copy">STEAL</span> The connection Check button for onboarding (verify Ollama + claude CLI reachable), and workspace-style isolation as the mental model behind our Private chats: privacy is a property of the chat, not a per-message checkbox.</div>
+</div></div>
+</div>
+
+<h2>2. Routing &middot; who shows their work, who hides it</h2>
+<div class="card">
+<div class="row"><div class="shots">
+<figure><img src="switchboard-shots/openrouter-chat-live.png" alt="OpenRouter chat"><figcaption>OpenRouter chat playground (live capture): rooms sidebar, "Add Model" to fan a prompt across models, curated category cards (Flagship / Roleplay / Coding / Reasoning).</figcaption></figure>
+<figure><img src="switchboard-shots/openrouter-activity-01.png" alt="OpenRouter dashboard"><figcaption>Activity dashboard: headline spend metrics with sparklines and prior-period comparison.</figcaption></figure>
+<figure><img src="switchboard-shots/openrouter-activity-00.png" alt="OpenRouter drilldown"><figcaption>Click any chart element to open the individual requests behind it.</figcaption></figure>
+<figure><img src="switchboard-shots/openrouter-activity-07.png" alt="OpenRouter responses"><figcaption>Per-request view: which provider/model actually served it, cost breakdown, fallback-or-not.</figcaption></figure>
+</div><div class="notes">
+<h3>OpenRouter, RouteLLM, and the ChatGPT lesson</h3>
+<ul>
+<li><strong>OpenRouter auto-router:</strong> a classifier assigns ~30 task types, then ranks models by 7-day community share-of-spend within your cost tier. The reasoning is hidden; you learn which model served you only post-hoc from the response metadata. Sticky <span class="code">session_id</span> keeps a conversation on one model.</li>
+<li><strong>RouteLLM (LMSYS):</strong> no rule taxonomy at all; routing is learned from human preference data, and the whole cost/quality tradeoff collapses to one calibrated number: "route N% to the strong model."</li>
+<li><strong>ChatGPT GPT-5 "auto":</strong> shipped as one unified system with a hidden real-time router. Users could not tell which model answered; it became a trust crisis within days, and OpenAI restored the manual picker. The transparency existed in the System Card, not the UI, and that gap was the whole problem. GitHub Copilot's hover-to-see-model is what forum users keep asking every tool for.</li>
+</ul>
+<div class="take"><span class="copy">STEAL</span> The drill-down dashboard (any number opens the requests behind it), sticky sessions, and RouteLLM's single-knob calibration as the mechanism our budget state turns.</div>
+<div class="warn"><span class="avoid">AVOID</span> Hidden routing. Automatic is fine; invisible is not. This is the entire case for our per-answer badge row (model &middot; reason &middot; latency &middot; left-machine), which nobody surveyed ships.</div>
+</div></div>
+</div>
+
+<h2>3. Quota pacing &middot; the dial already half-exists</h2>
+<div class="card">
+<div class="row"><div class="shots">
+<figure><img src="switchboard-shots/ccbudget-00.png" alt="cc-budget status line"><figcaption>cc-budget: the same 5h Claude window at four urgency tiers. Bar + white pace marker ("where you should be"), last-prompt cost, under/over-pace arrow with %, reset countdown, peak-hours flag. Display adds detail as urgency rises.</figcaption></figure>
+<figure><img src="switchboard-shots/ccbudget-01.png" alt="cc-budget in VS Code"><figcaption>The same meter compressed into a VS Code status-bar item.</figcaption></figure>
+</div><div class="notes">
+<h3>cc-budget, the tracker ecosystem, LiteLLM</h3>
+<ul>
+<li><strong>cc-budget</strong> (Claude Code statusline plugin) already renders the owner's mental math for the exact same quota: pace marker, direction arrow, color escalation (amber 70% / red 90%), reset countdown, progressive disclosure.</li>
+<li>The Max-tracker ecosystem (ClaudeMeter, ClaudeUsageBar, Claude Tracker, ccusage) converges on: session % + weekly % + exact reset time + threshold alerts, living in a menu bar or status line. Nobody puts it IN the chat surface.</li>
+<li><strong>LiteLLM</strong> proxy dashboard handles the dollar side: per-key/team budgets, soft alert at a threshold, max alert at 80%.</li>
+<li>Research found <strong>no product anywhere</strong> with a rolling daily allowance that carries unused budget forward and tightens after overspend.</li>
+</ul>
+<div class="take"><span class="copy">STEAL</span> The cc-budget visual grammar wholesale; it is proven on this exact quota.</div>
+<div class="ours"><strong>(ours)</strong> Our two additions are the novel part: the allowance rolls over adaptively, and the budget state FEEDS the router instead of just displaying. Nobody surveyed closes that loop.</div>
+</div></div>
+</div>
+
+<h2>4. Deferred work &middot; naming the trigger</h2>
+<div class="card">
+<p>Render farms and ML schedulers agree: AWS Deadline paints Pending jobs orange with the reason they wait; Weights &amp; Biases' launch-queue plot exists to spot idle-queue windows and backfill them with preemptible low-priority jobs, which is exactly our overnight lane; SLURM's submitted → queued → running → done is the standard vocabulary. No screenshots fetched (CLI-first tools); <a href="https://docs.wandb.ai/platform/launch/launch-queue-observability">W&amp;B docs</a>, <a href="https://docs.thinkboxsoftware.com/products/deadline/latest/1_User%20Manual/manual/job-controlling.html">Deadline docs</a>.</p>
+<div class="take"><span class="copy">STEAL</span> Queue rows always name their trigger ("waiting for idle GPU"), and when the machine goes idle the queue announces what it is about to start, so an overnight run is never a surprise.</div>
+</div>
+
+<h2>5. The adoption diff &middot; what moved into the spec</h2>
+<div class="card"><table>
+<tr><th>Verdict</th><th>Idea (source)</th><th>Landed in spec</th></tr>
+<tr><td class="copy">ADOPTED</td><td>Fit-before-download badges + Small/Balanced/Large + Recommended (LM Studio, Jan)</td><td>Roster manager</td></tr>
+<tr><td class="copy">ADOPTED</td><td>Thread stickiness (OpenRouter session; ChatGPT lesson inverted)</td><td>Routing rule 2</td></tr>
+<tr><td class="copy">ADOPTED</td><td>cc-budget pacing grammar</td><td>Budget dial</td></tr>
+<tr><td class="copy">ADOPTED</td><td>Context gauge in the chat (LibreChat, LM Studio composer counter)</td><td>Composer meter</td></tr>
+<tr><td class="copy">ADOPTED</td><td>Independent panes, never a shared slot (LibreChat bug inverted)</td><td>Layout hard rule</td></tr>
+<tr><td class="copy">ADOPTED</td><td>Split view, two panes (Msty)</td><td>v0 capabilities</td></tr>
+<tr><td>CONSIDER v1.1</td><td>Compare fan-out as mini-gauntlet (Msty/Open WebUI) &middot; hover preview cards (Open WebUI) &middot; personas/presets (Chatbox/LibreChat/Open WebUI variables) &middot; connection Check button (Chatbox) &middot; usage heatmap by model (Open WebUI)</td><td>listed v1.1</td></tr>
+<tr><td class="avoid">SKIPPED</td><td>Channels/multi-user (Open WebUI) &middot; RAG workspaces (AnythingLLM) &middot; 6-platform clients (Chatbox)</td><td>non-goals</td></tr>
+</table>
+<p class="muted">Sources: <a href="https://openwebui.com/blog/v0-11-0-the-interface-reorganized">Open WebUI v0.11</a> &middot; <a href="https://lmstudio.ai/docs/app/basics/download-model">LM Studio docs</a> &middot; <a href="https://jan.ai/">Jan</a> &middot; <a href="https://www.librechat.ai/docs/user_guides/artifacts">LibreChat artifacts</a> &middot; <a href="https://www.pondhouse-data.com/blog/introduction-to-libre-chat">Pondhouse LibreChat walkthrough</a> &middot; <a href="https://docs.anythingllm.com/chat-ui">AnythingLLM</a> &middot; <a href="https://github.com/chatboxai/chatbox">Chatbox</a> &middot; <a href="https://msty.ai/blog/split-chats/">Msty split chats</a> &middot; <a href="https://gigazine.net/gsc_news/en/20250802-msty-ai-app/">GIGAZINE Msty hands-on</a> &middot; <a href="https://openrouter.ai/docs/guides/routing/routers/auto-router">OpenRouter auto-router</a> &middot; <a href="https://openrouter.ai/blog/announcements/activity-dashboard/">OpenRouter activity</a> &middot; <a href="https://github.com/lm-sys/RouteLLM">RouteLLM</a> &middot; <a href="https://fortune.com/2025/08/12/openai-gpt-5-model-router-backlash-ai-future">Fortune on the GPT-5 router backlash</a> &middot; <a href="https://github.com/boyand/cc-budget">cc-budget</a> &middot; <a href="https://docs.litellm.ai/docs/proxy/ui_team_soft_budget_alerts">LiteLLM budgets</a>. Unknowns flagged in research: NotDiamond human-in-the-loop mechanics (doc 404), Msty fit-gauge internals, LM Studio Discover-tab imagery (visit docs live).</p></div>
+
+<h2>6. Appendix &middot; additional captures</h2>
+<div class="card">
+<p class="muted">Everything else the harvest pulled from the same official sources, kept for breadth. Captions name the source only; these were not individually reviewed in detail. Click to enlarge.</p>
+<div class="grid">
+<figure><img src="switchboard-shots/lmstudio-home-live.png" alt=""><figcaption>LM Studio homepage, live capture (same Bionic scene as above, site framing)</figcaption></figure>
+<figure><img src="switchboard-shots/openwebui-banner.png" alt=""><figcaption>Open WebUI v0.11 release banner</figcaption></figure>
+<figure><img src="switchboard-shots/openwebui-blog-03.png" alt=""><figcaption>Open WebUI v0.11 notes: model-defaults UI, before vs after</figcaption></figure>
+<figure><img src="switchboard-shots/openwebui-blog-04.png" alt=""><figcaption>Open WebUI v0.11 release notes</figcaption></figure>
+<figure><img src="switchboard-shots/openwebui-blog-05.png" alt=""><figcaption>Open WebUI v0.11 release notes</figcaption></figure>
+<figure><img src="switchboard-shots/openwebui-blog-06.png" alt=""><figcaption>Open WebUI v0.11 release notes</figcaption></figure>
+<figure><img src="switchboard-shots/openwebui-blog-07.png" alt=""><figcaption>Open WebUI v0.11 release notes</figcaption></figure>
+<figure><img src="switchboard-shots/librechat-chat.png" alt=""><figcaption>LibreChat docs</figcaption></figure>
+<figure><img src="switchboard-shots/librechat-forking.png" alt=""><figcaption>LibreChat docs: conversation forking</figcaption></figure>
+<figure><img src="switchboard-shots/librechat-image-support.png" alt=""><figcaption>LibreChat docs: image support</figcaption></figure>
+<figure><img src="switchboard-shots/librechat-contributions.png" alt=""><figcaption>LibreChat docs</figcaption></figure>
+<figure><img src="switchboard-shots/pondhouse-librechat-00.jpg" alt=""><figcaption>Pondhouse LibreChat walkthrough header</figcaption></figure>
+<figure><img src="switchboard-shots/anythingllm-step-download.webp" alt=""><figcaption>AnythingLLM onboarding: download step</figcaption></figure>
+<figure><img src="switchboard-shots/anythingllm-step-chat.webp" alt=""><figcaption>AnythingLLM onboarding: chat step</figcaption></figure>
+<figure><img src="switchboard-shots/openrouter-activity-02.png" alt=""><figcaption>OpenRouter activity-dashboard post</figcaption></figure>
+<figure><img src="switchboard-shots/openrouter-activity-03.png" alt=""><figcaption>OpenRouter activity: provider latency view</figcaption></figure>
+<figure><img src="switchboard-shots/openrouter-activity-04.png" alt=""><figcaption>OpenRouter activity-dashboard post</figcaption></figure>
+<figure><img src="switchboard-shots/openrouter-activity-05.png" alt=""><figcaption>OpenRouter activity-dashboard post</figcaption></figure>
+<figure><img src="switchboard-shots/openrouter-activity-06.png" alt=""><figcaption>OpenRouter activity-dashboard post</figcaption></figure>
+</div>
+</div>
+
+<div id="lightbox"><img alt=""><div class="cap"></div></div>
+<script>
+(function(){
+  var lb=document.getElementById('lightbox'),im=lb.querySelector('img'),cap=lb.querySelector('.cap');
+  document.querySelectorAll('.shots img, .grid img').forEach(function(t){
+    t.addEventListener('click',function(){
+      im.src=t.src;
+      var fc=t.closest('figure').querySelector('figcaption');
+      cap.textContent=fc?fc.textContent:'';
+      lb.style.display='flex';
+    });
+  });
+  lb.addEventListener('click',function(){lb.style.display='none';im.src='';});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){lb.style.display='none';im.src='';}});
+})();
+</script>
+</body>
+</html>
