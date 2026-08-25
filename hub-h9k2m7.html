@@ -211,6 +211,28 @@ ul.tasks li .t:hover b{color:var(--lip2)}
 .hubnav a.here{color:var(--skin,#f4c9a5);border-color:var(--skin,#f4c9a5)}
 .hubnav .brand{font-family:"Anton",sans-serif;font-size:18px;letter-spacing:.06em;color:#f4f1e4;margin-right:14px;padding-right:14px;border-right:1px solid rgba(244,241,228,.2)}
 </style>
+
+<style>
+.hubnav .navbtns .osdbtn{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;background:transparent;color:var(--osd,#c9c1a8);border:1px solid rgba(244,241,228,.35);padding:4px 10px;border-radius:2px;cursor:pointer;transition:all .15s}
+.hubnav .navbtns .osdbtn:hover{color:var(--skin,#f4c9a5);border-color:var(--skin,#f4c9a5)}
+.hubnav{flex-wrap:wrap}
+
+/* Force one-line rows in Books/Movies QL cards */
+.ql .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;gap:6px;align-items:baseline;min-width:0}
+.ql .v > b{flex:0 0 auto;overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap}
+.ql .v > span.m{flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;color:var(--mut);font-size:11.5px}
+.ql .v > div.m,.ql .v > div.more{display:none;white-space:normal;flex:1 0 100%;margin-top:4px;font-size:12px;color:var(--mut)}
+.ql li.open .v{white-space:normal;flex-wrap:wrap}
+.ql li.open .v > div.m,.ql li.open .v > div.more{display:block}
+
+/* Defer button — more visible */
+.tasks .defer,.urgent .defer{margin-left:auto;flex:none;border:1px solid var(--cream);background:rgba(23,20,26,.55);color:var(--cream);opacity:1;font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.1em;padding:2px 9px;cursor:pointer;border-radius:2px}
+.tasks .defer:hover,.urgent .defer:hover{background:rgba(23,20,26,.9)}
+
+/* Top 3 all-done state */
+.alldone{padding:12px 0;text-align:center;font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--cream);opacity:.9}
+.alldone b{color:#ffd9c4}
+</style>
 </head>
 <body>
 <script>
@@ -221,7 +243,36 @@ ul.tasks li .t:hover b{color:var(--lip2)}
       var tries=0;
       while(tries<5){
         var v=window.prompt('Password:');
-        if (v===null){ document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>'; return; }
+        if (v===null){ document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.
+<script>
+(function(){
+  function refreshAllDone(){
+    var urg = document.querySelector('.card.urgent'); if(!urg) return;
+    var lis = urg.querySelectorAll('ul.tasks > li');
+    var total = lis.length;
+    var closed = 0;
+    lis.forEach(function(li){
+      if (li.classList.contains('done')) closed++;
+      else if (li.style.display === 'none') closed++;  // deferred
+    });
+    var msg = urg.querySelector('.alldone');
+    if (total > 0 && closed === total) {
+      if (!msg) {
+        msg = document.createElement('div');
+        msg.className = 'alldone';
+        msg.innerHTML = '<b>&#10003;</b> TOP 3 CLOSED &middot; deferred items return tomorrow';
+        urg.appendChild(msg);
+      }
+    } else {
+      if (msg) msg.remove();
+    }
+  }
+  refreshAllDone();
+  document.addEventListener('change', function(e){ if (e.target.classList && e.target.classList.contains('ck')) setTimeout(refreshAllDone, 20); });
+  document.addEventListener('click', function(e){ if (e.target.classList && (e.target.classList.contains('defer') || e.target.tagName === 'BUTTON')) setTimeout(refreshAllDone, 30); });
+})();
+</script>
+</body>'; return; }
         if (v.trim().toLowerCase()==='dakz'){ sessionStorage.setItem(KEY,'1'); break; }
         tries++;
       }
@@ -241,15 +292,13 @@ ul.tasks li .t:hover b{color:var(--lip2)}
   <a href="recipes-h9k2m7.html">RECIPES</a>
   <a href="books-h9k2m7.html">BOOKS</a>
   <a href="movies-h9k2m7.html">MOVIES</a>
-</nav>
+<span class="navbtns" style="margin-left:auto;display:flex;gap:6px"><button class="osdbtn" id="hdone">HIDE DONE</button><button class="osdbtn" id="xall">EXPAND</button><button class="osdbtn" id="call">COLLAPSE</button></span></nav>
 
 <div class="scene"><div class="cel"></div><div class="celscrim"></div></div>
 <div class="vhs"><div class="scan"></div><div class="track"></div><div class="track t2"></div>
 <svg class="grainsvg" aria-hidden="true"><filter id="g"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2"></feTurbulence><feColorMatrix type="matrix" values="0 0 0 0 .9 0 0 0 0 .85 0 0 0 0 .78 0 0 0 .07 0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#g)"></rect></svg></div>
 
 <div class="page">
-<div class="osdbar"><span></span><span></span><span style="display:flex;gap:8px;align-items:center"><button class="osdbtn" id="hdone">HIDE DONE</button><button class="osdbtn" id="xall">EXPAND ALL</button><button class="osdbtn" id="call">COLLAPSE</button></span></div>
-
 <div class="cols">
 <!-- LEFT: today + everything else -->
 <div class="lcol">
@@ -341,7 +390,6 @@ ul.tasks li .t:hover b{color:var(--lip2)}
 <div class="mcol">
 <article class="card">
 <h2>This <i>week</i></h2>
-<div class="meta">AUG 23&ndash;30 · GOOGLE + SKYLIGHT · PULLED SUN 8/23</div>
 <div class="day"><div class="d">SUN 8/23</div><div class="ev"><div><b>1:30P</b>Kids testing</div><div><b>3:15P</b>Sticks and cones</div><div><b>4:00P</b>Golf lessons &mdash; Columbus Park</div></div></div>
 <div class="day"><div class="d">MON 8/24</div><div class="ev"><div><b>7:00A</b>Family get ready (resumes Mon&ndash;Fri)</div><div><b>MIDDAY</b>Roof coat 2 (perpendicular)</div><div><b>4:30P</b>Zada swim &mdash; Foss, Elmwood Park (last of the block)</div><div><b>5:30P</b>Zada gymnastics &mdash; GRC, Beginner Girls 2, week 1 <span class="gloss">CONFLICT</span></div></div></div>
 <div class="day"><div class="d">TUE 8/25</div><div class="ev open">Open evening &middot; peri-peri night (or Thu)</div></div>
@@ -387,10 +435,8 @@ ul.tasks li .t:hover b{color:var(--lip2)}
 
 <article class="card">
 <h2>Games <i>queue</i></h2>
-<div class="meta">STEAM · TAP A ROW FOR DETAIL</div>
 <ul class="ql">
-<li class="x"><span class="k">NOW</span><div class="v"><b>Gothic 1 Remake</b><div class="more">Up next after finishing Vahrin&rsquo;s Call (Aug 23). Steam block is the weekend-evening slot.</div></div></li>
-<li class="x"><span class="k">NEXT</span><div class="v"><b>Gothic 1 Remake</b><div class="more">Finish this before diving into anything else.</div></div></li>
+<li class="x"><span class="k">NOW</span><div class="v"><b>Gothic 1 Remake</b><div class="more">Vahrin&rsquo;s Call done 8/23. Weekend-evening slot.</div></div></li>
 <li class="x"><span class="k">WED 8/27</span><div class="v"><b>Star Wars: Zero Company</b><div class="more">Bit Reactor, XCOM-style tactics, Clone Wars setting.</div></div></li>
 <li class="x"><span class="k">THU 9/03</span><div class="v"><b>The Blood of Dawnwalker</b><div class="more">Rebel Wolves (ex-CDPR) vampire RPG. Wishlist it.</div></div></li>
 </ul>
@@ -398,7 +444,6 @@ ul.tasks li .t:hover b{color:var(--lip2)}
 
 <article class="card">
 <h2>Books <i>active + next</i></h2>
-<div class="meta">NEXT = TOP OF EACH QUEUE ON THE BOOKS PAGE</div>
 <ul class="ql">
 <li><span class="k">ANDREW</span><div class="v"><b>A Trade of Blood</b> <span class="m">+ My Cousin Rachel (audio)</span><div class="m">next: <i>The Woman in White</i> &middot; gap list graded on Books</div></div></li>
 <li><span class="k">DEBBIE</span><div class="v"><b>Nothing active</b> <span class="m">Babel done, liked</span><div class="m">next: <i>My Cousin Rachel</i> &middot; couple read, or Yellowface</div></div></li>
@@ -410,7 +455,6 @@ ul.tasks li .t:hover b{color:var(--lip2)}
 
 <article class="card">
 <h2>Movies <i>top 5</i></h2>
-<div class="meta">FAMILY NIGHT · FRI 8/28</div>
 <ul class="ql">
 <li><span class="k">1</span><div class="v"><b>Percy Jackson S1</b> <span class="m">Kai lead &middot; <i>Disney+</i></span></div></li>
 <li><span class="k">2</span><div class="v"><b>Series of Unfortunate Events</b> <span class="m">Zada lead &middot; <i>Netflix</i></span></div></li>
