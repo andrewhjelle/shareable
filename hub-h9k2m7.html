@@ -1,683 +1,541 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hub · The Week</title>
 <meta name="robots" content="noindex, nofollow">
-<title>Hub</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>.day.past{opacity:.42}
+.day.now .d{color:var(--lip2)}
+.ep .stale{color:var(--osd);opacity:.8}
+.addtask{display:flex;gap:8px;margin:8px 0 4px}
+.addtask input{flex:1;font:inherit;font-size:13.5px;padding:7px 10px;background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px;color:var(--ink)}
+.addtask input:focus{outline:none;border-color:var(--lip2)}
+.tasks .rm{margin-left:auto;background:none;border:0;color:var(--mut);font-size:15px;line-height:1;cursor:pointer;padding:0 4px}
+.tasks .rm:hover{color:var(--lip2)}
+#custom-tasks:empty{display:none}
+.tasks .defer{margin-left:auto;flex:none;border:1px solid currentColor;background:none;color:inherit;opacity:.45;font:inherit;font-size:.62rem;letter-spacing:.06em;padding:1px 6px;cursor:pointer;border-radius:3px}
+.tasks .defer:hover{opacity:1}
+.tasks .t .defer{margin-left:6px}
+.pushedline{font-size:.68rem;opacity:.6;margin-top:8px;letter-spacing:.04em}
+.pushedline button{border:none;background:none;color:inherit;text-decoration:underline;cursor:pointer;font:inherit;padding:0 2px}
+</style>
 
 <style>
-:root{
-  --tape:#17141a;--ink:#211d20;--cream:#f2e0c8;--cream2:#e9d5ba;
-  --lip:#d96b52;--lip2:#c24f3d;--cobalt:#4a6fb2;--signal:#cf4a2e;
-  --osd:#f4f1e4;--skin:#edbd97;--blush:#e58087;
-  --rule-soft:rgba(33,29,32,0.35);--rule-faint:rgba(33,29,32,0.18);
-  --mut:#7a6a5e;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  font-family:"Zen Kaku Gothic New",system-ui,sans-serif;
-  font-size:14.5px;line-height:1.55;color:var(--ink);
-  background:var(--tape);
-  -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
-  min-height:100vh;
-}
-
-::selection{background:var(--lip);color:var(--cream)}
-a{color:var(--lip2);text-decoration:none;border-bottom:1px dotted rgba(194,79,61,.5)}
-a:hover{color:var(--ink);border-bottom-color:var(--ink)}
-
-.masthead{position:sticky;top:0;z-index:30;background:rgba(23,20,26,.85);border-bottom:1px solid rgba(244,241,228,.14);backdrop-filter:blur(4px)}
-.masthead-inner{max-width:1600px;margin:0 auto;padding:12px 22px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:20px;font-family:"DotGothic16",monospace;color:var(--osd);text-shadow:1px 0 0 rgba(217,107,82,.55),-1px 0 0 rgba(74,111,178,.55)}
-.brand{display:flex;align-items:baseline;gap:12px}
-.brand .mark{font-family:"DotGothic16",monospace;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--osd);display:inline-flex;align-items:center;gap:8px}
-.brand .mark::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--signal);animation:blink 1s step-end infinite}
-@keyframes blink{50%{opacity:.15}}
-.brand .name{font-family:"Anton",sans-serif;font-size:22px;letter-spacing:.04em;text-transform:uppercase;color:var(--skin);transform:skewX(-6deg);font-style:normal}
-.dateline{font-family:"DotGothic16",monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--osd);text-align:center}
-.dateline strong{color:var(--skin);font-weight:400}
-.actions{display:flex;gap:6px}
-.actions button{font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.12em;background:transparent;color:var(--osd);border:1px solid rgba(244,241,228,.4);padding:4px 10px;border-radius:2px;cursor:pointer;transition:all .15s;text-transform:uppercase}
-.actions button:hover{color:var(--skin);border-color:var(--skin)}
-.actions button.on{background:var(--lip2);color:var(--cream);border-color:var(--lip2)}
-
-.main{position:relative;z-index:3;max-width:1600px;margin:0 auto;padding:22px;display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,300px) minmax(280px,320px);gap:20px;align-items:start}
-@media(max-width:1200px){.main{grid-template-columns:minmax(280px,1fr) minmax(0,1.6fr)}.col:nth-child(3){grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;align-items:start}}
-@media(max-width:720px){.main{grid-template-columns:1fr}.col:nth-child(3){grid-template-columns:1fr}}
-.col{display:grid;gap:18px;min-width:0}
-
-.card{position:relative;background:var(--cream);color:var(--ink);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:20px 22px 18px;box-shadow:5px 6px 0 rgba(33,29,32,.85)}
-.card::before{content:"";position:absolute;inset:4px;border:1px solid var(--ink);opacity:.22;border-radius:2px 9px 3px 8px;pointer-events:none}
-.card > *{position:relative}
-
-.section-label{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.section-label .num{font-family:"Anton",sans-serif;font-size:22px;letter-spacing:.03em;text-transform:uppercase;transform:skewX(-5deg);color:var(--ink);line-height:1}
-.section-label .num i{font-style:normal;color:var(--lip2)}
-.section-label .rule{flex:1;height:1.5px;background:var(--ink);opacity:.35}
-.section-label > span:last-child{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
-
-.horizon{font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--lip2);background:var(--cream2);border-left:3px solid var(--lip2);padding:8px 12px;margin:14px 0 6px;border-radius:0 6px 6px 0;display:flex;flex-direction:column;gap:3px}
-.horizon .sub{font-family:"Zen Kaku Gothic New",sans-serif;font-size:12.5px;letter-spacing:0;text-transform:none;color:var(--mut);font-weight:400}
-
-ul.tasks{list-style:none;padding:0;margin:6px 0 0;display:grid}
-ul.tasks li.task{padding:9px 0;border-top:1.5px dashed var(--rule-soft);display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline}
-ul.tasks li.task:first-child{border-top:0}
-.box{width:15px;height:15px;border:2px solid var(--ink);border-radius:2px 5px 2px 5px;background:var(--cream);cursor:pointer;position:relative;top:3px;flex-shrink:0}
-.box.done,.task.done .box{background:var(--lip2);border-color:var(--lip2)}
-.box.done::after,.task.done .box::after{content:"\2713";position:absolute;inset:-4px 0 0 1px;color:var(--cream);font-size:12px;font-weight:700;line-height:1;text-align:center;font-family:"Zen Kaku Gothic New",sans-serif}
-.task .body{min-width:0;display:flex;gap:10px;align-items:baseline;flex-wrap:nowrap;overflow:hidden}
-.task .title{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.task .meta{flex:0 0 auto;white-space:nowrap;margin-top:0}
-.body.clickable{cursor:pointer}
-.task .title{font-weight:700;line-height:1.35}
-.task.done .title{text-decoration:line-through;opacity:.5}
-.task.done .details,.task.done .meta{display:none}
-ul.tasks li.task.done{display:none !important}
-.meta{margin-top:2px}
-.when{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--lip2)}
-.who{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-left:8px}
-.details{display:none;grid-column:1 / -1;margin-top:8px;padding:10px 14px;background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px;font-size:13.5px;color:var(--ink);overflow-wrap:break-word;min-width:0}
-.task.open .details{display:block;animation:insert .35s ease}
-@keyframes insert{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-.details ol,.details ul{padding-left:18px;display:grid;gap:5px;margin:6px 0}
-.details b{color:var(--lip2)}
-
-.day-row{display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;padding:9px 0;border-top:1.5px dashed var(--rule-soft);align-items:baseline}
-.day-row:first-of-type{border-top:0}
-.day-row .d{font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.08em;color:var(--ink);font-weight:700;text-transform:uppercase}
-.day-row.today .d{color:var(--lip2)}
-.day-row.today .d::before{content:"> ";color:var(--signal)}
-.events{display:grid;gap:3px;min-width:0}
-.ev{font-size:13px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.ev b{font-family:"DotGothic16",monospace;font-weight:400;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--lip2);margin-right:6px}
-.ev.debby{opacity:.5}
-.ev.debby::after{content:"D";display:inline-block;margin-left:6px;font-size:9px;background:var(--mut);color:var(--cream);padding:1px 5px;border-radius:2px;font-family:"DotGothic16",monospace;letter-spacing:.08em}
-.ev.faint{color:var(--mut);font-style:italic}
-.ev.self{color:var(--cobalt);font-weight:500}
-
-.rhythm{margin-top:14px}
-.rhythm .cap{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
-.rhythm-list{list-style:none;padding:0;display:grid;gap:5px}
-.rhythm-list li{font-size:12.5px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;padding:4px 0;border-top:1px dotted var(--rule-faint);align-items:baseline}
-.rhythm-list li > span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.rhythm-list li:first-child{border-top:0}
-.rhythm-list li strong{font-family:"DotGothic16",monospace;font-weight:400;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--lip2);align-self:baseline;padding-top:1px}
-
-.blurb{font-size:13.5px;color:var(--ink);margin:8px 0}
-.blurb b{color:var(--lip2)}
-.slot{background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px;padding:10px 14px;margin:8px 0;font-size:13px}
-.cost{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.12em;color:var(--lip2);margin-left:6px;text-transform:uppercase}
-.what{font-weight:700;color:var(--ink)}
-
-.diagram{background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px;padding:12px;margin:10px 0;overflow-x:auto}
-.diagram svg{max-width:100%;height:auto;display:block;margin:0 auto}
-.diagram text{fill:var(--ink);font-family:"DotGothic16",monospace;font-size:11px}
-
-.footer-links{grid-column:1/-1;max-width:1600px;margin:0 auto;padding:30px 22px 60px;display:flex;flex-wrap:wrap;gap:10px;position:relative;z-index:3}
-.footer-links a{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--osd);background:rgba(33,29,32,.8);border:1px solid rgba(244,241,228,.25);padding:6px 12px;text-decoration:none;border-radius:2px}
-.footer-links a:hover{color:var(--skin);border-color:var(--skin)}
-
-@media(prefers-reduced-motion:reduce){.brand .mark::before{animation:none}}
-
-/* Scene: the cel background */
+:root{--tape:#17141a;--ink:#211d20;--skin:#edbd97;--skin2:#e2ad84;--lip:#d96b52;--lip2:#c24f3d;--blush:#e58087;--eye:#8d93b5;--cobalt:#4a6fb2;--signal:#cf4a2e;--cream:#f2e0c8;--cream2:#e9d5ba;--osd:#f4f1e4}
+*{box-sizing:border-box;margin:0}
+body{background:var(--tape);color:var(--ink);font:15px/1.6 "Zen Kaku Gothic New",sans-serif;overflow-x:hidden}
+a{color:var(--lip2)}a:hover{color:var(--ink)}
+/* scene: the cel itself */
 .scene{position:fixed;inset:0;z-index:0;pointer-events:none}
-.cel{position:absolute;inset:0;background:url("kaset-cel.png") 62% 18%/cover no-repeat;filter:saturate(.92) brightness(.85)}
-.celscrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(23,20,26,.35) 0%,rgba(23,20,26,.62) 55%,rgba(23,20,26,.88) 100%),linear-gradient(180deg,rgba(23,20,26,.05) 40%,rgba(23,20,26,.65) 100%)}
+.cel{position:absolute;inset:0;background:url("hub-cel-h9k2m7.jpg") 62% 18%/cover no-repeat;filter:saturate(.92) brightness(.9)}
+.celscrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(23,20,26,.22) 0%,rgba(23,20,26,.5) 55%,rgba(23,20,26,.82) 100%),linear-gradient(180deg,rgba(23,20,26,0) 40%,rgba(23,20,26,.55) 100%)}
 /* VHS pass — behind the cards, over the cel */
 .vhs{position:fixed;inset:0;z-index:1;pointer-events:none}
 .scan{position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(10,8,12,.11) 3px 4px)}
-.track{position:absolute;left:0;right:0;height:9px;background:linear-gradient(180deg,transparent,rgba(244,241,228,.10) 45%,rgba(244,241,228,.10) 55%,transparent);animation:trackmove 90s linear infinite}
+.track{position:absolute;left:0;right:0;height:9px;background:linear-gradient(180deg,transparent,rgba(244,241,228,.1) 45%,rgba(244,241,228,.1) 55%,transparent);animation:trackmove 90s linear infinite}
 .track.t2{height:5px;animation-duration:130s;animation-delay:-40s;opacity:.7}
 @keyframes trackmove{from{top:-4%}to{top:104%}}
-.grainsvg{position:absolute;inset:0;width:100%;height:100%;opacity:.55;mix-blend-mode:overlay;pointer-events:none}
-/* Tape flutter — periodic CRT stutter */
-@keyframes flutter{0%,97.4%,100%{transform:none;filter:none}97.7%{transform:translateX(1px) skewX(.35deg);filter:hue-rotate(6deg)}98.1%{transform:translateX(-1px)}98.5%{transform:none}}
+.grainsvg{position:absolute;inset:0;width:100%;height:100%;opacity:.55;mix-blend-mode:overlay}
+/* tape flutter */
+@keyframes flutter{0%,97.4%,100%{transform:none;filter:none}97.7%{transform:translateX(1px) skewX(.35deg)}98.1%{transform:translateX(-1px)}98.5%{transform:none}}
+.page{position:relative;z-index:2}
 .scene .cel,.vhs .scan{animation:flutter 18s step-end infinite}
-/* Card entrance + card chromatic aberration during flutter */
-.js .card{opacity:0;transform:translateY(10px)}
-.js .card.in{opacity:1;transform:none;transition:opacity .5s ease,transform .5s ease}
-.js .card.in.stag{transition-delay:var(--stag),var(--stag)}
-@keyframes chroma{0%,97.4%,100%{filter:none}97.7%{filter:drop-shadow(3px 0 0 rgba(217,107,82,.75)) drop-shadow(-3px 0 0 rgba(74,111,178,.65))}98.5%{filter:none}}
-.js .card.in{animation:chroma 18s step-end infinite}
-/* Blushed accent breathing on masthead brand */
-.brand .name{position:relative}
-.brand .name::after{content:"";position:absolute;top:-6px;left:-10px;width:120px;height:36px;background:radial-gradient(ellipse,rgba(229,128,135,.45),transparent 70%);pointer-events:none;animation:breathe 14s ease-in-out infinite;z-index:-1}
-@keyframes breathe{0%,100%{opacity:.6}50%{opacity:1}}
+/* OSD header */
+.osdbar{position:sticky;top:0;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 22px;font-family:"DotGothic16";font-size:13px;letter-spacing:.14em;color:var(--osd);background:rgba(23,20,26,.78);border-bottom:1px solid rgba(244,241,228,.14);text-shadow:1px 0 0 rgba(217,107,82,.7),-1px 0 0 rgba(74,111,178,.7)}
+.osdbar .rec i{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--signal);margin-right:6px;animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:.15}}
+.osdbar .mid{display:none}
+.osdbtn{font-family:"DotGothic16";font-size:11px;letter-spacing:.12em;background:transparent;color:var(--osd);border:1px solid rgba(244,241,228,.4);padding:3px 10px;cursor:pointer;border-radius:2px}
+.osdbtn:hover{color:var(--skin);border-color:var(--skin)}
+@media(min-width:760px){.osdbar .mid{display:block}}
+/* masthead */
+.mast{padding:8vh 22px 5vh;max-width:1460px;margin:0 auto}
+.mast .ep{font-family:"DotGothic16";font-size:14px;letter-spacing:.2em;color:var(--osd);text-shadow:1px 0 0 rgba(217,107,82,.7),-1px 0 0 rgba(74,111,178,.7)}
+.mast h1{font-family:"Anton";font-size:clamp(52px,9vw,118px);line-height:.95;text-transform:uppercase;color:var(--skin);transform:skewX(-6deg);margin:12px 0 20px;text-shadow:3px 0 0 rgba(194,79,61,.55),-3px 0 0 rgba(74,111,178,.45);margin-left:-6px}
+.mast h1 i{font-style:normal;color:var(--lip)}
+.mast p{color:var(--cream);max-width:560px;text-shadow:0 1px 6px rgba(23,20,26,.9);font-size:15.5px}
+/* columns */
+.cols{display:grid;grid-template-columns:minmax(460px,600px) minmax(0,1fr) minmax(320px,380px);gap:18px;align-items:start;max-width:1640px;margin:0 auto;padding:16px 22px 110px}
+/* left col: density pass */
+.lcol .card{padding:14px 16px 12px}
+.lcol .card p.sub{display:block;margin:8px 0 2px;font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.lcol .card p.sub b{color:var(--ink);font-weight:700}
+.lcol ul.tasks li{padding:6px 0}
+.lcol .t b{font-size:13.5px}
+/* right col: fewer wraps */
+.rcol .card{padding:14px 16px 12px}
+.rcol .proj li{padding:6px 0;font-size:13px;gap:8px;flex-wrap:wrap}
+.rcol .proj .when{font-size:10.5px;padding-left:6px}
+@media(max-width:1120px){.cols{grid-template-columns:minmax(320px,1.3fr) minmax(0,1fr)}.rcol{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}}
+@media(max-width:720px){.cols{grid-template-columns:1fr}.rcol{grid-template-columns:1fr}}
+.lcol{display:grid;gap:18px}
+.lcol::-webkit-scrollbar{display:none}
+.mcol,.rcol{display:grid;gap:18px}
+/* cards — cel + sketch ink */
+.card{position:relative;background:var(--cream);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:22px 24px 20px;box-shadow:5px 6px 0 rgba(33,29,32,.85)}
+.card::before{content:"";position:absolute;inset:4px;border:1px solid var(--ink);opacity:.25;border-radius:2px 9px 3px 8px;pointer-events:none}
+.js .card{opacity:0;transform:translateY(10px);filter:drop-shadow(3px 0 0 rgba(217,107,82,.75)) drop-shadow(-3px 0 0 rgba(74,111,178,.65))}
+.js .card.in{opacity:1;transform:none;filter:none;transition:opacity .5s ease,transform .5s ease,filter .7s ease .2s}
+.js .card.in.stag{transition-delay:var(--stag),var(--stag),calc(var(--stag) + .2s)}
+.card h2{font-family:"Anton";font-size:clamp(20px,2.2vw,26px);letter-spacing:.02em;text-transform:uppercase;line-height:1.08;transform:skewX(-5deg);margin:6px 0 4px}
+.card h2 i{font-style:normal;color:var(--lip2)}
+.ep{font-family:"DotGothic16";font-size:11px;letter-spacing:.2em;color:var(--lip2)}
+.meta{font-family:"DotGothic16";font-size:11.5px;letter-spacing:.1em;color:#7a6a5e;margin:2px 0 6px}
+.card p{margin:7px 0;text-wrap:pretty}
+/* urgent card */
+.card.urgent{background:var(--signal);color:var(--cream);border-color:var(--ink);box-shadow:5px 6px 0 rgba(33,29,32,.9)}
+.card.urgent .ep{color:var(--cream)}
+.card.urgent .ep::before{content:"● ";color:#ffd9c4;animation:blink 1.4s step-end infinite}
+.card.urgent .meta{color:#f4cdbd}
+.card.urgent h2{color:var(--cream);text-shadow:2px 0 0 rgba(33,29,32,.5)}
+.card.urgent h2 i{color:#ffd9c4}
+.card.urgent a{color:#ffe3d1}
+.card.urgent li{border-color:rgba(242,224,200,.4)}
+/* blush header accent */
+.blushed{position:relative}
+.blushed::after{content:"";position:absolute;top:-6px;left:-10px;width:120px;height:40px;background:radial-gradient(ellipse,rgba(229,128,135,.5),transparent 70%);pointer-events:none;animation:breathe 14s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.7}50%{opacity:1}}
+/* checkboxes */
+.ck{appearance:none;flex:0 0 15px;width:15px;height:15px;border:2px solid var(--ink);border-radius:2px 5px 2px 5px;background:var(--cream);cursor:pointer;position:relative;top:2px;margin:0}
+.ck:checked{background:var(--lip2)}
+.ck:checked::after{content:"✓";position:absolute;inset:-4px 0 0 1px;color:var(--cream);font-size:12px;font-weight:700}
+.urgent .ck{border-color:var(--cream);background:transparent}
+.urgent .ck:checked{background:var(--cream)}
+.urgent .ck:checked::after{color:var(--signal)}
+li.done>.t{opacity:.45}
+li.done>.t b{text-decoration:line-through}
+li.done>.sub,li.done>details{display:none}
+body.hidedone li.done{display:none}
+/* task lists */
+ul.tasks{list-style:none;padding:0;margin:8px 0 0;display:grid}
+ul.tasks li{padding:9px 0;border-top:1.5px dashed rgba(33,29,32,.35)}
+ul.tasks li:first-child{border-top:0}
+.t{display:flex;gap:10px;align-items:baseline}
+.t b{font-weight:700}
+.when{font-family:"DotGothic16";font-size:11px;letter-spacing:.1em;color:var(--lip2);white-space:nowrap;margin-left:auto;padding-left:10px}
+.urgent .when{color:#ffd9c4}
+.sub{font-size:13.5px;color:#5c4f46;margin-top:3px}
+.urgent .sub{color:#f6d8c8}
+/* chips — OSD on ink */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px}
+.chip{position:relative;font-family:"DotGothic16";font-size:11px;letter-spacing:.12em;background:var(--ink);color:var(--osd);padding:4px 12px;border-radius:2px;overflow:hidden;white-space:nowrap}
+.chip::after{content:"";position:absolute;top:0;left:8px;width:10px;height:6px;background:rgba(244,241,228,.55);transform:skewX(-20deg)}
+.chip::before{content:"";position:absolute;top:0;bottom:0;left:-30%;width:18%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);animation:sheen 9s ease-in-out infinite}
+@keyframes sheen{0%,88%{left:-30%}100%{left:130%}}
+.chip.blue{background:var(--cobalt)}
+.chip.red{background:var(--lip2)}
+/* details = tape insert */
+details{margin-top:6px}
+summary{cursor:pointer;font-family:"DotGothic16";font-size:12px;letter-spacing:.14em;color:var(--ink);list-style:none;display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--ink);padding:5px 12px;border-radius:2px 7px 2px 7px;background:var(--cream2);transition:background .2s}
+summary:hover{background:#fff}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"►";font-size:9px;color:var(--lip2)}
+details[open] summary::before{content:"▼"}
+.urgent summary{background:transparent;color:var(--cream);border-color:var(--cream)}
+.urgent summary::before{color:var(--cream)}
+details .inner{margin-top:10px;background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px;padding:12px 16px;font-size:13.5px}
+details[open] .inner{animation:insert .35s ease}
+@keyframes insert{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.urgent details .inner{background:rgba(33,29,32,.25);border-color:rgba(242,224,200,.55);color:var(--cream)}
+details .inner ol{padding-left:18px;display:grid;gap:5px;margin:4px 0}
+/* week strip */
+.day{display:grid;grid-template-columns:74px 1fr;gap:12px;padding:9px 0;border-top:1.5px dashed rgba(33,29,32,.35)}
+.day:first-of-type{border-top:0}
+.day .d{font-family:"DotGothic16";font-size:12px;letter-spacing:.08em;color:var(--ink);font-weight:700}
+.day .ev{font-size:13.5px}
+.day .ev b{color:var(--lip2);font-family:"DotGothic16";font-weight:400;font-size:11.5px;letter-spacing:.06em;margin-right:6px}
+.day .ev div{margin:2px 0}
+.open{color:#8a7a6c;font-style:italic}
+/* projects ticker */
+.proj{list-style:none;padding:0;margin:8px 0 0;display:grid}
+.proj li{display:flex;gap:10px;align-items:baseline;padding:7px 0;border-top:1.5px dashed rgba(33,29,32,.35)}
+.proj li:first-child{border-top:0}
+.proj .when{margin-left:auto}
+/* gloss white emphasis */
+.gloss{background:#fff;padding:0 6px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+/* footer links */
+.foot{max-width:1460px;margin:0 auto;padding:0 22px 70px;display:flex;flex-wrap:wrap;gap:10px}
+.foot a{font-family:"DotGothic16";font-size:11.5px;letter-spacing:.12em;color:var(--osd);background:rgba(33,29,32,.8);border:1px solid rgba(244,241,228,.25);padding:6px 12px;text-decoration:none;border-radius:2px}
+.foot a:hover{color:var(--skin);border-color:var(--skin)}
+@media(prefers-reduced-motion:reduce){.track,.osdbar .rec i,.scene .cel,.vhs .scan,.chip::before,.blushed::after,.card.urgent .ep::before{animation:none}.js .card{opacity:1;transform:none;filter:none}}
+/* key/value list for media cards */
+.ql{list-style:none;padding:0;margin:8px 0 0;display:grid}
+.ql li{display:grid;grid-template-columns:66px minmax(0,1fr);gap:10px;padding:6px 0;border-top:1.5px dashed rgba(33,29,32,.35);align-items:baseline}
+.ql li:first-child{border-top:0}
+.ql .k{font-family:"DotGothic16";font-size:10.5px;letter-spacing:.1em;color:var(--lip2);white-space:nowrap;padding-top:2px}
+.ql .v{min-width:0;font-size:13.5px;line-height:1.35}
+.ql .v b{font-weight:700}
+.ql .m{font-family:"DotGothic16";font-size:10px;letter-spacing:.08em;color:#7a6a5e;text-transform:uppercase}
+.ql .m i{font-style:normal;color:var(--lip2)}
+.ql li.x{cursor:pointer}
+.ql li.x .v > b::after{content:" \203A";color:#7a6a5e;font-weight:400}
+.ql li.x.open .v > b::after{content:" \2304";color:var(--lip2)}
+.ql .more{display:none;font-size:12.5px;line-height:1.45;margin-top:4px;padding:7px 10px;background:var(--cream2);border:1.5px solid var(--ink);border-radius:2px 8px 3px 8px;text-transform:none;font-family:"Zen Kaku Gothic New",sans-serif;letter-spacing:0;color:var(--ink)}
+.ql li.open .more{display:block}
+.rcol .card .sub{display:block;font-size:12.5px;color:#5c4f46}
+
+.desc{font-size:13.5px;line-height:1.5;margin:6px 0 0}
+.desc b{font-weight:700}
+.desc .k{font-family:"DotGothic16";font-size:10.5px;letter-spacing:.12em;color:var(--lip2);text-transform:uppercase;margin-right:6px}
+.desc + .desc{margin-top:8px;padding-top:8px;border-top:1.5px dashed rgba(33,29,32,.35)}
+.today-head{background:var(--signal);color:var(--cream);margin:-14px -16px 10px;padding:14px 16px 12px;border-radius:1px 10px 0 0;border-bottom:2.5px solid var(--ink)}
+.today-head .ep{color:var(--cream)}
+.today-head .ep::before{content:"● ";color:#ffd9c4;animation:blink 1.4s step-end infinite}
+.today-head h2{color:var(--cream);text-shadow:2px 0 0 rgba(33,29,32,.5);margin-bottom:2px}
+.today-head h2 i{color:#ffd9c4}
+.today-head .meta{color:#f4cdbd}
+.today-head ul.tasks li{border-color:rgba(242,224,200,.4)}
+.today-head .t b{color:var(--cream)}
+.today-head .when{color:#ffd9c4}
+.today-head .sub{color:#f6d8c8}
+.today-head .ck{border-color:var(--cream);background:transparent}
+.today-head .ck:checked{background:var(--cream)}
+.today-head .ck:checked::after{color:var(--signal)}
+.grp{font-family:"DotGothic16";font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--lip2);margin:14px 0 0;padding-bottom:4px;border-bottom:1.5px solid rgba(33,29,32,.35)}
+.grp:first-of-type{margin-top:6px}
+/* expandable tasks: caret on the title, whole row toggles */
+ul.tasks li.x .t{cursor:pointer}
+ul.tasks li.x .t > b::after{content:" \203A";color:#7a6a5e;font-weight:400}
+ul.tasks li.x.open .t > b::after{content:" \2304";color:var(--lip2)}
+ul.tasks li.x details > summary{display:none}
+ul.tasks li .t:hover b{color:var(--lip2)}
+.urgent ul.tasks li .t:hover b{color:#ffd9c4}
 
 </style>
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* shared header bar */
+.hubnav{position:sticky;top:0;z-index:50;background:rgba(33,29,32,.92);backdrop-filter:blur(6px);border-bottom:1px solid rgba(244,241,228,.18);display:flex;gap:2px;align-items:center;padding:8px 20px;font-family:"DotGothic16",monospace;letter-spacing:.14em;font-size:12px}
+.hubnav a{color:var(--osd,#c9c1a8);text-decoration:none;padding:8px 14px;border-radius:2px;border:1px solid transparent;transition:color .15s,border-color .15s}
+.hubnav a:hover{color:var(--skin,#f4c9a5);border-color:rgba(244,201,165,.4)}
+.hubnav a.here{color:var(--skin,#f4c9a5);border-color:var(--skin,#f4c9a5)}
+.hubnav .brand{font-family:"Anton",sans-serif;font-size:18px;letter-spacing:.06em;color:#f4f1e4;margin-right:14px;padding-right:14px;border-right:1px solid rgba(244,241,228,.2)}
+</style>
 </head>
 <body>
+<script>
+(function(){
+  var KEY='hub_pw_ok_v1';
+  try{
+    if (sessionStorage.getItem(KEY)!=='1'){
+      var tries=0;
+      while(tries<5){
+        var v=window.prompt('Password:');
+        if (v===null){ document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>'; return; }
+        if (v.trim().toLowerCase()==='dakz'){ sessionStorage.setItem(KEY,'1'); break; }
+        tries++;
+      }
+      if (sessionStorage.getItem(KEY)!=='1'){
+        document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>';
+        return;
+      }
+    }
+  }catch(e){}
+})();
+</script>
+
+<nav class="hubnav" aria-label="Hub nav">
+  <a class="brand here" href="hub-h9k2m7.html">HUB</a>
+  <a href="house-design-h9k2m7.html">HOUSE DESIGN</a>
+  <a href="kids-h9k2m7.html">KIDS</a>
+  <a href="recipes-h9k2m7.html">RECIPES</a>
+  <a href="books-h9k2m7.html">BOOKS</a>
+  <a href="movies-h9k2m7.html">MOVIES</a>
+</nav>
+
 <div class="scene"><div class="cel"></div><div class="celscrim"></div></div>
 <div class="vhs"><div class="scan"></div><div class="track"></div><div class="track t2"></div>
 <svg class="grainsvg" aria-hidden="true"><filter id="g"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2"></feTurbulence><feColorMatrix type="matrix" values="0 0 0 0 .9 0 0 0 0 .85 0 0 0 0 .78 0 0 0 .07 0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#g)"></rect></svg></div>
 
+<div class="page">
+<div class="osdbar"><span></span><span></span><span style="display:flex;gap:8px;align-items:center"><button class="osdbtn" id="hdone">HIDE DONE</button><button class="osdbtn" id="xall">EXPAND ALL</button><button class="osdbtn" id="call">COLLAPSE</button></span></div>
 
-<header class="masthead">
-  <div class="masthead-inner">
-    <div class="brand"><span class="mark">Hub</span></div><div class="dateline"></div>
-    <div class="actions">
-      <button onclick="expandAll(true)">Expand</button>
-      <button onclick="expandAll(false)">Collapse</button>
-      <button id="btn-sync" onclick="openSync()">Sync</button>
-    </div>
-  </div>
-</header>
+<div class="cols">
+<!-- LEFT: today + everything else -->
+<div class="lcol">
 
-<main class="main">
+<article class="card urgent" data-built="2026-08-23">
+<div class="ep">TODAY · SUN 8/23</div>
+<h2>Top <i>3</i></h2>
+<ul class="tasks">
+<li><div class="t"><b>Text Ben: get the ladder back</b><span class="when">1 MIN</span></div><div class="sub">Needed for the roof recoat weekend.</div></li>
+<li><div class="t"><b>Finish washing Zada&rsquo;s backpack</b><span class="when">TODAY</span></div></li>
+</ul>
+</article>
 
-<!-- ===================== LEFT: TIMELINE TO-DO ===================== -->
-<div class="col">
+<article class="card">
+<h2>To-do <i>everything else</i></h2>
+<div class="meta" data-today-meta>GROUPED BY WHEN</div>
+<form id="addtask" class="addtask" autocomplete="off"><input type="text" id="addtask-in" placeholder="Add to today&hellip; (end with @when for a label)" maxlength="140"><button type="submit" class="osdbtn ink">ADD</button></form>
+<ul class="tasks" id="custom-tasks"></ul>
 
-  <div class="card">
-    <div class="section-label"><span class="num">To do</span><span class="rule"></span><span>Tap a row for detail</span></div>
+<div class="grp">Mon 8/24</div>
+<ul class="tasks">
+<li><div class="t"><b>Breakfast music starts Monday: Peter and the Wolf</b><span class="when">MON 7 AM</span></div><div class="sub">Search it on Spotify, 15 minutes, say &ldquo;this is Prokofiev.&rdquo; Rotation is on the Kids page.</div></li>
+<li><div class="t"><b>Roof recoat &mdash; coat 2</b>, perpendicular<span class="when">MIDDAY · AFTER 12&ndash;24 HR CURE</span></div><div class="sub">Roll 90&deg; to yesterday&rsquo;s direction &mdash; this coat is the waterproofing. ~1.4 gal, don&rsquo;t thin, fresh roller cover, chip-brush details first. Stay off a week after.</div></li>
+<li><div class="t"><b>Plan Zada&rsquo;s birthday party</b><span class="when">MON EVE</span></div><div class="sub">Party is Sat 3 PM &mdash; ice skating + sleepover (helmets). Guest list, food, cake.</div></li>
+</ul>
 
-    <div class="horizon" style="border-left-color:#a2352a;background:rgba(162,53,42,0.10)"><span style="color:#a2352a">Security incident &mdash; confirmed vishing</span><span class="sub" style="color:#a2352a">Password given on a call &rarr; X takeover proves they used it. PW changed + 2FA on. Residual work still needed.</span></div>
-    <ul class="tasks">
-      <li class="task done" data-key="sec-gmail-pw"><div class="box done" onclick="toggleTask(event)"></div><div class="body"><div class="title">Change Gmail password &mdash; DONE</div></div></li>
+<div class="grp">Tue 8/25</div>
+<ul class="tasks">
+<li><div class="t"><b>Homework diagnostic, both kids</b><span class="when">TUE · 20&ndash;30 MIN EACH</span></div><div class="sub">Last spring&rsquo;s returned work + summer workbooks; watch a page cold. Note fluent / shaky / forgotten.</div></li>
+<li><div class="t"><b>Cook: Nando&rsquo;s peri-peri chicken on the grill</b><span class="when">TUE OR THU · MARINATE THE NIGHT BEFORE</span></div><div class="sub">Two bowls: kids mild, adults hot. Recipe is on the Recipes page; corn on the grill alongside.</div></li>
+<li><div class="t"><b>Clean for the roofers</b><span class="when">TUE EVE</span></div></li>
+<li><div class="t"><b>Open the 4th-floor ceiling + moisture meter</b><span class="when">TUE · 1 HR · GATES MIKE WED 9:30</span></div><div class="sub">Gates the drywall crew; Mike Coloma is Wed 9:30. Under 15% = dry; over 19% = water still arriving.</div>
+<details><summary hidden></summary><div class="inner"><ol><li>Kill the ceiling circuit if wiring is near the stain.</li><li>Find joists with a rare-earth magnet line.</li><li>Rectangle: joist centerline to centerline, ~2&quot; past the stain.</li><li>Mist the lines &mdash; damp gypsum cuts near dust-free.</li><li>Score 3&ndash;4 passes, shop-vac trailing. Blade &le; 3/4&quot; (wires).</li><li>Palm-punch, pull gently, slice back paper.</li><li>Bag it &mdash; but LOOK at the back face first. Evidence.</li><li>Photograph everything.</li><li>Meter the framing, then the other two areas.</li></ol></div></details></li>
+<li><div class="t"><b>Fix the HVAC</b><span class="when">TUE</span></div></li>
+</ul>
 
-      <li class="task done" data-key="sec-2fa"><div class="box done" onclick="toggleTask(event)"></div><div class="body"><div class="title">2FA on Gmail &mdash; DONE (verify method below)</div></div></li>
+<div class="grp">Wed 8/26</div>
+<ul class="tasks">
+<li><div class="t"><b>Mike Coloma visit prep</b> &mdash; re-issue the contractor view, retire house-w6r9m2<span class="when">BEFORE WED 9:30A</span></div></li>
+<li><div class="t"><b>Roof odds-and-ends after Mike leaves</b>: cable-mast bead + AC line-set foam<span class="when">WED · 30 MIN · ~$20</span></div>
+<details><summary hidden></summary><div class="inner"><ol><li>When HD order arrives: squeeze the foam. Black rubbery = go; gray polyethylene = swap for rubber sleeves (~$10).</li><li>Solar Seal bead at cable entry + mast-cone cap seam.</li><li>Copy neighbor&rsquo;s 8/8 fix in white: foam sleeves, UV tape, Solar Seal at entries. No black mastic (ghosts through white).</li><li>Cone gap over 1/2&quot;? Backer rod first; dome the top so water sheds.</li><li>Roof is freshly coated &mdash; soft shoes, stay off the field where you can, work from the edges.</li></ol></div></details></li>
+<li><div class="t"><b>Diet + exercise: 1-hr design session</b><span class="when">WED PM</span></div><div class="sub">Bring: current weight, last reset&rsquo;s lessons (afternoon snacking, weighted-vest walks, knee), soccer schedule, real training window. Output: one page, ONE habit, 2-week experiment. Note: Kai soccer 5:30 + piano 6:30 that evening.</div></li>
+</ul>
 
-      <li class="task" data-key="sec-2fa-verify"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Verify 2FA setup wasn&rsquo;t tampered with (authenticator, backup codes)</div><div class="meta"><span class="when">NOW &middot; 3 min</span></div></div><div class="details">At <a href="https://myaccount.google.com/signinoptions/two-step-verification" target="_blank">2-Step Verification settings</a>: <ol><li>Only YOUR authenticator app should be listed. Any second authenticator = attacker&rsquo;s. Remove it.</li><li>Backup codes: regenerate a fresh set (invalidates any codes the attacker may have saved).</li><li>Trusted devices: remove any you don&rsquo;t recognize.</li></ol><b>Critical question:</b> did you give the 2FA CODE on the call too? If yes, they had a chance to add their own authenticator. If no, 2FA held.</div></li>
+<div class="grp">Fri 8/28</div>
+<ul class="tasks">
+<li><div class="t"><b>Family movie night &mdash; protect it</b><span class="when">FRI 8/28 PM</span></div><div class="sub">Top 5 on the Movies card. September&rsquo;s film-year pick is Mary Poppins; Friday can be the early start.</div></li>
+</ul>
 
-      <li class="task" data-key="sec-signout"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Sign out of ALL Gmail sessions &mdash; still needed after PW change</div><div class="meta"><span class="when">NOW &middot; 30 sec</span></div></div><div class="details">Password change does NOT kill existing sessions. Google Account &rarr; Security &rarr; Your devices &rarr; sign out of every device. Then sign back in only on the ones you own.</div></li>
+<div class="grp">This week · no fixed day</div>
+<ul class="tasks">
+<li><div class="t"><b>Kai&rsquo;s math level &mdash; ask his teacher</b><span class="when">FIRST WEEK OF SCHOOL</span></div><div class="sub">&ldquo;Want to match at home, not race ahead.&rdquo;</div></li>
+<li><div class="t"><b>Typing practice: Kai (especially) + Zada</b><span class="when">START THIS WEEK</span></div><div class="sub">TypingClub or typing.com, free in the browser. Start absurdly small: 10 min after homework, streak on the fridge.</div></li>
+<li><div class="t"><b>Steam block</b> (1 hr)<span class="when">WKND EVE</span></div></li>
+</ul>
 
-      <li class="task" data-key="sec-filters"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Check Gmail filters + forwarding for hostile rules</div><div class="meta"><span class="when">NOW &middot; 5 min</span></div></div><div class="details"><b>This is the highest-signal check.</b> If the X confirmation emails never hit your inbox, the attacker likely added:<ol><li><b>A filter</b> that auto-archives or deletes messages from twitter.com / x.com / your bank / Google security alerts. Settings &rarr; See all settings &rarr; Filters and Blocked Addresses. Delete anything you didn&rsquo;t create.</li><li><b>A forwarding address</b> sending copies of your mail elsewhere. Settings &rarr; Forwarding and POP/IMAP. Delete anything unfamiliar.</li><li><b>Send-mail-as / delegates.</b> Settings &rarr; Accounts and Import &rarr; Send mail as + Grant access. Nuke anything unknown.</li></ol>Screenshot each of these BEFORE deleting &mdash; that&rsquo;s your evidence of the compromise.</div></li>
+<div class="grp">Next weekend · Zada&rsquo;s party + bath · Aug 29&ndash;30</div>
+<ul class="tasks">
+<li><div class="t"><b>Shower curb: glue the 3 cement-board pieces</b> (2 hrs)<span class="when">SAT AM (ROOF DONE EARLY) OR SUN EVE</span></div><div class="sub">Gate: PL Premium (NOT X-15) on hand, RedGard uniformly red, liner coverage decides screws-or-no.</div></li>
+</ul>
 
-      <li class="task" data-key="sec-activity"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Review recent security activity + connected apps</div><div class="meta"><span class="when">NOW &middot; 5 min</span></div></div><div class="details"><b>Recent security activity:</b> <a href="https://myaccount.google.com/notifications" target="_blank">myaccount.google.com/notifications</a> &mdash; unfamiliar logins, especially foreign IPs / new devices. Note the times.<br><br><b>Connected apps:</b> <a href="https://myaccount.google.com/permissions" target="_blank">myaccount.google.com/permissions</a>. Revoke anything you don&rsquo;t recognize &mdash; a malicious OAuth app is the modern back door.<br><br><b>App passwords:</b> Security &rarr; App passwords. Revoke everything, re-issue only what you actually need.</div></li>
+<div class="grp">House · when it fits</div>
+<ul class="tasks">
+<li><div class="t"><b>Office clean, then Shinco AC clean + re-route ducting</b><span class="when">3&ndash;4 HRS · NEXT FREE AM</span></div><div class="sub">Office first; can&rsquo;t clean coils in a dusty room.</div></li>
+<li><div class="t"><b>Reorganize the living-room bookshelf</b><span class="when">30-MIN TIMER</span></div><div class="sub">Kids can do the declutter pass first.</div></li>
+<li><div class="t"><b>Deck wasps: break the re-nesting cycle</b><span class="when">~$25</span></div>
+<details><summary hidden></summary><div class="inner"><ol><li>Early morning (they&rsquo;re sluggish): nest into bag, seal.</li><li>Scrub the attachment spot with soapy water &mdash; kills the pheromone marker. The most-skipped step and why they return.</li><li>Outlet: foam gasket + in-use bubble cover.</li><li>Light: re-seat glass, plug gaps. Dust insecticide only near fixtures &mdash; never liquid.</li><li>Sept/Oct: seal remaining crevices while nests are empty.</li></ol></div></details></li>
+<li><div class="t"><b>3rd-floor deck: shave gutter-edge dam, rebuild seam, recoat band</b><span class="when">W/ WASP TRIP</span></div><div class="sub">Shave (don&rsquo;t rip) &rarr; 289 + 296 ElastoTape three-course &rarr; water test &rarr; recoat 90 sq ft. Boards off a week.</div></li>
+<li><div class="t"><b>Deck slider: fish toy, clean track, clear weep holes</b><span class="when">30 MIN</span></div><div class="sub">Silicone spray on rollers, NOT WD-40.</div></li>
+<li><div class="t"><b>Drywall: Debbie books after the mold + moisture checks pass</b><span class="when">~$1,050</span></div><div class="sub">Andrew may hang board (deadman brace) + crew quotes finish-only.</div></li>
+<li><div class="t"><b>Handyman for vents &mdash; Debbie booking</b></div></li>
+<li><div class="t"><b>Fix Debbie&rsquo;s pants rack</b><span class="when">ANY EVE</span></div></li>
+<li><div class="t"><b>Master closet: further clean + declutter</b><span class="when">ANY EVE · 30-MIN TIMER</span></div></li>
+<li><div class="t"><b>Clean the 3D printer</b></div></li>
+<li><div class="t"><b>2nd-floor bookshelf: 30 min with the kids</b><span class="when">WKND PM</span></div></li>
+<li><div class="t"><b>Pantry: 30-min pass, timer on</b><span class="when">ANY EVE</span></div></li>
+</ul>
 
-      <li class="task" data-key="sec-recovery"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Verify recovery email + phone are yours (not swapped)</div><div class="meta"><span class="when">NOW &middot; 2 min</span></div></div><div class="details">Security &rarr; Ways we can verify it&rsquo;s you. Attackers change these first so YOU can&rsquo;t recover the account. If either has changed, that&rsquo;s definitive proof of compromise &mdash; fix it and file with Google.</div></li>
-
-      <li class="task" data-key="sec-linkedin"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">LinkedIn: password + 2FA + active sessions + email on file</div><div class="meta"><span class="when">Today</span></div></div><div class="details">Same play as Gmail. Settings &amp; Privacy &rarr; Sign in &amp; security. Change password, enable 2FA (authenticator), sign out all sessions, verify the email on file is still yours. If the account email was swapped like X, LinkedIn support has a takeover form.</div></li>
-
-      <li class="task" data-key="sec-money"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Rotate every account that uses this Gmail as login/recovery</div><div class="meta"><span class="when">Today, priority order</span></div></div><div class="details">If Gmail was owned, the attacker could have password-reset any downstream account. Order:<ol><li><b>Banking / brokerages / credit cards</b> &mdash; check recent logins + transactions.</li><li><b>Amazon, Apple ID</b> &mdash; stored payment methods.</li><li><b>Work SSO / IBM</b> &mdash; if same email, flag your IT team NOW.</li><li><b>Password manager</b> (if you use one) &mdash; change master password.</li><li><b>Everything else</b> &mdash; batch it, most-used first.</li></ol></div></li>
-
-      <li class="task" data-key="sec-hibp"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Check haveibeenpwned.com to see which breaches your email is in</div><div class="meta"><span class="when">Today &middot; 30 sec</span></div></div><div class="details">Enter the Gmail at <a href="https://haveibeenpwned.com" target="_blank">haveibeenpwned.com</a>. Tells you which sites your credentials leaked from &mdash; those are the sites where a reused password would let the attacker in. Rotate passwords everywhere the report lists.</div></li>
-
-      <li class="task" data-key="sec-malware"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Run a malware scan on your primary machine</div><div class="meta"><span class="when">Today</span></div></div><div class="details">If it&rsquo;s malware (infostealer, session-cookie theft), changing passwords doesn&rsquo;t help &mdash; the attacker will grab the new ones. Windows: Defender full scan + <a href="https://www.malwarebytes.com/mwb-download" target="_blank">Malwarebytes free scan</a>. If anything hits, treat the machine as untrusted and change passwords again from a clean device.</div></li>
-
-      <li class="task" data-key="sec-deepdive"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Schedule the deep-dive session &mdash; document what happened</div><div class="meta"><span class="when">This week</span></div></div><div class="details">After the immediate ladder is done. We reconstruct the timeline (X change dates, X posts, what emails are missing from Gmail), map the blast radius, and figure out if this is a one-shot phish or an ongoing intrusion. Bring: screenshots of filters/forwarding, activity log, X takeover notice, LinkedIn state.</div></li>
-    </ul>
-
-    <div class="horizon" style="background:rgba(122,106,94,0.10);border-left-color:#7a6a5e"><span style="color:#7a6a5e">Carryover &mdash; was Sat 8/22</span></div>
-    <ul class="tasks"></ul>
-
-    <div class="horizon"><span>Today &mdash; Mon 8/24</span></div>
-    <ul class="tasks">
-      <li class="task" data-key="t-today-placeholder"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Add today's tasks &mdash; ping me or type them straight in</div><div class="meta"><span class="when">Mon 8/24</span></div></div><div class="details">This slot is empty for Mon 8/24. Tell me what's on your plate and I'll fill it. Old Sat 8/22 items are just below in Carryover &mdash; check any that got done, ignore the rest.</div></li>
-    </ul>
-
-    <div class="horizon" style="background:rgba(122,106,94,0.10);border-left-color:#7a6a5e"><span style="color:#7a6a5e">Later this week</span></div>
-    <ul class="tasks">
-
-      <li class="task" data-key="t-ben"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">Text Ben &mdash; get the ladder back</div><div class="meta"><span class="when">AM</span></div></div></li>
-
-      <li class="task" data-key="t-jason"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">Text Jason &mdash; schedule work gaming day</div><div class="meta"><span class="when">AM</span></div></div></li>
-
-      <li class="task" data-key="t-gift"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Buy Rosalind&rsquo;s gift + card (drop off at 4 PM party)</div><div class="meta"><span class="when">Before 2 PM</span> &middot; <span class="cost">~$25</span></div></div><div class="details"><p>GRC, 21 Lake St, Oak Park. Ask Debbie what Rosalind likes. Safe age-7 default: LEGO Friends, art kit, or a book. Card too.</p></div></li>
-
-      <li class="task" data-key="t-laundry"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">Get laundry rolling &mdash; washed, dried, folded, put away by tonight</div><div class="meta"><span class="when">All day</span></div></div></li>
-
-      <li class="task" data-key="t-zada-laundry"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Set Zada up on her own laundry (light supervision)</div><div class="meta"><span class="who">Zada</span></div></div><div class="details"><b>Talk her through it, then let her run it:</b><ol><li>Sort into TWO piles: lights, darks.</li><li>One pile at a time. Not too full.</li><li>One detergent pod. Close lid.</li><li>Cold water, normal cycle.</li><li>Beep &rarr; dryer. Clean lint trap first &mdash; show her the fuzz.</li><li>Normal dry setting.</li><li>Fold with her the first time. Shirts, pants, socks in pairs.</li></ol>Be there for load one. Let her drive load two.</div></li>
-
-      <li class="task" data-key="t-shelves"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Get the kids started on living room bookshelves</div><div class="meta"><span class="who">Kai + Zada</span> &middot; <span class="when">30 min</span></div></div><div class="details"><b>Set the frame, start the timer, then hover-not-hover:</b><ol><li>Three piles: KEEP, DONATE, TRASH. Labeled grocery bags.</li><li>&ldquo;Keep&rdquo; = we&rsquo;ll use it again in the next year. Not &ldquo;someday.&rdquo;</li><li>&ldquo;Donate&rdquo; = still good. Games w/ zero missing pieces.</li><li>&ldquo;Trash&rdquo; = broken, missing pieces, scribbled.</li><li>Zada: lower two shelves. She brings you unclear items &mdash; no penalty for asking.</li><li>Kai: mid + upper. Empowered to call it.</li><li>30-min timer. When it rings, re-shelve KEEP by size.</li><li>Your job while they work: dust each shelf as it empties.</li></ol>Reward: family thing tonight or Sunday. Not a screen bribe.</div></li>
-
-      <li class="task" data-key="t-office"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Clean the office (do before AC clean)</div><div class="meta"><span class="when">1&ndash;2 hrs</span></div></div><div class="details"><ol><li>Clear surfaces into two boxes: KEEP-AT-DESK, DEAL-LATER. Don&rsquo;t sort while clearing.</li><li>Cables + monitors: unplug what isn&rsquo;t in the current stack. Coil, label. Trash orphan dongles.</li><li>Wipe: monitors (microfiber, no cleaner), keyboard (compressed air first), desk, shelves, sill.</li><li>Vacuum: rug, corners, behind desk, under seat.</li><li>Then the AC (next task).</li><li>Re-populate desk with KEEP-AT-DESK only. DEAL-LATER goes to closet.</li></ol></div></li>
-
-      <li class="task" data-key="t-ac"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Clean the Shinco SPS5-10C AC (filter + coils + drain)</div><div class="meta"><span class="when">30&ndash;45 min</span></div></div><div class="details"><div class="diagram"><svg viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Shinco portable AC back panel: filter, coils, drain"><rect x="40" y="20" width="200" height="210" fill="#f8f4eb" stroke="#14121e" stroke-width="1.6" rx="4"/><text x="140" y="14" font-family="Geist Mono, monospace" font-size="9" fill="#4f4639" text-anchor="middle" letter-spacing="1.2">BACK OF UNIT</text><rect x="60" y="42" width="160" height="80" fill="#fbf8f0" stroke="#14121e" stroke-width="1.2"/><g stroke="#807565" stroke-width="0.8"><line x1="60" y1="52" x2="220" y2="52"/><line x1="60" y1="62" x2="220" y2="62"/><line x1="60" y1="72" x2="220" y2="72"/><line x1="60" y1="82" x2="220" y2="82"/><line x1="60" y1="92" x2="220" y2="92"/><line x1="60" y1="102" x2="220" y2="102"/><line x1="60" y1="112" x2="220" y2="112"/></g><rect x="130" y="118" width="20" height="5" fill="#e84478" stroke="#14121e" stroke-width="0.6"/><path d="M 240 80 L 275 80" stroke="#e84478" stroke-width="1.2" fill="none"/><circle cx="275" cy="80" r="3" fill="#e84478"/><text x="278" y="76" font-family="Geist, sans-serif" font-size="9.5" font-weight="700" fill="#e84478">1</text><text x="278" y="88" font-family="Geist Mono, monospace" font-size="8" fill="#14121e">FILTER</text><text x="278" y="96" font-family="Geist Mono, monospace" font-size="7" fill="#4f4639">pull tab</text><rect x="240" y="140" width="30" height="24" fill="#efe9d7" stroke="#14121e" stroke-width="1.2"/><text x="255" y="156" font-family="Geist Mono, monospace" font-size="7" fill="#4f4639" text-anchor="middle">HOSE</text><text x="255" y="164" font-family="Geist Mono, monospace" font-size="7" fill="#4f4639" text-anchor="middle">EXIT</text><circle cx="140" cy="200" r="8" fill="#efe9d7" stroke="#14121e" stroke-width="1.4"/><line x1="134" y1="200" x2="146" y2="200" stroke="#14121e" stroke-width="1"/><path d="M 100 200 L 60 200" stroke="#e84478" stroke-width="1.2" fill="none"/><circle cx="60" cy="200" r="3" fill="#e84478"/><text x="30" y="196" font-family="Geist, sans-serif" font-size="9.5" font-weight="700" fill="#e84478">3</text><text x="8" y="208" font-family="Geist Mono, monospace" font-size="8" fill="#14121e">DRAIN</text><text x="6" y="216" font-family="Geist Mono, monospace" font-size="7" fill="#4f4639">plug</text><path d="M 140 60 L 140 30 L 190 30" stroke="#0b2545" stroke-width="1" fill="none" stroke-dasharray="3,2"/><text x="193" y="34" font-family="Geist, sans-serif" font-size="9.5" font-weight="700" fill="#0b2545">2</text><text x="203" y="34" font-family="Geist Mono, monospace" font-size="8" fill="#14121e">COILS (behind filter)</text></svg><div class="cap">Shinco SPS5-10C &middot; rear-panel view</div></div><ol><li><b>Unplug</b>, wheel out from the wall so you can reach the back. Towel on the floor for the drain step.</li><li><b>Filter (1):</b> pull the filter panel out from the back (plastic tab or lift-out grille). Rinse under warm tap until clear. Shake. <b>Air-dry FULLY</b> before reinstalling &mdash; a wet filter mildews.</li><li><b>Coils (2):</b> visible through the empty filter slot. Soft brush + vacuum nozzle held nearby. <b>Gentle</b> &mdash; fins bend permanently.</li><li><b>Drain (3):</b> back-bottom, small round plug. Shallow pan, twist off, let it fully drain, re-seat hand-tight.</li><li>Wipe exterior + intake grille (damp microfiber).</li><li>Reinstall dry filter. Run on high 5 min to check.</li></ol></div></li>
-
-      <li class="task" data-key="t-movie"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Movie night with the kids (while Debbie&rsquo;s at Improv)</div><div class="meta"><span class="when">Tonight, 6&ndash;10</span></div></div><div class="details">Pick something you already know they&rsquo;ll both sit through &mdash; don&rsquo;t spend the whole evening picking. Movie guide sheet needs updating anyway (see this-week list); tonight is not the night to fix it.</div></li>
-    </ul>
-
-    <div class="horizon"><span>This week &mdash; Tue 8/25 &ndash; Sun 8/31</span></div>
-    <ul class="tasks">
-
-      <li class="task" data-key="w-ceiling"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Open 4th-floor ceiling for the mold verdict</div><div class="meta"><span class="when">Sun 8/24 AM</span> &middot; 45 min</div></div><div class="details">Score-and-snap, N95. Gates the drywall crew.<ol><li>Kill ceiling circuit at breaker if fixture near stain.</li><li>Find joists w/ rare-earth magnet &mdash; sticks at every screw.</li><li>Draw rectangle joist-centerline to centerline; ~2" past stain into clean board.</li><li>Mist lines. Score 3&ndash;4 firm passes, shop-vac trailing blade. Blade &lt;= 3/4" out.</li><li>Palm-punch mid-piece. LOOK at back face before bagging.</li><li>Meter framing: &lt;15% dry, &gt;19% still arriving.</li></ol></div></li>
-
-      <li class="task" data-key="w-moisture"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">Moisture-meter the framing in all three areas</div><div class="meta"><span class="when">Sun 8/24</span> &middot; <span class="cost">~$30 tool</span></div></div></li>
-
-      <li class="task" data-key="w-diag"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Kids homework diagnostic (20&ndash;30 min each)</div><div class="meta"><span class="when">Weekend</span></div></div><div class="details">Read where they actually are before layering testing on top. Grab last spring&rsquo;s returned work + summer workbooks; watch each kid work a page cold. Write down what&rsquo;s fluent / shaky / forgotten &rarr; that&rsquo;s the input to the testing plan.</div></li>
-
-      <li class="task" data-key="w-outline"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Review outline + feedback + share Uber Talk link</div><div class="meta"><span class="when">Sun 8/23 PM</span></div></div><div class="details">Two-part in one reply: (1) read the outline, feedback in their preferred format; (2) share the Uber Talk link you flagged as worth reviewing.</div></li>
-
-      <li class="task" data-key="w-regimen"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Design the diet + exercise regimen (1 hr sit-down)</div><div class="meta"><span class="when">Sun 8/24 or Wed</span></div></div><div class="details">Bring: current weight, last-reset wins/misses (afternoon snacking, weighted-vest walks, knee), soccer schedule, realistic training window. Output = ONE habit, 2-week experiment.</div></li>
-
-      <li class="task" data-key="w-katsu-rec"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">Write chicken-katsu.md + build cook-mode page</div><div class="meta"><span class="when">Before cook</span></div></div></li>
-
-      <li class="task" data-key="w-katsu-cook"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">Cook: Chicken Katsu night</div><div class="meta"><span class="when">Tue 8/25 or Thu 8/28</span></div></div></li>
-
-      <li class="task" data-key="w-roof-odds"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Roof odds-and-ends: cable-mast bead + AC line-set</div><div class="meta"><span class="when">Wed 8/26, after Mike</span> &middot; 30 min &middot; ~$20</div></div><div class="details">Do BEFORE the recoat. First squeeze the foam: black rubbery = go; gray polyethylene = swap for rubber sleeves.<ol><li>Solar Seal bead at cable entry + mast-cone cap seam.</li><li>White sealants only &mdash; neighbor&rsquo;s black mastic would ghost through the 687.</li><li>New foam sleeves on AC suction line, UV tape wrap, Solar Seal where lines enter.</li><li>Top-of-cone: gap &gt;1/2"? Backer rod first. Work each line, then middle. Dome the top so water sheds.</li></ol></div></li>
-
-      <li class="task" data-key="w-kai-math"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Talk to Kai&rsquo;s teacher about math level</div><div class="meta"><span class="when">Week of 8/25</span></div></div><div class="details">Ask what workbook / level the class is on and where Kai sits relative to it. Frame: &ldquo;want to match at home, not race ahead.&rdquo;</div></li>
-
-      <li class="task" data-key="w-research"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Consolidate ResearchBot background w/ IBM-side research</div><div class="meta"><span class="when">This week</span> &middot; 1&ndash;2 hrs</div></div><div class="details">Two streams running on the same subject. Merge into one doc so you&rsquo;re not carrying two mental models. Output = single briefing you&rsquo;d hand to a colleague cold.</div></li>
-
-      <li class="task" data-key="w-movie-guide"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Refresh streaming column on the movies page + add recent watches</div><div class="meta"><span class="when">This week</span> &middot; 20&ndash;30 min</div></div><div class="details">Movies now live at <a href="movies-h9k2m7.html">movies-h9k2m7.html</a> (Codex-styled, shortlist at top). Streaming was last checked June 2026. Log what you&rsquo;ve watched since (add to Loved / Liked), verify Netflix/Disney+/Max availability for the top 10, and add any new backlog picks.</div></li>
-
-      <li class="task" data-key="w-wyze-sub"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Check active Wyze subscription (Cam Plus / Home Monitoring)</div><div class="meta"><span class="when">When Gmail MCP is back</span></div></div><div class="details">Gmail connector is offline right now. Quickest for today: <b>wyze.com &rarr; Account &rarr; Services</b> shows active plans.</div></li>
-
-      <li class="task" data-key="w-wyze-set"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Wyze setup: garage floodlight + keypad + hub</div><div class="meta"><span class="when">Weekend eve</span> &middot; 1&ndash;2 hrs</div></div><div class="details"><b>Order: hub first, then floodlight, then keypad.</b> Everything downstream needs the hub online.<p><b>Stage 1 &mdash; Hub online</b></p><ol><li>Ethernet cable from hub &rarr; LAN port on router. Then power. 60 sec to solid (not blinking) status light.</li><li>Wyze app: <b>Home &rarr; + &rarr; Add Device &rarr; Home Security</b>.</li><li>Not found? Unplug 10 sec, plug back, hit &ldquo;Search again&rdquo; within 30 sec of boot.</li><li>Still not found? Router likely has client isolation on the SSID your phone is on. Turn off guest-network isolation.</li></ol><p><b>Stage 2 &mdash; Keypad</b></p><ol><li>Hub green? Then <b>Home Monitoring &rarr; Settings &rarr; Devices &rarr; Add &rarr; Keypad</b>.</li><li>Pop battery cover, hold reset pin 5 sec until LED flashes.</li><li>Pair within ~10 ft of hub; mount farther after.</li><li>If pairing fails twice: fresh AAs before anything else.</li></ol><p><b>Stage 3 &mdash; Garage floodlight</b></p><ol><li>Confirm model: original Cam Floodlight (v2 add-on to Cam v3) vs. Floodlight Pro (standalone). Setup differs.</li><li>Switch stays ON (constant power). Tape it or rewire always-on.</li><li>App: <b>+ &rarr; Cameras &rarr; [model]</b>. Scan the QR with the camera lens.</li><li>Wi-Fi: 2.4 GHz credentials only. Won&rsquo;t join 5 GHz even w/ same SSID name. On mesh, disable band steering during setup.</li></ol><p><b>Fallback isolation:</b> phone on mobile hotspot (2.4 GHz), pair device there first to confirm it&rsquo;s not broken, then move to home Wi-Fi.</p></div></li>
-
-      <li class="task" data-key="w-closet"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">30-min slot: bedroom closet + fix Debbie&rsquo;s pants rack</div><div class="meta"><span class="when">Any weeknight</span></div></div></li>
-
-      <li class="task" data-key="w-pantry"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">30-min slot: pantry pass, timer on</div><div class="meta"><span class="when">Any weeknight</span></div></div></li>
-
-      <li class="task" data-key="w-family-night"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">Protect Fri 8/28 evening &mdash; family night</div><div class="meta"><span class="when">Fri PM</span></div></div></li>
-    </ul>
-
-    <div class="horizon"><span>Later &mdash; Sep 1+</span></div>
-    <ul class="tasks">
-
-      <li class="task" data-key="l-recoat-1"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Roof recoat coat 1</div><div class="meta"><span class="when">Sat 8/30 AM</span> &middot; half day</div></div><div class="details">Materials in. Gates: 50&deg;F+, dry 3-day stretch, morning only.<ol><li>Sweep + shop-vac whole roof (30 min).</li><li>Prep wide cracks: wire-brush, alcohol wipe, Solar Seal + ElastoTape + skim.</li><li>Reinforce remaining penetrations (AC pad edges, drain, parapet base).</li><li>Stir with paddle. Chip-brush penetrations first, then roll flats ONE direction. ~1.4 gal. DO NOT THIN.</li></ol></div></li>
-
-      <li class="task" data-key="l-recoat-2"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">Roof recoat coat 2 (perpendicular)</div><div class="meta"><span class="when">Sun 8/31 AM</span> &middot; half day</div></div></li>
-
-      <li class="task" data-key="l-deck"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">3rd-floor deck: shave gutter-edge dam, rebuild seam, recoat band</div><div class="meta">Pairs w/ wasp trip</div></div><div class="details">Root cause = raised sealant bead damming water. Shave (don&rsquo;t rip) &rarr; 289 + ElastoTape three-course &rarr; water test &rarr; recoat 90 sq ft band. Boards off a week.</div></li>
-
-      <li class="task" data-key="l-wasps"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Deck wasps: break the re-nesting cycle</div><div class="meta"><span class="cost">~$25</span></div></div><div class="details"><ol><li>Early AM (they&rsquo;re sluggish): knock nest into bag, seal.</li><li>Scrub attachment spot with soapy water &mdash; kills the pheromone marker (most-skipped step).</li><li>Outlet: foam gasket behind cover + in-use bubble cover.</li><li>Light: re-seat glass housing; dust insecticide only, never liquid.</li><li>Sept/Oct: seal remaining deck crevices while nests are empty.</li></ol></div></li>
-
-      <li class="task" data-key="l-slider"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Deck slider: toy out, clean track, clear weep holes</div><div class="meta">30 min</div></div><div class="details">Silicone spray on rollers, NOT WD-40 (oil+grit = grinding paste). Check the other 1&ndash;2 weeps on the outside face.</div></li>
-
-      <li class="task" data-key="l-curb"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Shower curb: glue 3 cement-board pieces</div><div class="meta"><span class="when">Sun 8/31 or Mon 9/1 PM</span> &middot; 2 hrs</div></div><div class="details">Gate check: PL Premium on hand (NOT X-15), RedGard uniformly red, liner coverage decides screws-or-no.</div></li>
-
-      <li class="task" data-key="l-bkshelf"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">2nd-floor bookshelf declutter with kids</div><div class="meta"><span class="when">Any wknd PM</span> &middot; 30 min</div></div></li>
-
-      <li class="task done" data-key="l-drywall"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">Drywall booking &mdash; after mold + moisture checks</div><div class="meta"><span class="who">Debbie</span> &middot; <span class="cost">~$1,050</span></div></div></li>
-
-      <li class="task" data-key="l-mbp-touchbar"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Debbie&rsquo;s MacBook Pro &mdash; Touch Bar flicker</div><div class="meta"><span class="who">Debbie</span></div></div><div class="details"><b>Symptom:</b> Touch Bar flashes/flickers constantly. Paper tape over it as workaround. Prior disable attempts didn&rsquo;t stick. Probably hardware (classic signature), worth a 10-min software ladder before spending money.<br><br><b>First: get the model/year.</b> Apple menu &rarr; About This Mac. 2016-2017 15" MBP had known Touch Bar failures &mdash; check Apple Service Program eligibility with serial number.<br><br><b>Software ladder (stop if flicker clears):</b><ol><li>Restart Touch Bar processes: Terminal &rarr; <code>sudo pkill TouchBarServer; killall ControlStrip</code></li><li>Force function-keys only: System Settings &rarr; Keyboard &rarr; Touch Bar Settings &rarr; "Touch Bar shows" = <b>F1, F2, etc. Keys</b>. Set Fn key = Nothing.</li><li><b>Safe Mode test (the diagnostic).</b> Intel: shut down, hold Shift, power on. Apple Silicon: hold power, Options &rarr; Continue Safe Mode. Run 5 min. Flicker stops = software (audit recently installed apps: BetterTouchTool, Pock, MTMR, Rocket, Adobe helpers). Flicker continues = hardware.</li><li>Reset SMC (Intel T2): shut down, hold Ctrl+Option+Shift 7s, add power 7s, release.</li><li>Reset NVRAM (Intel): shut down, boot holding Cmd+Option+P+R ~20s.</li><li>Install pending macOS updates.</li></ol><b>If hardware:</b><ol><li>Keep the tape (free, doesn&rsquo;t damage anything). Legit long-term answer if she doesn&rsquo;t miss it.</li><li>Apple support chat with serial number &rarr; get repair quote + Service Program check. 5 min, no commitment.</li><li>Third-party Apple-authorized repair &mdash; typically 40-50% of Apple pricing.</li></ol></div></li>
-
-      <li class="task done" data-key="l-handy"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">Handyman vents</div><div class="meta"><span class="who">Debbie</span></div></div></li>
-    </ul>
-  </div>
-
+<div class="grp">Hub housekeeping</div>
+<ul class="tasks">
+<li><div class="t"><b>Write confirmed block-outs to Google Calendar</b><span class="when">NEXT PASS</span></div></li>
+<li><div class="t"><b>Gmail sweep</b> &mdash; MCP reconnected 8/23; full inbox pass still to run</div></li>
+</ul>
+<details class="keep"><summary>RECENTLY DONE ✔</summary><div class="inner"><p><b>Roof coat 1 DONE 8/23</b> &mdash; a week ahead of schedule. Coat 2 Mon midday, then stay off it a week.</p><p><b>Soccer &rarr; calendar (8/23):</b> Kai&rsquo;s Wed/Thu practices + all 8 fall games on the Family Calendar, showing on Skylight.</p><p><b>Proving rain PASSED 8/9 &mdash; roof leak fixed.</b> Hose test (7/12) &rarr; three-course rebuild (8/8) &rarr; huge storm (8/9), ceiling dry. Two months, ~$120 materials, zero contractors.</p><p>All roof-season materials ordered 8/9.</p></div></details>
+</article>
 </div>
 
-<!-- ===================== MIDDLE: CALENDAR ===================== -->
-<div class="col">
+<!-- MIDDLE: the week + where things stand -->
+<div class="mcol">
+<article class="card">
+<h2>This <i>week</i></h2>
+<div class="meta">AUG 23&ndash;30 · GOOGLE + SKYLIGHT · PULLED SUN 8/23</div>
+<div class="day"><div class="d">SUN 8/23</div><div class="ev"><div><b>1:30P</b>Kids testing</div><div><b>3:15P</b>Sticks and cones</div><div><b>4:00P</b>Golf lessons &mdash; Columbus Park</div></div></div>
+<div class="day"><div class="d">MON 8/24</div><div class="ev"><div><b>7:00A</b>Family get ready (resumes Mon&ndash;Fri)</div><div><b>MIDDAY</b>Roof coat 2 (perpendicular)</div><div><b>4:30P</b>Zada swim &mdash; Foss, Elmwood Park (last of the block)</div><div><b>5:30P</b>Zada gymnastics &mdash; GRC, Beginner Girls 2, week 1 <span class="gloss">CONFLICT</span></div></div></div>
+<div class="day"><div class="d">TUE 8/25</div><div class="ev open">Open evening &middot; peri-peri night (or Thu)</div></div>
+<div class="day"><div class="d">WED 8/26</div><div class="ev"><div><b>9:30A</b>Mike Coloma &mdash; contractor visit</div><div><b>5:30P</b>Kai soccer practice &mdash; Priory Park North, River Forest (to 7:00)</div><div><b>6:30P</b>Piano w/ Christian &mdash; <span class="gloss">BRING BOOKS · OVERLAPS SOCCER</span></div></div></div>
+<div class="day"><div class="d">THU 8/27</div><div class="ev"><div><b>10:00A</b>Julia x Debbie</div><div><b>4:00P</b>Kai soccer practice &mdash; Priory Park North (to 5:30)</div><div><b>9:00P</b>Deeto</div></div></div>
+<div class="day"><div class="d">FRI 8/28</div><div class="ev open">Open evening &middot; family movie night</div></div>
+<div class="day"><div class="d">SAT 8/29</div><div class="ev"><div><b>3:00P</b>Zada&rsquo;s sleepover birthday party &mdash; ice skating, helmets</div></div></div>
+<div class="day"><div class="d">SUN 8/30</div><div class="ev"><div><b>11:00A</b>Party pickup</div><div><b>1:30P</b>Kids testing</div><div><b>4:00P</b>Golf lessons</div></div></div>
+</article>
 
-  <div class="card">
-    <div class="section-label"><span class="num">Cal</span><span class="rule"></span><span>Aug 22 &ndash; 29 &middot; D = Debbie only</span></div>
-    <div class="day-row today">
-      <div class="d">Mon 8/24</div>
-      <div class="events"><span class="ev self"><span class="t">4:30 PM</span>Zada swim (Foss)</span></div>
-    </div>
-    <div class="day-row">
-      <div class="d">Tue 8/25</div>
-      <div class="events"><span class="ev faint">Open weekday</span></div>
-    </div>
-    <div class="day-row">
-      <div class="d">Wed 8/26</div>
-      <div class="events">
-        <span class="ev"><span class="t">9:30 AM</span>Mike Coloma &mdash; contractor visit</span>
-        <span class="ev"><span class="t">6:30 PM</span>Piano w/ Christian (BRING BOOKS)</span>
-      </div>
-    </div>
-    <div class="day-row">
-      <div class="d">Thu 8/27</div>
-      <div class="events">
-        <span class="ev debby"><span class="t">10:00 AM</span>Julia x Debbie</span>
-        <span class="ev debby"><span class="t">9:00 PM</span>Deeto</span>
-      </div>
-    </div>
-    <div class="day-row">
-      <div class="d">Fri 8/28</div>
-      <div class="events"><span class="ev faint">Open &middot; movie night?</span></div>
-    </div>
+<article class="card">
+<h2>Recipes <i>this week</i></h2>
+<p class="desc"><span class="k">This week</span><b>Nando&rsquo;s peri-peri chicken</b>, grilled, Tue or Thu. Kids&rsquo; mild half, adults&rsquo; hot half; marinate the night before. Costco today: red bell peppers, corn, Greek yogurt. Check the paprika is smoked and there&rsquo;s vinegar.</p>
+<p class="desc"><span class="k">On a break</span>Butter chicken, bulgogi, H Mart marinated chicken. Direction is the grill, nothing breaded, nothing from a bag.</p>
+<p class="desc"><span class="k">Bench</span>Yakitori &middot; tandoori &middot; Thai gai yang &middot; souvlaki &middot; lemongrass pork chops &middot; miso salmon. Box + plan on the <a href="recipes-h9k2m7.html">Recipes</a> page.</p>
+</article>
 
-    <div class="day-row">
-      <div class="d">Sat 8/30</div>
-      <div class="events"><span class="ev faint">Open weekend</span></div>
-    </div>
+<article class="card">
+<h2>Kids <i>where it stands</i></h2>
+<p class="desc"><span class="k">Runway</span>Back-to-school. Diagnostic this weekend, then the Sat 1:30 testing slot gets targeted work instead of generic sets.</p>
+<p class="desc"><span class="k">Open question</span>Kai&rsquo;s math level &mdash; match at home, don&rsquo;t race ahead. Teacher conversation this week.</p>
+<p class="desc"><span class="k">Culture year</span>Film, books, breakfast music and a monthly Art Institute mission for 2026&ndash;27, one a month each, on the <a href="kids-h9k2m7.html">Kids</a> page. Sept: Mary Poppins, Peter and the Wolf, the Seurat.</p>
+<p class="desc"><span class="k">Kai soccer</span>Chicago Edge U12 Boys Competitive (from the club emails, 8/23). <b>Practice</b> Wed 5:30&ndash;7:00 + Thu 4:00&ndash;5:30, Priory Park North, 1255 William St, River Forest, weekly through Oct 31. <b>Games</b> (70 min): Sat 9/12 4:00P Keystone Park West, River Forest &middot; Sun 9/13 12:00P Julian MS, Oak Park &middot; Sat 9/19 2:00P Central Park, Oak Brook &middot; Sat 10/10 7:30P Julian MS &middot; Sun 10/11 4:30P Keystone (golf is 4:00) &middot; Sun 10/25 9:00A Timber Trails, Western Springs &middot; Sun 11/1 11:00A Community Park, Lisle &middot; Sun 11/8 12:00P Conrad Fischer Park, Elmhurst.</p>
+</article>
 
-    <div class="day-row">
-      <div class="d">Sun 8/31</div>
-      <div class="events"><span class="ev faint">Open weekend</span></div>
-    </div>
-  </div>
+<article class="card">
+<h2>House <i>where it stands</i></h2>
+<p class="desc"><span class="k">Roof</span>Leak fixed (proving rain 8/9). Recoat is the last step: 8/30&ndash;31, materials in, patches cured. Guide: <a href="roof-leak-diagnostic-guide.html">roof-leak diagnostic</a>.</p>
+<p class="desc"><span class="k">4th-floor ceiling</span>Chain is mold verdict &rarr; moisture under 15% &rarr; Debbie books drywall. Nothing closes until the wood is dry.</p>
+<p class="desc"><span class="k">Bathroom</span>Shower curb: three cement-board pieces to glue, gated on PL Premium + RedGard check. Guide: <a href="shower-cement-board-guide.html">cement board</a>.</p>
+<p class="desc"><span class="k">Contractors</span>Debbie books. Mike Coloma walks the roof Wed 9:30. Design ideas (not maintenance) on the <a href="house-design-h9k2m7.html">House design</a> page.</p>
+</article>
 
-  <div class="card" id="done-card" style="display:none">
-    <div class="section-label"><span class="num">Done</span><span class="rule"></span><span id="done-count">0 items</span></div>
-    <ul class="rhythm-list" id="done-list" style="margin-top:6px"></ul>
-  </div>
-
-  <div class="card">
-    <div class="section-label"><span class="num">Kids</span><span class="rule"></span><span>Back-to-school runway</span></div>
-    <p class="blurb">Diagnostic first, then use it to drive the recurring <b>Sat 1:30 testing</b> slot. <b>Kai&rsquo;s math workbook</b> conversation with his teacher is the other unknown to resolve. Both items are on the timeline.</p>
-  </div>
-
-  <div class="card">
-    <div class="section-label"><span class="num">Recipes</span><span class="rule"></span><span>This week &middot; Debbie has groceries</span></div>
-    <p class="blurb"><b>Andrew&rsquo;s one cook:</b> Chicken Katsu (new specialty). Recipe writeup + cook-mode page are on the timeline as to-do&rsquo;s.<br><br><b>Debbie&rsquo;s side (low-effort lane):</b> H Mart marinated chicken, bulgogi &mdash; monthly rotation.<br><br><b>Proven:</b> butter chicken (Jun 10 hit) &rarr; <a href="butter-chicken-steps.html">cook mode</a>.</p>
-  </div>
-
-  <div class="card">
-    <div class="section-label"><span class="num">Games</span><span class="rule"></span><span>Steam queue</span></div>
-    <ul class="rhythm-list" style="margin-top:8px">
-      <li><strong>NOW</strong><span><b>Vahrin&rsquo;s Call</b> &middot; active playthrough</span></li>
-      <li><strong>NEXT</strong><span><b>Gothic 1 Remake</b> &middot; finish before diving into others</span></li>
-      <li><strong>WED 8/27</strong><span><b>Star Wars: Zero Company</b> launches (Bit Reactor XCOM-style tactics, Clone Wars)</span></li>
-      <li><strong>THU 9/03</strong><span><b>The Blood of Dawnwalker</b> launches (Rebel Wolves, ex-CDPR, vampire RPG)</span></li>
-    </ul>
-  </div>
-
+<article class="card">
+<h2>Health <i>where it stands</i></h2>
+<p class="desc"><span class="k">Now</span>Regimen reset in design. One habit, two-week experiment, measured daily. Session is on the to-do list (Sun AM / Wed PM).</p>
+<p class="desc"><span class="k">Carry-overs</span>Afternoon snacking, weighted-vest walks, the knee. Soccer schedule sets the real training window.</p>
+</article>
 </div>
 
-<!-- ===================== RIGHT: REFERENCE ===================== -->
-<div class="col"><div class="details">Mike Coloma Wed 8/26 &mdash; may still want a shareable link.</div></li>
-      <li class="task" data-key="m-cal"><div class="box" onclick="toggleTask(event)"></div><div class="body"><div class="title">Write confirmed block-outs to Google Calendar</div></div></li>
-      <li class="task" data-key="m-soccer"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Soccer schedule &mdash; forward or paste the email so I can enter it</div></div><div class="details">Schedule is in your Gmail. Gmail MCP is down + I&rsquo;m deliberately NOT logging into Gmail via browser until the security cleanup is done. Forward the email to yourself (or copy the schedule text into chat) and I&rsquo;ll add each match to the shared calendar.</div></li>
-      <li class="task" data-key="m-gmail"><div class="box" onclick="toggleTask(event)"></div><div class="body clickable" onclick="toggleDetails(event)"><div class="title">Gmail sweep &mdash; AFTER security cleanup, from a clean session</div></div><div class="details">Don&rsquo;t reconnect Gmail MCP or start automated inbox reads until the password + 2FA + filter/forwarding checks are all done. Sweeping a compromised mailbox with a fresh tool session risks the attacker seeing my queries or piggybacking.</div></li>
-    </ul>
-  </div>
+<!-- RIGHT: standing + media -->
+<div class="rcol">
 
+<article class="card">
+<h2>Games <i>queue</i></h2>
+<div class="meta">STEAM · TAP A ROW FOR DETAIL</div>
+<ul class="ql">
+<li class="x"><span class="k">NOW</span><div class="v"><b>Gothic 1 Remake</b><div class="more">Up next after finishing Vahrin&rsquo;s Call (Aug 23). Steam block is the weekend-evening slot.</div></div></li>
+<li class="x"><span class="k">NEXT</span><div class="v"><b>Gothic 1 Remake</b><div class="more">Finish this before diving into anything else.</div></div></li>
+<li class="x"><span class="k">WED 8/27</span><div class="v"><b>Star Wars: Zero Company</b><div class="more">Bit Reactor, XCOM-style tactics, Clone Wars setting.</div></div></li>
+<li class="x"><span class="k">THU 9/03</span><div class="v"><b>The Blood of Dawnwalker</b><div class="more">Rebel Wolves (ex-CDPR) vampire RPG. Wishlist it.</div></div></li>
+</ul>
+</article>
+
+<article class="card">
+<h2>Books <i>active + next</i></h2>
+<div class="meta">NEXT = TOP OF EACH QUEUE ON THE BOOKS PAGE</div>
+<ul class="ql">
+<li><span class="k">ANDREW</span><div class="v"><b>A Trade of Blood</b> <span class="m">+ My Cousin Rachel (audio)</span><div class="m">next: <i>The Woman in White</i> &middot; gap list graded on Books</div></div></li>
+<li><span class="k">DEBBIE</span><div class="v"><b>Nothing active</b> <span class="m">Babel done, liked</span><div class="m">next: <i>My Cousin Rachel</i> &middot; couple read, or Yellowface</div></div></li>
+<li><span class="k">KAI</span><div class="v"><b>Percy Jackson #6</b> <span class="m">+ #7, Coraline</span><div class="m">next: <i>Percy Jackson&rsquo;s Greek Gods</i> &middot; the Greek year starts</div></div></li>
+<li><span class="k">ZADA</span><div class="v"><b>The Magic Finger</b> <span class="m">Matilda + Twits done</span><div class="m">next: <i>The BFG</i> &middot; then The Witches</div></div></li>
+</ul>
+<p class="sub" style="margin-top:8px">Family-guide track (Andrew): <b>Being Mortal</b> &middot; <b>Loving Someone Who Has Dementia</b>. Full queues on the <a href="books-h9k2m7.html">BOOKS</a> page.</p>
+</article>
+
+<article class="card">
+<h2>Movies <i>top 5</i></h2>
+<div class="meta">FAMILY NIGHT · FRI 8/28</div>
+<ul class="ql">
+<li><span class="k">1</span><div class="v"><b>Percy Jackson S1</b> <span class="m">Kai lead &middot; <i>Disney+</i></span></div></li>
+<li><span class="k">2</span><div class="v"><b>Series of Unfortunate Events</b> <span class="m">Zada lead &middot; <i>Netflix</i></span></div></li>
+<li><span class="k">3</span><div class="v"><b>Enola Holmes 2</b> <span class="m">All &middot; <i>Netflix</i></span></div></li>
+<li><span class="k">4</span><div class="v"><b>Stardust</b> <span class="m">All &middot; <i>Netflix</i></span></div></li>
+<li><span class="k">5</span><div class="v"><b>Sky High</b> <span class="m">All &middot; <i>Disney+</i></span></div></li>
+</ul>
+<p class="sub" style="margin-top:8px">Full ranked queue on the <a href="movies-h9k2m7.html">MOVIES</a> page.</p>
+</article>
+</div>
 </div>
 
-</main>
-
-<div class="footer-links">
-  <a href="movies-h9k2m7.html">Movies</a>
-  <a href="books-h9k2m7.html">Books</a>
-  <a href="butter-chicken-steps.html">Butter chicken</a>
-  <a href="roof-leak-diagnostic-guide.html">Roof leak</a>
-  <a href="vent-flashing-repair-guide.html">Vent flashing</a>
-  <a href="shower-cement-board-guide.html">Shower cement board</a>
-  <a href="recipes.html">Recipes</a>
-  <a href="family-guide-4bddbc.html">Family guide</a>
-</div>
-
-<script>
-/* ============ HUB STATE + CROSS-DEVICE SYNC ============ */
-const LS = 'hub_v3_';
-const SYNC_URL_KEY = 'hub_sync_url';
-const SYNC_TOKEN_KEY = 'hub_sync_token';
-const SYNC_NS = 'hub';
-let syncTimer = null;
-
-function getSync() {
-  return {
-    url: localStorage.getItem(SYNC_URL_KEY) || '',
-    token: localStorage.getItem(SYNC_TOKEN_KEY) || '',
-  };
-}
-
-function setSyncBadge(state) {
-  // state: 'off' | 'ok' | 'err' | 'sync'
-  const btn = document.getElementById('btn-sync');
-  if (!btn) return;
-  const map = { off: 'Sync', ok: 'Sync ok', err: 'Sync err', sync: 'Sync...' };
-  btn.textContent = map[state] || 'Sync';
-  btn.classList.toggle('on', state === 'ok' || state === 'sync');
-  btn.style.borderColor = state === 'err' ? '#cf4a2e' : '';
-}
-
-function collectState() {
-  const done = [];
-  const open = [];
-  document.querySelectorAll('.task[data-key]').forEach(t => {
-    const k = t.dataset.key;
-    if (t.classList.contains('done')) done.push(k);
-    if (t.classList.contains('open')) open.push(k);
-  });
-  return {
-    done, open,
-    hidedone: document.body.classList.contains('hide-done'),
-  };
-}
-
-function applyState(s) {
-  if (!s) return;
-  const doneSet = new Set(s.done || []);
-  const openSet = new Set(s.open || []);
-  document.querySelectorAll('.task[data-key]').forEach(t => {
-    const k = t.dataset.key;
-    const isDone = doneSet.has(k);
-    const isOpen = openSet.has(k);
-    t.classList.toggle('done', isDone);
-    const box = t.querySelector('.box');
-    if (box) box.classList.toggle('done', isDone);
-    t.classList.toggle('open', isOpen);
-  });
-  const hd = !!s.hidedone;
-  document.body.classList.toggle('hide-done', hd);
-  const bh = document.getElementById('btn-hide');
-  if (bh) bh.classList.toggle('on', hd);
-}
-
-function saveLocal() {
-  const s = collectState();
-  localStorage.setItem(LS + 'state', JSON.stringify(s));
-}
-
-function loadLocal() {
-  const raw = localStorage.getItem(LS + 'state');
-  if (raw) {
-    try { applyState(JSON.parse(raw)); return true; } catch(e) {}
-  }
-  // migrate from old per-key keys if present
-  const migrated = { done: [], open: [], hidedone: false };
-  document.querySelectorAll('.task[data-key]').forEach(t => {
-    const k = t.dataset.key;
-    if (localStorage.getItem(LS + 'done_' + k) === '1') migrated.done.push(k);
-    if (localStorage.getItem(LS + 'open_' + k) === '1') migrated.open.push(k);
-  });
-  migrated.hidedone = localStorage.getItem(LS + 'hide_done') === '1';
-  if (migrated.done.length || migrated.open.length || migrated.hidedone) {
-    applyState(migrated);
-    saveLocal();
-    return true;
-  }
-  return false;
-}
-
-async function pullRemote() {
-  const { url, token } = getSync();
-  if (!url || !token) { setSyncBadge('off'); return; }
-  setSyncBadge('sync');
-  try {
-    const r = await fetch(url.replace(/\/$/, '') + '/state?ns=' + SYNC_NS, {
-      headers: { 'Authorization': 'Bearer ' + token },
-    });
-    if (!r.ok) { setSyncBadge('err'); console.warn('pull', r.status); return; }
-    const s = await r.json();
-    // If server is newer than local, apply. Otherwise skip.
-    const localRaw = localStorage.getItem(LS + 'state_updated') || '0';
-    const localUpd = parseInt(localRaw, 10) || 0;
-    if ((s.updated || 0) > localUpd) {
-      applyState(s);
-      saveLocal();
-      localStorage.setItem(LS + 'state_updated', String(s.updated || Date.now()));
+</div><script>
+(function(){
+var tc=document.getElementById('tc');
+document.getElementById('xall').onclick=function(){document.querySelectorAll('details').forEach(function(d){d.open=true})};
+document.getElementById('call').onclick=function(){document.querySelectorAll('details').forEach(function(d){d.open=false})};
+// checkboxes + hide done (persisted)
+var KEY='kaset-hub-done',HKEY='kaset-hub-hidedone',CKEY='kaset-hub-custom',DKEY='kaset-hub-defer';
+var defer={};try{defer=JSON.parse(localStorage.getItem(DKEY)||'{}')}catch(e){}
+function saveDefer(){try{localStorage.setItem(DKEY,JSON.stringify(defer))}catch(e){}}
+function ymd(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function fmtDay(s){var p=s.split('-');var d=new Date(+p[0],+p[1]-1,+p[2]);return ['SUN','MON','TUE','WED','THU','FRI','SAT'][d.getDay()]+' '+(+p[1])+'/'+(+p[2])}
+var done={};try{done=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+var custom=[];try{custom=JSON.parse(localStorage.getItem(CKEY)||'[]')}catch(e){}
+function saveDone(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}}
+function saveCustom(){try{localStorage.setItem(CKEY,JSON.stringify(custom))}catch(e){}}
+function slug(s){return (s||'').replace(/[^a-z0-9]/gi,'').toLowerCase()}
+/* ids are the task text, not the position: reordering or inserting tasks no longer loses checks.
+   Old position-based ids ('t12-…') are migrated by their text suffix once. */
+var seen={};
+function attach(li){
+  var t=li.querySelector(':scope > .t');if(!t)return;
+  var tb=t.querySelector('b');var base=li.getAttribute('data-id')||('s-'+slug(tb?tb.textContent:t.textContent).slice(0,40));
+  var id=base; if(seen[base]){id=base+'-'+(++seen[base])}else{seen[base]=1}
+  if(!done[id]){var s24=slug(t.textContent).slice(0,24);for(var k in done){if(/^t\d+-/.test(k)&&k.slice(k.indexOf('-')+1)===s24){done[id]=1;delete done[k];saveDone();break}}}
+  var cb=document.createElement('input');cb.type='checkbox';cb.className='ck';cb.checked=!!done[id];
+  if(cb.checked)li.classList.add('done');
+  cb.addEventListener('change',function(){li.classList.toggle('done',cb.checked);if(cb.checked){done[id]=1}else{delete done[id]}saveDone()});
+  t.insertBefore(cb,t.firstChild);
+  var urgent=li.closest('.card.urgent');
+  if(urgent&&!li.getAttribute('data-id')){
+    var todayS=ymd(new Date());
+    if(defer[id]&&defer[id]<=todayS){delete defer[id];saveDefer();}
+    var btn=document.createElement('button');btn.type='button';btn.className='defer';btn.title='Push to tomorrow';btn.textContent='⏭';
+    t.appendChild(btn);
+    function pushedBox(){var b=urgent.querySelector('.pushedline');if(!b){b=document.createElement('div');b.className='pushedline';urgent.appendChild(b);}return b;}
+    function showPushed(){
+      li.style.display='none';
+      var row=document.createElement('span');row.style.display='block';
+      var tt=(li.querySelector(':scope > .t b')||{}).textContent||'task';
+      row.appendChild(document.createTextNode('⏭ '+tt+' → '+fmtDay(defer[id])+' '));
+      var u=document.createElement('button');u.type='button';u.textContent='undo';
+      u.onclick=function(){delete defer[id];saveDefer();li.style.display='';row.remove();};
+      row.appendChild(u);pushedBox().appendChild(row);
     }
-    setSyncBadge('ok');
-  } catch (e) {
-    setSyncBadge('err'); console.warn('pull err', e);
+    btn.onclick=function(){var d=new Date();d.setDate(d.getDate()+1);defer[id]=ymd(d);saveDefer();showPushed();};
+    if(defer[id])showPushed();
   }
 }
-
-async function pushRemote() {
-  const { url, token } = getSync();
-  if (!url || !token) return;
-  setSyncBadge('sync');
-  try {
-    const s = collectState();
-    const r = await fetch(url.replace(/\/$/, '') + '/state?ns=' + SYNC_NS, {
-      method: 'PUT',
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(s),
-    });
-    if (!r.ok) { setSyncBadge('err'); return; }
-    const saved = await r.json();
-    localStorage.setItem(LS + 'state_updated', String(saved.updated || Date.now()));
-    setSyncBadge('ok');
-  } catch (e) {
-    setSyncBadge('err');
-  }
+/* custom tasks: typed at the bottom of Today, kept in this browser */
+var cul=document.getElementById('custom-tasks'),form=document.getElementById('addtask'),inp=document.getElementById('addtask-in');
+function customLi(c){
+  var li=document.createElement('li');li.setAttribute('data-id','c-'+c.id);
+  li.innerHTML='<div class="t"><b></b><span class="when"></span><button type="button" class="rm" title="Remove">&times;</button></div>';
+  li.querySelector('b').textContent=c.text; li.querySelector('.when').textContent=c.when||'';
+  li.querySelector('.rm').onclick=function(){custom=custom.filter(function(x){return x.id!==c.id});delete done['c-'+c.id];saveCustom();saveDone();li.remove()};
+  return li;
 }
-
-function scheduleSync() {
-  saveLocal();
-  clearTimeout(syncTimer);
-  syncTimer = setTimeout(pushRemote, 800); // debounce
-}
-
-function toggleTask(ev) {
-  ev.stopPropagation();
-  const task = ev.currentTarget.closest('.task');
-  task.classList.toggle('done');
-  ev.currentTarget.classList.toggle('done');
-  scheduleSync();
-}
-
-function toggleDetails(ev) {
-  const task = ev.currentTarget.closest('.task');
-  task.classList.toggle('open');
-  scheduleSync();
-}
-
-function toggleHideDone() {
-  const on = document.body.classList.toggle('hide-done');
-  document.getElementById('btn-hide').classList.toggle('on', on);
-  scheduleSync();
-}
-
-function expandAll(open) {
-  document.querySelectorAll('.task').forEach(t => {
-    if (!t.querySelector('.details')) return;
-    if (open) t.classList.add('open'); else t.classList.remove('open');
-  });
-  scheduleSync();
-}
-
-/* Sync settings modal */
-function openSync() {
-  const { url, token } = getSync();
-  const modal = document.getElementById('sync-modal');
-  document.getElementById('sync-url').value = url;
-  document.getElementById('sync-token').value = token;
-  modal.classList.add('open');
-}
-function closeSync() {
-  document.getElementById('sync-modal').classList.remove('open');
-}
-function saveSync() {
-  const url = document.getElementById('sync-url').value.trim();
-  const token = document.getElementById('sync-token').value.trim();
-  localStorage.setItem(SYNC_URL_KEY, url);
-  localStorage.setItem(SYNC_TOKEN_KEY, token);
-  closeSync();
-  pullRemote();
-}
-function clearSync() {
-  localStorage.removeItem(SYNC_URL_KEY);
-  localStorage.removeItem(SYNC_TOKEN_KEY);
-  closeSync();
-  setSyncBadge('off');
-}
-
-/* Init: local first (instant paint) then remote (may overwrite) */
-loadLocal();
-pullRemote();
-
-/* Poll every 15s so other devices' changes show up */
-setInterval(pullRemote, 15000);
-
-/* Also pull when tab regains focus */
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) pullRemote();
-});
-</script>
-
-<!-- Sync settings modal -->
-<div id="sync-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(23,20,26,.75);align-items:center;justify-content:center;padding:20px">
-  <div style="background:var(--cream);color:var(--ink);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:22px;max-width:520px;width:100%;box-shadow:5px 6px 0 rgba(33,29,32,.85);position:relative">
-    <h3 style="font-family:'Anton',sans-serif;font-size:22px;text-transform:uppercase;transform:skewX(-5deg);color:var(--ink);margin-bottom:6px">CROSS-DEVICE <i style="font-style:normal;color:var(--lip2)">SYNC</i></h3>
-    <p style="font-family:'DotGothic16',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-bottom:14px">Cloudflare Worker + KV &middot; paste once per device</p>
-    <label style="display:block;margin-bottom:10px;font-size:13px">
-      <div style="font-family:'DotGothic16',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--lip2);margin-bottom:3px">Worker URL</div>
-      <input id="sync-url" type="url" placeholder="https://hub-sync.YOURSUB.workers.dev" style="width:100%;padding:8px 10px;border:1.5px solid var(--ink);border-radius:2px 5px 2px 5px;background:var(--cream2);font-family:'DotGothic16',monospace;font-size:12px;color:var(--ink)">
-    </label>
-    <label style="display:block;margin-bottom:14px;font-size:13px">
-      <div style="font-family:'DotGothic16',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--lip2);margin-bottom:3px">HUB_SECRET</div>
-      <input id="sync-token" type="password" placeholder="paste the secret" style="width:100%;padding:8px 10px;border:1.5px solid var(--ink);border-radius:2px 5px 2px 5px;background:var(--cream2);font-family:'DotGothic16',monospace;font-size:12px;color:var(--ink)">
-    </label>
-    <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button onclick="clearSync()" style="font-family:'DotGothic16',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:transparent;color:var(--mut);border:1px solid var(--mut);padding:6px 12px;border-radius:2px;cursor:pointer">Clear</button>
-      <button onclick="closeSync()" style="font-family:'DotGothic16',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:transparent;color:var(--ink);border:1px solid var(--ink);padding:6px 12px;border-radius:2px;cursor:pointer">Cancel</button>
-      <button onclick="saveSync()" style="font-family:'DotGothic16',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:var(--lip2);color:var(--cream);border:1px solid var(--lip2);padding:6px 12px;border-radius:2px;cursor:pointer">Save + sync</button>
-    </div>
-  </div>
-</div>
-<style>
-#sync-modal.open{display:flex !important}
-</style>
-
-
-<script>
+if(cul){custom.forEach(function(c){cul.appendChild(customLi(c))});}
+if(form){form.addEventListener('submit',function(e){e.preventDefault();var v=(inp.value||'').trim();if(!v)return;
+  var when='';var m=v.match(/\s@(.+)$/);if(m){when=m[1].toUpperCase();v=v.slice(0,m.index)}
+  var c={id:Date.now().toString(36),text:v,when:when,added:new Date().toISOString().slice(0,10)};custom.push(c);saveCustom();
+  var li=customLi(c);cul.appendChild(li);attach(li);inp.value='';});}
+document.querySelectorAll('ul.tasks li').forEach(attach);
+var hd=document.getElementById('hdone');
+function setHide(on){document.body.classList.toggle('hidedone',on);hd.textContent=on?'SHOW DONE':'HIDE DONE';try{localStorage.setItem(HKEY,on?'1':'')}catch(e){}}
+hd.onclick=function(){setHide(!document.body.classList.contains('hidedone'))};
+try{if(localStorage.getItem(HKEY)==='1')setHide(true)}catch(e){}
+// scroll-in: RGB-split resolve, staggered so first-paint cards animate too
+var cards=[].slice.call(document.querySelectorAll('.card'));
+if(!matchMedia('(prefers-reduced-motion:reduce)').matches){
 document.documentElement.classList.add('js');
-document.addEventListener('DOMContentLoaded', function(){
-  var cards = document.querySelectorAll('.card');
-  cards.forEach(function(c, i){
-    c.style.setProperty('--stag', (i*0.06) + 's');
-    c.classList.add('stag');
-  });
-  // Stagger in
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, {threshold:0.05});
-  cards.forEach(function(c){ io.observe(c); });
-});
+var n=0;
+function reveal(c){c.classList.add('stag');c.style.setProperty('--stag',(n++%6)*.12+'s');c.classList.add('in')}
+requestAnimationFrame(function(){requestAnimationFrame(function(){
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){reveal(e.target);io.unobserve(e.target)}})},{threshold:.05});
+cards.forEach(function(c){io.observe(c)});
+setTimeout(function(){cards.forEach(function(c){if(!c.classList.contains('in'))c.classList.add('in')})},4000)
+})})}
+})();
 </script>
 
 <script>
-// Auto-enable hide-done on first ever load
-if (localStorage.getItem('hub_v3_hd_bootstrapped') !== '1') {
-  document.body.classList.add('hide-done');
-  var bh = document.getElementById('btn-hide'); if (bh) bh.classList.add('on');
-  localStorage.setItem('hub_v3_hd_bootstrapped', '1');
-}
-// Populate the Done archive card from current DOM state
-function refreshDone() {
-  var card = document.getElementById('done-card');
-  var list = document.getElementById('done-list');
-  var count = document.getElementById('done-count');
-  if (!card || !list || !count) return;
-  var doneTasks = document.querySelectorAll('.task.done[data-key]');
-  list.innerHTML = '';
-  doneTasks.forEach(function(t){
-    var title = (t.querySelector('.title') || {}).textContent || t.dataset.key;
-    var li = document.createElement('li');
-    li.innerHTML = '<strong>OK</strong><span style="text-decoration:line-through;opacity:.65">' + title + '</span>';
-    list.appendChild(li);
-  });
-  count.textContent = doneTasks.length + ' item' + (doneTasks.length === 1 ? '' : 's');
-  card.style.display = doneTasks.length ? '' : 'none';
-}
-refreshDone();
-// Rebuild whenever a task changes state
-document.addEventListener('click', function(e){
-  if (e.target.closest('.box')) setTimeout(refreshDone, 10);
-});
-// Also after remote pull applies state
-var _apply = window.applyState;
-if (typeof _apply === 'function') {
-  window.applyState = function(s){ _apply(s); refreshDone(); };
-}
+document.addEventListener('click',function(e){var li=e.target.closest('.ql li.x');if(li&&!e.target.closest('a'))li.classList.toggle('open');});
 </script>
-
 <script>
-document.addEventListener('DOMContentLoaded', function(){
-  document.querySelectorAll('.task .title').forEach(function(t){ t.title = t.textContent.trim(); });
-  document.querySelectorAll('.events .ev').forEach(function(e){ e.title = e.textContent.trim(); });
-});
+(function(){
+  document.querySelectorAll('ul.tasks li').forEach(function(li){
+    var d=li.querySelector(':scope > details'); if(!d||d.classList.contains('keep')) return;
+    li.classList.add('x');
+    var t=li.querySelector(':scope > .t');
+    t.addEventListener('click',function(e){ if(e.target.closest('.ck')||e.target.closest('a')) return; d.open=!d.open; li.classList.toggle('open',d.open); });
+    d.addEventListener('toggle',function(){ li.classList.toggle('open',d.open); });
+  });
+})();
 </script>
-</body>
-</html>
+<script>
+/* Live date: the TODAY label and the week card follow the clock; priorities are stamped with the day they were set. */
+(function(){
+  var DAYS=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  var now=new Date(); var y=now.getFullYear(), m=now.getMonth()+1, d=now.getDate();
+  var label=DAYS[now.getDay()]+' '+m+'/'+d;
+  var card=document.querySelector('.card.urgent'); if(!card) return;
+  var built=card.getAttribute('data-built')||''; var bd=built?new Date(built+'T12:00:00'):null;
+  var same=bd && bd.getFullYear()===y && (bd.getMonth()+1)===m && bd.getDate()===d;
+  var ep=card.querySelector('.ep');
+  if(ep){ ep.innerHTML='TODAY · '+label+(same||!bd?'':' <span class="stale">· PRIORITIES SET '+DAYS[bd.getDay()]+' '+(bd.getMonth()+1)+'/'+bd.getDate()+'</span>'); }
+  var tm=document.querySelector('[data-today-meta]');
+  if(tm && !same && bd){ tm.textContent=label+' · LIST IS FROM '+DAYS[bd.getDay()]+' '+(bd.getMonth()+1)+'/'+bd.getDate()+' · ASK FOR A REFRESH'; }
+  document.querySelectorAll('.day').forEach(function(el){
+    var t=(el.querySelector('.d')||{}).textContent||''; var mm=t.match(/(\d{1,2})\/(\d{1,2})/); if(!mm) return;
+    var dt=new Date(y,+mm[1]-1,+mm[2]); var today=new Date(y,m-1,d);
+    if(dt<today) el.classList.add('past'); else if(dt.getTime()===today.getTime()) el.classList.add('now');
+  });
+})();
+</script>
+</body></html>
