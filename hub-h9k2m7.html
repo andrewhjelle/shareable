@@ -2,6 +2,21 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hub · The Week</title>
 <meta name="robots" content="noindex, nofollow">
+<!-- ================= LAYOUT CONTRACT — all sessions read this BEFORE editing =================
+Render-verify (Playwright, file:// then live) before any push. Gate: 0.Claude/_infra/hub-qc/qc_render.md
+1. FETCH the live raw file immediately before editing; push on its fresh SHA.
+2. ONE LINE PER ROW everywhere (Top 3, To-do, queues, books/movies): title truncates with
+   ellipsis, rows never wrap. Detail lives in .sub/.more, expands on click. Grid/flex children
+   that hold nowrap text need min-width:0.
+3. ONE header: the shared sticky .hubnav (HUB brand pill + uppercase links). No second header
+   row, no per-card meta subheaders, no TODAY row above Top 3.
+4. When-labels: no day-of-week token for today's items; time-of-day/duration only.
+5. Card h2 titles stay short (Top 3, To-do). No filler descriptors.
+6. DATA: every DAY M/D pair must match the real calendar — audit before push.
+7. <b> task text is the done-state key: reword via .when/.sub, not <b>, unless a state reset is intended.
+8. </body>, </head>, <nav> also occur inside JS strings — anchor edits by unique context or
+   LAST occurrence and assert counts after.
+============================================================================================= -->
 <style>.day.past{opacity:.42}
 .day.now .d{color:var(--lip2)}
 .ep .stale{color:var(--osd);opacity:.8}
@@ -241,10 +256,11 @@ ul.tasks li .t:hover b{color:var(--lip2)}
 .alldone{padding:12px 0;text-align:center;font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--cream);opacity:.9}
 .alldone b{color:#ffd9c4}
 
-/* Top-3 row layout: title flexes, when-label and defer stay whole */
-.card.urgent .t{flex-wrap:wrap;row-gap:2px}
-.card.urgent .t b{flex:1 1 auto;min-width:0}
+/* Top-3 rows are single-line: title truncates, when + defer never wrap (layout contract #2) */
+.card.urgent .t{flex-wrap:nowrap;min-width:0;overflow:hidden}
+.card.urgent .t b{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card.urgent .t .when{flex:0 0 auto;white-space:nowrap}
+.card.urgent .t .defer{flex:0 0 auto}
 
 /* grid items may not shrink below content min-width by default; without this the
    nowrap one-line rows push lcol cards into the middle column */
@@ -303,26 +319,18 @@ ul.tasks li .t:hover b{color:var(--lip2)}
 </article>
 
 <article class="card">
-<h2>To-do <i>everything else</i></h2>
-<div class="meta" data-today-meta>GROUPED BY WHEN</div>
+<h2>To-do</h2>
 <form id="addtask" class="addtask" autocomplete="off"><input type="text" id="addtask-in" placeholder="Add to today&hellip; (end with @when for a label)" maxlength="140"><button type="submit" class="osdbtn ink">ADD</button></form>
 <ul class="tasks" id="custom-tasks"></ul>
 
-<div class="grp">Carried</div>
-<ul class="tasks">
-<li><div class="t"><b>Text Ben: get the ladder back</b><span class="when">1 MIN</span></div><div class="sub">Needed for the roof recoat weekend.</div></li>
-<li><div class="t"><b>Finish washing Zada&rsquo;s backpack</b><span class="when">CARRIED</span></div></li>
-</ul>
-
 <div class="grp">Tue 8/25</div>
 <ul class="tasks">
+<li><div class="t"><b>Text Ben: get the ladder back</b><span class="when">1 MIN</span></div><div class="sub">Needed for the roof recoat weekend.</div></li>
+<li><div class="t"><b>Finish washing Zada&rsquo;s backpack</b><span class="when">TODAY</span></div></li>
 <li><div class="t"><b>Roof recoat &mdash; coat 2, perpendicular</b><span class="when">TUE MIDDAY · MOVED FROM MON</span></div><div class="sub">Roll 90&deg; to yesterday&rsquo;s direction &mdash; this coat is the waterproofing. ~1.4 gal, don&rsquo;t thin, fresh roller cover, chip-brush details first. Stay off a week after.</div></li>
 <li><div class="t"><b>Plan Zada&rsquo;s birthday party</b><span class="when">TUE EVE · MOVED FROM MON</span></div><div class="sub">Party is Sat 3 PM &mdash; ice skating + sleepover (helmets). Guest list, food, cake.</div></li>
 <li><div class="t"><b>Breakfast music starts Tuesday: Peter and the Wolf</b><span class="when">TUE 7 AM</span></div><div class="sub">Search it on Spotify, 15 minutes, say &ldquo;this is Prokofiev.&rdquo; Rotation is on the Kids page.</div></li>
 <li><div class="t"><b>Homework diagnostic, both kids</b><span class="when">TUE · 20&ndash;30 MIN EACH</span></div><div class="sub">Last spring&rsquo;s returned work + summer workbooks; watch a page cold. Note fluent / shaky / forgotten.</div></li>
-
-
-
 <li><div class="t"><b>Fix the HVAC</b><span class="when">TUE</span></div></li>
 </ul>
 
@@ -427,7 +435,7 @@ ul.tasks li .t:hover b{color:var(--lip2)}
 <h2>Games <i>queue</i></h2>
 <ul class="ql">
 <li class="x"><span class="k">NOW</span><div class="v"><b>Gothic 1 Remake</b><div class="more">Vahrin&rsquo;s Call done 8/23. Weekend-evening slot.</div></div></li>
-<li class="x"><span class="k">WED 8/27</span><div class="v"><b>Star Wars: Zero Company</b><div class="more">Bit Reactor, XCOM-style tactics, Clone Wars setting.</div></div></li>
+<li class="x"><span class="k">THU 8/27</span><div class="v"><b>Star Wars: Zero Company</b><div class="more">Bit Reactor, XCOM-style tactics, Clone Wars setting.</div></div></li>
 <li class="x"><span class="k">THU 9/03</span><div class="v"><b>The Blood of Dawnwalker</b><div class="more">Rebel Wolves (ex-CDPR) vampire RPG. Wishlist it.</div></div></li>
 </ul>
 </article>
