@@ -47,10 +47,43 @@ a{color:var(--blue)}
 <div class="streak"></div>
 <p><strong>Purpose.</strong> Show Claude Design a variety of real experiences before it draws ours. Screenshots left, notes right; green boxes = steal this, red boxes = the documented mistake. Images are local copies in <span class="code">switchboard-shots/</span> reproduced for design research from official docs, readmes, release notes, and hands-on reviews; all screenshots and product marks belong to their respective owners.</p>
 
+<h2>0. What we're building &middot; the requirements</h2>
+<div class="card">
+<p><strong>Switchboard</strong> is a personal desktop chat app that fronts a fleet of models across three lanes: local models (Ollama), subscription models (Claude via a Max login, not per-token billing), and API-key models (supported as a lane even when unused). A router picks the model for each message automatically, informed by question difficulty, the machine's specs and current load, privacy, and budget state, but routing is fully transparent, never hidden. The examples below are the evidence base; each requirement names the example it draws from.</p>
+<h3>North stars</h3>
+<ul>
+<li><strong>Take load off the user.</strong> Smart defaults everywhere, automatic routing, zero config to start a chat.</li>
+<li><strong>Simple and fast.</strong> The default view is calm; detail lives in a side drawer, not the main surface.</li>
+<li><strong>Progressive urgency.</strong> Indicators get louder as anything nears capacity (usage budget, VRAM, context). Quiet when healthy, prominent when critical.</li>
+<li><strong>Transparent, never hidden.</strong> Every answer shows which model produced it and why, at a glance. This is the core differentiator.</li>
+</ul>
+<h3>Required elements &middot; side by side with the examples</h3>
+<table>
+<tr><th style="width:46%">Requirement</th><th>The example it draws from</th></tr>
+<tr><td><strong>Multi-chat sidebar</strong> with search and pinning; hover previews welcome.</td><td><a href="#openwebui">Open WebUI</a>: typed sidebar sections, hover preview card. <a href="#jan">Jan</a>: overall calm.</td></tr>
+<tr><td><strong>Per-answer routing badge</strong>: model name, routing reason, latency, headroom left on the machine. Compact and scannable, not noisy.</td><td><a href="#librechat">LibreChat</a>: model avatar + name on every message. <a href="#routing">Routing section</a>: the ChatGPT hidden-router backlash is the mistake this inverts; Copilot's hover-to-see-model is the floor.</td></tr>
+<tr><td><strong>Composer</strong>: model override chip (default "Auto") plus a live context-usage meter.</td><td><a href="#openwebui">Open WebUI</a>: picker lives in the composer. <a href="#lmstudio">LM Studio</a>: "Context: 231.7K" counter in the composer.</td></tr>
+<tr><td><strong>Top strip</strong>: Claude usage-budget dial with pace marker (ahead/behind the daily allowance), machine-state chip (GPU busy/idle, VRAM headroom), background-jobs count.</td><td><a href="#budget">cc-budget</a>: bar + pace marker + urgency tiers, proven on this exact quota. Our additions: the allowance rolls over, and budget state feeds the router.</td></tr>
+<tr><td><strong>Models drawer</strong>: installed models with hardware-fit badges (fits now / fits when idle / too big), recommended downloads grouped Small/Balanced/Large, download-progress state.</td><td><a href="#lmstudio">LM Studio</a>: fit-before-download badges. <a href="#jan">Jan</a>: Small/Balanced/Large + Recommended. <a href="#msty">Msty</a>: circular fit gauges on model cards.</td></tr>
+<tr><td><strong>Preview/artifacts pane</strong> for rendered HTML and code, independent of every other panel, with its own close control.</td><td><a href="#librechat">LibreChat</a>: the artifacts pane to copy, and the shared-panel bug to avoid (hiding one panel hid both).</td></tr>
+<tr><td><strong>Split view</strong>: two chat panes side by side, same prompt to two models, labeled per pane.</td><td><a href="#msty">Msty</a>: Add Split Chat with per-pane composers; doubles as a live model comparison.</td></tr>
+<tr><td><strong>Task queue view</strong>: background and overnight jobs, each row naming its trigger ("waiting for idle GPU"), announcing what starts next.</td><td><a href="#queue">Deferred-work section</a>: Deadline's orange "Pending, waiting on X", W&amp;B idle-queue backfill.</td></tr>
+<tr><td><strong>Side drawer for detail</strong>: closed rail by default, opens on demand, auto-opens on alert (budget 70/90%, VRAM spill, context near limit).</td><td>Progressive-urgency pattern from <a href="#budget">cc-budget</a>: display adds detail as urgency rises.</td></tr>
+<tr><td><strong>Private chats</strong>: privacy is a property of the chat, not a per-message toggle; private chats stay on-device and route only to local models.</td><td>AnythingLLM (<a href="#chatbox">below</a>): workspace-scoped isolation as the mental model.</td></tr>
+<tr><td><strong>Permission ledger</strong>: every capability the app or a model uses (device probing, file access, web access, running commands) is opt-in, and a visible ledger shows what has been granted, to which lane, and when. Device diagnostics are consent-first: the app asks, or the user pastes specs or a screenshot; it never probes silently.</td><td>No surveyed product ships this; the ChatGPT lesson (<a href="#routing">routing section</a>) generalizes: invisible capability use erodes trust the same way invisible routing does.</td></tr>
+<tr><td><strong>Rich messages</strong>: images render inline in the conversation, plus math and code; artifacts open in the preview pane when they are documents or apps rather than pictures.</td><td><a href="#chatbox">Chatbox</a>: KaTeX inline. <a href="#librechat">LibreChat</a>: image support, artifacts pane split.</td></tr>
+<tr><td><strong>Multiple windows</strong>: several chats visible at once without the window-flashing cost of juggling OS windows; split panes and detachable views inside one app.</td><td><a href="#msty">Msty</a>: split chat. <a href="#lmstudio">LM Studio</a>: drag tabs into side-by-side chats.</td></tr>
+</table>
+<h3>Design states to cover</h3>
+<p>Budget Comfortable / Moderate / Warning / Critical &middot; model download in progress &middot; GPU busy vs idle &middot; drawer closed vs open vs auto-opened on alert &middot; router escalating a hard question to Claude vs answering locally.</p>
+<h3>Aesthetic</h3>
+<p>Personal tool, so it can have character. Desired range: from calm-minimal (Jan) to something with more personality. Desktop-first, dark mode primary. Deliverable: a variety of distinct visual directions (at least 3), not one converged proposal.</p>
+</div>
+
 <h2>1. The chat apps</h2>
 <div class="card">
 
-<div class="row"><div class="shots">
+<div class="row" id="openwebui"><div class="shots">
 <figure><img src="switchboard-shots/openwebui-demo.png" alt="Open WebUI home"><figcaption>Home: sectioned sidebar (Notes, Workspace, Channels, Folders, Chats), model name top-left with "Set as default", centered composer with suggestions.</figcaption></figure>
 <figure><img src="switchboard-shots/openwebui-blog-02.png" alt="Open WebUI hover preview"><figcaption>Hovering a sidebar chat opens a read-only preview card of its last messages, without opening the chat.</figcaption></figure>
 <figure><img src="switchboard-shots/openwebui-blog-01.png" alt="Open WebUI model picker"><figcaption>The model picker (moved into the composer in v0.11): searchable list of LOCAL models with parameter sizes right on the rows.</figcaption></figure>
@@ -67,7 +100,7 @@ a{color:var(--blue)}
 <div class="take"><span class="copy">STEAL</span> Picker lives in the composer, not a distant toolbar: the decision point sits where you type. Our override chip does the same.</div>
 </div></div>
 
-<div class="row"><div class="shots">
+<div class="row" id="lmstudio"><div class="shots">
 <figure><img src="switchboard-shots/lmstudio-app.webp" alt="LM Studio Bionic"><figcaption>LM Studio Bionic: projects tree left, agent chat center, generated-PDF artifact pane right. Note the composer: model pill (Kimi K3, High) and a live "Context: 231.7K" counter.</figcaption></figure>
 </div><div class="notes">
 <h3>LM Studio <span class="tag">desktop &middot; the model-manager benchmark</span></h3>
@@ -80,7 +113,7 @@ a{color:var(--blue)}
 <div class="take"><span class="copy">STEAL</span> Context counter directly in the composer, exact and numeric.</div>
 </div></div>
 
-<div class="row"><div class="shots">
+<div class="row" id="jan"><div class="shots">
 <figure><img src="switchboard-shots/jan-app.png" alt="Jan"><figcaption>Jan: the calmest layout in the category. Projects + chats in one soft sidebar, centered composer, model pill top-left, nothing else.</figcaption></figure>
 </div><div class="notes">
 <h3>Jan <span class="tag">desktop &middot; the minimalist</span></h3>
@@ -92,7 +125,7 @@ a{color:var(--blue)}
 <div class="take"><span class="copy">STEAL</span> The overall calm: this is closest to the "simple and fast" north star. Also the Small/Balanced/Large + Recommended grouping for quants.</div>
 </div></div>
 
-<div class="row"><div class="shots">
+<div class="row" id="librechat"><div class="shots">
 <figure><img src="switchboard-shots/librechat-chat-interface.png" alt="LibreChat message anatomy"><figcaption>Message anatomy: model avatar + name on the answer, response-version navigation (3/3), edit/copy/fork actions on hover.</figcaption></figure>
 <figure><img src="switchboard-shots/librechat-artifacts-example.png" alt="LibreChat artifacts"><figcaption>Artifacts pane: generated React login screen rendering live, Preview/Code tabs, its own close control.</figcaption></figure>
 <figure><img src="switchboard-shots/librechat-select-model.png" alt="LibreChat model select"><figcaption>Endpoint + model dropdown with search; switchable mid-conversation.</figcaption></figure>
@@ -107,7 +140,7 @@ a{color:var(--blue)}
 <div class="warn"><span class="avoid">AVOID</span> Their documented layout bug: Parameters and Artifacts share one right-panel slot, and hiding one hides both. Our rule: independent surfaces, independent close controls.</div>
 </div></div>
 
-<div class="row"><div class="shots">
+<div class="row" id="msty"><div class="shots">
 <figure><img src="switchboard-shots/msty-00.png" alt="Msty split chat"><figcaption>Split Chat: one prompt answered by gemma3:1b (left) and Qwen3 (right) simultaneously; each pane owns a labeled composer.</figcaption></figure>
 <figure><img src="switchboard-shots/msty-18.png" alt="Msty split with instructions"><figcaption>Per-pane "Edit Model Instructions": each split half can carry its own persona; thinking models show their reasoning trace.</figcaption></figure>
 <figure><img src="switchboard-shots/msty-15.png" alt="Msty model browser"><figcaption>Local AI Models browser: featured cards with size, capability tags (coding/vision/reasoning), a circular fit gauge per model, and "Import GGUF".</figcaption></figure>
@@ -120,7 +153,7 @@ a{color:var(--blue)}
 <div class="take"><span class="copy">STEAL</span> The split mechanic IS our "multiple windows" requirement, and doubles as a live mini-gauntlet: same prompt, local vs Fable, side by side. Also note their circular fit gauge on model cards.</div>
 </div></div>
 
-<div class="row"><div class="shots">
+<div class="row" id="chatbox"><div class="shots">
 <figure><img src="switchboard-shots/chatbox-light.png" alt="Chatbox"><figcaption>Chatbox: persona-first sidebar (Translator, Software Developer, Travel Guide as saved copilots), per-message word/token counts, KaTeX rendering.</figcaption></figure>
 <figure><img src="switchboard-shots/anythingllm-step-model.webp" alt="AnythingLLM model step"><figcaption>AnythingLLM onboarding: "Pick a model (or let us pick)" is the only auto-selection offer in the local category.</figcaption></figure>
 </div><div class="notes">
@@ -133,7 +166,7 @@ a{color:var(--blue)}
 </div></div>
 </div>
 
-<h2>2. Routing &middot; who shows their work, who hides it</h2>
+<h2 id="routing">2. Routing &middot; who shows their work, who hides it</h2>
 <div class="card">
 <div class="row"><div class="shots">
 <figure><img src="switchboard-shots/openrouter-chat-live.png" alt="OpenRouter chat"><figcaption>OpenRouter chat playground (live capture): rooms sidebar, "Add Model" to fan a prompt across models, curated category cards (Flagship / Roleplay / Coding / Reasoning).</figcaption></figure>
@@ -152,7 +185,7 @@ a{color:var(--blue)}
 </div></div>
 </div>
 
-<h2>3. Quota pacing &middot; the dial already half-exists</h2>
+<h2 id="budget">3. Quota pacing &middot; the dial already half-exists</h2>
 <div class="card">
 <div class="row"><div class="shots">
 <figure><img src="switchboard-shots/ccbudget-00.png" alt="cc-budget status line"><figcaption>cc-budget: the same 5h Claude window at four urgency tiers. Bar + white pace marker ("where you should be"), last-prompt cost, under/over-pace arrow with %, reset countdown, peak-hours flag. Display adds detail as urgency rises.</figcaption></figure>
@@ -170,7 +203,7 @@ a{color:var(--blue)}
 </div></div>
 </div>
 
-<h2>4. Deferred work &middot; naming the trigger</h2>
+<h2 id="queue">4. Deferred work &middot; naming the trigger</h2>
 <div class="card">
 <p>Render farms and ML schedulers agree: AWS Deadline paints Pending jobs orange with the reason they wait; Weights &amp; Biases' launch-queue plot exists to spot idle-queue windows and backfill them with preemptible low-priority jobs, which is exactly our overnight lane; SLURM's submitted → queued → running → done is the standard vocabulary. No screenshots fetched (CLI-first tools); <a href="https://docs.wandb.ai/platform/launch/launch-queue-observability">W&amp;B docs</a>, <a href="https://docs.thinkboxsoftware.com/products/deadline/latest/1_User%20Manual/manual/job-controlling.html">Deadline docs</a>.</p>
 <div class="take"><span class="copy">STEAL</span> Queue rows always name their trigger ("waiting for idle GPU"), and when the machine goes idle the queue announces what it is about to start, so an overnight run is never a surprise.</div>
