@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<title>Switchboard Design Brief &middot; requirements, prior art, and the proposed layout, annotated</title>
+<style>
+:root{--bg:#e7dfca;--panel:#f1ead7;--panel2:#e3dac1;--line:#b9ad8f;--txt:#23283a;--dim:#6f6754;--red:#d14b28;--blue:#527383;--green:#4a7a58;--gold:#c98a3e;--ink:#23283a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{color:var(--txt);font:14px/1.55 'Bahnschrift','Segoe UI',system-ui,sans-serif;padding:24px;max-width:1180px;margin:0 auto;background:var(--bg)}
+.streak{height:5px;margin:8px 0 18px;background:linear-gradient(90deg,var(--gold) 0 220px,var(--ink) 220px 234px,rgba(35,40,58,.25) 234px 100%)}
+h1{font-size:24px;color:var(--ink);text-transform:uppercase;letter-spacing:3px} h1 small{color:var(--dim);font-weight:400;font-size:13px;display:block;margin-top:4px;text-transform:none;letter-spacing:0}
+h2{font-size:15px;color:var(--red);margin:26px 0 8px;text-transform:uppercase;letter-spacing:1.5px}
+h3{font-size:13.5px;color:var(--ink);margin:12px 0 4px}
+p{margin:6px 0 10px;max-width:940px}
+.card{background:var(--panel);border:1.5px solid var(--ink);border-radius:4px;padding:16px;margin:14px 0;box-shadow:7px 7px 0 rgba(35,40,58,.2)}
+.svgwrap{background:#f6f1e2;border:1px solid var(--line);padding:10px;margin:10px 0;overflow-x:auto}
+svg{width:100%;height:auto;display:block;font-family:'Consolas','Cascadia Mono',monospace}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px;font-size:12.5px;margin:8px 0}
+.legend div b{color:var(--gold)}
+.ns{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:10px 0}
+.ns .b{background:var(--panel2);border:1px solid var(--ink);padding:10px;font-size:12.5px}
+.ns .b b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;color:var(--red)}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:8px 0}
+th,td{border:1px solid var(--line);padding:6px 8px;vertical-align:top;text-align:left}
+th{background:var(--panel2);text-transform:uppercase;letter-spacing:1px;font-size:11px}
+.code{background:var(--panel2);border:1px solid var(--line);padding:1px 5px;border-radius:2px;font-family:Consolas,monospace;font-size:12px}
+.ours{border-left:4px solid var(--blue);padding:8px 12px;background:#eee6d2;margin:10px 0}
+.muted{color:var(--dim);font-size:12px}
+a{color:var(--blue)}
+.copy{color:var(--green);font-weight:700}.avoid{color:var(--red);font-weight:700}
+.pair{display:flex;gap:16px;flex-wrap:wrap}
+.pair>div{flex:1;min-width:320px}
+</style>
+</head>
+<body>
+<h1>Switchboard Design Brief <small>The requirements, the proposed layout, and what the field already figured out &middot; annotated for the Claude Design pass &middot; 2026-08-25 &middot; companion to <span class="code">projects/switchboard-spec.md</span> (full written spec) and <a href="index.html">the prior-art deep dive</a> (requirements + real screenshots)</small></h1>
+<div class="streak"></div>
+
+<h2>0. North star &middot; four principles that settle every tie</h2>
+<div class="ns">
+<div class="b"><b>Take load off the user</b>Auto by default. The router, the budget math, the model choice, the scheduling: all decided for you, all explainable on demand. You never do quota arithmetic or pick a model unless you want to.</div>
+<div class="b"><b>Simple and fast</b>One calm chat surface. Local answers stream in about a second. Chrome stays thin; anything secondary lives in the drawer, closed.</div>
+<div class="b"><b>Multiple windows</b>Split view: two chats side by side in one window (v0), pop-out windows later. Different threads, different models, same rules.</div>
+<div class="b"><b>Quiet drawer, loud when it matters</b>Details (usage, models, queue) sit in a side drawer that stays shut. Approaching capacity (budget, VRAM, context) auto-opens it with the one number that matters.</div>
+</div>
+
+<h2>1. The proposed layout &middot; annotated</h2>
+<div class="card">
+<div class="svgwrap"><svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg">
+<!-- top strip -->
+<rect x="8" y="8" width="944" height="34" fill="#f1ead7" stroke="#23283a" stroke-width="1.5"/>
+<text x="20" y="29" font-size="12" font-weight="bold" fill="#23283a">SWITCHBOARD</text>
+<rect x="150" y="14" width="160" height="22" rx="11" fill="#e3dac1" stroke="#6f6754"/>
+<text x="230" y="29" font-size="10" text-anchor="middle" fill="#23283a">AUTO · local-only · fable</text>
+<rect x="330" y="14" width="52" height="22" rx="4" fill="#e3dac1" stroke="#6f6754"/><text x="356" y="29" font-size="10" text-anchor="middle" fill="#23283a">⧉ split</text>
+<rect x="640" y="14" width="90" height="22" rx="4" fill="#e8f0e6" stroke="#4a7a58"/><text x="685" y="29" font-size="9.5" text-anchor="middle" fill="#4a7a58">IDLE · 21GB free</text>
+<rect x="740" y="14" width="130" height="22" rx="4" fill="#e3dac1" stroke="#6f6754"/>
+<rect x="746" y="20" width="80" height="10" fill="#d8cfb4"/><rect x="746" y="20" width="42" height="10" fill="#c98a3e"/><line x1="796" y1="17" x2="796" y2="33" stroke="#23283a" stroke-width="2"/>
+<text x="852" y="29" font-size="10" fill="#23283a">52% ⇣</text>
+<rect x="880" y="14" width="62" height="22" rx="4" fill="#e3dac1" stroke="#6f6754"/><text x="911" y="29" font-size="10" text-anchor="middle" fill="#23283a">jobs: 2</text>
+<!-- sidebar -->
+<rect x="8" y="50" width="170" height="470" fill="#f1ead7" stroke="#23283a" stroke-width="1.5"/>
+<rect x="18" y="60" width="150" height="24" rx="4" fill="#e3dac1" stroke="#6f6754"/><text x="93" y="76" font-size="10" text-anchor="middle" fill="#23283a">+ new chat</text>
+<rect x="18" y="94" width="150" height="30" fill="#e3dac1" stroke="#527383"/><text x="28" y="107" font-size="9.5" fill="#23283a">house projects plan</text><text x="28" y="119" font-size="8.5" fill="#6f6754">● gpt-oss · 2m ago</text>
+<rect x="18" y="130" width="150" height="30" fill="#efe8d5" stroke="#6f6754"/><text x="28" y="143" font-size="9.5" fill="#23283a">🔒 health notes</text><text x="28" y="155" font-size="8.5" fill="#6f6754">● local only · 1h</text>
+<rect x="18" y="166" width="150" height="30" fill="#efe8d5" stroke="#6f6754"/><text x="28" y="179" font-size="9.5" fill="#23283a">trip ideas</text><text x="28" y="191" font-size="8.5" fill="#527383">◆ fable · yday</text>
+<text x="28" y="215" font-size="8.5" fill="#6f6754">hover = preview card</text>
+<!-- chat column -->
+<rect x="186" y="50" width="474" height="470" fill="#f6f1e2" stroke="#23283a" stroke-width="1.5"/>
+<rect x="360" y="66" width="284" height="30" rx="6" fill="#e3dac1" stroke="#6f6754"/><text x="376" y="85" font-size="10" fill="#23283a">what should I check before resealing the deck?</text>
+<rect x="200" y="108" width="240" height="14" rx="3" fill="#eee6d2" stroke="#b9ad8f"/>
+<text x="208" y="118" font-size="8.5" fill="#527383">gpt-oss:20b · short factual · 1.2s · stayed local</text>
+<rect x="200" y="126" width="380" height="64" rx="6" fill="#f1ead7" stroke="#6f6754"/><text x="214" y="146" font-size="10" fill="#23283a">Check three things before you reseal: moisture</text><text x="214" y="160" font-size="10" fill="#23283a">reading below 15%, board rot at the ledger, and…</text>
+<text x="214" y="182" font-size="8.5" fill="#6f6754">copy · ↑ escalate to Fable · re-run local</text>
+<rect x="200" y="202" width="240" height="14" rx="3" fill="#dde6ea" stroke="#527383"/>
+<text x="208" y="212" font-size="8.5" fill="#23283a">Fable 5 · escalated by you · 6.8s · left machine · quota −0.3%</text>
+<rect x="200" y="220" width="380" height="46" rx="6" fill="#eef2f4" stroke="#527383"/><text x="214" y="240" font-size="10" fill="#23283a">Deeper answer: sequencing, product choice by</text><text x="214" y="254" font-size="10" fill="#23283a">climate, and the two failure modes to avoid…</text>
+<!-- composer -->
+<rect x="196" y="440" width="454" height="70" rx="6" fill="#f1ead7" stroke="#23283a" stroke-width="1.5"/>
+<text x="212" y="464" font-size="10" fill="#6f6754">message…</text>
+<rect x="204" y="478" width="58" height="18" rx="9" fill="#e3dac1" stroke="#6f6754"/><text x="233" y="491" font-size="9" text-anchor="middle" fill="#23283a">@auto ▾</text>
+<rect x="268" y="478" width="58" height="18" rx="9" fill="#e3dac1" stroke="#6f6754"/><text x="297" y="491" font-size="9" text-anchor="middle" fill="#23283a">🔒 private</text>
+<rect x="336" y="484" width="180" height="5" fill="#d8cfb4"/><rect x="336" y="484" width="60" height="5" fill="#5d7f8a"/><text x="522" y="491" font-size="8.5" fill="#6f6754">context 33%</text>
+<rect x="600" y="474" width="42" height="26" rx="6" fill="#23283a"/><text x="621" y="491" font-size="10" text-anchor="middle" fill="#f1ead7">send</text>
+<!-- drawer -->
+<rect x="668" y="50" width="284" height="470" fill="#f1ead7" stroke="#23283a" stroke-width="1.5"/>
+<text x="810" y="70" font-size="10" text-anchor="middle" fill="#23283a" font-weight="bold">DRAWER · usage | models | queue | preview</text>
+<rect x="680" y="82" width="260" height="120" fill="#fff8e8" stroke="#c98a3e"/>
+<text x="692" y="100" font-size="10" fill="#23283a" font-weight="bold">WEEK 52% · resets Thu 09:00</text>
+<rect x="692" y="110" width="236" height="12" fill="#e3dac1"/><rect x="692" y="110" width="123" height="12" fill="#c98a3e"/><line x1="835" y1="106" x2="835" y2="126" stroke="#23283a" stroke-width="2"/>
+<text x="692" y="140" font-size="9" fill="#4a7a58">⇣ under pace · borderline prompts may use Fable</text>
+<text x="692" y="156" font-size="9" fill="#6f6754">today 4.1% · session bucket 18%</text>
+<text x="692" y="172" font-size="9" fill="#6f6754">by lane: local 71 turns · fable 9 turns</text>
+<rect x="680" y="212" width="260" height="90" fill="#f6f1e2" stroke="#6f6754"/>
+<text x="692" y="230" font-size="10" font-weight="bold" fill="#23283a">MODELS</text>
+<text x="692" y="246" font-size="9" fill="#23283a">gpt-oss:20b · loaded · day lane · 0.81</text>
+<text x="692" y="260" font-size="9" fill="#6f6754">qwen3.5:35b · idle lane · 0.87 · fits NOW ✓</text>
+<text x="692" y="274" font-size="9" fill="#527383">candidate: qwen4-flash · fits ✓ · [gauntlet it]</text>
+<rect x="680" y="312" width="260" height="66" fill="#f6f1e2" stroke="#6f6754"/>
+<text x="692" y="330" font-size="10" font-weight="bold" fill="#23283a">QUEUE</text>
+<text x="692" y="346" font-size="9" fill="#c98a3e">◔ digest build · waiting for idle GPU</text>
+<text x="692" y="360" font-size="9" fill="#6f6754">◔ gauntlet: qwen4-flash · runs overnight</text>
+<!-- callout dots -->
+<circle cx="230" cy="8" r="9" fill="#d14b28"/><text x="230" y="12" font-size="10" text-anchor="middle" fill="#fff">1</text>
+<circle cx="796" cy="8" r="9" fill="#d14b28"/><text x="796" y="12" font-size="10" text-anchor="middle" fill="#fff">2</text>
+<circle cx="188" cy="115" r="9" fill="#d14b28"/><text x="188" y="119" font-size="10" text-anchor="middle" fill="#fff">3</text>
+<circle cx="592" cy="209" r="9" fill="#d14b28"/><text x="592" y="213" font-size="10" text-anchor="middle" fill="#fff">4</text>
+<circle cx="233" cy="524" r="9" fill="#d14b28"/><text x="233" y="528" font-size="10" text-anchor="middle" fill="#fff">5</text>
+<circle cx="520" cy="524" r="9" fill="#d14b28"/><text x="520" y="528" font-size="10" text-anchor="middle" fill="#fff">6</text>
+<circle cx="668" cy="140" r="9" fill="#d14b28"/><text x="668" y="144" font-size="10" text-anchor="middle" fill="#fff">7</text>
+<circle cx="668" cy="345" r="9" fill="#d14b28"/><text x="668" y="349" font-size="10" text-anchor="middle" fill="#fff">8</text>
+<circle cx="356" cy="8" r="9" fill="#d14b28"/><text x="356" y="12" font-size="10" text-anchor="middle" fill="#fff">9</text>
+<circle cx="30" cy="140" r="9" fill="#d14b28"/><text x="30" y="144" font-size="10" text-anchor="middle" fill="#fff">10</text>
+</svg></div>
+<div class="legend">
+<div><b>1</b> Mode toggle: AUTO is default and 95% of use; the other two are escape hatches.</div>
+<div><b>2</b> Mini budget bar with pace marker lives in the strip; click = drawer usage panel.</div>
+<div><b>3</b> Badge row ABOVE every answer: model · routing reason · latency · left machine or not. The whole trust story in one line (nobody in the field ships this).</div>
+<div><b>4</b> Fable answers get a distinct cool tint + quota cost. Cloud is always recognizable at a glance.</div>
+<div><b>5</b> Composer chips: model override and Private toggle. Private disables the cloud lane, visibly.</div>
+<div><b>6</b> Context meter in the composer (LibreChat lesson: capacity lives in the chat, not settings).</div>
+<div><b>7</b> Drawer, usage panel: cc-budget grammar (pace marker, arrow, color ladder, reset countdown).</div>
+<div><b>8</b> Queue entries name their trigger condition (Deadline pattern): "waiting for idle GPU," never bare "pending."</div>
+<div><b>9</b> Split control: second chat pane side by side (Msty pattern, bounded at two).</div>
+<div><b>10</b> Private chats carry a lock glyph + model dot in the sidebar; hover shows a preview card (Open WebUI).</div>
+</div>
+</div>
+
+<h2>2. The drawer's three states &middot; quiet until it matters</h2>
+<div class="card">
+<div class="svgwrap"><svg viewBox="0 0 960 190" xmlns="http://www.w3.org/2000/svg">
+<rect x="8" y="12" width="290" height="160" fill="#f6f1e2" stroke="#6f6754"/>
+<text x="153" y="32" font-size="11" text-anchor="middle" font-weight="bold" fill="#23283a">CLOSED (default)</text>
+<rect x="262" y="44" width="28" height="120" fill="#f1ead7" stroke="#6f6754"/>
+<text x="276" y="66" font-size="10" text-anchor="middle" fill="#6f6754">◔</text><text x="276" y="88" font-size="10" text-anchor="middle" fill="#6f6754">▦</text><text x="276" y="110" font-size="10" text-anchor="middle" fill="#6f6754">≡</text>
+<text x="130" y="100" font-size="9.5" text-anchor="middle" fill="#6f6754">just a thin icon rail ·</text>
+<text x="130" y="114" font-size="9.5" text-anchor="middle" fill="#6f6754">zero pixels of nagging</text>
+<rect x="335" y="12" width="290" height="160" fill="#f6f1e2" stroke="#6f6754"/>
+<text x="480" y="32" font-size="11" text-anchor="middle" font-weight="bold" fill="#23283a">OPENED BY YOU</text>
+<rect x="470" y="44" width="145" height="120" fill="#f1ead7" stroke="#6f6754"/>
+<text x="542" y="66" font-size="9" text-anchor="middle" fill="#23283a">full panels: usage,</text>
+<text x="542" y="80" font-size="9" text-anchor="middle" fill="#23283a">models, queue, preview</text>
+<text x="542" y="100" font-size="9" text-anchor="middle" fill="#6f6754">progressive disclosure:</text>
+<text x="542" y="114" font-size="9" text-anchor="middle" fill="#6f6754">detail rows grow as</text>
+<text x="542" y="128" font-size="9" text-anchor="middle" fill="#6f6754">usage rises</text>
+<rect x="662" y="12" width="290" height="160" fill="#fff3e6" stroke="#d14b28" stroke-width="2"/>
+<text x="807" y="32" font-size="11" text-anchor="middle" font-weight="bold" fill="#d14b28">AUTO-OPENED · something matters</text>
+<rect x="797" y="44" width="145" height="120" fill="#f1ead7" stroke="#d14b28"/>
+<rect x="797" y="44" width="145" height="26" fill="#d14b28"/>
+<text x="869" y="61" font-size="9.5" text-anchor="middle" fill="#fff">budget 91% · Fable locks in 9%</text>
+<text x="869" y="88" font-size="9" text-anchor="middle" fill="#23283a">one number, one action,</text>
+<text x="869" y="102" font-size="9" text-anchor="middle" fill="#23283a">reset countdown</text>
+<text x="869" y="124" font-size="9" text-anchor="middle" fill="#6f6754">triggers: budget 70/90% ·</text>
+<text x="869" y="138" font-size="9" text-anchor="middle" fill="#6f6754">VRAM spill risk · context 85%</text>
+</svg></div>
+<p class="muted">The escalation ladder is the design: closed rail → user-opened panels → auto-opened alert with exactly one number and one action. Never a toast storm, never a nag while calm.</p>
+</div>
+
+<h2>3. Prior art &middot; what to copy, what to avoid</h2>
+<div class="card">
+<div class="pair">
+<div>
+<h3><span class="copy">COPY</span> LM Studio + Jan: fit-before-download</h3>
+<div class="svgwrap"><svg viewBox="0 0 440 120"><rect x="8" y="8" width="424" height="104" fill="#f6f1e2" stroke="#6f6754"/><rect x="20" y="20" width="120" height="60" fill="#e8f0e6" stroke="#4a7a58"/><text x="80" y="40" font-size="9" text-anchor="middle">Q4 · Small</text><text x="80" y="56" font-size="8.5" text-anchor="middle" fill="#4a7a58">fits w/ headroom ✓</text><rect x="160" y="20" width="120" height="60" fill="#fff8e8" stroke="#c98a3e"/><text x="220" y="40" font-size="9" text-anchor="middle">Q5 · Balanced ★</text><text x="220" y="56" font-size="8.5" text-anchor="middle" fill="#c98a3e">fits when idle</text><rect x="300" y="20" width="120" height="60" fill="#f6e3dc" stroke="#d14b28"/><text x="360" y="40" font-size="9" text-anchor="middle">Q8 · Large</text><text x="360" y="56" font-size="8.5" text-anchor="middle" fill="#d14b28">won't fit ✗</text><text x="220" y="100" font-size="9" text-anchor="middle" fill="#6f6754">computed from device-profile.json, shown BEFORE download</text></svg></div>
+<p class="muted">LM Studio's badge answers "will it run?" at decision time; Jan adds tiers + a Recommended tag. Ours adds the third state the field lacks: "fits when idle" (overnight lane).</p>
+</div>
+<div>
+<h3><span class="copy">COPY</span> cc-budget: the pacing bar</h3>
+<div class="svgwrap"><svg viewBox="0 0 440 120"><rect x="8" y="8" width="424" height="104" fill="#f6f1e2" stroke="#6f6754"/><text x="24" y="34" font-size="10" fill="#23283a">WEEK ▓▓▓▓▓▓░░░░ 62% ⇡ · resets 1d 4h</text><rect x="24" y="46" width="392" height="16" fill="#e3dac1" stroke="#6f6754"/><rect x="24" y="46" width="243" height="16" fill="#c98a3e"/><line x1="220" y1="40" x2="220" y2="68" stroke="#23283a" stroke-width="2.5"/><text x="220" y="82" font-size="9" text-anchor="middle" fill="#23283a">pace marker: where you SHOULD be today</text><text x="24" y="102" font-size="9" fill="#6f6754">⇡ over pace = router tightens · ⇣ under = router loosens · amber 70% · red 90%</text></svg></div>
+<p class="muted">The one genuinely proven Claude-quota visualization. Ours goes further: the same signal FEEDS the router (adaptive allowance with rollover), which no product surveyed does.</p>
+</div>
+</div>
+<div class="pair">
+<div>
+<h3><span class="copy">COPY</span> Msty: split view &middot; <span class="copy">COPY</span> LibreChat: artifacts + context gauge</h3>
+<p>Msty's window split (one prompt can fan to both panes; every pane labeled) is the "multiple windows" requirement, bounded at two. LibreChat proves the preview pane can carry React/HTML/SVG/Mermaid with fullscreen + export, and that a live context/cost gauge belongs inside the conversation.</p>
+</div>
+<div>
+<h3><span class="avoid">AVOID</span> ChatGPT auto-router: hidden routing &middot; <span class="avoid">AVOID</span> LibreChat: shared right panel</h3>
+<p>GPT-5's router hid which model answered; it became a trust crisis within days and OpenAI walked it back. Routing may be automatic, its identity may not be invisible: that is the whole case for the badge row. And LibreChat's parameters/artifacts panel collision (hide one, lose both) becomes our hard rule: independent surfaces, independent close controls.</p>
+</div>
+</div>
+<div class="pair">
+<div>
+<h3><span class="copy">COPY</span> AnythingLLM: isolation as a scope property</h3>
+<p>Workspace-level model binding (this room is local-only, that one may use cloud) maps to Private chats: privacy is a property of the chat, enforced by the router, not a per-message checkbox you can forget.</p>
+</div>
+<div>
+<h3><span class="copy">COPY</span> OpenRouter: per-request drill-down &middot; Deadline/W&amp;B: named triggers</h3>
+<p>OpenRouter's dashboard lets any spend number open the individual requests behind it (cost breakdown, provider, fallback). Our usage page inherits that: every day-bar opens its turns. Queue items name their trigger ("waiting for idle GPU") and announce what starts when idle arrives.</p>
+</div>
+</div>
+</div>
+
+<h2>4. Requirements &middot; condensed from the spec</h2>
+<div class="card"><table>
+<tr><th>Area</th><th>Requirement</th><th>The load it takes off the owner</th></tr>
+<tr><td class="code">routing</td><td>Auto by default; rules beat classifier; thread stickiness; badge row (model · reason · latency · left-machine) on every answer; escalate button; Private chats never leave the machine</td><td>never picks a model, never wonders who answered or what went to the cloud</td></tr>
+<tr><td class="code">budget</td><td>Meters Fable turns + local Claude Code transcripts; rolling 7-day adaptive pace (under = loosen, over = tighten, 90% = lock w/ override); pacing-bar visual; feeds the router</td><td>the quota mental math, deleted</td></tr>
+<tr><td class="code">machine</td><td>VRAM/RAM/idle sampler → ACTIVE-DAY / ACTIVE-LIGHT / IDLE; headroom picks the local model; interactive always preempts background</td><td>never thinks about VRAM or which Qwen fits right now</td></tr>
+<tr><td class="code">tasks</td><td>Interactive answers now; deferrable work queues for idle GPU with named triggers; overnight = big model's lane</td><td>overnight capacity used without scheduling anything by hand</td></tr>
+<tr><td class="code">roster</td><td>Scan via Ollama API; curated dated candidates with fit badges + Recommended quant; pull → gauntlet → lane, visible pipeline; bootstrap ladder (useful with zero downloads, day one)</td><td>model curation becomes approve/decline, adoption stays evidence-only</td></tr>
+<tr><td class="code">device&nbsp;+&nbsp;paths</td><td>Consent-first profiling (probe with shown commands, manual entry, or screenshot-parse w/ confirmation); machine.json per machine; models never located by path; synced folders excluded from storage, export is explicit</td><td>portable to any machine without path surgery; nothing syncs by accident</td></tr>
+<tr><td class="code">surface</td><td>Three columns + drawer; split view (2 panes); streaming + stop; preview pane independent of settings; context meter in composer; personas per chat</td><td>simple, fast, multiple windows; capacity finds him, he never checks</td></tr>
+</table>
+<p class="muted">Full written spec with rationale: <span class="code">projects/switchboard-spec.md</span>. Research and source links: <span class="code">resources/reference/switchboard-prior-art.html</span>.</p></div>
+
+</body>
+</html>
