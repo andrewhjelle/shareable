@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex, nofollow">
+<title>Nando&rsquo;s peri-peri &middot; cook mode</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{--tape:#17141a;--ink:#211d20;--skin:#edbd97;--lip:#d96b52;--lip2:#c24f3d;--cobalt:#4a6fb2;--signal:#cf4a2e;--cream:#f2e0c8;--cream2:#e9d5ba;--osd:#f4f1e4;--mut:#7a6a5e}
+*{box-sizing:border-box;margin:0}
+body{background:var(--tape);color:var(--ink);font:16px/1.55 "Zen Kaku Gothic New",sans-serif;overflow-x:hidden;min-height:100vh}
+a{color:var(--lip2);text-decoration:none;border-bottom:1px dotted rgba(194,79,61,.5)}
+a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
+.hubnav{position:sticky;top:0;z-index:50;background:rgba(33,29,32,.92);backdrop-filter:blur(6px);border-bottom:1px solid rgba(244,241,228,.18);display:flex;gap:2px;align-items:center;padding:8px 20px;font-family:"DotGothic16",monospace;letter-spacing:.14em;font-size:12px;text-transform:uppercase}
+.hubnav a{color:var(--osd);text-decoration:none;padding:8px 14px;border-radius:2px;border:1px solid transparent;transition:color .15s,border-color .15s}
+.hubnav a:hover{color:var(--skin);border-color:rgba(244,201,165,.4)}
+.hubnav a.here{color:var(--skin);border-color:var(--skin)}
+.hubnav .brand{font-family:"Anton",sans-serif;font-size:18px;letter-spacing:.06em;color:#f4f1e4;margin-right:14px;padding-right:14px;border-right:1px solid rgba(244,241,228,.2)}
+
+.mast{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:22px 22px 6px}
+.mast .ep{font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.2em;color:var(--osd);text-shadow:1px 0 0 rgba(217,107,82,.6),-1px 0 0 rgba(74,111,178,.6);text-transform:uppercase}
+.mast h1{font-family:"Anton",sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:.02em;text-transform:uppercase;transform:skewX(-6deg);color:var(--skin);text-shadow:3px 0 0 rgba(194,79,61,.55),-3px 0 0 rgba(74,111,178,.45);margin:8px 0 4px;line-height:1}
+.mast h1 i{font-style:normal;color:var(--lip)}
+.mast .sub{font-family:"DotGothic16",monospace;font-size:11.5px;letter-spacing:.14em;color:var(--osd);opacity:.85;text-transform:uppercase;margin-top:6px}
+
+.wrap{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:0 22px 100px;display:grid;gap:18px}
+
+.card{position:relative;background:var(--cream);color:var(--ink);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:22px 24px 20px;box-shadow:5px 6px 0 rgba(33,29,32,.85)}
+.card::before{content:"";position:absolute;inset:4px;border:1px solid var(--ink);opacity:.22;border-radius:2px 9px 3px 8px;pointer-events:none}
+.card > *{position:relative}
+.card h2{font-family:"Anton",sans-serif;font-size:26px;letter-spacing:.02em;text-transform:uppercase;transform:skewX(-5deg);margin:0 0 8px}
+.card h2 i{font-style:normal;color:var(--lip2)}
+.card h3{font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--lip2);margin:14px 0 6px}
+
+.card.step{background:var(--signal);color:var(--cream);border-color:var(--ink)}
+.card.step h2{color:var(--cream)}
+.card.step h2 i{color:#ffd9c4}
+.card.step .stepline{font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.2em;color:#ffd9c4;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline}
+.card.step .stepbody{font-size:20px;line-height:1.45;color:var(--cream);margin:14px 0 6px}
+.card.step .stepbody b{color:#ffe3d1}
+.card.step .steptip{font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.14em;color:#ffd9c4;text-transform:uppercase;margin-top:14px;padding-top:10px;border-top:1px dashed rgba(244,224,200,.4)}
+
+.progress{height:6px;background:rgba(33,29,32,.25);border-radius:3px;overflow:hidden;margin-top:14px}
+.progress .bar{height:100%;background:var(--cream);transition:width .25s ease}
+
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.btn{font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;background:var(--cream);color:var(--ink);border:1.5px solid var(--ink);padding:9px 16px;border-radius:2px;cursor:pointer;transition:transform .1s}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn.ghost{background:transparent;color:var(--cream);border-color:var(--cream)}
+.btn.ghost:hover{background:rgba(23,20,26,.25)}
+
+.card.timeline ol{margin:0;padding-left:26px}
+.card.timeline li{padding:6px 0;line-height:1.5}
+.card.timeline li.done{opacity:.45;text-decoration:line-through}
+.card.timeline li.now{background:rgba(207,74,46,.14);border-left:3px solid var(--lip2);margin-left:-14px;padding-left:11px;font-weight:600}
+
+.ingr{list-style:none;padding:0;margin:6px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px 20px}
+.ingr li{display:flex;align-items:baseline;gap:10px;line-height:1.5;padding:4px 0}
+.ingr input{width:16px;height:16px;accent-color:var(--lip2);cursor:pointer;flex:none}
+.ingr label{cursor:pointer;flex:1}
+.ingr li.checked label{opacity:.5;text-decoration:line-through}
+
+.recap{display:none}
+.recap.on{display:block}
+.recap ol{padding-left:22px}
+.recap li{padding:4px 0}
+
+.tabs{display:flex;gap:2px;margin:8px 0 0;border-bottom:1px dashed rgba(33,29,32,.35)}
+.tab{font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:0;color:var(--mut);padding:8px 14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.on{color:var(--lip2);border-bottom-color:var(--lip2)}
+
+.kmnote{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mut);text-transform:uppercase;margin-top:14px;text-align:center}
+
+/* scene */
+.scene{position:fixed;inset:0;z-index:0;pointer-events:none}
+.cel{position:absolute;inset:0;background:url("hub-cel-h9k2m7.jpg") 62% 18%/cover no-repeat;filter:saturate(.9) brightness(.9)}
+.celscrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(23,20,26,.22) 0%,rgba(23,20,26,.5) 55%,rgba(23,20,26,.82) 100%),linear-gradient(180deg,rgba(23,20,26,0) 40%,rgba(23,20,26,.55) 100%)}
+.vhs{position:fixed;inset:0;z-index:1;pointer-events:none}
+.scan{position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(10,8,12,.11) 3px 4px)}
+@media(prefers-reduced-motion:reduce){.scan{display:none}}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  var KEY='hub_pw_ok_v1';
+  try{
+    if (sessionStorage.getItem(KEY)!=='1'){
+      var tries=0;
+      while(tries<5){
+        var v=window.prompt('Password:');
+        if (v===null){ document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>'; return; }
+        if (v.trim().toLowerCase()==='dakz'){ sessionStorage.setItem(KEY,'1'); break; }
+        tries++;
+      }
+      if (sessionStorage.getItem(KEY)!=='1'){
+        document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>';
+        return;
+      }
+    }
+  }catch(e){}
+})();
+</script>
+
+<div class="scene"><div class="cel"></div><div class="celscrim"></div></div>
+<div class="vhs"><div class="scan"></div></div>
+
+<nav class="hubnav" aria-label="Hub nav">
+  <a class="brand" href="hub-h9k2m7.html">HUB</a>
+  <a href="house-design-h9k2m7.html">HOUSE DESIGN</a>
+  <a href="kids-h9k2m7.html">KIDS</a>
+  <a href="recipes-h9k2m7.html">RECIPES</a>
+  <a href="books-h9k2m7.html">BOOKS</a>
+  <a href="movies-h9k2m7.html">MOVIES</a>
+</nav>
+
+<header class="mast">
+  <div class="ep">COOK MODE &middot; ONE STEP AT A TIME &middot; SPACE / &rarr; = NEXT</div>
+  <h1>Nando&rsquo;s peri-peri <i>+ garlic mash</i></h1>
+  <div class="sub">~45 min active &middot; feeds 4 &middot; kids mild bowl + adults hot</div>
+</header>
+
+<div class="wrap">
+
+  <article class="card">
+    <div class="tabs">
+      <button class="tab on" data-tab="cook">Cook mode</button>
+      <button class="tab" data-tab="full">Full recipe</button>
+    </div>
+  </article>
+
+  <div id="cook-view">
+
+    <article class="card">
+      <h2>Ingredients &amp; <i>tools</i></h2>
+      <h3>Chicken</h3>
+      <ul class="ingr" id="ing-chicken"></ul>
+      <h3>Garlic mash</h3>
+      <ul class="ingr" id="ing-mash"></ul>
+      <h3>Tools</h3>
+      <ul class="ingr" id="ing-tools"></ul>
+    </article>
+
+    <article class="card step" id="step-card">
+      <div class="stepline"><span id="stepnum">STEP 1 OF 12</span><span id="steptime"></span></div>
+      <div class="stepbody" id="stepbody"></div>
+      <div class="steptip" id="steptip"></div>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <div class="controls">
+        <button class="btn" id="prev">&larr; Back</button>
+        <button class="btn" id="next">Next &rarr;</button>
+        <button class="btn ghost" id="reset">Reset</button>
+      </div>
+      <div class="kmnote">Space or &rarr; advances &middot; &larr; goes back &middot; progress auto-saves</div>
+    </article>
+
+    <article class="card timeline">
+      <h2>The <i>timeline</i></h2>
+      <ol id="timeline"></ol>
+    </article>
+
+  </div>
+
+  <div id="full-view" class="recap">
+
+    <article class="card">
+      <h2>Peri-peri <i>chicken</i></h2>
+      <h3>Prep</h3>
+      <ol>
+        <li>Overnight (or 4+ hr) marinade: coat chicken in peri-peri sauce, refrigerate.</li>
+        <li>Pull chicken from fridge 20 min before cook. Pat dry, keep the marinade cling.</li>
+      </ol>
+      <h3>Grill</h3>
+      <ol>
+        <li>Two zones: hot direct on one half, indirect on the other. Grate clean; oil rag on tongs.</li>
+        <li>Skin-side down over direct 4&ndash;5 min. Don&rsquo;t chase char &mdash; the basted sauce will paint it later.</li>
+        <li>Flip, move to indirect, close lid. 8&ndash;12 min more until thickest thigh reads <b>175&deg;F</b> (connective tissue melts).</li>
+        <li>Baste with a reserved marinade bowl (never one that touched raw chicken) the last 2 min per side.</li>
+        <li>Final 60 sec back over direct for lacquer.</li>
+        <li>Rest 5 min tented under foil. Second bowl of hot sauce at the table for adults.</li>
+      </ol>
+    </article>
+
+    <article class="card">
+      <h2>Nando&rsquo;s-style <i>garlic mash</i></h2>
+      <div class="meta" style="font-family:'DotGothic16',monospace;font-size:11px;letter-spacing:.1em;color:var(--mut);text-transform:uppercase;margin:2px 0 10px">1.5 lb Yukon golds &middot; 5&ndash;6 garlic cloves &middot; 4 tbsp butter &middot; &frac12; cup whole milk or heavy cream &middot; salt &middot; white pepper &middot; small pinch smoked paprika</div>
+      <ol>
+        <li>Peel + cut potatoes into 1.5-inch chunks.</li>
+        <li>Cover with cold salted water in a pot (1 tsp salt per quart). Bring to boil, then simmer 15&ndash;18 min until a paring knife slides in with zero resistance.</li>
+        <li>While they cook: finely mince or grate the garlic.</li>
+        <li>Small saucepan, low heat: melt 4 tbsp butter with the garlic. 2&ndash;3 min &mdash; fragrant, not brown.</li>
+        <li>Pour in &frac12; cup milk or cream. Warm through, keep warm.</li>
+        <li>Drain potatoes. Return to the empty hot pot for 30 sec shaking &mdash; dries them, makes silkier mash.</li>
+        <li>Push potatoes through a ricer back into the pot (ricer = the Nando&rsquo;s smooth texture; a masher + hand whisk works too).</li>
+        <li>Fold in the warm garlic butter + cream in three additions. Don&rsquo;t whip &mdash; overworked mash goes gluey.</li>
+        <li>Salt to taste (start 1 tsp), a pinch of white pepper, small pinch smoked paprika for the Nando&rsquo;s warm undertone.</li>
+        <li>Serve straight away. Chives + a little melted butter on the plate if showing off.</li>
+      </ol>
+    </article>
+
+    <article class="card">
+      <h2>Kid <i>mild</i></h2>
+      <p>Pull the kids&rsquo; portions from the mildest thighs (skin side, less baste) before the final hot-sauce basting round. Serve their sauce on the side, not brushed on. Mash is mild by default.</p>
+    </article>
+
+  </div>
+
+</div>
+
+<script>
+var CHICKEN = [
+  '4&ndash;6 chicken thighs (bone-in preferred), marinated overnight',
+  'Nando&rsquo;s peri-peri sauce &mdash; medium and/or hot',
+  'Neutral oil (grill grates)'
+];
+var MASH = [
+  '1.5 lb Yukon gold potatoes',
+  '5&ndash;6 garlic cloves',
+  '4 tbsp butter',
+  '&frac12; cup whole milk or heavy cream',
+  'Kosher salt, white pepper, smoked paprika',
+  'Chives (optional)'
+];
+var TOOLS = [
+  'Grill (2 zones: direct + indirect)',
+  'Pot for potatoes + small saucepan',
+  'Ricer (best) or masher + hand whisk',
+  'Instant-read thermometer',
+  'Foil for resting'
+];
+
+var STEPS = [
+  {t:'Prep station', body:'Pull marinated chicken from fridge. <b>Pat dry</b>, keep the marinade cling. Set out oil, tongs, and a basting bowl of fresh sauce that never touches raw chicken.', tip:'20 min sit at room temp = even cook', time:'0:00'},
+  {t:'Potatoes to the pot', body:'Peel + cut 1.5 lb Yukon golds into <b>1.5-inch chunks</b>. Cover with cold salted water (1 tsp per quart). Bring to boil, then simmer.', tip:'Cold-water start = even doneness edge-to-center', time:'0:00'},
+  {t:'Fire the grill', body:'Light both zones. Grate clean, oil rag on tongs. You want the hot side <b>ripping hot</b>, the indirect side around 350&deg;F.', tip:'Two zones = char without burning', time:'0:05'},
+  {t:'Garlic + butter', body:'Finely mince or grate 5&ndash;6 garlic cloves. Small saucepan, <b>low heat</b>: melt 4 tbsp butter with the garlic. 2&ndash;3 min &mdash; fragrant, not brown.', tip:'If garlic browns, start over &mdash; bitter', time:'0:08'},
+  {t:'Cream in', body:'Pour &frac12; cup whole milk or heavy cream into the garlic butter. Warm through. <b>Keep warm</b> on the lowest burner.', tip:'Warm cream + warm potatoes = silky, not gluey', time:'0:11'},
+  {t:'Chicken on: sear', body:'Skin-side down over the <b>direct zone</b>. 4&ndash;5 min. Don&rsquo;t chase char &mdash; the basted sauce will paint it later.', tip:'Leave it alone the whole 4 min', time:'0:13'},
+  {t:'Chicken: flip + indirect', body:'Flip, move to the <b>indirect side</b>, close the lid. 8&ndash;12 min more until thickest thigh reads <b>175&deg;F</b>. Thighs like it hot &mdash; connective tissue melts around 170&deg;.', tip:'Meat thermometer decides, not the clock', time:'0:18'},
+  {t:'Check potatoes', body:'~15&ndash;18 min total simmer. A paring knife should slide in with <b>zero resistance</b>. Drain them. Return to the empty hot pot for 30 sec, shaking. This dries them.', tip:'Wet potatoes = watery mash', time:'0:26'},
+  {t:'Rice + fold', body:'Push all the potatoes through a ricer back into the pot. Fold in the warm garlic butter + cream in <b>three additions</b>. Don&rsquo;t whip &mdash; overworked mash goes gluey.', tip:'Rice > mash > whip, for texture', time:'0:29'},
+  {t:'Season the mash', body:'<b>1 tsp salt</b> to start, pinch of white pepper, and a <b>small pinch smoked paprika</b> for the Nando&rsquo;s warm undertone. Taste, adjust. Chives if you have them.', tip:'Paprika is the Nando&rsquo;s signal &mdash; go small', time:'0:31'},
+  {t:'Baste the chicken', body:'Last 2 min per side over indirect: brush with reserved sauce. Then <b>60 sec back over direct</b> per side for lacquer.', tip:'Never dip the brush back in raw-marinade bowl', time:'0:33'},
+  {t:'Rest + plate', body:'Off the grill. <b>Rest 5 min tented under foil</b>, not wrapped. Pull kid portions from the mildest thighs before adding table-side hot sauce. Plate: mash under, chicken on top, chives, adults get the hot bowl.', tip:'Skipping the rest = dry chicken', time:'0:36'}
+];
+
+// ---- render ingredients ----
+function renderIngr(el, items, key){
+  el = document.getElementById(el);
+  el.innerHTML = '';
+  var checked = {};
+  try{ checked = JSON.parse(localStorage.getItem('nppp_'+key)||'{}'); }catch(e){}
+  items.forEach(function(txt, i){
+    var li=document.createElement('li');
+    var id='ing-'+key+'-'+i;
+    li.innerHTML='<input type="checkbox" id="'+id+'"><label for="'+id+'">'+txt+'</label>';
+    if(checked[i]){ li.classList.add('checked'); li.querySelector('input').checked=true; }
+    li.querySelector('input').addEventListener('change', function(e){
+      li.classList.toggle('checked', e.target.checked);
+      checked[i]=e.target.checked;
+      try{ localStorage.setItem('nppp_'+key, JSON.stringify(checked)); }catch(e){}
+    });
+    el.appendChild(li);
+  });
+}
+renderIngr('ing-chicken', CHICKEN, 'chicken');
+renderIngr('ing-mash', MASH, 'mash');
+renderIngr('ing-tools', TOOLS, 'tools');
+
+// ---- render timeline ----
+var tl = document.getElementById('timeline');
+STEPS.forEach(function(s,i){
+  var li=document.createElement('li');
+  li.dataset.i=i;
+  li.innerHTML=s.t+' <span style="color:var(--mut);font-family:\'DotGothic16\',monospace;font-size:10.5px;letter-spacing:.1em">'+s.time+'</span>';
+  tl.appendChild(li);
+});
+
+// ---- step engine ----
+var IDX_KEY='nppp_stepidx';
+var idx = 0;
+try{ idx = parseInt(localStorage.getItem(IDX_KEY)||'0',10); if(isNaN(idx)||idx<0||idx>=STEPS.length) idx=0; }catch(e){}
+
+var stepnum = document.getElementById('stepnum');
+var steptime = document.getElementById('steptime');
+var stepbody = document.getElementById('stepbody');
+var steptip = document.getElementById('steptip');
+var bar = document.getElementById('bar');
+var prev = document.getElementById('prev');
+var next = document.getElementById('next');
+var reset = document.getElementById('reset');
+
+function render(){
+  var s = STEPS[idx];
+  stepnum.innerHTML = 'STEP '+(idx+1)+' OF '+STEPS.length+' &middot; '+s.t.toUpperCase();
+  steptime.textContent = '~'+s.time+' IN';
+  stepbody.innerHTML = s.body;
+  steptip.textContent = s.tip;
+  bar.style.width = ((idx+1)/STEPS.length*100)+'%';
+  prev.disabled = idx===0;
+  next.disabled = false;
+  next.innerHTML = idx===STEPS.length-1 ? 'Done &check;' : 'Next &rarr;';
+  [...tl.children].forEach(function(li,i){
+    li.classList.toggle('done', i<idx);
+    li.classList.toggle('now', i===idx);
+  });
+  try{ localStorage.setItem(IDX_KEY, String(idx)); }catch(e){}
+}
+prev.onclick=function(){ if(idx>0){ idx--; render(); } };
+next.onclick=function(){ if(idx<STEPS.length-1){ idx++; render(); } };
+reset.onclick=function(){ if(confirm('Reset to step 1 and clear ingredient checks?')){
+  idx=0;
+  try{ localStorage.removeItem(IDX_KEY); localStorage.removeItem('nppp_chicken'); localStorage.removeItem('nppp_mash'); localStorage.removeItem('nppp_tools'); }catch(e){}
+  renderIngr('ing-chicken', CHICKEN, 'chicken');
+  renderIngr('ing-mash', MASH, 'mash');
+  renderIngr('ing-tools', TOOLS, 'tools');
+  render();
+} };
+document.addEventListener('keydown', function(e){
+  if (e.target && (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')) return;
+  if (e.key===' '||e.key==='ArrowRight'||e.key==='Enter'){ e.preventDefault(); next.click(); }
+  if (e.key==='ArrowLeft'){ e.preventDefault(); prev.click(); }
+});
+render();
+
+// ---- tabs ----
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click', function(){
+    document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('on'); });
+    t.classList.add('on');
+    var which = t.dataset.tab;
+    document.getElementById('cook-view').style.display = which==='cook' ? '' : 'none';
+    document.getElementById('full-view').classList.toggle('on', which==='full');
+  });
+});
+</script>
+
+</body>
+</html>
