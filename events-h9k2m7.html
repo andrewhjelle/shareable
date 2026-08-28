@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex, nofollow">
+<title>Events</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --tape:#17141a;--ink:#211d20;--cream:#f2e0c8;--cream2:#e9d5ba;
+  --lip:#d96b52;--lip2:#c24f3d;--cobalt:#4a6fb2;--signal:#cf4a2e;
+  --osd:#f4f1e4;--skin:#edbd97;--blush:#e58087;
+  --rule-soft:rgba(33,29,32,0.35);--rule-faint:rgba(33,29,32,0.18);
+  --mut:#7a6a5e;--zada:#a855f7;--kai:#4a6fb2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Zen Kaku Gothic New",system-ui,sans-serif;font-size:14px;line-height:1.5;color:var(--ink);background:var(--tape);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--lip2);text-decoration:none;border-bottom:1px dotted rgba(194,79,61,.5)}
+a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+::selection{background:var(--lip);color:var(--cream)}
+
+.hubnav{position:sticky;top:0;z-index:50;background:rgba(33,29,32,.92);backdrop-filter:blur(6px);border-bottom:1px solid rgba(244,241,228,.18);display:flex;gap:2px;align-items:center;padding:8px 20px;font-family:"DotGothic16",monospace;letter-spacing:.14em;font-size:12px;text-transform:uppercase;flex-wrap:wrap}
+.hubnav a{color:var(--osd);text-decoration:none;padding:8px 14px;border-radius:2px;border:1px solid transparent;transition:color .15s,border-color .15s}
+.hubnav a:hover{color:var(--skin);border-color:rgba(244,201,165,.4)}
+.hubnav a.here{color:var(--skin);border-color:var(--skin)}
+.hubnav .brand{font-family:"Anton",sans-serif;font-size:18px;letter-spacing:.06em;color:#f4f1e4;margin-right:14px;padding-right:14px;border-right:1px solid rgba(244,241,228,.2)}
+
+.main{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:22px 22px 60px;display:grid;grid-template-columns:1fr;gap:18px;align-items:start}
+@media(min-width:900px){.main{grid-template-columns:1fr 1.3fr}}
+.col{display:grid;gap:18px;min-width:0}
+
+.card{position:relative;background:var(--cream);color:var(--ink);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:18px 20px;box-shadow:5px 6px 0 rgba(33,29,32,.85)}
+.card::before{content:"";position:absolute;inset:4px;border:1px solid var(--ink);opacity:.22;border-radius:2px 9px 3px 8px;pointer-events:none}
+.card > *{position:relative}
+.card.urgent{background:linear-gradient(180deg,#f7c6b0 0%,var(--cream) 100%);border-color:var(--lip2)}
+.card.watching{background:linear-gradient(180deg,#f7ead4 0%,var(--cream) 100%)}
+.card.free{background:#e7ead0}
+
+h2{font-family:"Anton",sans-serif;font-size:24px;letter-spacing:.02em;text-transform:uppercase;transform:skewX(-5deg);color:var(--ink);line-height:1.05;margin:2px 0 4px}
+h2 em,h2 i{font-style:normal;color:var(--lip2)}
+h3{font-family:"Anton",sans-serif;font-size:17px;letter-spacing:.03em;text-transform:uppercase;transform:skewX(-4deg);color:var(--ink);margin:14px 0 6px;line-height:1.1}
+.subhead{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:10px}
+.blurb{font-size:13.5px;color:var(--ink);line-height:1.55}
+.blurb b{color:var(--lip2)}
+.blurb p+p{margin-top:8px}
+
+/* Event list — one row per event */
+.evlist{list-style:none;margin-top:6px}
+.evlist li{padding:10px 0;border-top:1.5px dashed var(--rule-soft)}
+.evlist li:first-child{border-top:0}
+.evlist .h{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.evlist .t{font-weight:700;font-size:14.5px;color:var(--ink);flex:1 1 auto;min-width:0}
+.evlist .d{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.10em;text-transform:uppercase;color:var(--lip2);white-space:nowrap;flex:0 0 auto}
+.evlist .m{font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-top:2px}
+.evlist .n{font-size:12.5px;color:var(--ink);line-height:1.45;margin-top:4px}
+.evlist .n b{color:var(--lip2)}
+.evlist .tag{display:inline-block;font-family:"DotGothic16",monospace;font-size:9px;letter-spacing:.10em;text-transform:uppercase;padding:1px 5px;border:1px solid var(--rule-soft);color:var(--mut);background:var(--cream2);margin-right:4px;border-radius:2px}
+.evlist .tag.free{background:#c8dda2;color:#3a5a1a;border-color:#7c9a3f}
+.evlist .tag.hot{background:var(--lip2);color:var(--cream);border-color:var(--lip2)}
+.evlist .tag.kids{background:rgba(74,111,178,.15);color:var(--kai);border-color:var(--kai)}
+
+/* Playbook list */
+.play{list-style:none;margin-top:4px}
+.play li{padding:6px 0 6px 22px;position:relative;font-size:13.5px;color:var(--ink);line-height:1.5}
+.play li::before{content:"→";position:absolute;left:0;top:5px;color:var(--lip2);font-weight:700}
+.play li b{color:var(--lip2)}
+.play li a{color:var(--cobalt);border-bottom-color:rgba(74,111,178,.5)}
+
+/* Sources */
+.src{list-style:none;margin-top:4px;font-size:12.5px}
+.src li{padding:5px 0;border-top:1.5px dashed var(--rule-soft);display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.src li:first-child{border-top:0}
+.src .n{flex:1 1 auto;font-weight:700;color:var(--ink)}
+.src .u{flex:0 0 auto;font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.06em;color:var(--cobalt);white-space:nowrap}
+.src .d{flex-basis:100%;font-size:11.5px;color:var(--mut);margin-top:2px}
+
+/* scene bg */
+.scene{position:fixed;inset:0;z-index:0;pointer-events:none}
+.cel{position:absolute;inset:0;background:url("hub-cel-h9k2m7.jpg") 62% 18%/cover no-repeat;filter:saturate(.92) brightness(.9)}
+.celscrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(23,20,26,.22) 0%,rgba(23,20,26,.5) 55%,rgba(23,20,26,.82) 100%),linear-gradient(180deg,rgba(23,20,26,0) 40%,rgba(23,20,26,.55) 100%)}
+.vhs{position:fixed;inset:0;z-index:1;pointer-events:none}
+.scan{position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(10,8,12,.11) 3px 4px)}
+.track{position:absolute;left:0;right:0;height:9px;background:linear-gradient(180deg,transparent,rgba(244,241,228,.1) 45%,rgba(244,241,228,.1) 55%,transparent);animation:trackmove 90s linear infinite}
+.track.t2{height:5px;animation-duration:130s;animation-delay:-40s;opacity:.7}
+@keyframes trackmove{from{top:-4%}to{top:104%}}
+.grainsvg{position:absolute;inset:0;width:100%;height:100%;opacity:.55;mix-blend-mode:overlay}
+.hubnav,.main{position:relative;z-index:2}
+.hubnav{z-index:50}
+@media(prefers-reduced-motion:reduce){.track{animation:none}}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  var KEY='hub_pw_ok_v1';
+  try{
+    if (sessionStorage.getItem(KEY)!=='1'){
+      var tries=0;
+      while(tries<5){
+        var v=window.prompt('Password:');
+        if (v===null){ document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>'; return; }
+        if (v.trim().toLowerCase()==='dakz'){ sessionStorage.setItem(KEY,'1'); break; }
+        tries++;
+      }
+      if (sessionStorage.getItem(KEY)!=='1'){
+        document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>';
+        return;
+      }
+    }
+  }catch(e){}
+})();
+</script>
+
+<div class="scene"><div class="cel"></div><div class="celscrim"></div></div>
+<div class="vhs"><div class="scan"></div><div class="track"></div><div class="track t2"></div>
+<svg class="grainsvg" aria-hidden="true"><filter id="g"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2"></feTurbulence><feColorMatrix type="matrix" values="0 0 0 0 .9 0 0 0 0 .85 0 0 0 0 .78 0 0 0 .07 0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#g)"></rect></svg></div>
+
+<nav class="hubnav" aria-label="Hub nav">
+  <a class="brand" href="hub-h9k2m7.html">HUB</a>
+  <a href="house-design-h9k2m7.html">HOUSE DESIGN</a>
+  <a href="kids-h9k2m7.html">KIDS</a>
+  <a href="recipes-h9k2m7.html">RECIPES</a>
+  <a href="books-h9k2m7.html">BOOKS</a>
+  <a href="movies-h9k2m7.html">MOVIES</a>
+  <a href="music-h9k2m7.html">MUSIC</a>
+  <a href="events-h9k2m7.html" class="here">EVENTS</a>
+</nav>
+
+<main class="main">
+<div class="col">
+
+<article class="card urgent">
+<h2>Tonight <i>·</i> BTS at Soldier Field</h2>
+<div class="subhead">FRI AUG 28 &middot; 8 PM &middot; DOORS 6 PM &middot; TIME-SENSITIVE</div>
+<div class="blurb">
+<p>Kids watched the Chicago livestream last night and want to go. Second Chicago night is <b>tonight</b>. Andrew&rsquo;s cheap-seats window is now.</p>
+<p><b>Playbook:</b></p>
+</div>
+<ul class="play">
+<li><b><a href="https://gametime.co/" target="_blank" rel="noopener">Gametime app</a>:</b> the best last-minute lever. Prices genuinely drop 2&ndash;6 hrs before showtime as brokers dump inventory. Set the alert now.</li>
+<li><b><a href="https://www.tickpick.com/" target="_blank" rel="noopener">TickPick</a>:</b> same secondary market as StubHub, lower fees. Cross-check every price you see on StubHub against TickPick.</li>
+<li><b><a href="https://www.stubhub.com/bts-chicago-tickets-8-27-2026/event/160262060/" target="_blank" rel="noopener">StubHub last-minute</a>:</b> the 3&ndash;6 pm window is when broker panic starts if the show didn&rsquo;t sell out. Watch for &ldquo;price drop&rdquo; badges.</li>
+<li><b>Reality check on BTS specifically:</b> K-pop scarcity is real. Even last-minute may not be $50 seats. Set a max ($X/ticket, times 3 or 4 tickets, plus fees) and walk if it never gets there.</li>
+<li><b>Gate policy at Soldier Field:</b> clear-bag only (12&times;6&times;12 max), no backpacks, cameras with lenses under 6&Prime; OK. Cashless venue. Doors 6 pm.</li>
+<li><b>Transit:</b> CTA #146 or #130 bus, Roosevelt L, or Metra 18th St drops right at the field. Parking = expensive + slow. Skip it.</li>
+</ul>
+</article>
+
+<article class="card watching">
+<h2>Sept 9 <i>·</i> Kai&rsquo;s Xmas game</h2>
+<div class="subhead">WED SEP 9 &middot; INTER MIAMI @ CHICAGO FIRE &middot; SOLDIER FIELD</div>
+<div class="blurb">
+<p><b>Messi is expected to play</b> the Sept 9 return fixture (he skipped the July 22 one — too soon after the World Cup final). This is the one you promised Kai. Now is the buy window for reasonable prices.</p>
+</div>
+<ul class="play">
+<li><b>Buy sooner not later.</b> Prices will only go up as Sept 9 approaches if Messi&rsquo;s status stays confirmed. Reasonable seats are cheapest ~2 weeks out (i.e. now-ish).</li>
+<li><b>Chicago Fire ticket-holder resale window:</b> often undercuts StubHub by 30&ndash;50%. Check the <a href="https://www.chicagofirefc.com/competitions/mls-regular-season/2026/matches/chivsmia-09-09-2026/" target="_blank" rel="noopener">Fire&rsquo;s official page</a> for their marketplace before StubHub.</li>
+<li><b>The Messi-injury lever:</b> if he&rsquo;s ruled out 24&ndash;48 hrs before, prices crater. Set price alerts. If you&rsquo;re willing to gamble, wait; if not, buy now.</li>
+<li><b>Family strategy:</b> upper deck at Soldier Field is worst seats but Kai still SEES Messi from there. Save 60%.</li>
+<li><b>School night for Kai</b> (rising 6th, Wed). 7:30 PM kickoff, ends ~9:45. Home by 10:30. Weigh it.</li>
+</ul>
+</article>
+
+<article class="card free">
+<h2>Sept 3&ndash;6 <i>·</i> Chicago Jazz Festival</h2>
+<div class="subhead">MILLENNIUM PARK &middot; ALL FREE &middot; PRITZKER PAVILION 6&ndash;9 PM</div>
+<div class="blurb">
+<p><b>This is the sleeper cheat code.</b> Four days of world-class jazz at Millennium Park, all free. Ties directly into the music page&rsquo;s Duke Ellington (Feb) and Year 2 jazz-roots plan &mdash; kids can hear the real thing live before we ever talk about it.</p>
+<p><b>Programming worth showing up for:</b> Dee Dee Bridgewater &amp; Bill Charlap Duo, Robert Glasper, M.E.B. (Miles Electric Band), Paquito D&rsquo;Rivera. All at Pritzker Pavilion, all free. Bring a blanket.</p>
+<p><b>Easiest family plan:</b> pick one evening (Fri Sep 4 or Sat Sep 5), arrive 5:30, blanket on the lawn, food from a nearby taco/hot dog spot, leave when Zada fades. First live-jazz experience for both kids.</p>
+</div>
+</article>
+
+<article class="card">
+<h2>Cheap-tickets <i>playbook</i></h2>
+<div class="subhead">HOW TO ACTUALLY GET IN CHEAP</div>
+<ul class="play">
+<li><b>Gametime app:</b> day-of pricing for sports + some concerts. Real drops 2&ndash;6 hrs before start. Set price alerts, not searches.</li>
+<li><b>TickPick:</b> like StubHub, ~15% lower fees. Cross-check both for anything.</li>
+<li><b>SeatGeek deal alerts:</b> set a per-ticket max on any specific event; they ping when the market crosses your threshold.</li>
+<li><b>Team/venue resale first:</b> Chicago Fire, CSO, Lyric all have their own resale platforms that undercut third-party. Always check the team/venue site before StubHub.</li>
+<li><b>Ravinia lawn tickets:</b> $30&ndash;50 adult, kids often free, bring a blanket + picnic. The cheapest way to see a name act in Chicago.</li>
+<li><b>Grant Park Music Festival</b> (summer only, next season): free at Pritzker Pavilion, full orchestra, mid-June through mid-August. Set a reminder for May 2027.</li>
+<li><b>CSO Family Matinees</b> at Symphony Center: ~$25/seat, 55 min, 5&ndash;12 age band. Andrew&rsquo;s concert-anchor slot on the music page.</li>
+<li><b>Miss-Messi hedge (or its equivalent):</b> for star-driven events, injury news 24&ndash;48 hr out cratrers resale prices. Only for the risk-tolerant.</li>
+<li><b>Standing room:</b> at Metro, Thalia Hall, Lincoln Hall &mdash; cheapest way in, best for the kids-and-Debbie later Zada is old enough for a non-seated show.</li>
+</ul>
+</article>
+
+</div>
+
+<div class="col">
+
+<article class="card">
+<h2>On the <i>radar</i></h2>
+<div class="subhead">SEP 2026 &rarr; SPRING 2027 &middot; UPDATED WEEKLY</div>
+<ol class="evlist">
+<li><div class="h"><span class="t">Chicago Jazz Festival</span><span class="d">SEP 3&ndash;6</span></div><div class="m">Millennium Park &middot; Pritzker Pavilion 6&ndash;9 PM</div><div class="n"><span class="tag free">FREE</span><span class="tag kids">KIDS OK</span> Dee Dee Bridgewater, Robert Glasper, Miles Electric Band, Paquito D&rsquo;Rivera. First live-jazz for both kids. Blanket + lawn.</div></li>
+<li><div class="h"><span class="t">Inter Miami @ Chicago Fire</span><span class="d">WED SEP 9</span></div><div class="m">Soldier Field &middot; 7:30 PM &middot; Messi expected</div><div class="n"><span class="tag hot">KAI XMAS</span> Buy 2 weeks out for best price. Fire resale first, then TickPick.</div></li>
+<li><div class="h"><span class="t">Alison Krauss &amp; Union Station</span><span class="d">SAT SEP 12</span></div><div class="m">Ravinia &middot; lawn tickets $30&ndash;50 &middot; kids often free</div><div class="n"><span class="tag kids">KIDS OK</span> Bluegrass/folk with Jerry Douglas on dobro. Zada-friendly texture, direct lyric-driven music, great intro to American roots. Ravinia = the family-picnic answer.</div></li>
+<li><div class="h"><span class="t">Los Tigres del Norte</span><span class="d">SUN SEP 13</span></div><div class="m">Ravinia &middot; nortena / regional Mexican</div><div class="n"><span class="tag kids">KIDS OK</span> Cultural exposure the classical rotation won&rsquo;t give them. Andrew, consider.</div></li>
+<li><div class="h"><span class="t">Jacob Collier</span><span class="d">WED SEP 23</span></div><div class="m">Ravinia festival closer</div><div class="n"><span class="tag kids">KIDS OK</span> Young 30-something jazz-pop virtuoso, huge kid appeal (loops, joy, multi-instrumentalist showmanship). Watch a YouTube clip with them first &mdash; they&rsquo;ll ask to go.</div></li>
+<li><div class="h"><span class="t">CSO: Symphonic Superheroes</span><span class="d">SAT NOV 21</span></div><div class="m">Symphony Center &middot; family matinee &middot; ~$25/seat</div><div class="n"><span class="tag kids">KIDS OK</span> Superhero-scored film music (John Williams et al) with CSO. Kai will recognize half of it from the car playlist. First real concert-hall visit.</div></li>
+<li><div class="h"><span class="t">CSO: Once Upon a Symphony &mdash; Stone Soup</span><span class="d">DEC 5 &rarr; FEB 13</span></div><div class="m">Symphony Center &middot; kid-narrated storytelling + orchestra</div><div class="n"><span class="tag kids">KIDS OK</span> Runs multiple weekends. Great Zada-scale (7-yo) live-orchestra intro.</div></li>
+<li><div class="h"><span class="t">CSO: The Young Person&rsquo;s Guide to the Orchestra</span><span class="d">SAT MAR 6 2027</span></div><div class="m">Symphony Center &middot; family matinee &middot; ~$25/seat</div><div class="n"><span class="tag hot">MUSIC-YEAR CAPSTONE</span> Britten&rsquo;s exact same concept as Peter and the Wolf &mdash; every instrument gets highlighted. By March they&rsquo;ll have done Prokofiev, Bach, Tchaikovsky, Beethoven, Ellington, Vivaldi. This is the concert that ties it all together. <b>Buy tickets now.</b></div></li>
+</ol>
+</article>
+
+<article class="card">
+<h2>How I <i>scan</i></h2>
+<div class="subhead">SOURCES &middot; UPDATED EVERY MONDAY</div>
+<ul class="src">
+<li><span class="n">Choose Chicago</span><span class="u">choosechicago.com</span><span class="d">Master calendar for citywide events. Filter by family / free / date.</span></li>
+<li><span class="n">Do312</span><span class="u">do312.com</span><span class="d">Best aggregator for live music, comedy, sports. &ldquo;Free&rdquo; tab is where budget wins.</span></li>
+<li><span class="n">Time Out Chicago</span><span class="u">timeout.com/chicago</span><span class="d">Weekly &ldquo;this weekend&rdquo; roundup + last-minute tips (BTS article was theirs).</span></li>
+<li><span class="n">CSO calendar</span><span class="u">cso.org</span><span class="d">Family Matinees on the &ldquo;CSO for Kids&rdquo; page. Subscribe early Aug for the season.</span></li>
+<li><span class="n">Ravinia</span><span class="u">ravinia.org</span><span class="d">Full lineup goes up in March. Lawn tickets often on sale in April.</span></li>
+<li><span class="n">Millennium Park calendar</span><span class="u">chicago.gov/millpark</span><span class="d">Grant Park Music Fest, Jazz Fest, film series, free programming.</span></li>
+<li><span class="n">Chicago Fire tickets</span><span class="u">chicagofirefc.com/tickets</span><span class="d">Season-holder resale here first, before third-party.</span></li>
+<li><span class="n">Ticketmaster verified fan</span><span class="u">ticketmaster.com</span><span class="d">For hot presales (BTS-tier). Sign up per artist as they&rsquo;re announced.</span></li>
+<li><span class="n">Gametime / TickPick / SeatGeek</span><span class="u">apps</span><span class="d">Day-of drops for sports; price alerts for concerts.</span></li>
+<li><span class="n">Explore Oak Park &amp; Beyond</span><span class="u">oakparkandbeyond.org</span><span class="d">Local (5-min drive) events. Wednesday Journal has a weekly roundup.</span></li>
+<li><span class="n">FLW Trust</span><span class="u">flwright.org</span><span class="d">Frank Lloyd Wright house concerts + events in Oak Park.</span></li>
+</ul>
+</article>
+
+<article class="card">
+<h2>Family <i>filters</i></h2>
+<div class="subhead">WHAT MAKES SOMETHING RIGHT FOR US</div>
+<ul class="play">
+<li><b>Zada-safe:</b> under 3 hrs total including transit; done by 10 PM if a school night; no jump-scares (Wednesday-tier fine, horror not); can leave early without drama.</li>
+<li><b>Kai-hook:</b> something to identify by name (composer, artist, athlete); shows up in the car playlist / breakfast rotation later; opportunity for him to &ldquo;spot the borrow&rdquo; per the music page mechanic.</li>
+<li><b>Budget filter:</b> free tier (Millennium Park, Grant Park Music Fest, Jazz Fest) is default. Paid tier = $30&ndash;100 for the family (Ravinia lawn, CSO Family Matinees). Premium ($200+) reserved for once-a-year anchors (BTS, Messi).</li>
+<li><b>Debbie signal:</b> add it here so Andrew and Debbie decide together, not one-sided.</li>
+</ul>
+</article>
+
+<article class="card">
+<h2>Anti-<i>patterns</i></h2>
+<div class="subhead">DON&rsquo;T</div>
+<ul class="play">
+<li><b>Don&rsquo;t buy face-value from a scalper site</b> until you&rsquo;ve checked the team/venue resale. 40% price haircut is normal.</li>
+<li><b>Don&rsquo;t overpay for parking.</b> Downtown = transit. Ravinia = shuttle from Metra.</li>
+<li><b>Don&rsquo;t stack two big outings in one weekend.</b> Kai and Zada both burn out. One anchor event per weekend.</li>
+<li><b>Don&rsquo;t force attendance</b> at anything a kid&rsquo;s cold on. The music page principle applies here too &mdash; watching a livestream now, in-person next year, is a valid pathway.</li>
+</ul>
+</article>
+
+</div>
+</main>
+</body>
+</html>
