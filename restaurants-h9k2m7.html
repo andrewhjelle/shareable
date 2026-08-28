@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex, nofollow">
+<title>Restaurants</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --tape:#17141a;--ink:#211d20;--cream:#f2e0c8;--cream2:#e9d5ba;
+  --lip:#d96b52;--lip2:#c24f3d;--cobalt:#4a6fb2;--signal:#cf4a2e;
+  --osd:#f4f1e4;--skin:#edbd97;--blush:#e58087;
+  --rule-soft:rgba(33,29,32,0.35);--rule-faint:rgba(33,29,32,0.18);
+  --mut:#7a6a5e;--olive:#6b7a3f;--gold:#b8892a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Zen Kaku Gothic New",system-ui,sans-serif;font-size:14px;line-height:1.5;color:var(--ink);background:var(--tape);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--lip2);text-decoration:none;border-bottom:1px dotted rgba(194,79,61,.5)}
+a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+::selection{background:var(--lip);color:var(--cream)}
+
+.hubnav{position:sticky;top:0;z-index:50;background:rgba(33,29,32,.92);backdrop-filter:blur(6px);border-bottom:1px solid rgba(244,241,228,.18);display:flex;gap:2px;align-items:center;padding:8px 20px;font-family:"DotGothic16",monospace;letter-spacing:.14em;font-size:12px;text-transform:uppercase;flex-wrap:wrap}
+.hubnav a{color:var(--osd);text-decoration:none;padding:8px 14px;border-radius:2px;border:1px solid transparent;transition:color .15s,border-color .15s}
+.hubnav a:hover{color:var(--skin);border-color:rgba(244,201,165,.4)}
+.hubnav a.here{color:var(--skin);border-color:var(--skin)}
+.hubnav .brand{font-family:"Anton",sans-serif;font-size:18px;letter-spacing:.06em;color:#f4f1e4;margin-right:14px;padding-right:14px;border-right:1px solid rgba(244,241,228,.2)}
+
+.main{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:22px 22px 60px;display:grid;grid-template-columns:1fr;gap:18px;align-items:start}
+@media(min-width:900px){.main{grid-template-columns:1fr 1.3fr}}
+.col{display:grid;gap:18px;min-width:0}
+
+.card{position:relative;background:var(--cream);color:var(--ink);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:18px 20px;box-shadow:5px 6px 0 rgba(33,29,32,.85)}
+.card::before{content:"";position:absolute;inset:4px;border:1px solid var(--ink);opacity:.22;border-radius:2px 9px 3px 8px;pointer-events:none}
+.card > *{position:relative}
+.card.anchor{background:linear-gradient(180deg,#f7ead4 0%,var(--cream) 100%);border-color:var(--lip2)}
+.card.ethos{background:linear-gradient(180deg,#e7ead0 0%,var(--cream) 100%)}
+.card.gap{background:#e9dcc7;border-color:var(--mut)}
+
+h2{font-family:"Anton",sans-serif;font-size:24px;letter-spacing:.02em;text-transform:uppercase;transform:skewX(-5deg);color:var(--ink);line-height:1.05;margin:2px 0 4px}
+h2 em,h2 i{font-style:normal;color:var(--lip2)}
+h3{font-family:"Anton",sans-serif;font-size:16px;letter-spacing:.03em;text-transform:uppercase;transform:skewX(-4deg);color:var(--ink);margin:14px 0 4px;line-height:1.1}
+.subhead{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+.blurb{font-size:13.5px;color:var(--ink);line-height:1.55}
+.blurb b{color:var(--lip2)}
+.blurb p+p{margin-top:8px}
+
+/* Restaurant list — one row per spot */
+.rlist{list-style:none;margin-top:6px}
+.rlist li{padding:9px 0;border-top:1.5px dashed var(--rule-soft)}
+.rlist li:first-child{border-top:0}
+.rlist .h{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.rlist .t{font-weight:700;font-size:14.5px;color:var(--ink);flex:1 1 auto;min-width:0}
+.rlist .c{font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.10em;text-transform:uppercase;color:var(--lip2);white-space:nowrap;flex:0 0 auto}
+.rlist .n{font-size:12.5px;color:var(--ink);line-height:1.45;margin-top:3px}
+.rlist .n b{color:var(--lip2)}
+.rlist .addr{font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.06em;color:var(--mut);margin-top:2px}
+
+/* Tags */
+.tag{display:inline-block;font-family:"DotGothic16",monospace;font-size:9px;letter-spacing:.10em;text-transform:uppercase;padding:1px 5px;border:1px solid var(--rule-soft);color:var(--mut);background:var(--cream2);margin-right:4px;border-radius:2px}
+.tag.dest{background:var(--lip2);color:var(--cream);border-color:var(--lip2)}
+.tag.conv{background:#c8dda2;color:#3a5a1a;border-color:#7c9a3f}
+.tag.new{background:var(--gold);color:var(--tape);border-color:var(--gold)}
+.tag.gap{background:#ddb5a5;color:#5a2418;border-color:#8a2c1c}
+.tag.watch{background:#e9d5ba;color:var(--ink);border-color:var(--mut)}
+.tag.src{background:transparent;color:var(--cobalt);border-color:rgba(74,111,178,.4)}
+
+/* Neighborhood-header row */
+.nb{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px;flex-wrap:wrap;gap:8px}
+.nb .why{font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.08em;color:var(--mut);text-transform:uppercase}
+.nb .dist{font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.06em;color:var(--lip2);text-transform:uppercase}
+
+/* Cuisine index */
+.cindex{display:flex;flex-wrap:wrap;gap:4px 8px;font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;margin-top:8px}
+.cindex a{color:var(--cobalt);border-bottom:1px dotted rgba(74,111,178,.4);padding:1px 2px}
+
+/* Rules list */
+.play{list-style:none;margin-top:4px}
+.play li{padding:5px 0 5px 22px;position:relative;font-size:13px;color:var(--ink);line-height:1.5}
+.play li::before{content:"→";position:absolute;left:0;top:5px;color:var(--lip2);font-weight:700}
+.play li b{color:var(--lip2)}
+.play li.bad::before{content:"×";color:#8a2c1c}
+.play li.bad b{color:#8a2c1c}
+
+/* scene bg */
+.scene{position:fixed;inset:0;z-index:0;pointer-events:none}
+.cel{position:absolute;inset:0;background:url("hub-cel-h9k2m7.jpg") 62% 18%/cover no-repeat;filter:saturate(.92) brightness(.9)}
+.celscrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(23,20,26,.22) 0%,rgba(23,20,26,.5) 55%,rgba(23,20,26,.82) 100%),linear-gradient(180deg,rgba(23,20,26,0) 40%,rgba(23,20,26,.55) 100%)}
+.vhs{position:fixed;inset:0;z-index:1;pointer-events:none}
+.scan{position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(10,8,12,.11) 3px 4px)}
+.track{position:absolute;left:0;right:0;height:9px;background:linear-gradient(180deg,transparent,rgba(244,241,228,.1) 45%,rgba(244,241,228,.1) 55%,transparent);animation:trackmove 90s linear infinite}
+.track.t2{height:5px;animation-duration:130s;animation-delay:-40s;opacity:.7}
+@keyframes trackmove{from{top:-4%}to{top:104%}}
+.grainsvg{position:absolute;inset:0;width:100%;height:100%;opacity:.55;mix-blend-mode:overlay}
+.hubnav,.main{position:relative;z-index:2}
+.hubnav{z-index:50}
+@media(prefers-reduced-motion:reduce){.track{animation:none}}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  var KEY='hub_pw_ok_v1';
+  try{
+    if (sessionStorage.getItem(KEY)!=='1'){
+      var tries=0;
+      while(tries<5){
+        var v=window.prompt('Password:');
+        if (v===null){ document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>'; return; }
+        if (v.trim().toLowerCase()==='dakz'){ sessionStorage.setItem(KEY,'1'); break; }
+        tries++;
+      }
+      if (sessionStorage.getItem(KEY)!=='1'){
+        document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>';
+        return;
+      }
+    }
+  }catch(e){}
+})();
+</script>
+
+<div class="scene"><div class="cel"></div><div class="celscrim"></div></div>
+<div class="vhs"><div class="scan"></div><div class="track"></div><div class="track t2"></div>
+<svg class="grainsvg" aria-hidden="true"><filter id="g"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2"></feTurbulence><feColorMatrix type="matrix" values="0 0 0 0 .9 0 0 0 0 .85 0 0 0 0 .78 0 0 0 .07 0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#g)"></rect></svg></div>
+
+<nav class="hubnav" aria-label="Hub nav">
+  <a class="brand" href="hub-h9k2m7.html">HUB</a>
+  <a href="house-design-h9k2m7.html">HOUSE DESIGN</a>
+  <a href="kids-h9k2m7.html">KIDS</a>
+  <a href="recipes-h9k2m7.html">RECIPES</a>
+  <a href="restaurants-h9k2m7.html" class="here">RESTAURANTS</a>
+  <a href="books-h9k2m7.html">BOOKS</a>
+  <a href="movies-h9k2m7.html">MOVIES</a>
+  <a href="music-h9k2m7.html">MUSIC</a>
+  <a href="events-h9k2m7.html">EVENTS</a>
+</nav>
+
+<main class="main">
+<div class="col">
+
+<article class="card ethos">
+<h2>The Cloud Naan <i>Test</i></h2>
+<div class="subhead">CALIBRATION &middot; UPDATED 2026-08-28</div>
+<div class="blurb">
+<p>Every candidate answers one question: <b>does this actually taste better than a Cloud Naan-tier enclave meal?</b> If not, skip the premium. Steakhouses, tasting-menu theater, modern-ethnic-in-Randolph, and destination-ramen all fail this.</p>
+<p><b>Primary sort = neighborhood, not cuisine.</b> Restaurants are add-ons to already-planned trips. In Chinatown for a Sox game? Shoo Loong Kan. Uptown for a concert? Hai Yen or Demera after.</p>
+<p><b>What we hunt:</b> diaspora enclave institutions &middot; chains from the motherland &middot; craft-obsessive singletons where no diaspora exists &middot; family-default rotations &middot; side-menu stars.</p>
+<p><b>What we skip:</b> modern-fusion, tasting-menu theater, Americanized chains, tourist-preserved Bourdain-era spots, wait-required hype.</p>
+</div>
+</article>
+
+<article class="card anchor">
+<h2>Anchors <i>·</i> confirmed</h2>
+<div class="subhead">FAMILY FAVORITES &middot; NEVER RE-EVALUATE</div>
+<ol class="rlist">
+<li><div class="h"><span class="t"><b>Hai Yen</b> <span class="tag dest">#1</span></span><span class="c">Vietnamese &middot; Argyle</span></div><div class="n">Family favorite. Community-frequented; full regional menu (not just pho). The reference restaurant for the whole page.</div><div class="addr">1055 W Argyle St</div></li>
+<li><div class="h"><span class="t"><b>Shoo Loong Kan Hotpot</b> <span class="tag dest">#2</span></span><span class="c">Sichuan hotpot &middot; Chinatown</span></div><div class="n">Chain-from-China (positive signal, not negative). Nice room. Cook-your-own = participation, not passive.</div><div class="addr">2129 S Archer Ave</div></li>
+<li><div class="h"><span class="t"><b>New Furama</b> <span class="tag dest">DIM SUM PRIMARY</span></span><span class="c">Cantonese &middot; Chinatown</span></div><div class="n">Weekend cart service, family scale, community-frequented. Reliable-not-optimal tier, and that&rsquo;s the point.</div><div class="addr">2828 S Wentworth Ave</div></li>
+<li><div class="h"><span class="t"><b>Cai</b> <span class="tag conv">DIM SUM SECONDARY</span></span><span class="c">Cantonese &middot; Chinatown</span></div><div class="n">Rotation partner to New Furama. Less often, still a family go-to.</div><div class="addr">2100 S Archer Ave</div></li>
+<li><div class="h"><span class="t"><b>Spacca Napoli</b> <span class="tag dest">CRAFT</span></span><span class="c">Neapolitan pizza &middot; Ravenswood</span></div><div class="n">Jonathan Goldsmith apprenticed in Naples; VPN-certified; imports Italian ingredients. Craft-obsessive exception because Chicago has no Italian enclave.</div><div class="addr">1769 W Sunnyside Ave</div></li>
+<li><div class="h"><span class="t"><b>Blowfish Sushi &amp; Ramen</b> <span class="tag dest">SIDE-MENU STAR</span></span><span class="c">Sushi + ramen &middot; Edgewater</span></div><div class="n">Sushi place where the ramen is the star. Sukh brothers; expanded to Northfield. Ramen went into the actual name.</div><div class="addr">1130 W Bryn Mawr Ave</div></li>
+<li><div class="h"><span class="t"><b>Kashgar Uyghur Dining</b> <span class="tag new">NEW &middot; VERIFY VISIT</span></span><span class="c">Uyghur &middot; Albany Park</span></div><div class="n">Fresh (opened 2026). Lamb + chicken skewers with cumin, prickly ash pepper. Direct hit for Andrew&rsquo;s Beijing-Uyghur reference. <span class="tag src"><a href="https://blockclubchicago.org/2026/07/23/kashgar-uyghur-dining-offers-albany-park-neighbors-a-taste-of-central-asian-home-cooking/" target="_blank" rel="noopener">Block Club Chicago</a></span></div><div class="addr">4830 N Pulaski Rd #102</div></li>
+<li><div class="h"><span class="t"><b>Small Cheval</b> <span class="tag conv">POST-KID-ACTIVITY</span></span><span class="c">Burger &middot; multi-location</span></div><div class="n">The Au Cheval burger without the wait. Reliable-not-amazing tier; the after-activity default.</div><div class="addr">West Loop, Wicker Park, Old Town, Bucktown</div></li>
+<li><div class="h"><span class="t"><b>Pok&eacute; Burrito</b> <span class="tag conv">OAK PARK UTILITY</span></span><span class="c">Poke + surprise-ramen &middot; Oak Park</span></div><div class="n">Convenience win. Ramen that unexpectedly hit for the whole family in a poke shop.</div><div class="addr">Oak Park</div></li>
+</ol>
+</article>
+
+<article class="card">
+<h2>By cuisine <i>·</i> quick jump</h2>
+<div class="cindex">
+<a href="#argyle">Vietnamese &rarr; Argyle</a>
+<a href="#chinatown">Chinese &rarr; Chinatown</a>
+<a href="#lincolnpark">Sichuan &rarr; Lincoln Park</a>
+<a href="#pilsen">Mexican &rarr; Pilsen</a>
+<a href="#littlevillage">Salvadoran &rarr; Little Village</a>
+<a href="#belmontcragin">Guatemalan &rarr; Belmont Cragin</a>
+<a href="#devon">Pakistani/Indian &rarr; Devon</a>
+<a href="#lincolnsquare">Korean/Thai/Nepali/Filipino &rarr; Lincoln Square</a>
+<a href="#uptown">Ethiopian/Thai &rarr; Uptown</a>
+<a href="#albanypark">Persian/Uyghur &rarr; Albany Park</a>
+<a href="#northpark">Yemeni &rarr; North Park</a>
+<a href="#ravenswood">Neapolitan pizza &rarr; Ravenswood</a>
+<a href="#edgewater">Ramen &rarr; Edgewater</a>
+<a href="#westtown">Japanese izakaya &rarr; West Town</a>
+<a href="#ukvillage">Filipino &rarr; Ukrainian Village</a>
+<a href="#avondale">Polish &rarr; Avondale</a>
+<a href="#bronzeville">Senegalese &rarr; Bronzeville</a>
+<a href="#bridgeview">Palestinian &rarr; Bridgeview</a>
+<a href="#irvingpark">Colombian &rarr; Irving Park</a>
+<a href="#lakeview">Peruvian &rarr; Lakeview</a>
+<a href="#forestpark">Cameroonian &rarr; Forest Park</a>
+</div>
+</article>
+
+<article class="card">
+<h2>Ring 1 <i>·</i> Oak Park + 5&ndash;15 min</h2>
+<div class="subhead">CLOSE ENOUGH FOR WEEKNIGHT / POST-ACTIVITY</div>
+
+<h3 id="forestpark">Forest Park</h3>
+<div class="nb"><span class="why">post-First Ascent Humboldt · farmers market · Sat morning</span><span class="dist">~10 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Kribi Coffee &amp; Air Roastery</b> <span class="tag watch">CANDIDATE</span></span><span class="c">Cameroonian coffee + weekend menu</span></div><div class="n">Family-owned Cameroonian; roastery + weekend food service. Under-verified beyond community mentions but proximity + rarity make it a low-effort experiment.</div><div class="addr">7324 W Madison St, Forest Park</div></li>
+</ul>
+
+<h3>Berwyn / Cicero</h3>
+<div class="nb"><span class="why">Route 66 · Berwyn Sertoma parade · FitzGerald&rsquo;s music</span><span class="dist">~10 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Aunt Diana&rsquo;s Old Fashioned Pierogies</b></span><span class="c">Polish &middot; Berwyn</span></div><div class="n">Counter-service pierogi, family lineage. Cheap. The Czech-Polish Cicero-Berwyn corridor is thin now (Klas is gone) but Aunt Diana&rsquo;s persists.</div><div class="addr">3457 S Oak Park Ave, Berwyn</div></li>
+</ul>
+
+<h3>Oak Park utility</h3>
+<div class="nb"><span class="why">walkable / bike-able / weeknight</span><span class="dist">home</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Pok&eacute; Burrito</b> <span class="tag conv">CONVENIENCE</span></span><span class="c">Poke + surprise-ramen</span></div><div class="n">The utility win. Not destination, but reliable and close.</div><div class="addr">Oak Park</div></li>
+<li><div class="h"><span class="t"><b>George&rsquo;s Family Restaurant</b> <span class="tag conv">DINER TIER</span></span><span class="c">Greek diner &middot; family-run since 1979</span></div><div class="n">Not enclave, but honest holdout. Diner utility only.</div><div class="addr">Oak Park</div></li>
+</ul>
+</article>
+
+<article class="card">
+<h2>Ring 2 <i>·</i> City &nbsp;15&ndash;25 min</h2>
+<div class="subhead">DAY-TRIP OR AFTER-EVENT PAIRING</div>
+
+<h3 id="pilsen">Pilsen</h3>
+<div class="nb"><span class="why">murals · National Museum of Mexican Art · 18th St L</span><span class="dist">~20 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Carnitas Uruapan</b> <span class="tag dest">CARNITAS DESTINATION</span></span><span class="c">Michoac&aacute;n carnitas</span></div><div class="n">By the pound, cash-friendly, community consensus. <span class="tag src"><a href="https://www.lthforum.com/bb/viewtopic.php?t=18663" target="_blank" rel="noopener">LTHForum</a></span></div><div class="addr">1725 W 18th St</div></li>
+<li><div class="h"><span class="t"><b>Birrieria Reyes de Ocotl&aacute;n</b> <span class="tag dest">BIRRIA</span></span><span class="c">Goat birria + consom&eacute;</span></div><div class="n">Weekend mornings. LTH + Louisa Chu (Tribune).</div><div class="addr">1322 W 18th St</div></li>
+<li><div class="h"><span class="t"><b>Taqueria La Oaxaque&ntilde;a</b> <span class="tag dest">OAXACAN MOLE</span></span><span class="c">Regional Oaxacan &middot; also on 18th St</span></div><div class="n">Complex moles, conejo adobado, chapulines on request.</div><div class="addr">3382 N Milwaukee (also 18th St branch)</div></li>
+<li><div class="h"><span class="t"><b>5 Rabanitos</b> <span class="tag watch">SIT-DOWN &middot; chef-driven note</span></span><span class="c">Regional Mexican</span></div><div class="n">Chef Alfonso Sotelo (ex-Topolobampo). Regional Mexican at Pilsen prices; nice room; kid-viable. Chef-driven angle flagged but the food and price are enclave-tier.</div><div class="addr">1758 W 18th St</div></li>
+</ul>
+
+<h3 id="chinatown">Chinatown</h3>
+<div class="nb"><span class="why">Sox game · Chinatown Square · dim sum weekend</span><span class="dist">~25 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Shoo Loong Kan Hotpot</b> <span class="tag dest">ANCHOR #2</span></span><span class="c">Sichuan hotpot</span></div><div class="n">See anchors card. Book weekends.</div><div class="addr">2129 S Archer Ave</div></li>
+<li><div class="h"><span class="t"><b>New Furama</b> <span class="tag dest">DIM SUM PRIMARY</span></span><span class="c">Cantonese cart</span></div><div class="addr">2828 S Wentworth Ave</div></li>
+<li><div class="h"><span class="t"><b>Cai</b> <span class="tag conv">DIM SUM ROTATION</span></span><span class="c">Cantonese</span></div><div class="addr">2100 S Archer Ave</div></li>
+<li><div class="h"><span class="t"><b>Xi&rsquo;an Cuisine</b> <span class="tag dest">HAND-PULLED NOODLES</span></span><span class="c">Northern Chinese / Xi&rsquo;an</span></div><div class="n">Biang biang, roujiamo, cumin lamb. LTH: &ldquo;closest I&rsquo;ve come to homemade Chinese food in restaurant form in Chicago.&rdquo; <span class="tag src"><a href="https://www.lthforum.com/bb/viewtopic.php?f=28&amp;t=42867" target="_blank" rel="noopener">LTHForum</a></span></div><div class="addr">225 W Cermak Rd</div></li>
+<li><div class="h"><span class="t"><b>Dongpo Impression</b> <span class="tag watch">SICHUAN SKEWERS</span></span><span class="c">Chuan chuan xiang &middot; same owners as Chengdu Impression</span></div><div class="addr">228 W Cermak Rd</div></li>
+</ul>
+
+<h3>Bridgeport</h3>
+<div class="nb"><span class="why">south-side pairing with Sox / Chinatown crawl</span><span class="dist">~25 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Homestyle Taste</b> <span class="tag watch">NORTHERN CHINESE</span></span><span class="c">Wheat pancakes, cumin lamb, hand-formed dumplings</span></div><div class="n">Rice-not-default Northern menu. Community-verified via Chicago Reader.</div><div class="addr">3205 S Halsted St</div></li>
+</ul>
+
+<h3 id="littlevillage">Little Village (La Villita)</h3>
+<div class="nb"><span class="why">26th St shopping corridor · Marshall Square</span><span class="dist">~20 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Izalco Restaurant</b> <span class="tag dest">SALVADORAN</span></span><span class="c">Steak pupusas, agua de maracuya</span></div><div class="n">Little Village institution. <span class="tag src"><a href="https://fooditor.com/meet-baleada-king-chicago-cafe-izalco/" target="_blank" rel="noopener">Fooditor</a></span></div><div class="addr">3739 W 26th St</div></li>
+</ul>
+
+<h3 id="westtown">West Town / Ukrainian Village</h3>
+<div class="nb"><span class="why">bookstore · gallery night · date-night lane</span><span class="dist">~20 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Kai Zan</b> <span class="tag dest">JAPANESE IZAKAYA</span></span><span class="c">Sushi + izakaya &middot; Vizconde brothers</span></div><div class="n">22-seat counter. Takoyaki, karaage, yakitori alongside creative nigiri. Not for kids under 10 given counter format &mdash; date-night lane. <span class="tag src"><a href="https://www.lthforum.com/bb/viewtopic.php?f=14&amp;t=35508" target="_blank" rel="noopener">LTHForum</a></span></div><div class="addr">413 N Ashland Ave</div></li>
+</ul>
+
+<h3 id="ukvillage">Ukrainian Village (Filipino)</h3>
+<div class="nb"><span class="why">gallery-district date-night · pastry-counter morning</span><span class="dist">~20 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Kasama &mdash; pastry counter only</b> <span class="tag watch">PASTRIES OK &middot; SKIP TASTING</span></span><span class="c">Filipino bakery + tasting menu</span></div><div class="n"><b>Corrected downgrade:</b> two Michelin stars, but the tasting menu = tasting-menu theater (auto-fail) + weekend waits are punishing. <b>The weekday pastry counter is the family-viable entry point</b> &mdash; walk-in for lengua de gato, ube pandesal, coffee. Ignore the dinner offering.</div><div class="addr">1001 N Winchester Ave</div></li>
+</ul>
+
+</article>
+
+</div>
+
+<div class="col">
+
+<article class="card">
+<h2>Ring 3 <i>·</i> City &nbsp;25&ndash;45 min</h2>
+<div class="subhead">DESTINATION TRIP &middot; PAIR WITH AN EVENT</div>
+
+<h3 id="argyle">Argyle Street / Uptown Vietnamese</h3>
+<div class="nb"><span class="why">Aragon show · Uptown Theatre · pho weekend</span><span class="dist">~30 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Hai Yen</b> <span class="tag dest">ANCHOR #1</span></span><span class="c">Vietnamese &middot; family favorite</span></div><div class="addr">1055 W Argyle St</div></li>
+</ul>
+
+<h3 id="uptown">Uptown (Ethiopian + Thai)</h3>
+<div class="nb"><span class="why">Aragon · Riviera · Green Mill · same trip as Argyle</span><span class="dist">~30 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Demera Ethiopian</b> <span class="tag dest">ETHIOPIAN ANCHOR</span></span><span class="c">Chef-owner Tigist Reda &middot; spices from Ethiopia</span></div><div class="n">Vegetarian combo on injera is the shared-table order. Michelin Guide listed. <span class="tag src"><a href="https://www.lthforum.com/bb/viewtopic.php?p=170634" target="_blank" rel="noopener">LTHForum</a></span></div><div class="addr">4801 N Broadway</div></li>
+<li><div class="h"><span class="t"><b>Immm Thai (Rice &amp; Beyond)</b> <span class="tag dest">THAI ISAAN</span></span><span class="c">Northern Thai &middot; sai krok, khao soi, nam prik</span></div><div class="n">Skip pad Thai; order Isaan sausage, larb muang. <span class="tag src"><a href="https://www.lthforum.com/bb/viewtopic.php?f=14&amp;t=42701" target="_blank" rel="noopener">LTHForum</a></span></div><div class="addr">4949 N Broadway</div></li>
+</ul>
+
+<h3 id="edgewater">Edgewater</h3>
+<div class="nb"><span class="why">north-side loop with Argyle · Bryn Mawr Historic District</span><span class="dist">~35 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Blowfish Sushi &amp; Ramen</b> <span class="tag dest">RAMEN &middot; SIDE-MENU STAR</span></span><span class="c">Sushi + ramen &middot; Sukh brothers</span></div><div class="addr">1130 W Bryn Mawr Ave</div></li>
+</ul>
+
+<h3 id="devon">Devon Ave (West Ridge) &mdash; Pakistani / Indian</h3>
+<div class="nb"><span class="why">devote a whole afternoon · walk the strip</span><span class="dist">~35 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Sabri Nihari</b> <span class="tag dest">NIHARI DESTINATION</span></span><span class="c">Pakistani halal &middot; long-established</span></div><div class="n">The slow-braised beef shank (nihari) is why Devon veterans go. Family-run. <span class="tag src"><a href="https://www.lthforum.com/bb/viewtopic.php?t=8639" target="_blank" rel="noopener">LTHForum</a></span></div><div class="addr">2502 W Devon Ave</div></li>
+<li><div class="h"><span class="t"><b>Khan BBQ</b> <span class="tag dest">KEBAB DESTINATION</span></span><span class="c">Chapli kebab, chicken malai boti</span></div><div class="n">Dedicated LTH thread, years of regulars. <span class="tag src"><a href="https://www.lthforum.com/bb/viewtopic.php?t=14901" target="_blank" rel="noopener">LTHForum</a></span></div><div class="addr">2401 W Devon Ave</div></li>
+<li><div class="h"><span class="t"><b>Usmania</b> <span class="tag watch">BIRYANI + KARAHI</span></span><span class="c">Pakistani</span></div><div class="n">Consistent biryani; LTH-endorsed in Devon roundups.</div><div class="addr">2244 W Devon Ave</div></li>
+</ul>
+<div class="blurb"><p><b>How to eat Devon:</b> no one place does everything. Kebabs, curries, and tandoor live at different addresses. Plan a walking crawl.</p></div>
+
+<h3 id="albanypark">Albany Park (Persian + Uyghur)</h3>
+<div class="nb"><span class="why">Kashgar destination + Persian round-out</span><span class="dist">~30 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Kashgar Uyghur Dining</b> <span class="tag new">UYGHUR &middot; NEW</span></span><span class="c">Central Asian home cooking</span></div><div class="n">See anchors. <span class="tag src"><a href="https://blockclubchicago.org/2026/07/23/kashgar-uyghur-dining-offers-albany-park-neighbors-a-taste-of-central-asian-home-cooking/" target="_blank" rel="noopener">Block Club</a></span></div><div class="addr">4830 N Pulaski Rd #102</div></li>
+<li><div class="h"><span class="t"><b>Noon O Kabab</b> <span class="tag dest">PERSIAN ANCHOR</span></span><span class="c">Persian &middot; family-owned since 1997</span></div><div class="n">Tile-mural room, koobideh, lamb shank, baba ganoush. Nice room + authentic + affordable trifecta. <span class="tag src"><a href="https://www.lthforum.com/bb/viewtopic.php?t=5283&amp;start=30" target="_blank" rel="noopener">LTHForum</a></span></div><div class="addr">4701 N Kedzie Ave</div></li>
+<li><div class="h"><span class="t"><b>Kabobi</b> <span class="tag watch">PERSIAN COUNTER</span></span><span class="c">Casual grill</span></div><div class="n">LTH commenters rank the grill items above Noon O Kabab; different lane (fast-casual).</div><div class="addr">4748 N Kedzie Ave</div></li>
+</ul>
+
+<h3 id="lincolnsquare">Lincoln Square (Korean + Thai + Filipino + Nepali)</h3>
+<div class="nb"><span class="why">Old Town School of Folk Music · Sulzer Library · Cafe Selmarie</span><span class="dist">~30 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>San Soo Gab San</b> <span class="tag dest">KOREAN ANCHOR</span></span><span class="c">Tabletop BBQ + goat soup &middot; 25+ years</span></div><div class="n">Family-run; 20+ banchan. Michelin-listed. Korean-American families still fill the room weekends. <span class="tag src"><a href="https://guide.michelin.com/us/en/illinois/chicago/restaurant/san-soo-gab-san" target="_blank" rel="noopener">Michelin</a></span></div><div class="addr">5247 N Western Ave</div></li>
+<li><div class="h"><span class="t"><b>Aroy Thai</b> <span class="tag dest">THAI &middot; ORDER CLASSICS MENU</span></span><span class="c">Thai + Isaan &middot; LTH poster hangs on their wall</span></div><div class="n">Order from the &ldquo;Classics&rdquo; menu &mdash; sour Isaan sausage, sweet beef jerky, ground pork in curried coconut over crispy omelette. <span class="tag src"><a href="https://www.lthforum.com/bb/viewtopic.php?f=14&amp;t=37623" target="_blank" rel="noopener">LTHForum</a></span></div><div class="addr">4654 N Damen Ave</div></li>
+<li><div class="h"><span class="t"><b>Isla Pilipina</b> <span class="tag dest">FILIPINO PRIMARY</span></span><span class="c">Kare-kare, sisig, lechon kawali</span></div><div class="n">Diaspora room. Everyday Filipino, community regulars &mdash; <b>the actual Filipino anchor</b>, promoted after the Kasama critic downgrade. <span class="tag src"><a href="https://www.lthforum.com/bb/viewtopic.php?p=387166" target="_blank" rel="noopener">LTHForum</a></span></div><div class="addr">2501 W Lawrence Ave</div></li>
+<li><div class="h"><span class="t"><b>Himalayan Sherpa Kitchen</b> <span class="tag dest">NEPALI</span></span><span class="c">Jhol momo, thukpa, thali</span></div><div class="n">Chef Ramkrishna Adhikari; the momo dumplings served in soup are the diaspora giveaway.</div><div class="addr">2701 W Lawrence Ave</div></li>
+</ul>
+
+<h3 id="ravenswood">Ravenswood</h3>
+<div class="nb"><span class="why">Old Town School radius · Damen Silo · pizza</span><span class="dist">~30 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Spacca Napoli</b> <span class="tag dest">NEAPOLITAN ANCHOR</span></span><span class="c">VPN-certified Neapolitan pizza</span></div><div class="addr">1769 W Sunnyside Ave</div></li>
+</ul>
+
+<h3 id="lincolnpark">Lincoln Park (Sichuan)</h3>
+<div class="nb"><span class="why">DePaul area · Lincoln Park Zoo · closer than Chinatown for Sichuan</span><span class="dist">~30 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Chengdu Impression</b> <span class="tag dest">SICHUAN ANCHOR</span></span><span class="c">Bone-in rabbit ma la, Chengdu dumplings, suan la fen</span></div><div class="n">Chinatown-quality Sichuan outside Chinatown. Order from the actual Sichuan section (they keep two menus). <span class="tag src"><a href="https://www.lthforum.com/bb/viewtopic.php?f=14&amp;t=39092" target="_blank" rel="noopener">LTHForum</a></span></div><div class="addr">2545 N Halsted St</div></li>
+</ul>
+
+<h3 id="lakeview">Lakeview (Peruvian)</h3>
+<div class="nb"><span class="why">Wrigley area · northside sports · pair with a game</span><span class="dist">~35 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Machu Picchu</b> <span class="tag dest">PERUVIAN</span></span><span class="c">Ceviche, lomo saltado, aj&iacute; de gallina</span></div><div class="n">Casual family-run; Peruvian-Americans specifically name it.</div><div class="addr">3856 N Ashland Ave</div></li>
+</ul>
+
+<h3 id="avondale">Avondale (Polish)</h3>
+<div class="nb"><span class="why">Milwaukee corridor · Kuma&rsquo;s Corner · pierogi</span><span class="dist">~30 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Staropolska</b> <span class="tag dest">POLISH ANCHOR &middot; ENDANGERED</span></span><span class="c">Last true old-Jackowo sit-down</span></div><div class="n">Pierogi, go&#322;&#261;bki, bacon-wrapped plums, rustic room. <span class="tag src"><a href="https://chicago.suntimes.com/food-drink/2025/10/29/polish-restaurants-chicago-spoko-pierogi-kitchen-staropolska-smakosz-red-apple-polish-paczki-cafe-polish-bistro" target="_blank" rel="noopener">Sun-Times</a></span></div><div class="addr">3030 N Milwaukee Ave</div></li>
+<li><div class="h"><span class="t"><b>Podhalanka</b> <span class="tag gap">VERIFY OPEN &middot; RETIRING</span></span><span class="c">Wicker Park &middot; Helena Madej&rsquo;s 30-year mainstay</span></div><div class="n">Owner announced retirement 2024; future uncertain. Pilgrimage before it closes. <span class="tag src"><a href="https://blockclubchicago.org/2024/08/18/podhalanka-owner-retiring-leaving-iconic-wicker-park-polish-restaurants-future-uncertain/" target="_blank" rel="noopener">Block Club</a></span></div><div class="addr">1549 W Division St</div></li>
+</ul>
+
+<h3 id="bronzeville">Bronzeville (Senegalese)</h3>
+<div class="nb"><span class="why">DuSable Museum · south-side pair · Sunday</span><span class="dist">~35 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Yassa African</b> <span class="tag dest">SENEGALESE ANCHOR</span></span><span class="c">Chicken yassa, thieboudienne, dibi lamb &middot; Ndiaye family since 2004</span></div><div class="n">In-city verified West African pick. House bissap + ginger juice. <span class="tag src"><a href="https://borderlessmag.org/2021/08/18/the-ultimate-guide-to-african-food-in-chicago/" target="_blank" rel="noopener">Borderless Mag</a></span></div><div class="addr">3511 S King Dr</div></li>
+</ul>
+
+<h3 id="irvingpark">Irving Park (Colombian)</h3>
+<div class="nb"><span class="why">north-northwest side · Portage Park nearby</span><span class="dist">~30 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Las Tablas Colombian Steakhouse</b> <span class="tag dest">COLOMBIAN &middot; AJIACO</span></span><span class="c">Since 1991 &middot; Andean guascas ajiaco</span></div><div class="n">The only Midwest restaurant using authentic Andean guascas herbs in the ajiaco. Entra&ntilde;a and bandeja paisa also. <span class="tag src"><a href="https://www.lthforum.com/bb/viewtopic.php?p=194863" target="_blank" rel="noopener">LTHForum</a></span></div><div class="addr">4920 W Irving Park Rd (Irving Park location; Lincoln Ave closed)</div></li>
+</ul>
+
+<h3 id="belmontcragin">Belmont Cragin (Central American)</h3>
+<div class="nb"><span class="why">Portage Park + Cragin cluster · Sunday morning</span><span class="dist">~25 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Cafe Izalco</b> <span class="tag dest">SALVADORAN &middot; BALEADAS</span></span><span class="c">Izalco sibling &middot; baleadas focused</span></div><div class="n">Sister to the Little Village Izalco; tighter menu.</div><div class="addr">5306 W Fullerton Ave</div></li>
+<li><div class="h"><span class="t"><b>Latin Patio</b> <span class="tag watch">GUATEMALAN &middot; NEEDS VERIFY</span></span><span class="c">Pepian, kak&rsquo;ik, hilachas, chuchitos</span></div><div class="n"><b>Downgraded by critic:</b> Block Club coverage of the neighborhood cluster was about a different restaurant (Pupuseria El Centroamericano). Latin Patio itself needs first-visit verify or a stronger source. Guatemalan is otherwise a Chicago-wide gap.</div><div class="addr">3115 N Central Ave</div></li>
+</ul>
+
+<h3 id="northpark">North Park (Yemeni)</h3>
+<div class="nb"><span class="why">standalone destination · Foster corridor</span><span class="dist">~30 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Sheeba Mandi House</b> <span class="tag dest">YEMENI &middot; MANDI</span></span><span class="c">Tandoor-pit lamb + rice</span></div><div class="n">Sold-out early on weekends. Yemeni ≠ Lebanese; go for mandi, not shawarma. <span class="tag src"><a href="https://abc7chicago.com/mandi-yemen-yemeni-food-cuisine/5931077/" target="_blank" rel="noopener">ABC7</a></span></div><div class="addr">3312 W Foster Ave</div></li>
+</ul>
+
+<h3 id="bridgeview">Bridgeview (&ldquo;Little Palestine&rdquo;)</h3>
+<div class="nb"><span class="why">isolated but worth the drive · pair with mosque visit</span><span class="dist">~40 min</span></div>
+<ul class="rlist">
+<li><div class="h"><span class="t"><b>Al Bawadi Grill</b> <span class="tag dest">PALESTINIAN ANCHOR</span></span><span class="c">Kebabs, mezze, kanefeh</span></div><div class="n">Largest Palestinian community in the U.S. and the food matches. Original Bridgeview location, not Niles. <span class="tag src"><a href="https://stevedolinsky.com/middle-eastern-nirvana-in-bridgeview" target="_blank" rel="noopener">Dolinsky</a></span></div><div class="addr">7216 W 87th St, Bridgeview</div></li>
+<li><div class="h"><span class="t"><b>M&rsquo;dakhan</b> <span class="tag watch">SMOKED CHICKEN ON TABOON</span></span><span class="c">Newer Palestinian &middot; specialty dish signature</span></div><div class="n">Dolinsky called it &ldquo;something different in the kitchen.&rdquo;</div><div class="addr">Bridgeview</div></li>
+</ul>
+
+</article>
+
+<article class="card gap">
+<h2>Honest <i>gaps</i></h2>
+<div class="subhead">CUISINES WITHOUT A COMMUNITY-VERIFIED CHICAGO ANCHOR</div>
+<ul class="play">
+<li class="bad"><b>Turkish:</b> Cafe Orchid appears closed as of Jul 2026. Chicago&rsquo;s Turkish scene is thin; no true destination replacement right now. Turkitch and Ali Baba Doner are d&ouml;ner-only fallbacks. Fill only after a visit-verify.</li>
+<li class="bad"><b>Czech / Slovak:</b> Klas closed 2016, demolished 2022. No true successor in Chicagoland. Bohemian House (River North) is modern-upscale, not enclave &mdash; skip. Don&rsquo;t fake this one.</li>
+<li class="bad"><b>Indian modern-tasting:</b> intentionally not covered. Rooh / Baar Baar / Basanti / Vajra all fail the Cloud Naan Test for Andrew. Devon is the actual answer.</li>
+<li class="bad"><b>Ramen destination:</b> Akahoshi tried, &ldquo;liked-not-amazing.&rdquo; The lane is side-menu-star (Blowfish) + convenience anchors (Pok&eacute; Burrito), not destination-ramen restaurants.</li>
+<li class="bad"><b>Steakhouses at spend tier:</b> Chicago Cut / Bavette&rsquo;s / Maple &amp; Ash / RPM / Gibsons all legit-in-category but off Andrew&rsquo;s lane. Home cooking + good butcher (Publican Quality Meats, Gepperth&rsquo;s) is the alternative.</li>
+</ul>
+</article>
+
+<article class="card">
+<h2>Anti-<i>patterns</i></h2>
+<div class="subhead">AUTO-FAIL &middot; DON&rsquo;T RECOMMEND</div>
+<ul class="play">
+<li class="bad"><b>Modern-ethnic fusion in Randolph/West Loop:</b> Rooh, Baar Baar, Basanti, Kimski, Fat Rice, New Rebozo. Cloud Naan Test fails.</li>
+<li class="bad"><b>Tasting-menu theater:</b> Alinea, Next, Ever, Smyth, Oriole, Elske, Kumiko. Food theater is not the same as ambiance.</li>
+<li class="bad"><b>Americanized chains:</b> Happy Lamb (worse than Shoo Loong Kan), P.F. Chang, Big Bowl, Uncle Julio&rsquo;s.</li>
+<li class="bad"><b>Tourist-preserved Bourdain-era spots:</b> Tank Noodle canonical. Community has moved on; Yelp lags.</li>
+<li class="bad"><b>Wait-required hype spots:</b> Au Cheval (Small Cheval fixes it), Kasama tasting menu on weekends.</li>
+<li class="bad"><b>Illumination-style linear light walks:</b> Morton Illumination, ZooLights, Lightscape. Cold + outdoor + passive triple-no.</li>
+</ul>
+</article>
+
+<article class="card">
+<h2>How I <i>vet</i></h2>
+<div class="subhead">SOURCING HIERARCHY &middot; NEVER YELP AGGREGATE</div>
+<ol class="play">
+<li><b>LTHForum</b> ethnic threads &mdash; 20+ years of serious Chicago-eater discussion. Primary source.</li>
+<li><b>Steve Dolinsky</b> &mdash; Hungry Hound / The Feed. Field work in enclaves, not press junkets.</li>
+<li><b>Louisa Chu</b> (Tribune) + <b>Mike Sula</b> (Reader) &mdash; deep-source ethnic reporting.</li>
+<li><b>Block Club Chicago</b> &mdash; neighborhood reporting; caught Kashgar Uyghur in July 2026.</li>
+<li><b>Titus Ruscitti</b> (Smokin Chokin blog) &mdash; obsessive documentarian of classic/ethnic Chicago.</li>
+<li><b>Google Maps reviews filtered to the community&rsquo;s native language</b> &mdash; the community eats where the community reviews.</li>
+<li><b>Reddit r/chicagofood</b> &mdash; diaspora-source threads only, not &ldquo;best of&rdquo; posts.</li>
+</ol>
+<div class="blurb"><p><b>Not sources:</b> Yelp aggregate, Time Out, Eater, The Infatuation, Chicago Magazine best-of, TripAdvisor. All are trendy-detectors, not verified-good detectors. Yelp popularity for ethnic enclave = <b>negative signal</b> (Tank Noodle canonical).</p></div>
+</article>
+
+</div>
+</main>
+</body>
+</html>
