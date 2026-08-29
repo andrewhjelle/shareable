@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex, nofollow">
+<title>Picadillo tacos &middot; cook mode</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{--tape:#17141a;--ink:#211d20;--skin:#edbd97;--lip:#d96b52;--lip2:#c24f3d;--cobalt:#4a6fb2;--signal:#cf4a2e;--cream:#f2e0c8;--cream2:#e9d5ba;--osd:#f4f1e4;--mut:#7a6a5e}
+*{box-sizing:border-box;margin:0}
+body{background:var(--tape);color:var(--ink);font:16px/1.55 "Zen Kaku Gothic New",sans-serif;overflow-x:hidden;min-height:100vh}
+a{color:var(--lip2);text-decoration:none;border-bottom:1px dotted rgba(194,79,61,.5)}
+a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
+.hubnav{position:sticky;top:0;z-index:50;background:rgba(33,29,32,.92);backdrop-filter:blur(6px);border-bottom:1px solid rgba(244,241,228,.18);display:flex;gap:2px;align-items:center;padding:8px 20px;font-family:"DotGothic16",monospace;letter-spacing:.14em;font-size:12px;text-transform:uppercase}
+.hubnav a{color:var(--osd);text-decoration:none;padding:8px 14px;border-radius:2px;border:1px solid transparent;transition:color .15s,border-color .15s}
+.hubnav a:hover{color:var(--skin);border-color:rgba(244,201,165,.4)}
+.hubnav a.here{color:var(--skin);border-color:var(--skin)}
+@media(max-width:720px){.hubnav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:8px 12px}.hubnav::-webkit-scrollbar{display:none}.hubnav a{flex:0 0 auto;white-space:nowrap;padding:6px 10px}.hubnav .brand{margin-right:8px;padding-right:8px}}
+.hubnav .brand{font-family:"Anton",sans-serif;font-size:18px;letter-spacing:.06em;color:#f4f1e4;margin-right:14px;padding-right:14px;border-right:1px solid rgba(244,241,228,.2)}
+
+.mast{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:22px 22px 6px}
+.mast .ep{font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.2em;color:var(--osd);text-shadow:1px 0 0 rgba(217,107,82,.6),-1px 0 0 rgba(74,111,178,.6);text-transform:uppercase}
+.mast h1{font-family:"Anton",sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:.02em;text-transform:uppercase;transform:skewX(-6deg);color:var(--skin);text-shadow:3px 0 0 rgba(194,79,61,.55),-3px 0 0 rgba(74,111,178,.45);margin:8px 0 4px;line-height:1}
+.mast h1 i{font-style:normal;color:var(--lip)}
+.mast .sub{font-family:"DotGothic16",monospace;font-size:11.5px;letter-spacing:.14em;color:var(--osd);opacity:.85;text-transform:uppercase;margin-top:6px}
+
+.wrap{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:0 22px 100px;display:grid;gap:18px}
+
+.card{position:relative;background:var(--cream);color:var(--ink);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:22px 24px 20px;box-shadow:5px 6px 0 rgba(33,29,32,.85)}
+.card::before{content:"";position:absolute;inset:4px;border:1px solid var(--ink);opacity:.22;border-radius:2px 9px 3px 8px;pointer-events:none}
+.card > *{position:relative}
+.card h2{font-family:"Anton",sans-serif;font-size:26px;letter-spacing:.02em;text-transform:uppercase;transform:skewX(-5deg);margin:0 0 8px}
+.card h2 i{font-style:normal;color:var(--lip2)}
+.card h3{font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--lip2);margin:14px 0 6px}
+
+.card.step{background:var(--signal);color:var(--cream);border-color:var(--ink)}
+.card.step h2{color:var(--cream)}
+.card.step h2 i{color:#ffd9c4}
+.card.step .stepline{font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.2em;color:#ffd9c4;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline}
+.card.step .stepbody{font-size:20px;line-height:1.45;color:var(--cream);margin:14px 0 6px}
+.card.step .stepbody b{color:#ffe3d1}
+.card.step .steptip{font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.14em;color:#ffd9c4;text-transform:uppercase;margin-top:14px;padding-top:10px;border-top:1px dashed rgba(244,224,200,.4)}
+
+.progress{height:6px;background:rgba(33,29,32,.25);border-radius:3px;overflow:hidden;margin-top:14px}
+.progress .bar{height:100%;background:var(--cream);transition:width .25s ease}
+
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.btn{font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;background:var(--cream);color:var(--ink);border:1.5px solid var(--ink);padding:9px 16px;border-radius:2px;cursor:pointer;transition:transform .1s}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn.ghost{background:transparent;color:var(--cream);border-color:var(--cream)}
+.btn.ghost:hover{background:rgba(23,20,26,.25)}
+.wakebadge{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#ffd9c4;margin-left:auto;padding:3px 8px;border:1px dashed rgba(244,224,200,.5);border-radius:2px}
+.wakebadge.on{color:#f4f1e4;border-color:#f4f1e4}
+.wakebadge.off{opacity:.55}
+
+.card.timeline ol{margin:0;padding-left:26px}
+.card.timeline li{padding:6px 0;line-height:1.5}
+.card.timeline li.done{opacity:.45;text-decoration:line-through}
+.card.timeline li.now{background:rgba(207,74,46,.14);border-left:3px solid var(--lip2);margin-left:-14px;padding-left:11px;font-weight:600}
+
+.ingr{list-style:none;padding:0;margin:6px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px 20px}
+.ingr li{display:flex;align-items:baseline;gap:10px;line-height:1.5;padding:4px 0}
+.ingr input{width:16px;height:16px;accent-color:var(--lip2);cursor:pointer;flex:none}
+.ingr label{cursor:pointer;flex:1}
+.ingr li.checked label{opacity:.5;text-decoration:line-through}
+
+.recap{display:none}
+.recap.on{display:block}
+.recap ol{padding-left:22px}
+.recap li{padding:4px 0}
+
+.tabs{display:flex;gap:2px;margin:8px 0 0;border-bottom:1px dashed rgba(33,29,32,.35)}
+.tab{font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:0;color:var(--mut);padding:8px 14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.on{color:var(--lip2);border-bottom-color:var(--lip2)}
+
+.kmnote{font-family:"DotGothic16",monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mut);text-transform:uppercase;margin-top:14px;text-align:center}
+
+.scene{position:fixed;inset:0;z-index:0;pointer-events:none}
+.cel{position:absolute;inset:0;background:url("hub-cel-h9k2m7.jpg") 62% 18%/cover no-repeat;filter:saturate(.9) brightness(.9)}
+.celscrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(23,20,26,.22) 0%,rgba(23,20,26,.5) 55%,rgba(23,20,26,.82) 100%),linear-gradient(180deg,rgba(23,20,26,0) 40%,rgba(23,20,26,.55) 100%)}
+.vhs{position:fixed;inset:0;z-index:1;pointer-events:none}
+.scan{position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(10,8,12,.11) 3px 4px)}
+@media(prefers-reduced-motion:reduce){.scan{display:none}}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  var KEY='hub_pw_ok_v1';
+  try{
+    if (sessionStorage.getItem(KEY)!=='1'){
+      var tries=0;
+      while(tries<5){
+        var v=window.prompt('Password:');
+        if (v===null){ document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>'; return; }
+        if (v.trim().toLowerCase()==='dakz'){ sessionStorage.setItem(KEY,'1'); break; }
+        tries++;
+      }
+      if (sessionStorage.getItem(KEY)!=='1'){
+        document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>';
+        return;
+      }
+    }
+  }catch(e){}
+})();
+</script>
+
+<div class="scene"><div class="cel"></div><div class="celscrim"></div></div>
+<div class="vhs"><div class="scan"></div></div>
+
+<nav class="hubnav" aria-label="Hub nav">
+  <a class="brand" href="hub-h9k2m7.html">HUB</a>
+  <a href="house-design-h9k2m7.html">HOUSE DESIGN</a>
+  <a href="kids-h9k2m7.html">KIDS</a>
+  <a href="recipes-h9k2m7.html">RECIPES</a>
+  <a href="books-h9k2m7.html">BOOKS</a>
+  <a href="movies-h9k2m7.html">MOVIES</a>
+  <a href="music-h9k2m7.html">MUSIC</a>
+  <a href="events-h9k2m7.html">EVENTS</a>
+  <a href="restaurants-h9k2m7.html">RESTAURANTS</a>
+</nav>
+
+<header class="mast">
+  <div class="ep">COOK MODE &middot; ONE STEP AT A TIME &middot; SPACE / &rarr; = NEXT</div>
+  <h1>Picadillo <i>tacos</i></h1>
+  <div class="sub">~30 min active &middot; feeds 4 with leftovers &middot; kid-mild base, adults heat at the table &middot; screen stays awake</div>
+</header>
+
+<div class="wrap">
+
+  <article class="card">
+    <div class="tabs">
+      <button class="tab on" data-tab="cook">Cook mode</button>
+      <button class="tab" data-tab="full">Full recipe</button>
+    </div>
+  </article>
+
+  <div id="cook-view">
+
+    <article class="card">
+      <h2>Ingredients &amp; <i>tools</i></h2>
+      <h3>The meat pot</h3>
+      <ul class="ingr" id="ing-meat"></ul>
+      <h3>Aromatics + veg</h3>
+      <ul class="ingr" id="ing-aro"></ul>
+      <h3>Spices (all mild)</h3>
+      <ul class="ingr" id="ing-spice"></ul>
+      <h3>Tacos + table</h3>
+      <ul class="ingr" id="ing-table"></ul>
+      <h3>Tools</h3>
+      <ul class="ingr" id="ing-tools"></ul>
+    </article>
+
+    <article class="card step" id="step-card">
+      <div class="stepline"><span id="stepnum">STEP 1</span><span id="steptime"></span></div>
+      <div class="stepbody" id="stepbody"></div>
+      <div class="steptip" id="steptip"></div>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <div class="controls">
+        <button class="btn" id="prev">&larr; Back</button>
+        <button class="btn" id="next">Next &rarr;</button>
+        <button class="btn ghost" id="reset">Reset</button>
+        <span class="wakebadge off" id="wakebadge">Screen: sleep</span>
+      </div>
+      <div class="kmnote">Space or &rarr; advances &middot; &larr; goes back &middot; progress auto-saves &middot; screen locked awake while cooking</div>
+    </article>
+
+    <article class="card timeline">
+      <h2>The <i>timeline</i></h2>
+      <ol id="timeline"></ol>
+    </article>
+
+  </div>
+
+  <div id="full-view" class="recap">
+
+    <article class="card">
+      <h2>Picadillo <i>filling</i></h2>
+      <div class="meta" style="font-family:'DotGothic16',monospace;font-size:11px;letter-spacing:.1em;color:var(--mut);text-transform:uppercase;margin:2px 0 10px">1&ndash;1.25 lb ground beef (80/20) &middot; 1 medium white onion &middot; 4 garlic cloves &middot; 2 medium yukon gold potatoes &middot; 1 medium carrot &middot; 2 tbsp tomato paste &middot; 1 (14 oz) can diced tomatoes (or 2 romas) &middot; &frac12; cup water or beef broth &middot; small handful raisins (optional) &middot; 1 bay leaf</div>
+      <ol>
+        <li>Small dice: 2 yukon golds (~1/3-inch cubes), 1 carrot, 1 white onion. Mince 4 garlic cloves.</li>
+        <li>Brown 1&ndash;1.25 lb ground beef in a wide skillet over medium-high, breaking it up fine. 6&ndash;8 min. Drain excess fat, leaving ~1 tbsp behind.</li>
+        <li>Add the diced onion. Cook 4&ndash;5 min until translucent. Add garlic, stir 30 sec.</li>
+        <li>Add spices: 1 tsp cumin, 1 tsp Mexican oregano, pinch (1/8 tsp) cinnamon, 1 bay leaf, 1 tsp ancho chili powder, &frac12; tsp smoked paprika, &frac12; tsp black pepper. Stir 30 sec to bloom.</li>
+        <li>Stir in 2 tbsp tomato paste. Cook 1 min until it darkens a shade.</li>
+        <li>Add the can of diced tomatoes + &frac12; cup water or beef broth. Stir.</li>
+        <li>Stir in diced potato + carrot. (Raisins now if using.)</li>
+        <li>Cover, reduce to a low simmer, cook 15&ndash;20 min. Stir once at 10 min. Done when a paring knife slides through the potato with no resistance and the liquid is mostly reduced to a thick sauce.</li>
+        <li>Fish out the bay leaf. Salt to taste (start 1 tsp, more if needed).</li>
+      </ol>
+    </article>
+
+    <article class="card">
+      <h2>Table <i>setup</i></h2>
+      <ul>
+        <li>Warm corn or flour tortillas (dry skillet 30 sec/side, or wrapped stack in the oven at 300&deg;F for 10 min)</li>
+        <li>Diced avocado or sliced</li>
+        <li>Chopped white onion + cilantro</li>
+        <li>Lime wedges</li>
+        <li>Queso fresco or cotija, crumbled</li>
+        <li>Mexican crema (or sour cream thinned with lime juice)</li>
+      </ul>
+      <h3>Heat at the table (adults only)</h3>
+      <ul>
+        <li>Chipotles in adobo &mdash; mince a spoonful into your own portion</li>
+        <li>Hot sauce (Cholula / Valentina / Tapat&iacute;o)</li>
+        <li>Sliced fresh serrano or pickled jalape&ntilde;os</li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <h2>Kid <i>mild</i></h2>
+      <p>The base pot is mild on purpose. Ancho + smoked paprika give the "seasoned Mexican meat" flavor with near-zero heat. Any real heat goes on adult tacos at the table, not in the pot.</p>
+      <p>If Zada is picky about visible veg: the potato dice hides in the sauce; the carrot dice can be finer or skipped.</p>
+    </article>
+
+  </div>
+
+</div>
+
+<script>
+var MEAT = [
+  '1&ndash;1.25 lb ground beef (80/20)',
+];
+var ARO = [
+  '1 medium white onion (small dice)',
+  '4 garlic cloves (minced)',
+  '2 medium yukon gold potatoes (small dice)',
+  '1 medium carrot (small dice, optional)',
+  '2 tbsp tomato paste',
+  '1 (14 oz) can diced tomatoes (or 2 romas)',
+  '&frac12; cup water or beef broth',
+  'Small handful raisins (optional)',
+  '1 bay leaf'
+];
+var SPICE = [
+  '1 tsp cumin',
+  '1 tsp Mexican oregano',
+  'Pinch (1/8 tsp) cinnamon',
+  '1 tsp ancho chili powder',
+  '&frac12; tsp smoked paprika',
+  '&frac12; tsp black pepper',
+  '1 tsp kosher salt (start)'
+];
+var TABLE = [
+  'Corn or flour tortillas (2&ndash;3 per adult)',
+  'Avocado (1&ndash;2)',
+  'Cilantro (small bunch, chopped)',
+  'White onion (extra, diced fine)',
+  'Lime wedges',
+  'Queso fresco or cotija',
+  'Mexican crema or sour cream',
+  'Chipotles in adobo (adults)',
+  'Hot sauce (adults)'
+];
+var TOOLS = [
+  'Wide skillet or dutch oven with lid',
+  'Sharp knife + cutting board',
+  'Wooden spoon or spatula',
+  'Foil or towel to keep tortillas warm'
+];
+
+var STEPS = [
+  {t:'Small-dice the veg', body:'Dice 2 yukon gold potatoes into <b>1/3-inch cubes</b>, 1 carrot into a similar small dice, and 1 white onion. Mince 4 garlic cloves. Get it all on the board before the pan gets hot.', tip:'Small dice = potatoes cook in 15&ndash;20 min with the beef', time:'0:00'},
+  {t:'Warm tortillas plan', body:'Decide now: dry skillet 30 sec/side later, or wrap a stack in foil in a <b>300&deg;F oven</b>. If oven: turn it on now.', tip:'Cold tortillas kill the taco &mdash; plan for warm', time:'0:03'},
+  {t:'Brown the beef', body:'Wide skillet over medium-high. Add 1&ndash;1.25 lb ground beef, break it up fine with a spoon. <b>6&ndash;8 min</b> until no pink, edges getting crisp. Drain excess fat, leave about 1 tbsp behind for the aromatics.', tip:'Real browning = flavor. Don&rsquo;t stir constantly &mdash; let it sit and color.', time:'0:05'},
+  {t:'Onion in', body:'Drop the diced onion into the pan with the beef. Cook <b>4&ndash;5 min</b>, stirring occasionally, until translucent and softened at the edges.', tip:'Onion should smell sweet, not sharp, before garlic goes in', time:'0:12'},
+  {t:'Garlic + bloom the spices', body:'Add the minced garlic, stir 30 sec. Then dump in the spices: <b>1 tsp cumin, 1 tsp Mexican oregano, pinch cinnamon, 1 bay leaf, 1 tsp ancho chili powder, &frac12; tsp smoked paprika, &frac12; tsp black pepper</b>. Stir constantly 30 sec &mdash; the pan will smell like a taqueria.', tip:'The cinnamon pinch is the tell &mdash; makes it picadillo, not taco meat', time:'0:17'},
+  {t:'Tomato paste sear', body:'Add <b>2 tbsp tomato paste</b>. Stir it into the meat and cook 1 min until it darkens a shade &mdash; caramelizing the paste = depth.', tip:'Skipping this step = flat, thin flavor', time:'0:18'},
+  {t:'Liquid in', body:'Pour in <b>1 can (14 oz) diced tomatoes + &frac12; cup water or beef broth</b>. Stir, scraping up any brown bits from the bottom.', tip:'Scrape the fond &mdash; that&rsquo;s where the flavor lives', time:'0:19'},
+  {t:'Potato + carrot in', body:'Stir in the <b>diced potato + carrot</b>. Add raisins now if using (a small handful &mdash; they melt into sweet pops). Cover with the lid.', tip:'Cover retains the steam that cooks the potato', time:'0:20'},
+  {t:'Simmer 15-20 min', body:'Reduce heat to <b>low simmer</b>. Set a 15 min timer. Stir once at 10 min so nothing sticks. Done when a paring knife slides through a potato cube with zero resistance.', tip:'Now is when you set the table + warm tortillas', time:'0:35'},
+  {t:'Season + reduce', body:'Uncover. If it&rsquo;s soupy, simmer 3&ndash;5 min uncovered until it&rsquo;s a <b>thick, spoonable sauce</b>. Fish out the bay leaf. Salt to taste, start with 1 tsp.', tip:'Picadillo should be moist but not wet &mdash; no puddle on the tortilla', time:'0:38'},
+  {t:'Warm tortillas', body:'Warm the tortillas: dry skillet 30 sec/side, then stack under a towel. Or pull the foil-wrapped stack out of the oven.', tip:'Hot tortillas + hot filling &mdash; everything else is cold toppings', time:'0:40'},
+  {t:'Table + heat station', body:'Set out: avocado, cilantro, extra onion, lime, queso fresco, crema. <b>Adult side</b>: chipotles in adobo + hot sauce + pickled jalape&ntilde;os. Build tacos to order.', tip:'Kids get theirs first, plain filling + cheese + crema. Then the adult station.', time:'0:42'}
+];
+
+// ---- render ingredients ----
+function renderIngr(el, items, key){
+  el = document.getElementById(el);
+  el.innerHTML = '';
+  var checked = {};
+  try{ checked = JSON.parse(localStorage.getItem('pica_'+key)||'{}'); }catch(e){}
+  items.forEach(function(txt, i){
+    var li=document.createElement('li');
+    var id='ing-'+key+'-'+i;
+    li.innerHTML='<input type="checkbox" id="'+id+'"><label for="'+id+'">'+txt+'</label>';
+    if(checked[i]){ li.classList.add('checked'); li.querySelector('input').checked=true; }
+    li.querySelector('input').addEventListener('change', function(e){
+      li.classList.toggle('checked', e.target.checked);
+      checked[i]=e.target.checked;
+      try{ localStorage.setItem('pica_'+key, JSON.stringify(checked)); }catch(e){}
+    });
+    el.appendChild(li);
+  });
+}
+renderIngr('ing-meat', MEAT, 'meat');
+renderIngr('ing-aro', ARO, 'aro');
+renderIngr('ing-spice', SPICE, 'spice');
+renderIngr('ing-table', TABLE, 'table');
+renderIngr('ing-tools', TOOLS, 'tools');
+
+// ---- render timeline ----
+var tl = document.getElementById('timeline');
+STEPS.forEach(function(s,i){
+  var li=document.createElement('li');
+  li.dataset.i=i;
+  li.innerHTML=s.t+' <span style="color:var(--mut);font-family:\'DotGothic16\',monospace;font-size:10.5px;letter-spacing:.1em">'+s.time+'</span>';
+  tl.appendChild(li);
+});
+
+// ---- step engine ----
+var IDX_KEY='pica_stepidx';
+var idx = 0;
+try{ idx = parseInt(localStorage.getItem(IDX_KEY)||'0',10); if(isNaN(idx)||idx<0||idx>=STEPS.length) idx=0; }catch(e){}
+
+var stepnum = document.getElementById('stepnum');
+var steptime = document.getElementById('steptime');
+var stepbody = document.getElementById('stepbody');
+var steptip = document.getElementById('steptip');
+var bar = document.getElementById('bar');
+var prev = document.getElementById('prev');
+var next = document.getElementById('next');
+var reset = document.getElementById('reset');
+
+function render(){
+  var s = STEPS[idx];
+  stepnum.innerHTML = 'STEP '+(idx+1)+' OF '+STEPS.length+' &middot; '+s.t.toUpperCase();
+  steptime.textContent = '~'+s.time+' IN';
+  stepbody.innerHTML = s.body;
+  steptip.textContent = s.tip;
+  bar.style.width = ((idx+1)/STEPS.length*100)+'%';
+  prev.disabled = idx===0;
+  next.disabled = false;
+  next.innerHTML = idx===STEPS.length-1 ? 'Done &check;' : 'Next &rarr;';
+  [...tl.children].forEach(function(li,i){
+    li.classList.toggle('done', i<idx);
+    li.classList.toggle('now', i===idx);
+  });
+  try{ localStorage.setItem(IDX_KEY, String(idx)); }catch(e){}
+}
+prev.onclick=function(){ if(idx>0){ idx--; render(); } };
+next.onclick=function(){ if(idx<STEPS.length-1){ idx++; render(); } };
+reset.onclick=function(){ if(confirm('Reset to step 1 and clear ingredient checks?')){
+  idx=0;
+  try{ localStorage.removeItem(IDX_KEY); ['meat','aro','spice','table','tools'].forEach(function(k){ localStorage.removeItem('pica_'+k); }); }catch(e){}
+  renderIngr('ing-meat', MEAT, 'meat');
+  renderIngr('ing-aro', ARO, 'aro');
+  renderIngr('ing-spice', SPICE, 'spice');
+  renderIngr('ing-table', TABLE, 'table');
+  renderIngr('ing-tools', TOOLS, 'tools');
+  render();
+} };
+document.addEventListener('keydown', function(e){
+  if (e.target && (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')) return;
+  if (e.key===' '||e.key==='ArrowRight'||e.key==='Enter'){ e.preventDefault(); next.click(); }
+  if (e.key==='ArrowLeft'){ e.preventDefault(); prev.click(); }
+});
+render();
+
+// ---- tabs ----
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click', function(){
+    document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('on'); });
+    t.classList.add('on');
+    var which = t.dataset.tab;
+    document.getElementById('cook-view').style.display = which==='cook' ? '' : 'none';
+    document.getElementById('full-view').classList.toggle('on', which==='full');
+  });
+});
+
+// ---- wake lock (keep screen on) ----
+(function(){
+  var badge = document.getElementById('wakebadge');
+  var lock = null;
+  async function acquire(){
+    if (!('wakeLock' in navigator)) { badge.textContent='Screen: browser unsupported'; return; }
+    try {
+      lock = await navigator.wakeLock.request('screen');
+      badge.classList.remove('off'); badge.classList.add('on');
+      badge.textContent='Screen: awake';
+      lock.addEventListener('release', function(){
+        badge.classList.remove('on'); badge.classList.add('off');
+        badge.textContent='Screen: sleep';
+      });
+    } catch(e) {
+      badge.textContent='Screen: '+(e && e.message ? e.message : 'blocked');
+    }
+  }
+  acquire();
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState==='visible' && (!lock || lock.released)) acquire();
+  });
+})();
+</script>
+
+</body>
+</html>
