@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex, nofollow">
+<title>Zada 8 · Slumber Party · print builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Special+Elite&family=Permanent+Marker&family=Caveat:wght@700&family=Kalam:wght@700&family=Shrikhand&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:#141216;color:#e8dfd2;font:14px/1.5 "Zen Kaku Gothic New",sans-serif;padding:24px;min-height:100vh}
+.wrap{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:start}
+@media(max-width:1024px){.wrap{grid-template-columns:1fr}}
+
+h1{font-family:"Bebas Neue",sans-serif;font-size:32px;letter-spacing:.06em;margin-bottom:2px}
+.sub{opacity:.75;margin-bottom:14px;max-width:660px;font-size:13px}
+
+.print-col{display:flex;flex-direction:column;align-items:center;gap:16px}
+.print-frame{background:#f4f1e4;padding:14px;border-radius:4px;box-shadow:0 8px 24px rgba(0,0,0,.55)}
+.plabel{font-family:"Special Elite",monospace;font-size:10px;color:#7a6a5e;letter-spacing:.14em;text-transform:uppercase;text-align:center;margin:0 0 8px}
+.print{width:400px;height:600px;background:#000;position:relative;overflow:hidden}
+
+.ptitle{position:absolute;top:22px;left:0;right:0;text-align:center;z-index:6;pointer-events:none;padding:0 18px}
+.ptitle .big{color:#e8dfd2;letter-spacing:.02em;line-height:1;display:inline-block;text-shadow:0 2px 6px rgba(0,0,0,.6)}
+.ptitle .d{font-family:"Caveat",cursive;font-size:16px;color:#c9b8a3;margin-top:4px;font-weight:700}
+
+.pfont-marker  .big{font-family:"Permanent Marker",cursive;font-size:34px;transform:rotate(-3deg)}
+.pfont-caveat  .big{font-family:"Caveat",cursive;font-size:46px;font-weight:700;transform:rotate(-2deg)}
+.pfont-shrik   .big{font-family:"Shrikhand",cursive;font-size:32px;transform:rotate(-2deg);color:#f6c4b0}
+.pfont-kalam   .big{font-family:"Kalam",cursive;font-size:32px;font-weight:700;transform:rotate(-2deg)}
+.pfont-bebas   .big{font-family:"Bebas Neue",sans-serif;font-size:34px;letter-spacing:.14em;text-transform:uppercase}
+
+.polaroid{position:absolute;background:#f4f1e4;padding:5px 5px 6px;box-shadow:0 5px 12px rgba(0,0,0,.55);transform-origin:center;overflow:visible}
+.polaroid .pinner{width:100%;height:100%;background:#151217;overflow:hidden;position:relative}
+.polaroid img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* washi tape corners */
+.polaroid::before,.polaroid::after{content:"";position:absolute;width:22px;height:8px;background:rgba(230,210,180,.55);z-index:10}
+.polaroid::before{top:-3px;left:8px;transform:rotate(-4deg)}
+.polaroid::after{bottom:-3px;right:8px;transform:rotate(6deg)}
+
+/* treatments */
+.tx-color img{filter:contrast(1.05) saturate(1.05)}
+.tx-bw img{filter:grayscale(1) contrast(1.08) brightness(1.02)}
+.tx-sepia img{filter:sepia(.82) contrast(1.05) brightness(1.02)}
+.tx-hicontrast img{filter:grayscale(1) contrast(1.5) brightness(1.05)}
+.tx-vignette .pinner::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.78) 100%);pointer-events:none}
+.polaroid.tx-cutout{background:transparent;padding:0;box-shadow:none}
+.polaroid.tx-cutout::before,.polaroid.tx-cutout::after{display:none}
+.polaroid.tx-cutout .pinner{background:transparent}
+.polaroid.tx-cutout img{object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,.7))}
+
+/* SLOT POSITIONS (aspect-matched to source photos) */
+/* Slot 1 chocolate — square-ish source (1.05:1) → landscape polaroid to keep all 3 girls */
+.p-s1{width:150px;height:130px;left:12px;top:100px;transform:rotate(-9deg);z-index:3}
+/* Slot 2 walking — very landscape source (1.95:1) → tall-landscape polaroid */
+.p-s2{width:170px;height:95px;right:12px;top:112px;transform:rotate(7deg);z-index:3}
+/* Slot 3 pusheen HERO — near-square source → landscape hero */
+.p-s3{width:250px;height:200px;left:75px;top:220px;transform:rotate(-3deg);z-index:4}
+/* Slot 4 ice skating (placeholder) */
+.p-s4{width:135px;height:120px;left:14px;bottom:80px;transform:rotate(5deg);z-index:5;background:#1e1a20;border:1.5px dashed rgba(244,241,228,.35)}
+.p-s4 .pinner{display:flex;align-items:center;justify-content:center;color:#c9b8a3;font-family:"Special Elite",monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;text-align:center;padding:6px;line-height:1.5;background:transparent}
+.p-s4::before,.p-s4::after{display:none}
+/* Slot 5 ice cream — portrait source (0.74:1) → portrait polaroid */
+.p-s5{width:110px;height:150px;right:14px;bottom:22px;transform:rotate(-7deg);z-index:5}
+/* Slot 6 rock candy — landscape source (1.35:1) → bottom center */
+.p-s6{width:140px;height:105px;left:150px;bottom:14px;transform:rotate(3deg);z-index:6}
+
+/* ---- controls ---- */
+.ctrl{background:#1e1c22;padding:22px;border-radius:8px;border:1px solid rgba(244,241,228,.1)}
+.ctrl h3{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:.06em;color:#f4c9a5;margin:18px 0 8px}
+.ctrl h3:first-child{margin-top:0}
+.row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.btn{font-family:"Special Elite",monospace;font-size:11.5px;letter-spacing:.06em;background:#2b2830;color:#c9b8a3;border:1px solid rgba(244,241,228,.15);padding:7px 11px;border-radius:2px;cursor:pointer;transition:background .15s}
+.btn:hover{background:#3a353e;color:#f4f1e4}
+.btn.active{background:#cf4a2e;color:#f4f1e4;border-color:#cf4a2e}
+.slotgroup{margin-bottom:8px;padding:10px 12px;background:#161418;border-radius:4px;border:1px solid rgba(244,241,228,.06)}
+.slotlabel{font-family:"Bebas Neue",sans-serif;font-size:13px;letter-spacing:.1em;color:#c9b8a3;margin-bottom:6px}
+.slotlabel b{color:#f4f1e4}
+
+.walgreens{background:#1e1c22;padding:22px;border-radius:8px;border:1px solid rgba(244,241,228,.1);margin-top:18px;max-width:660px}
+.walgreens h2{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:.06em;margin-bottom:6px}
+.walgreens ol{margin:8px 0 0 22px}
+.walgreens li{padding:4px 0;opacity:.92;font-size:13.5px}
+.walgreens a{color:#e58e73}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  var KEY='hub_pw_ok_v1';
+  try{
+    if (sessionStorage.getItem(KEY)!=='1'){
+      var tries=0;
+      while(tries<5){
+        var v=window.prompt('Password:');
+        if (v===null){ document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>'; return; }
+        if (v.trim().toLowerCase()==='dakz'){ sessionStorage.setItem(KEY,'1'); break; }
+        tries++;
+      }
+      if (sessionStorage.getItem(KEY)!=='1'){
+        document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>';
+        return;
+      }
+    }
+  }catch(e){}
+})();
+</script>
+
+<div class="wrap">
+
+  <div class="print-col">
+    <h1>Zada 8 · Slumber Party</h1>
+    <div class="sub" style="text-align:center">Live 4×6 preview. Tap options at right to preview. When it looks right, Andrew renders the print-ready JPG for Walgreens.</div>
+    <div class="print-frame">
+      <div class="plabel">4 × 6 &middot; portrait &middot; black bg</div>
+      <div class="print" id="print">
+        <div class="ptitle pfont-shrik" id="ptitle">
+          <div class="big" id="ptitle-big">best buds</div>
+          <div class="d" id="ptitle-d">Zada 8 · Aug 29, 2026</div>
+        </div>
+
+        <div class="polaroid p-s1 tx-color" data-slot="1" data-src="1-chocolate"><div class="pinner"><img src="bday-photostrip-h9k2m7/1-chocolate-tight.jpg" alt=""></div></div>
+        <div class="polaroid p-s2 tx-bw"    data-slot="2" data-src="2-walking"><div class="pinner"><img src="bday-photostrip-h9k2m7/2-walking-tight.jpg" alt=""></div></div>
+        <div class="polaroid p-s3 tx-color" data-slot="3" data-src="4-pusheen"><div class="pinner"><img src="bday-photostrip-h9k2m7/4-pusheen-tight.jpg" alt=""></div></div>
+        <div class="polaroid p-s4"           data-slot="4"><div class="pinner">ice skating<br>(swap in later)</div></div>
+        <div class="polaroid p-s5 tx-vignette" data-slot="5" data-src="5-icecream"><div class="pinner"><img src="bday-photostrip-h9k2m7/5-icecream-tight.jpg" alt=""></div></div>
+        <div class="polaroid p-s6 tx-color" data-slot="6" data-src="3-rockcandy"><div class="pinner"><img src="bday-photostrip-h9k2m7/3-rockcandy-tight.jpg" alt=""></div></div>
+      </div>
+      <div class="plabel">approx print size · defaults saved · tap to override</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="ctrl">
+      <h3>Headline</h3>
+      <div class="row" id="titles"></div>
+      <h3>Title font</h3>
+      <div class="row" id="fonts"></div>
+      <h3>Per-photo treatment</h3>
+      <div id="slots"></div>
+    </div>
+
+    <div class="walgreens">
+      <h2>Walgreens print flow</h2>
+      <ol>
+        <li>Dial in title + treatments (defaults already set to Andrew&rsquo;s picks: <b>best buds</b> · Groovy font · slot 2 B&amp;W · slot 5 Vignette).</li>
+        <li>Say &ldquo;print it&rdquo; to Andrew &mdash; he renders a <b>1200&times;1800 JPG</b> (300 DPI, 4&times;6 print-ready).</li>
+        <li>Upload at <a href="https://www.walgreens.com/photo/product/print" target="_blank">walgreens.com/photo/product/print</a> &rarr; 4&times;6 Glossy &rarr; qty 5&ndash;6.</li>
+        <li>Same-day pickup at your Oak Park store, ~1 hr, ~$0.35 each.</li>
+        <li>When the ice-skating photo arrives, re-render just that slot &mdash; print an updated batch if you want.</li>
+      </ol>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var TITLES = [
+  'best buds','slumber party','BFFs','the trio','sleepover crew',
+  'party of 3','cat squad','girl gang','the crew','three amigas',
+  'zada + friends','eight'
+];
+var FONTS = [
+  {k:'pfont-marker', label:'Marker'},
+  {k:'pfont-caveat', label:'Handwritten'},
+  {k:'pfont-shrik',  label:'Groovy'},
+  {k:'pfont-kalam',  label:'Casual'},
+  {k:'pfont-bebas',  label:'Block'}
+];
+
+var SLOT_INFO = {
+  '1': {name:'Chocolate shop', src:'1-chocolate', default:'tx-color'},
+  '2': {name:'Walking (video still)', src:'2-walking', default:'tx-bw'},
+  '3': {name:'Pusheen · HERO', src:'4-pusheen', default:'tx-color'},
+  '4': {name:'ICE SKATING (pending swap)', src:null},
+  '5': {name:'Arcade + ice cream', src:'5-icecream', default:'tx-vignette'},
+  '6': {name:'Rock candy in car', src:'3-rockcandy', default:'tx-color'}
+};
+var TREATMENTS = [
+  {k:'tx-color',      label:'Color'},
+  {k:'tx-bw',         label:'B&W'},
+  {k:'tx-sepia',      label:'Sepia'},
+  {k:'tx-hicontrast', label:'Hi-contrast BW'},
+  {k:'tx-vignette',   label:'+ Vignette'},
+  {k:'tx-cutout',     label:'Cutout (no bg)'}
+];
+
+// ---- title picker ----
+var titlesEl = document.getElementById('titles');
+var DEFAULT_TITLE = 'best buds';
+TITLES.forEach(function(t){
+  var b = document.createElement('button');
+  b.className = 'btn' + (t===DEFAULT_TITLE ? ' active' : '');
+  b.textContent = t;
+  b.onclick = function(){
+    document.querySelectorAll('#titles .btn').forEach(function(x){ x.classList.remove('active'); });
+    b.classList.add('active');
+    document.getElementById('ptitle-big').textContent = t;
+  };
+  titlesEl.appendChild(b);
+});
+
+// ---- font picker ----
+var fontsEl = document.getElementById('fonts');
+var DEFAULT_FONT = 'pfont-shrik';
+FONTS.forEach(function(f){
+  var b = document.createElement('button');
+  b.className = 'btn' + (f.k===DEFAULT_FONT ? ' active' : '');
+  b.textContent = f.label;
+  b.onclick = function(){
+    document.querySelectorAll('#fonts .btn').forEach(function(x){ x.classList.remove('active'); });
+    b.classList.add('active');
+    var t = document.getElementById('ptitle');
+    FONTS.forEach(function(x){ t.classList.remove(x.k); });
+    t.classList.add(f.k);
+  };
+  fontsEl.appendChild(b);
+});
+
+// ---- slot treatments ----
+var slotsEl = document.getElementById('slots');
+Object.keys(SLOT_INFO).forEach(function(slot){
+  var info = SLOT_INFO[slot];
+  var grp = document.createElement('div');
+  grp.className = 'slotgroup';
+  grp.innerHTML = '<div class="slotlabel">SLOT ' + slot + ' &middot; <b>'+info.name+'</b></div><div class="row" data-slot="'+slot+'"></div>';
+  var row = grp.querySelector('.row');
+  if (!info.src){
+    row.innerHTML = '<span style="opacity:.55;font-size:12px;padding:4px 0">Placeholder &mdash; swap in ice-skating photo when you have it.</span>';
+    slotsEl.appendChild(grp);
+    return;
+  }
+  TREATMENTS.forEach(function(tr){
+    var b = document.createElement('button');
+    b.className = 'btn' + (tr.k===info.default ? ' active' : '');
+    b.textContent = tr.label;
+    b.onclick = function(){
+      row.querySelectorAll('.btn').forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      var polaroid = document.querySelector('.polaroid[data-slot="'+slot+'"]');
+      TREATMENTS.forEach(function(t){ polaroid.classList.remove(t.k); });
+      polaroid.classList.add(tr.k);
+      var img = polaroid.querySelector('img');
+      if (tr.k === 'tx-cutout'){
+        img.src = 'bday-photostrip-h9k2m7/' + info.src + '-cutout.png';
+      } else {
+        img.src = 'bday-photostrip-h9k2m7/' + info.src + '-tight.jpg';
+      }
+    };
+    row.appendChild(b);
+  });
+  slotsEl.appendChild(grp);
+});
+</script>
+
+</body>
+</html>
