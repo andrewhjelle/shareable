@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex, nofollow">
+<title>Char siu pork &middot; cook mode</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{--tape:#17141a;--ink:#211d20;--skin:#edbd97;--lip:#d96b52;--lip2:#c24f3d;--cobalt:#4a6fb2;--signal:#cf4a2e;--cream:#f2e0c8;--cream2:#e9d5ba;--osd:#f4f1e4;--mut:#7a6a5e;--go:#2e7d5b}
+*{box-sizing:border-box;margin:0}
+body{background:var(--tape);color:var(--ink);font:16px/1.55 "Zen Kaku Gothic New",sans-serif;overflow-x:hidden;min-height:100vh}
+a{color:var(--lip2);text-decoration:none;border-bottom:1px dotted rgba(194,79,61,.5)}
+
+.hubnav{position:sticky;top:0;z-index:50;background:rgba(33,29,32,.92);backdrop-filter:blur(6px);border-bottom:1px solid rgba(244,241,228,.18);display:flex;gap:2px;align-items:center;padding:8px 20px;font-family:"DotGothic16",monospace;letter-spacing:.14em;font-size:12px;text-transform:uppercase}
+.hubnav a{color:var(--osd);text-decoration:none;padding:8px 14px;border-radius:2px;border:1px solid transparent;transition:color .15s,border-color .15s}
+.hubnav a:hover{color:var(--skin);border-color:rgba(244,201,165,.4)}
+@media(max-width:720px){.hubnav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:8px 12px}.hubnav::-webkit-scrollbar{display:none}.hubnav a{flex:0 0 auto;white-space:nowrap;padding:6px 10px}.hubnav .brand{margin-right:8px;padding-right:8px}}
+.hubnav .brand{font-family:"Anton",sans-serif;font-size:18px;letter-spacing:.06em;color:#f4f1e4;margin-right:14px;padding-right:14px;border-right:1px solid rgba(244,241,228,.2)}
+
+.mast{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:22px 22px 6px}
+.mast .ep{font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.2em;color:var(--osd);text-shadow:1px 0 0 rgba(217,107,82,.6),-1px 0 0 rgba(74,111,178,.6);text-transform:uppercase}
+.mast h1{font-family:"Anton",sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:.02em;text-transform:uppercase;transform:skewX(-6deg);color:var(--skin);text-shadow:3px 0 0 rgba(194,79,61,.55),-3px 0 0 rgba(74,111,178,.45);margin:8px 0 4px;line-height:1}
+.mast h1 i{font-style:normal;color:var(--lip)}
+.mast .sub{font-family:"DotGothic16",monospace;font-size:11.5px;letter-spacing:.14em;color:var(--osd);opacity:.85;text-transform:uppercase;margin-top:6px}
+
+.wrap{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:0 22px 100px;display:grid;gap:18px}
+
+.card{position:relative;background:var(--cream);color:var(--ink);border:2.5px solid var(--ink);border-radius:3px 12px 4px 10px;padding:22px 24px 20px;box-shadow:5px 6px 0 rgba(33,29,32,.85)}
+.card::before{content:"";position:absolute;inset:4px;border:1px solid var(--ink);opacity:.22;border-radius:2px 9px 3px 8px;pointer-events:none}
+.card > *{position:relative}
+.card h2{font-family:"Anton",sans-serif;font-size:26px;letter-spacing:.02em;text-transform:uppercase;transform:skewX(-5deg);margin:0 0 8px}
+.card h2 i{font-style:normal;color:var(--lip2)}
+.card h3{font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--lip2);margin:14px 0 6px}
+.card ul{margin:6px 0 6px 20px;padding:0}
+.card ul li{padding:3px 0;line-height:1.5}
+.card p{margin:6px 0;line-height:1.55}
+
+.card.tier{background:var(--signal);color:var(--cream);border-color:var(--ink)}
+.card.tier h2{color:var(--cream)}
+.card.tier h2 i{color:#ffd9c4}
+.card.tier ul li,.card.tier p{color:var(--cream)}
+.card.tier .ep{color:#ffd9c4}
+.card.tier b{color:#ffe3d1}
+
+.card.launch{background:var(--ink);color:var(--osd)}
+.card.launch h2{color:var(--skin)}
+.card.launch p{color:var(--osd)}
+
+.ingr{list-style:none;padding:0;margin:6px 0 0;display:grid;grid-template-columns:1fr;gap:4px}
+@media(min-width:640px){.ingr{grid-template-columns:1fr 1fr}}
+.ingr li{display:flex;align-items:baseline;gap:10px;line-height:1.5;padding:5px 0;border-top:1px dashed rgba(33,29,32,.15)}
+.ingr li:first-child{border-top:0}
+.ingr input{width:18px;height:18px;accent-color:var(--lip2);cursor:pointer;flex:none}
+.ingr label{cursor:pointer;flex:1}
+.ingr li.checked label{opacity:.5;text-decoration:line-through}
+.ingr.opt li label{color:var(--mut)}
+
+.bigbtn{font-family:"Anton",sans-serif;font-size:22px;letter-spacing:.06em;text-transform:uppercase;background:var(--signal);color:var(--cream);border:2.5px solid var(--ink);padding:16px 24px;border-radius:3px 10px 4px 8px;cursor:pointer;box-shadow:4px 5px 0 rgba(33,29,32,.85);transition:transform .1s;width:100%}
+.bigbtn:hover{transform:translateY(-2px)}
+
+/* MODAL */
+.modal{position:fixed;inset:0;z-index:200;background:var(--tape);display:none;flex-direction:column;overflow:hidden}
+.modal.on{display:flex}
+.modal .mhead{display:flex;align-items:center;gap:12px;padding:14px 18px;background:#0f0d11;border-bottom:1px solid rgba(244,241,228,.15);flex:none}
+.modal .mtitle{font-family:"Anton",sans-serif;font-size:18px;letter-spacing:.04em;color:var(--skin);text-transform:uppercase;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.modal .mclose{font-family:"DotGothic16",monospace;font-size:22px;background:transparent;border:1px solid rgba(244,241,228,.4);color:var(--osd);width:44px;height:44px;border-radius:2px;cursor:pointer;flex:none;line-height:1}
+.modal .mwake{font-family:"DotGothic16",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);padding:4px 8px;border:1px dashed rgba(244,241,228,.3);border-radius:2px;flex:none}
+.modal .mwake.on{color:var(--skin);border-color:var(--skin)}
+
+.modal .mdots{display:flex;gap:5px;padding:10px 18px;flex-wrap:wrap;background:#0f0d11;border-bottom:1px solid rgba(244,241,228,.1);flex:none}
+.modal .mdots span{width:10px;height:10px;border-radius:50%;background:rgba(244,241,228,.2);flex:none}
+.modal .mdots span.done{background:rgba(244,201,165,.6)}
+.modal .mdots span.now{background:var(--signal);transform:scale(1.35)}
+
+.modal .mbody{flex:1;overflow-y:auto;padding:24px 22px 20px;display:flex;flex-direction:column;gap:14px}
+.modal .mstepn{font-family:"DotGothic16",monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--skin);opacity:.85}
+.modal .mtitle-h{font-family:"Anton",sans-serif;font-size:clamp(26px,5.5vw,38px);letter-spacing:.02em;text-transform:uppercase;color:var(--osd);line-height:1.1;transform:skewX(-4deg)}
+.modal .mtext{color:var(--osd);font-size:clamp(17px,3.4vw,20px);line-height:1.55}
+.modal .mtext b{color:#ffe3d1}
+.modal .mtext ul{margin:8px 0 4px 22px;padding:0}
+.modal .mtext ul li{padding:5px 0;line-height:1.5}
+
+.badge{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:3px;border:1.5px solid;font-size:15px;line-height:1.45}
+.badge .bl{font-family:"DotGothic16",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.9;flex:none;min-width:74px}
+.badge.time{background:rgba(74,111,178,.12);border-color:rgba(74,111,178,.55);color:#cfd9f0}
+.badge.time .bl{color:#8ea6d6}
+.badge.done{background:rgba(46,125,91,.14);border-color:rgba(46,125,91,.55);color:#c5e3d3}
+.badge.done .bl{color:#7fbf9a}
+.badge.tip{background:rgba(217,107,82,.11);border-color:rgba(217,107,82,.5);color:#f0cdbd}
+.badge.tip .bl{color:#e58e73}
+
+.mctl{display:flex;gap:10px;padding:14px 18px 22px;background:#0f0d11;border-top:1px solid rgba(244,241,228,.15);flex:none}
+.mctl button{flex:1;font-family:"Anton",sans-serif;font-size:18px;letter-spacing:.05em;text-transform:uppercase;padding:16px 12px;border-radius:2px;border:2px solid var(--ink);cursor:pointer;transition:transform .1s}
+.mctl .mprev{background:#2a252b;color:var(--osd);border-color:rgba(244,241,228,.3)}
+.mctl .mnext{background:var(--signal);color:var(--cream);border-color:var(--ink);flex:1.4}
+.mctl button:disabled{opacity:.35;cursor:not-allowed}
+@media(max-width:640px){.modal .mbody{padding:18px 16px}.badge{font-size:14px;padding:10px 12px}.mctl{padding:12px 14px 18px}.mctl button{font-size:16px;padding:14px 10px}}
+
+.scene{position:fixed;inset:0;z-index:0;pointer-events:none}
+.cel{position:absolute;inset:0;background:url("hub-cel-h9k2m7.jpg") 62% 18%/cover no-repeat;filter:saturate(.9) brightness(.9)}
+.celscrim{position:absolute;inset:0;background:linear-gradient(90deg,rgba(23,20,26,.22) 0%,rgba(23,20,26,.5) 55%,rgba(23,20,26,.82) 100%),linear-gradient(180deg,rgba(23,20,26,0) 40%,rgba(23,20,26,.55) 100%)}
+.vhs{position:fixed;inset:0;z-index:1;pointer-events:none}
+.scan{position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 3px,rgba(10,8,12,.11) 3px 4px)}
+@media(prefers-reduced-motion:reduce){.scan{display:none}}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  var KEY='hub_pw_ok_v1';
+  try{
+    if (sessionStorage.getItem(KEY)!=='1'){
+      var tries=0;
+      while(tries<5){
+        var v=window.prompt('Password:');
+        if (v===null){ document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>'; return; }
+        if (v.trim().toLowerCase()==='dakz'){ sessionStorage.setItem(KEY,'1'); break; }
+        tries++;
+      }
+      if (sessionStorage.getItem(KEY)!=='1'){
+        document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>';
+        return;
+      }
+    }
+  }catch(e){}
+})();
+</script>
+
+<div class="scene"><div class="cel"></div><div class="celscrim"></div></div>
+<div class="vhs"><div class="scan"></div></div>
+
+<nav class="hubnav" aria-label="Hub nav">
+  <a class="brand" href="hub-h9k2m7.html">HUB</a>
+  <a href="house-design-h9k2m7.html">HOUSE DESIGN</a>
+  <a href="kids-h9k2m7.html">KIDS</a>
+  <a href="recipes-h9k2m7.html">RECIPES</a>
+  <a href="books-h9k2m7.html">BOOKS</a>
+  <a href="movies-h9k2m7.html">MOVIES</a>
+  <a href="music-h9k2m7.html">MUSIC</a>
+  <a href="events-h9k2m7.html">EVENTS</a>
+  <a href="restaurants-h9k2m7.html">RESTAURANTS</a>
+</nav>
+
+<header class="mast">
+  <div class="ep">RECIPE + COOK MODE &middot; STICKY GLAZE-FIRST TECHNIQUE &middot; TIME + DONE-WHEN ON EVERY STEP</div>
+  <h1>Char siu <i>pork tenderloin</i></h1>
+  <div class="sub">Cantonese BBQ pork &middot; ~35 min active cook (once marinated) &middot; feeds 4 with rice &middot; kid-mild, sweet-savory</div>
+</header>
+
+<div class="wrap">
+
+  <article class="card launch">
+    <h2>Start <i>cook mode</i></h2>
+    <p>Fullscreen, one step at a time, screen stays awake. Assumes the meat is ready to roast (marinated OR you&rsquo;re going glaze-on-the-fly).</p>
+    <button class="bigbtn" id="openmodal">▶ START COOK MODE</button>
+  </article>
+
+  <article class="card tier">
+    <span class="ep" style="font-family:'DotGothic16',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase">TIMING TRIAGE &middot; PICK A PATH</span>
+    <h2>How much <i>time</i> do you have?</h2>
+    <p>Char siu is more forgiving than most marinades because the sticky glaze does the flavor work &mdash; not the soak. Pick your path:</p>
+    <ul>
+      <li><b>8+ hours out:</b> Full overnight marinade. Best result. Marinate now, roast at dinner.</li>
+      <li><b>3&ndash;6 hours out:</b> Cut the tenderloin lengthwise into 2 strips, fork-poke aggressively, then marinate. Compensate with extra glaze coats while roasting.</li>
+      <li><b>Under 2 hours:</b> Skip the soak. <b>Glaze-on-the-fly</b> method &mdash; sear it, then paint the marinade on as glaze every 4&ndash;5 min while it roasts. Total time = 25 min. 80% of the flavor.</li>
+    </ul>
+  </article>
+
+  <article class="card">
+    <h2>Ingredients &amp; <i>tools</i></h2>
+    <h3>The pork</h3>
+    <ul class="ingr" id="ing-meat"></ul>
+    <h3>Marinade + glaze</h3>
+    <ul class="ingr" id="ing-mar"></ul>
+    <h3>Optional (authentic reddish color)</h3>
+    <ul class="ingr opt" id="ing-opt"></ul>
+    <h3>To serve</h3>
+    <ul class="ingr" id="ing-serve"></ul>
+    <h3>Tools</h3>
+    <ul class="ingr" id="ing-tools"></ul>
+  </article>
+
+  <article class="card">
+    <h2>Full <i>recipe</i></h2>
+    <h3>Marinade (do first, then move to cook)</h3>
+    <ol style="padding-left:22px">
+      <li>Whisk together: 3 tbsp hoisin, 2 tbsp light soy, 1 tbsp dark soy, 2 tbsp Shaoxing wine (or dry sherry), 2 tbsp brown sugar, 2 tbsp honey, &frac12; tsp Chinese five-spice, 2 tsp minced garlic, 1 tbsp grated ginger, &frac14; tsp white pepper.</li>
+      <li>Reserve <b>&frac14; cup</b> of the marinade in a small bowl for glazing later &mdash; DON&rsquo;T dip a brush into raw-meat marinade.</li>
+      <li>Add pork tenderloin (1&ndash;1.25 lb) to a zip-top bag with the rest of the marinade. Massage, seal, refrigerate.</li>
+      <li>Marinate: overnight best, minimum 2 hr. If short on time, halve the tenderloin lengthwise and fork-poke first.</li>
+    </ol>
+    <h3>Roast</h3>
+    <ol style="padding-left:22px">
+      <li>Preheat oven to <b>425&deg;F</b>. Line a sheet pan with foil, set a wire rack on top. Add 1 cup water to the pan (catches drippings, prevents burn).</li>
+      <li>Pull tenderloin from marinade, let excess drip off. Lay on the rack, not touching.</li>
+      <li>Roast 12 min. Pull, brush both sides with the reserved &frac14; cup glaze (add 1 tbsp honey to it first for extra stick).</li>
+      <li>Roast another 8 min. Brush again.</li>
+      <li>Broiler on HIGH: 2&ndash;3 min for lacquer char. Watch it &mdash; goes from sticky to burnt in 30 seconds.</li>
+      <li>Internal temp target: <b>140&ndash;145&deg;F</b>. Rest 5 min tented in foil (carries to 145&ndash;150&deg;F).</li>
+      <li>Slice thin against the grain, ~&frac14; inch pieces. Serve over rice with steamed bok choy or cucumber salad.</li>
+    </ol>
+    <h3>Glaze-on-the-fly variant (no marinade time)</h3>
+    <p>Salt the tenderloin, sear all sides in a screaming-hot cast iron pan (~5 min total). Move to a 400&deg;F oven on a foil-lined pan. Paint the char-siu mixture on every 4&ndash;5 min, flipping once. Pull at 140&deg;F internal, rest, slice.</p>
+    <h3>Kid-mild note</h3>
+    <p>Char siu is naturally kid-friendly &mdash; five-spice is warm but not spicy, and the sticky-sweet glaze is the crave-back-for-it factor. No adjustments needed for Kai/Zada.</p>
+  </article>
+
+</div>
+
+<!-- COOK MODE MODAL -->
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="mhead">
+    <div class="mtitle" id="mstepname">Step</div>
+    <span class="mwake" id="wakebadge">Screen: sleep</span>
+    <button class="mclose" id="mclose" title="Exit cook mode">×</button>
+  </div>
+  <div class="mdots" id="mdots"></div>
+  <div class="mbody">
+    <div class="mstepn" id="mstepn">STEP 1 OF ?</div>
+    <div class="mtitle-h" id="mstepnameh"></div>
+    <div class="mtext" id="mstepbody"></div>
+    <div class="badge time" id="btime"><span class="bl">Time</span><span id="btimev"></span></div>
+    <div class="badge done" id="bdone"><span class="bl">Done when</span><span id="bdonev"></span></div>
+    <div class="badge tip" id="btip"><span class="bl">Tip</span><span id="btipv"></span></div>
+  </div>
+  <div class="mctl">
+    <button class="mprev" id="mprev">&larr; Back</button>
+    <button class="mnext" id="mnext">Next &rarr;</button>
+  </div>
+</div>
+
+<script>
+var MEAT = [
+  '1&ndash;1.25 lb pork tenderloin (or pork shoulder for more traditional / fattier)'
+];
+var MAR = [
+  '3 tbsp hoisin sauce',
+  '2 tbsp light soy sauce',
+  '1 tbsp dark soy sauce (for color; light works if that&rsquo;s all you have)',
+  '2 tbsp Shaoxing wine (or dry sherry, or mirin as pinch-hitter)',
+  '2 tbsp brown sugar',
+  '2 tbsp honey (plus 1 tbsp extra for glazing)',
+  '&frac12; tsp Chinese five-spice powder',
+  '2 tsp minced garlic (or 4 cloves)',
+  '1 tbsp grated fresh ginger',
+  '&frac14; tsp white pepper (or black)',
+  '&frac12; tsp kosher salt'
+];
+var OPT = [
+  'Red fermented bean curd (nam yu) &mdash; 1 tbsp for authentic umami + color',
+  'A drop or two red food coloring (restaurant look; skippable)'
+];
+var SERVE = [
+  'Steamed rice',
+  'Steamed bok choy or cucumber salad',
+  'Sliced scallions',
+  'Sesame seeds (optional)'
+];
+var TOOLS = [
+  'Sheet pan + foil',
+  'Wire rack that fits the pan',
+  'Small bowl for reserved glaze',
+  'Basting brush',
+  'Instant-read thermometer',
+  'Sharp knife for slicing thin'
+];
+
+var STEPS = [
+  {
+    t:'Preheat + pan setup',
+    body:'Set the oven to <b>425&deg;F</b>. Line a sheet pan with foil. Set a wire rack on top. Pour <b>1 cup water</b> into the bottom of the pan (catches drippings + prevents smoke).',
+    time:'2 min setup + oven preheat',
+    done:'Oven at 425&deg;F, rack on foil-lined pan, water in the bottom.',
+    tip:'The water is non-negotiable &mdash; without it, the drippings will smoke your kitchen out.'
+  },
+  {
+    t:'Ready the glaze bowl',
+    body:'Take your reserved <b>&frac14; cup marinade</b> (the clean one you set aside BEFORE the raw meat went in). Whisk in <b>1 extra tbsp honey</b> for stickier glaze.',
+    time:'30 sec',
+    done:'Glaze bowl on the counter, brush next to it.',
+    tip:'If you didn&rsquo;t reserve any: mix a quick glaze &mdash; 1 tbsp hoisin + 1 tbsp honey + 1 tsp soy in a small bowl.'
+  },
+  {
+    t:'Pork on the rack',
+    body:'Pull the tenderloin from the marinade bag. Let excess drip off (5 sec shake). Lay it on the wire rack, not touching the sides.',
+    time:'30 sec',
+    done:'Pork on rack, most marinade dripped off, ready to roast.',
+    tip:'Don&rsquo;t wipe the meat &mdash; the clinging marinade IS the base layer of flavor.'
+  },
+  {
+    t:'First roast',
+    body:'Slide into the oven, middle rack. Set timer for <b>12 min</b>.',
+    time:'12 min',
+    done:'Surface starts to darken and dry slightly. Not lacquered yet.',
+    tip:'Now is when you cook the rice + prep the bok choy.'
+  },
+  {
+    t:'First glaze',
+    body:'Pull the pan out. Brush the tenderloin generously with the glaze bowl <b>on all sides</b> &mdash; top, sides, ends. Use the whole brush, don&rsquo;t be shy.',
+    time:'30 sec',
+    done:'Surface is fully coated in a glossy layer, no dry patches.',
+    tip:'Keep the oven door closed as much as possible &mdash; don&rsquo;t let it drop below 400.'
+  },
+  {
+    t:'Second roast',
+    body:'Back in the oven. Set timer for <b>8 min</b>.',
+    time:'8 min',
+    done:'Glaze starts to caramelize at the edges. Meat is nearly to temp.',
+  },
+  {
+    t:'Second glaze',
+    body:'Pull again. Brush with the rest of the glaze &mdash; another generous coat.',
+    time:'30 sec',
+    done:'Fully re-glazed. Should look wet + sticky.',
+    tip:'Save 1-2 tsp of glaze for a final brush after resting.'
+  },
+  {
+    t:'Broil for lacquer',
+    body:'Switch oven to <b>BROIL HIGH</b>. Move pan to top rack (~4 in from element). <b>Watch it constantly</b> &mdash; goes from sticky to burnt in 30 sec.',
+    time:'2&ndash;3 min',
+    done:'Surface has dark caramelized spots. Sticky + glossy. Not black.',
+    tip:'Rotate the pan halfway if your broiler is uneven.'
+  },
+  {
+    t:'Temp check',
+    body:'Instant-read thermometer in the thickest part. Target: <b>140&ndash;145&deg;F</b>. If under, back in the oven at 400&deg;F for 2 min at a time.',
+    time:'10 sec',
+    done:'Reads 140&ndash;145&deg;F in the thickest part.',
+    tip:'Pork tenderloin at 145&deg;F is safe and juicy. Overcooking = dry.'
+  },
+  {
+    t:'Rest',
+    body:'Tent the pork loosely in foil. Rest <b>5 minutes</b>. Internal temp rises 5&deg;F while it rests.',
+    time:'5 min',
+    done:'Foil warm, meat has stopped steaming visibly.',
+    tip:'Rest is not optional &mdash; skipping it = juice on the cutting board instead of in the meat.'
+  },
+  {
+    t:'Slice + final glaze',
+    body:'Slice against the grain, ~<b>&frac14; inch</b> thick. Brush the sliced pieces with the reserved glaze for that restaurant shine.',
+    time:'1 min',
+    done:'Slices arranged on a plate, glistening.',
+    tip:'Thin slices &mdash; thick slices are chewy. Sharp knife, one stroke per slice.'
+  },
+  {
+    t:'Plate + serve',
+    body:'Rice on the bottom, char siu on top. Steamed bok choy or cucumber salad on the side. Optional: scallions + sesame seeds scattered on the pork.',
+    time:'2 min',
+    done:'Family at the table, plates warm.',
+    tip:'Save 2-3 slices for tomorrow&rsquo;s fried rice or bao buns.'
+  }
+];
+
+// ---- render ingredients ----
+function renderIngr(el, items, key){
+  el = document.getElementById(el);
+  el.innerHTML = '';
+  var checked = {};
+  try{ checked = JSON.parse(localStorage.getItem('cs_'+key)||'{}'); }catch(e){}
+  items.forEach(function(txt, i){
+    var li=document.createElement('li');
+    var id='ing-'+key+'-'+i;
+    li.innerHTML='<input type="checkbox" id="'+id+'"><label for="'+id+'">'+txt+'</label>';
+    if(checked[i]){ li.classList.add('checked'); li.querySelector('input').checked=true; }
+    li.querySelector('input').addEventListener('change', function(e){
+      li.classList.toggle('checked', e.target.checked);
+      checked[i]=e.target.checked;
+      try{ localStorage.setItem('cs_'+key, JSON.stringify(checked)); }catch(e){}
+    });
+    el.appendChild(li);
+  });
+}
+renderIngr('ing-meat', MEAT, 'meat');
+renderIngr('ing-mar', MAR, 'mar');
+renderIngr('ing-opt', OPT, 'opt');
+renderIngr('ing-serve', SERVE, 'serve');
+renderIngr('ing-tools', TOOLS, 'tools');
+
+// ---- modal + step engine ----
+var modal = document.getElementById('modal');
+var mdots = document.getElementById('mdots');
+var mstepn = document.getElementById('mstepn');
+var mstepname = document.getElementById('mstepname');
+var mstepnameh = document.getElementById('mstepnameh');
+var mstepbody = document.getElementById('mstepbody');
+var btime = document.getElementById('btime');
+var btimev = document.getElementById('btimev');
+var bdone = document.getElementById('bdone');
+var bdonev = document.getElementById('bdonev');
+var btip = document.getElementById('btip');
+var btipv = document.getElementById('btipv');
+var mprev = document.getElementById('mprev');
+var mnext = document.getElementById('mnext');
+var mclose = document.getElementById('mclose');
+var openbtn = document.getElementById('openmodal');
+var wakebadge = document.getElementById('wakebadge');
+
+var IDX_KEY='cs_stepidx';
+var idx = 0;
+try{ idx = parseInt(localStorage.getItem(IDX_KEY)||'0',10); if(isNaN(idx)||idx<0||idx>=STEPS.length) idx=0; }catch(e){}
+
+STEPS.forEach(function(){ var s=document.createElement('span'); mdots.appendChild(s); });
+
+function renderStep(){
+  var s = STEPS[idx];
+  mstepn.textContent = 'STEP '+(idx+1)+' OF '+STEPS.length;
+  mstepname.textContent = s.t;
+  mstepnameh.textContent = s.t;
+  mstepbody.innerHTML = s.body;
+  btimev.textContent = s.time || '—';
+  bdonev.textContent = s.done || '—';
+  if (s.tip){ btip.style.display=''; btipv.textContent = s.tip; }
+  else { btip.style.display='none'; }
+  [...mdots.children].forEach(function(d,i){
+    d.classList.remove('now','done');
+    if (i<idx) d.classList.add('done');
+    if (i===idx) d.classList.add('now');
+  });
+  mprev.disabled = idx===0;
+  mnext.textContent = idx===STEPS.length-1 ? 'Done ✓' : 'Next →';
+  try{ localStorage.setItem(IDX_KEY, String(idx)); }catch(e){}
+}
+
+var wakelock = null;
+async function acquireWake(){
+  if (!('wakeLock' in navigator)) { wakebadge.textContent='Screen: unsupported'; return; }
+  try {
+    wakelock = await navigator.wakeLock.request('screen');
+    wakebadge.textContent='Screen: awake';
+    wakebadge.classList.add('on');
+    wakelock.addEventListener('release', function(){
+      wakebadge.textContent='Screen: sleep';
+      wakebadge.classList.remove('on');
+    });
+  } catch(e){
+    wakebadge.textContent='Screen: '+(e&&e.message?e.message:'blocked');
+  }
+}
+function releaseWake(){ if (wakelock){ try{ wakelock.release(); }catch(e){} wakelock=null; } }
+
+function openModal(){
+  modal.classList.add('on');
+  modal.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+  acquireWake();
+  renderStep();
+}
+function closeModal(){
+  modal.classList.remove('on');
+  modal.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+  releaseWake();
+}
+
+openbtn.onclick = openModal;
+mclose.onclick = closeModal;
+mprev.onclick = function(){ if(idx>0){ idx--; renderStep(); } };
+mnext.onclick = function(){ if(idx<STEPS.length-1){ idx++; renderStep(); } };
+
+document.addEventListener('keydown', function(e){
+  if (!modal.classList.contains('on')) return;
+  if (e.target && (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')) return;
+  if (e.key==='Escape'){ e.preventDefault(); closeModal(); }
+  if (e.key===' '||e.key==='ArrowRight'||e.key==='Enter'){ e.preventDefault(); mnext.click(); }
+  if (e.key==='ArrowLeft'){ e.preventDefault(); mprev.click(); }
+});
+document.addEventListener('visibilitychange', function(){
+  if (document.visibilityState==='visible' && modal.classList.contains('on') && (!wakelock)) acquireWake();
+});
+</script>
+
+</body>
+</html>
