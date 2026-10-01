@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>PC Rebuild List</title>
+<style>
+:root{
+  --bg:#f6f4ef; --card:#ffffff; --ink:#1d1b20; --muted:#5d5866; --line:#e2ddd4;
+  --accent:#2f5d8a; --warn:#a33a2a; --warnbg:#fbeae6; --ok:#2e6b3f; --okbg:#e7f3ea; --tipbg:#eef3f9;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16151a; --card:#201e25; --ink:#f1eee8; --muted:#a7a1ae; --line:#34313b;
+    --accent:#8fb6e0; --warn:#f08b78; --warnbg:#3a201c; --ok:#86c99a; --okbg:#1c2d21; --tipbg:#1d2633;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16151a; --card:#201e25; --ink:#f1eee8; --muted:#a7a1ae; --line:#34313b;
+  --accent:#8fb6e0; --warn:#f08b78; --warnbg:#3a201c; --ok:#86c99a; --okbg:#1c2d21; --tipbg:#1d2633;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:28px 16px 80px}
+h1{font-size:clamp(26px,6vw,34px);line-height:1.2;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 20px}
+.progress{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.bar{flex:1;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .25s}
+.progress span{font-size:14px;color:var(--muted);white-space:nowrap}
+.callout{border-radius:10px;padding:14px 16px;margin:0 0 18px}
+.callout.warn{background:var(--warnbg);border-left:4px solid var(--warn)}
+.callout.tip{background:var(--tipbg);border-left:4px solid var(--accent)}
+.callout.ok{background:var(--okbg);border-left:4px solid var(--ok)}
+.phase{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 8px;margin:0 0 18px}
+.phase h2{font-size:21px;margin:0 0 2px;display:flex;gap:10px;align-items:baseline}
+.phase h2 .n{color:var(--accent);font-variant-numeric:tabular-nums}
+.phase .when{color:var(--muted);font-size:14px;margin:0 0 10px}
+ul.steps{list-style:none;padding:0;margin:0}
+ul.steps>li{border-top:1px solid var(--line);padding:12px 0}
+ul.steps label{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+ul.steps input{width:22px;height:22px;flex:none;margin-top:3px;accent-color:var(--ok)}
+ul.steps li.done .t{text-decoration:line-through;color:var(--muted)}
+.t b{font-weight:650}
+.d{color:var(--muted);font-size:15.5px;margin:4px 0 0 34px}
+.d ul{margin:6px 0 2px;padding-left:20px}
+code,kbd{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:var(--tipbg);padding:1px 5px;border-radius:4px}
+a{color:var(--accent)}
+.foot{color:var(--muted);font-size:14px;margin-top:26px}
+button.reset{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:6px 12px;font:inherit;font-size:14px;cursor:pointer}
+.tag{display:inline-block;font-size:12px;padding:1px 7px;border-radius:99px;background:var(--tipbg);color:var(--accent);margin-left:6px;vertical-align:1px}
+.tag.red{background:var(--warnbg);color:var(--warn)}
+pre{background:var(--tipbg);padding:10px 12px;border-radius:8px;overflow-x:auto;font-size:14px;margin:6px 0}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  var KEY='hub_pw_ok_v1';
+  try{
+    if (sessionStorage.getItem(KEY)!=='1'){
+      var tries=0;
+      while(tries<5){
+        var v=window.prompt('Password:');
+        if (v===null){ document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>'; return; }
+        if (v.trim().toLowerCase()==='dakz'){ sessionStorage.setItem(KEY,'1'); break; }
+        tries++;
+      }
+      if (sessionStorage.getItem(KEY)!=='1'){
+        document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>';
+        return;
+      }
+    }
+  }catch(e){}
+})();
+</script>
+
+<div class="wrap">
+<h1>PC Rebuild List</h1>
+<p class="sub">What to reinstall and how to put Claude back together, built from what was actually on this PC on 1 Oct 2026. Use it alongside the <a href="pc-reset-q7m3x9.html">Clean PC Reset</a> steps.</p>
+<div class="progress"><div class="bar"><i id="barfill"></i></div><span id="count">0 / 0</span></div>
+<section class="phase"><h2><span class="n">A</span> Grab before you wipe</h2><p class="when">Do these BEFORE Phase 4 of the reset</p><div class="callout warn">Two repos have a lot of unpushed work (below). Copy them before anything else. Don't push them from the infected PC: you'll be revoking those GitHub tokens anyway.</div><ul class="steps">
+<li><label><input type="checkbox" data-id="r1"><span class="t"><b>0.Claude (hq repo): 52 unpushed commits.</b> Copy the whole <code>Documents\0.Claude</code> folder, <code>.git</code> included, to the backup drive.</span></label></li>
+<li><label><input type="checkbox" data-id="r2"><span class="t"><b>futures-trading: 366 unpushed commits + 101 changed files.</b> This is the biggest risk of losing work. Copy the whole folder, <code>.git</code> included.</span></label><div class="d">Push it from the clean PC later, once you have new GitHub credentials.</div></li>
+<li><label><input type="checkbox" data-id="r3"><span class="t"><b>wisp</b> (<code>Documents\wisp</code>) has <b>no GitHub remote</b>, so this copy is the only one. Back it up.</span></label></li>
+<li><label><input type="checkbox" data-id="r4"><span class="t"><b>Claude memory:</b> the <code>C:\Users\Andrew\.claude\projects\*\memory</code> folders (about 7 MB in total). They aren't in git anywhere.</span></label></li>
+<li><label><input type="checkbox" data-id="r5"><span class="t"><b>Claude config</b> from <code>C:\Users\Andrew\.claude\</code>: <code>settings.json</code>, <code>skills\</code>, <code>plans\</code>, <code>.mcp.json</code>, <code>plugins\installed_plugins.json</code> + <code>known_marketplaces.json</code>.</span></label><div class="d"><b>Skip:</b> <code>.credentials.json</code> (you'll log in fresh), plus <code>cache</code>, <code>debug</code>, <code>file-history</code>, <code>shell-snapshots</code>, <code>session-env</code>, <code>sessions</code>, <code>tasks</code>. Old chat transcripts (<code>projects\*\*.jsonl</code>) are optional. They're large and you don't need them.</div></li>
+<li><label><input type="checkbox" data-id="r6"><span class="t"><b>MEGA downloads</b> (includes <code>eternal bets</code> and its <code>.claude\agents</code>): confirm MEGAsync shows it fully synced, otherwise copy it.</span></label></li>
+<li><label><input type="checkbox" data-id="r7"><span class="t"><b>ComfyUI:</b> copy <code>models\</code> (only <code>.safetensors</code> / <code>.gguf</code>), <code>input\</code>, <code>output\</code>, <code>user\default\workflows</code>. <b>Not</b> <code>custom_nodes</code> or <code>venv</code>.</span></label></li>
+<li><label><input type="checkbox" data-id="r8"><span class="t"><b>kohya_ss:</b> copy <code>dataset\</code> and any trained LoRAs/outputs only. The app itself gets cloned fresh.</span></label></li>
+<li><label><input type="checkbox" data-id="r9"><span class="t"><b>Licence keys / logins to find first:</b> Microsoft Office LTSC 2024 key, Macrium Reflect key, IPVanish login, DAZ 3D account.</span></label></li>
+<li><label><input type="checkbox" data-id="r10"><span class="t"><b>Wipe C: only.</b> Your Steam games live on <b>D:\SteamLibrary</b>. Leave D: alone (no partition deletes) and you won't need to download them again.</span></label></li>
+</ul></section>
+<section class="phase"><h2><span class="n">B</span> Games: your 10 must-haves</h2><p class="when">All on D:\SteamLibrary · cloud saves come back on their own</p><ul class="steps">
+<li><label><input type="checkbox" data-id="r11"><span class="t">Install <b>Steam</b> from store.steampowered.com and log in.</span></label></li>
+<li><label><input type="checkbox" data-id="r12"><span class="t">Steam → Settings → Storage → <b>Add drive → D:\SteamLibrary</b>. Your games show up as installed with no re-download.</span></label></li>
+<li><label><input type="checkbox" data-id="r13"><span class="t">Install <b>Ubisoft Connect</b> (ubisoft.com) for Black Flag Resynced.</span></label></li>
+<li><label><input type="checkbox" data-id="r14"><span class="t">Dune: Awakening</span></label></li>
+<li><label><input type="checkbox" data-id="r15"><span class="t">Gothic 1 Remake</span></label></li>
+<li><label><input type="checkbox" data-id="r16"><span class="t">Blue Prince</span></label></li>
+<li><label><input type="checkbox" data-id="r17"><span class="t">VRChat</span></label></li>
+<li><label><input type="checkbox" data-id="r18"><span class="t">Expeditions: Rome</span></label></li>
+<li><label><input type="checkbox" data-id="r19"><span class="t">Assassin's Creed Black Flag Resynced <span class="tag">needs Ubisoft Connect</span></span></label></li>
+<li><label><input type="checkbox" data-id="r20"><span class="t">Subnautica 2</span></label></li>
+<li><label><input type="checkbox" data-id="r21"><span class="t">Subnautica</span></label></li>
+<li><label><input type="checkbox" data-id="r22"><span class="t">Heroes of Might and Magic: Olden Era</span></label></li>
+<li><label><input type="checkbox" data-id="r23"><span class="t">Super Battle Golf</span></label></li>
+<li><label><input type="checkbox" data-id="r24"><span class="t">Once they're all back, right-click each one → Properties → Installed Files → <b>Verify integrity</b>. That checks the files against Steam and replaces anything that was tampered with.</span></label></li>
+</ul></section>
+<section class="phase"><h2><span class="n">C</span> Apps</h2><p class="when">Official sites only, or <code>winget install</code></p><div class="callout tip"><b>Shortcut:</b> lots of these install in one go from PowerShell, e.g. <code>winget install Google.Chrome Discord.Discord 7zip.7zip VideoLAN.VLC Git.Git OpenJS.NodeJS.LTS Microsoft.VisualStudioCode</code>. winget only pulls from official publishers.</div><ul class="steps">
+<li style="border:0;padding:14px 0 2px"><b style="color:var(--accent)">Everyday</b></li>
+<li><label><input type="checkbox" data-id="r25"><span class="t">Google Chrome</span></label></li>
+<li><label><input type="checkbox" data-id="r26"><span class="t">Brave</span></label></li>
+<li><label><input type="checkbox" data-id="r27"><span class="t">Discord</span></label></li>
+<li><label><input type="checkbox" data-id="r28"><span class="t">7-Zip</span></label></li>
+<li><label><input type="checkbox" data-id="r29"><span class="t">VLC</span></label></li>
+<li><label><input type="checkbox" data-id="r30"><span class="t">Foxit PDF Reader</span></label></li>
+<li><label><input type="checkbox" data-id="r31"><span class="t">Amazon Kindle</span></label></li>
+<li><label><input type="checkbox" data-id="r32"><span class="t">calibre</span></label></li>
+<li style="border:0;padding:14px 0 2px"><b style="color:var(--accent)">Sync &amp; cloud</b></li>
+<li><label><input type="checkbox" data-id="r33"><span class="t">MEGAsync, then sign in and point it at the same folders</span></label></li>
+<li><label><input type="checkbox" data-id="r34"><span class="t">Google Drive</span></label></li>
+<li><label><input type="checkbox" data-id="r35"><span class="t">Dropbox</span></label></li>
+<li><label><input type="checkbox" data-id="r36"><span class="t">OneDrive (built in, just sign in)</span></label></li>
+<li style="border:0;padding:14px 0 2px"><b style="color:var(--accent)">Hardware &amp; system</b></li>
+<li><label><input type="checkbox" data-id="r37"><span class="t">NVIDIA App (installs the driver)</span></label></li>
+<li><label><input type="checkbox" data-id="r38"><span class="t">Logitech G HUB</span></label></li>
+<li><label><input type="checkbox" data-id="r39"><span class="t">SteelSeries GG</span></label></li>
+<li><label><input type="checkbox" data-id="r40"><span class="t">SoundSwitch</span></label></li>
+<li><label><input type="checkbox" data-id="r41"><span class="t">PowerToys</span></label></li>
+<li><label><input type="checkbox" data-id="r42"><span class="t">Macrium Reflect <span class="tag red">licence key</span></span></label><div class="d">Once everything is set up, take a full image of C:. Next time you can restore a clean PC in 20 minutes.</div></li>
+<li style="border:0;padding:14px 0 2px"><b style="color:var(--accent)">Office / work</b></li>
+<li><label><input type="checkbox" data-id="r43"><span class="t">Microsoft Office LTSC 2024 <span class="tag red">licence key</span></span></label></li>
+<li><label><input type="checkbox" data-id="r44"><span class="t">Zoom</span></label></li>
+<li><label><input type="checkbox" data-id="r45"><span class="t">IPVanish <span class="tag">optional</span></span></label></li>
+<li style="border:0;padding:14px 0 2px"><b style="color:var(--accent)">Dev &amp; Claude (install in this order)</b></li>
+<li><label><input type="checkbox" data-id="r46"><span class="t">Git</span></label></li>
+<li><label><input type="checkbox" data-id="r47"><span class="t">GitHub Desktop</span></label></li>
+<li><label><input type="checkbox" data-id="r48"><span class="t">Node.js LTS</span></label></li>
+<li><label><input type="checkbox" data-id="r49"><span class="t">Python 3.10 (ComfyUI needs this one), 3.12, 3.14, ticking "Add to PATH" and the py launcher</span></label></li>
+<li><label><input type="checkbox" data-id="r50"><span class="t">VS Code + the Claude Code extension</span></label></li>
+<li><label><input type="checkbox" data-id="r51"><span class="t">ripgrep, Deno, yt-dlp + FFmpeg</span></label></li>
+<li><label><input type="checkbox" data-id="r52"><span class="t">Ollama, then re-pull your local models (<code>ollama pull …</code>)</span></label></li>
+<li style="border:0;padding:14px 0 2px"><b style="color:var(--accent)">Creative / hobby</b></li>
+<li><label><input type="checkbox" data-id="r53"><span class="t">Blender</span></label></li>
+<li><label><input type="checkbox" data-id="r54"><span class="t">DAZ Install Manager <span class="tag">re-download assets from account</span></span></label></li>
+<li><label><input type="checkbox" data-id="r55"><span class="t">Anycubic Slicer Next</span></label></li>
+<li><label><input type="checkbox" data-id="r56"><span class="t">Vortex (mod manager) <span class="tag">optional</span></span></label></li>
+<li style="border:0;padding:14px 0 2px"><b style="color:var(--accent)">Trading</b></li>
+<li><label><input type="checkbox" data-id="r57"><span class="t">AMP Global MT5 (download it from AMP's site, not a mirror)</span></label></li>
+</ul></section>
+<section class="phase"><h2><span class="n">D</span> Claude Code setup</h2><p class="when">After apps · 30 min</p><ul class="steps">
+<li><label><input type="checkbox" data-id="r58"><span class="t"><b>Use the same Windows username (Andrew) and the same folder locations.</b> Claude stores memory per project by path (e.g. <code>c--Users-Andrew-Documents-0-Claude</code>). If the paths change, your memories won't load.</span></label></li>
+<li><label><input type="checkbox" data-id="r59"><span class="t">Install Claude Code (native): in PowerShell run</span></label><div class="d"><pre>irm https://claude.ai/install.ps1 | iex</pre>Then run <code>claude</code> and log in. That creates a fresh <code>.credentials.json</code>.</div></li>
+<li><label><input type="checkbox" data-id="r60"><span class="t">Copy the backed-up <code>settings.json</code>, <code>skills\</code>, <code>plans\</code>, <code>.mcp.json</code> and the <code>projects\*\memory</code> folders back into <code>C:\Users\Andrew\.claude\</code> at the same paths.</span></label></li>
+<li><label><input type="checkbox" data-id="r61"><span class="t">Re-add MCP servers (don't copy the old <code>.claude.json</code> over; re-adding is cleaner):</span></label><div class="d"><pre>claude mcp add playwright -s user -- npx -y @playwright/mcp@latest
+claude mcp add skylight -s user -- npx -y @rjhalvorson/skylight-mcp</pre>Skylight needs its login again. Use a <b>new</b> password, since you changed it in the reset.</div></li>
+<li><label><input type="checkbox" data-id="r62"><span class="t">Re-add the TypeSafe plugin: in Claude, <code>/plugin</code> → add marketplace <code>typesafe-ai/skills</code> → install <code>typesafe</code>.</span></label></li>
+<li><label><input type="checkbox" data-id="r63"><span class="t">claude.ai connectors (Gmail, Calendar, Docs, Drive) live in your claude.ai account and come back when you log in. Google Drive still needs authorising there.</span></label></li>
+<li><label><input type="checkbox" data-id="r64"><span class="t">Make a <b>new GitHub login</b> on the clean PC (GitHub Desktop sign-in or <code>gh auth login</code>), then clone:</span></label><div class="d"><pre>cd ~/Documents
+git clone https://github.com/andrewhjelle/rising-impact-spelling-edition 0.Claude/rising-impact-spelling-edition
+git clone https://github.com/andrewhjelle/shareable clones/shareable
+git clone https://github.com/bmaltais/kohya_ss</pre></div></li>
+<li><label><input type="checkbox" data-id="r65"><span class="t">Restore <b>0.Claude</b>, <b>futures-trading</b> and <b>wisp</b> from the backup copies (they have unpushed work), then <code>git push</code> 0.Claude and futures-trading.</span></label></li>
+<li><label><input type="checkbox" data-id="r66"><span class="t">Make new API keys for anything that had them (Anthropic, Nectar etc.) and put them back in the env vars or <code>.env</code> files.</span></label></li>
+<li><label><input type="checkbox" data-id="r67"><span class="t">Run <code>claude</code> in <code>Documents\0.Claude</code> and in <code>MEGA downloads\eternal bets</code>. Check it remembers you (it should call you Shep).</span></label></li>
+</ul></section>
+<section class="phase"><h2><span class="n">E</span> ComfyUI custom nodes</h2><p class="when">Re-add only what you use · one at a time</p><ul class="steps">
+<li><label><input type="checkbox" data-id="r68"><span class="t">Fresh ComfyUI into <code>Documents\ComfyUI-Local\ComfyUI</code> with a new venv on <code>py -3.10</code>, then copy <code>models\</code>, <code>input\</code> and workflows back.</span></label></li>
+<li><label><input type="checkbox" data-id="r69"><span class="t">ComfyUI-Manager (install first, then use it to add the rest)</span></label></li>
+<li><label><input type="checkbox" data-id="r70"><span class="t">ComfyUI-GGUF</span></label></li>
+<li><label><input type="checkbox" data-id="r71"><span class="t">ComfyUI_IPAdapter_plus</span></label></li>
+<li><label><input type="checkbox" data-id="r72"><span class="t">ComfyUI-Anima_IP-Adapter</span></label></li>
+<li><label><input type="checkbox" data-id="r73"><span class="t">ComfyUI-VideoHelperSuite</span></label></li>
+<li><label><input type="checkbox" data-id="r74"><span class="t">ComfyUI-AnimateDiff-Evolved</span></label></li>
+<li><label><input type="checkbox" data-id="r75"><span class="t">ComfyUI-LTXVideo</span></label></li>
+<li><label><input type="checkbox" data-id="r76"><span class="t">ComfyUI-HunyuanVideoWrapper</span></label></li>
+<li><label><input type="checkbox" data-id="r77"><span class="t">ComfyUI-FramePackWrapper</span></label></li>
+<li><label><input type="checkbox" data-id="r78"><span class="t">comfyui-impact-pack</span></label></li>
+<li><label><input type="checkbox" data-id="r79"><span class="t">comfyui_controlnet_aux</span></label></li>
+<li><label><input type="checkbox" data-id="r80"><span class="t">rgthree-comfy</span></label></li>
+<li><label><input type="checkbox" data-id="r81"><span class="t">ComfyUI-ReActor</span></label></li>
+<li><label><input type="checkbox" data-id="r82"><span class="t"><code>ComfyUI-h3-explorations</code> is your own node. Restore it from the backup only after giving the code a quick look.</span></label></li>
+</ul></section>
+<p class="foot"><button class="reset" id="resetBtn" type="button">Clear all ticks</button></p>
+</div>
+
+<script>
+(function(){
+  var SKEY='pcrebuild_ticks_v1', state={};
+  try{ state=JSON.parse(localStorage.getItem(SKEY)||'{}')||{}; }catch(e){ state={}; }
+  var boxes=document.querySelectorAll('ul.steps input[type=checkbox]');
+  function render(){
+    var n=0;
+    boxes.forEach(function(b){ var on=!!state[b.dataset.id]; b.checked=on; b.closest('li').classList.toggle('done',on); if(on)n++; });
+    document.getElementById('count').textContent=n+' / '+boxes.length;
+    document.getElementById('barfill').style.width=(boxes.length?100*n/boxes.length:0)+'%';
+  }
+  function save(){ try{ localStorage.setItem(SKEY,JSON.stringify(state)); }catch(e){} }
+  boxes.forEach(function(b){ b.addEventListener('change',function(){ state[b.dataset.id]=b.checked; save(); render(); }); });
+  document.getElementById('resetBtn').addEventListener('click',function(){ if(confirm('Clear all ticks?')){ state={}; save(); render(); } });
+  render();
+})();
+</script>
+</body>
+</html>
