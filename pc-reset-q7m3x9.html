@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Clean PC Reset</title>
+<style>
+:root{
+  --bg:#f6f4ef; --card:#ffffff; --ink:#1d1b20; --muted:#5d5866; --line:#e2ddd4;
+  --accent:#2f5d8a; --warn:#a33a2a; --warnbg:#fbeae6; --ok:#2e6b3f; --okbg:#e7f3ea; --tipbg:#eef3f9;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16151a; --card:#201e25; --ink:#f1eee8; --muted:#a7a1ae; --line:#34313b;
+    --accent:#8fb6e0; --warn:#f08b78; --warnbg:#3a201c; --ok:#86c99a; --okbg:#1c2d21; --tipbg:#1d2633;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16151a; --card:#201e25; --ink:#f1eee8; --muted:#a7a1ae; --line:#34313b;
+  --accent:#8fb6e0; --warn:#f08b78; --warnbg:#3a201c; --ok:#86c99a; --okbg:#1c2d21; --tipbg:#1d2633;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:28px 16px 80px}
+h1{font-size:clamp(26px,6vw,34px);line-height:1.2;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 20px}
+.progress{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.bar{flex:1;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .25s}
+.progress span{font-size:14px;color:var(--muted);white-space:nowrap}
+.callout{border-radius:10px;padding:14px 16px;margin:0 0 18px}
+.callout.warn{background:var(--warnbg);border-left:4px solid var(--warn)}
+.callout.tip{background:var(--tipbg);border-left:4px solid var(--accent)}
+.callout.ok{background:var(--okbg);border-left:4px solid var(--ok)}
+.phase{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 8px;margin:0 0 18px}
+.phase h2{font-size:21px;margin:0 0 2px;display:flex;gap:10px;align-items:baseline}
+.phase h2 .n{color:var(--accent);font-variant-numeric:tabular-nums}
+.phase .when{color:var(--muted);font-size:14px;margin:0 0 10px}
+ul.steps{list-style:none;padding:0;margin:0}
+ul.steps>li{border-top:1px solid var(--line);padding:12px 0}
+ul.steps label{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+ul.steps input{width:22px;height:22px;flex:none;margin-top:3px;accent-color:var(--ok)}
+ul.steps li.done .t{text-decoration:line-through;color:var(--muted)}
+.t b{font-weight:650}
+.d{color:var(--muted);font-size:15.5px;margin:4px 0 0 34px}
+.d ul{margin:6px 0 2px;padding-left:20px}
+code,kbd{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:var(--tipbg);padding:1px 5px;border-radius:4px}
+a{color:var(--accent)}
+.foot{color:var(--muted);font-size:14px;margin-top:26px}
+button.reset{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:6px 12px;font:inherit;font-size:14px;cursor:pointer}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  var KEY='hub_pw_ok_v1';
+  try{
+    if (sessionStorage.getItem(KEY)!=='1'){
+      var tries=0;
+      while(tries<5){
+        var v=window.prompt('Password:');
+        if (v===null){ document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>'; return; }
+        if (v.trim().toLowerCase()==='dakz'){ sessionStorage.setItem(KEY,'1'); break; }
+        tries++;
+      }
+      if (sessionStorage.getItem(KEY)!=='1'){
+        document.documentElement.innerHTML='<body style="background:#17141a;color:#f4f1e4;font-family:sans-serif;padding:40px;text-align:center">Locked.</body>';
+        return;
+      }
+    }
+  }catch(e){}
+})();
+</script>
+
+<div class="wrap">
+<h1>Clean PC Reset</h1>
+<p class="sub">Wiping a Windows 11 PC you think has malware, start to finish. Tick things off as you go. Ticks are saved on this device.</p>
+
+<div class="progress"><div class="bar"><i id="barfill"></i></div><span id="count">0 / 0</span></div>
+
+<div class="callout warn"><b>Golden rule:</b> anything to do with accounts or passwords happens on a <b>clean device</b> (your phone or another computer), never on the infected PC. Malware often logs keystrokes, so a password you type on the infected PC should be treated as already stolen.</div>
+
+<!-- PHASE 0 -->
+<section class="phase">
+<h2><span class="n">0</span> Contain it now</h2>
+<p class="when">5 minutes · do this first</p>
+<ul class="steps">
+<li><label><input type="checkbox" data-id="p0a"><span class="t"><b>Stop logging into anything</b> on the suspect PC. No banking, email, or password-manager unlocks.</span></label></li>
+<li><label><input type="checkbox" data-id="p0b"><span class="t"><b>Disconnect it from the internet</b> (unplug ethernet / turn off Wi-Fi) unless you're actively copying files to the cloud.</span></label>
+<p class="d">This cuts off anything sending your data out. Plug back in only for a step that needs it.</p></li>
+<li><label><input type="checkbox" data-id="p0c"><span class="t"><b>Optional: get a second opinion</b> on what it is, so you know what it may have stolen.</span></label>
+<div class="d"><ul>
+<li>Windows Security → Virus &amp; threat protection → Scan options → <b>Microsoft Defender Offline scan</b> (reboots and scans before Windows loads).</li>
+<li>Write down any threat names it finds. An "infostealer" or "RAT" finding means assume <b>every saved browser password and logged-in session</b> is compromised.</li>
+</ul></div></li>
+</ul>
+</section>
+
+<!-- PHASE 1 -->
+<section class="phase">
+<h2><span class="n">1</span> Lock down your accounts</h2>
+<p class="when">30–60 min · on your PHONE or another clean computer</p>
+<ul class="steps">
+<li><label><input type="checkbox" data-id="p1a"><span class="t"><b>Email first.</b> Change the password, turn on 2-step verification, then use "Sign out of all other sessions".</span></label>
+<p class="d">Gmail: myaccount.google.com → Security → "Your devices" → sign out unknown devices. Email comes first because it's the reset key for everything else.</p></li>
+<li><label><input type="checkbox" data-id="p1b"><span class="t"><b>Microsoft account</b> (the one Windows logs in with): new password plus 2-step, and check recent activity.</span></label></li>
+<li><label><input type="checkbox" data-id="p1c"><span class="t"><b>Money:</b> bank, credit cards, PayPal, Venmo, brokerage, any crypto. New passwords, and check for transactions you don't recognise.</span></label></li>
+<li><label><input type="checkbox" data-id="p1d"><span class="t"><b>Dev / cloud accounts:</b> GitHub, MEGA, Anthropic/Claude, any AI or image sites.</span></label>
+<div class="d"><ul>
+<li>GitHub: Settings → Sessions (sign out others), <b>SSH keys</b> and <b>Personal access tokens</b>: delete any that lived on this PC; you'll make new ones after.</li>
+<li>Revoke and regenerate any <b>API keys</b> that were saved in files or environment variables on this PC.</li>
+</ul></div></li>
+<li><label><input type="checkbox" data-id="p1e"><span class="t"><b>Everything saved in your browser.</b> If Chrome/Edge remembered passwords, assume they've leaked. Change the important ones; for the rest, change them as you next use them.</span></label></li>
+<li><label><input type="checkbox" data-id="p1f"><span class="t"><b>Discord / Steam / social:</b> change passwords and log out other sessions. Stolen session cookies get around passwords, so the log-out is the part that counts.</span></label></li>
+</ul>
+</section>
+
+<!-- PHASE 2 -->
+<section class="phase">
+<h2><span class="n">2</span> Back up, carefully</h2>
+<p class="when">1–3 hrs, depending on size</p>
+<div class="callout tip"><b>Back up data, not programs.</b> Documents, photos, project files and models are fine. Anything that <i>runs</i> (.exe, .bat, .ps1, .msi, installers, cracks, "portable" apps, browser extensions) gets reinstalled fresh from the official source instead.</div>
+<ul class="steps">
+<li><label><input type="checkbox" data-id="p2a"><span class="t"><b>Copy personal files</b> to an external drive or cloud: Documents, Pictures, Videos, Desktop, Downloads (skim it and leave installers behind).</span></label></li>
+<li><label><input type="checkbox" data-id="p2b"><span class="t"><b>Project folders:</b> copy your source and data. Skip <code>node_modules</code>, <code>venv</code>, <code>.venv</code> and <code>__pycache__</code>; you'll rebuild those.</span></label>
+<p class="d">Anything already pushed to GitHub or synced to MEGA is already safe. You only need what exists nowhere else.</p></li>
+<li><label><input type="checkbox" data-id="p2c"><span class="t"><b>AI / ComfyUI:</b> keep model files in <code>.safetensors</code> format. <b>Don't</b> carry over the <code>custom_nodes</code> folder or Python environments.</span></label>
+<p class="d">Malicious ComfyUI custom nodes and pickled <code>.ckpt</code>/<code>.pt</code>/<code>.bin</code> models are a known way malware gets in. Reinstall the nodes you need from their official repos afterwards.</p></li>
+<li><label><input type="checkbox" data-id="p2d"><span class="t"><b>Small config you'd hate to lose:</b> e.g. <code>C:\Users\&lt;you&gt;\.claude</code>, game saves, OBS scenes. These are text, so they're fine to copy.</span></label></li>
+<li><label><input type="checkbox" data-id="p2e"><span class="t"><b>Write down:</b> your Wi-Fi password and a list of the apps you'll reinstall.</span></label></li>
+<li><label><input type="checkbox" data-id="p2f"><span class="t"><b>BitLocker / Device Encryption recovery key:</b> check it's at <a href="https://aka.ms/myrecoverykey" target="_blank" rel="noopener">aka.ms/myrecoverykey</a> (on your phone).</span></label>
+<p class="d">Windows 11 Home often encrypts the drive automatically. A wipe makes this moot, but you'll want the key if anything goes sideways mid-install.</p></li>
+<li><label><input type="checkbox" data-id="p2g"><span class="t"><b>Windows licence:</b> nothing to do. It's a digital licence tied to your hardware and Microsoft account, and it reactivates by itself.</span></label></li>
+</ul>
+</section>
+
+<!-- PHASE 3 -->
+<section class="phase">
+<h2><span class="n">3</span> Make the install USB</h2>
+<p class="when">30 min · on a CLEAN computer · 8 GB+ USB stick (it gets erased)</p>
+<ul class="steps">
+<li><label><input type="checkbox" data-id="p3a"><span class="t">On the clean computer, go to <b>microsoft.com/software-download/windows11</b> and download the <b>Media Creation Tool</b>.</span></label></li>
+<li><label><input type="checkbox" data-id="p3b"><span class="t">Run it → "Create installation media" → USB flash drive → pick your stick.</span></label></li>
+</ul>
+<div class="callout tip" style="margin-top:12px">No clean computer? Second best: on the infected PC go to <b>Settings → System → Recovery → Reset this PC → Remove everything → Cloud download</b>, and choose "Clean data". It works against almost all common malware, but the USB clean install is the more thorough option.</div>
+</section>
+
+<!-- PHASE 4 -->
+<section class="phase">
+<h2><span class="n">4</span> Wipe &amp; reinstall</h2>
+<p class="when">45–90 min</p>
+<div class="callout warn"><b>Multiple drives?</b> If you have extra drives with data or models on them, <b>unplug them</b> (or be very sure which is which) before you delete partitions. Deleted partitions are gone for good.</div>
+<ul class="steps">
+<li><label><input type="checkbox" data-id="p4a"><span class="t">Plug in the USB and restart. Tap the <b>boot-menu key</b> as it powers on (usually <kbd>F12</kbd>, <kbd>F11</kbd>, <kbd>F8</kbd> or <kbd>Esc</kbd>, and the screen often says which) and pick the USB.</span></label></li>
+<li><label><input type="checkbox" data-id="p4b"><span class="t">Choose your language → <b>Install Windows 11</b>. When asked about a product key, choose <b>"I don't have a product key"</b>; it activates on its own later.</span></label></li>
+<li><label><input type="checkbox" data-id="p4c"><span class="t">Pick the <b>same edition</b> you had (Windows 11 <b>Home</b>).</span></label></li>
+<li><label><input type="checkbox" data-id="p4d"><span class="t">On the disk screen: <b>delete every partition on the Windows drive</b> (usually "Drive 0") until it shows one block of Unallocated Space. Select that and click Next.</span></label></li>
+<li><label><input type="checkbox" data-id="p4e"><span class="t">Let it install and restart a few times. Sign in with your Microsoft account (the one whose password you just changed).</span></label></li>
+<li><label><input type="checkbox" data-id="p4f"><span class="t">When setup asks to <b>restore from a previous PC / OneDrive backup</b>: <b>say no</b>. Start fresh.</span></label></li>
+</ul>
+</section>
+
+<!-- PHASE 5 -->
+<section class="phase">
+<h2><span class="n">5</span> Harden the fresh install</h2>
+<p class="when">1 hr, mostly waiting on updates</p>
+<ul class="steps">
+<li><label><input type="checkbox" data-id="p5a"><span class="t"><b>Windows Update</b> until it says you're up to date (include optional driver updates). Expect several restarts.</span></label></li>
+<li><label><input type="checkbox" data-id="p5b"><span class="t"><b>GPU driver</b> straight from nvidia.com (or AMD/Intel). Not from a driver-updater site.</span></label></li>
+<li><label><input type="checkbox" data-id="p5c"><span class="t"><b>Windows Security:</b> check that Virus protection, Firewall, and <b>Core isolation → Memory integrity</b> are all on.</span></label></li>
+<li><label><input type="checkbox" data-id="p5d"><span class="t">Install a <b>password manager</b> (Bitwarden is free, or 1Password) and stop saving passwords in the browser.</span></label></li>
+</ul>
+</section>
+
+<!-- PHASE 6 -->
+<section class="phase">
+<h2><span class="n">6</span> Bring things back</h2>
+<p class="when">As needed</p>
+<ul class="steps">
+<li><label><input type="checkbox" data-id="p6a"><span class="t"><b>Scan the backup drive before you open anything:</b> plug it in, right-click it → <b>Scan with Microsoft Defender</b>.</span></label></li>
+<li><label><input type="checkbox" data-id="p6b"><span class="t">Copy your files back.</span></label></li>
+<li><label><input type="checkbox" data-id="p6c"><span class="t"><b>Reinstall apps only from official sources:</b> the vendor's own site, the Microsoft Store, or <code>winget</code>. No re-uploads, mirrors or "repacks".</span></label></li>
+<li><label><input type="checkbox" data-id="p6d"><span class="t">Make <b>new</b> SSH keys / GitHub tokens / API keys on the clean PC and add them to your accounts.</span></label></li>
+<li><label><input type="checkbox" data-id="p6e"><span class="t">Python / ComfyUI: fresh install, fresh environments, and re-add custom nodes one by one, only ones you recognise and need.</span></label></li>
+</ul>
+</section>
+
+<!-- PHASE 7 -->
+<section class="phase">
+<h2><span class="n">7</span> The week after</h2>
+<p class="when">Light follow-up</p>
+<ul class="steps">
+<li><label><input type="checkbox" data-id="p7a"><span class="t">Watch bank/card statements and email for "new sign-in" or "password changed" alerts you didn't trigger.</span></label></li>
+<li><label><input type="checkbox" data-id="p7b"><span class="t">Check <a href="https://haveibeenpwned.com" target="_blank" rel="noopener">haveibeenpwned.com</a> for your email addresses.</span></label></li>
+<li><label><input type="checkbox" data-id="p7c"><span class="t">Change any remaining passwords you skipped in Phase 1 <b>from the clean PC</b>.</span></label></li>
+<li><label><input type="checkbox" data-id="p7d"><span class="t">Think back to <b>how it got in</b> (a cracked game or app, a "free" download, a fake update pop-up, an email attachment) so it doesn't happen twice.</span></label></li>
+</ul>
+</section>
+
+<div class="callout ok"><b>When to call a pro:</b> if money already left an account, if your email or Microsoft account was taken over and you can't get back in, or if the same symptoms come back <i>after</i> a clean USB install. That last one is very rare and can point to firmware-level malware, which needs a BIOS update or professional help.</div>
+
+<p class="foot"><button class="reset" id="resetBtn" type="button">Clear all ticks</button></p>
+</div>
+
+<script>
+(function(){
+  var SKEY='pcreset_ticks_v1', state={};
+  try{ state=JSON.parse(localStorage.getItem(SKEY)||'{}')||{}; }catch(e){ state={}; }
+  var boxes=document.querySelectorAll('ul.steps input[type=checkbox]');
+  function render(){
+    var n=0;
+    boxes.forEach(function(b){ var on=!!state[b.dataset.id]; b.checked=on; b.closest('li').classList.toggle('done',on); if(on)n++; });
+    document.getElementById('count').textContent=n+' / '+boxes.length;
+    document.getElementById('barfill').style.width=(boxes.length?100*n/boxes.length:0)+'%';
+  }
+  function save(){ try{ localStorage.setItem(SKEY,JSON.stringify(state)); }catch(e){} }
+  boxes.forEach(function(b){ b.addEventListener('change',function(){ state[b.dataset.id]=b.checked; save(); render(); }); });
+  document.getElementById('resetBtn').addEventListener('click',function(){ if(confirm('Clear all ticks?')){ state={}; save(); render(); } });
+  render();
+})();
+</script>
+</body>
+</html>
