@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Rewiring the State &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/ObNKGf9YR0g" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 28 min</span><span class="ln"></span></div>
+<h1 class="lede">Rewiring the State</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Eoin Mulgrew &middot; No. 10 (Downing Street)</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/ObNKGf9YR0g" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/ObNKGf9YR0g</a> &middot; 28 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip hot" style="background:var(--mark);color:#fff">Blueprint &middot; full operating model</span><span class="chip hot">Vertical AI</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Evals & benchmarks</span></div>
+<p class="deck" style="font-size:15px">No. 10 Downing Street built an insurgency-model data team: outsider-only hiring, embedded forward-deployed engineers, AISI Inspect agent-autonomy evals, and sycophancy red-teaming before rollout.</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>No.10&#x27;s data science team frames UK public service delivery as a systemic productivity crisis (7 and 1/4 million on NHS waiting lists, only one in five planning applications decided on time) with a cited 40 billion pound annual AI productivity opportunity.</li><li>Their response is an &#x27;insurgency model&#x27;: a small team with political backing, market-rate pay, and an outsider-only hiring bar (about 0.7-0.8% acceptance) that embeds forward-deployed engineers directly with policy, legal, and operational teams.</li><li>Early wins include replacing a 1.5 million pound external legal review of the UK statute book with an in-house tool, plus agent-autonomy evals (AISI&#x27;s Inspect tool) and AI-tutor safety benchmarking, alongside an acknowledged sycophancy risk that they mitigate through red-teaming before user rollout.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">NO.10 INSURGENCY-MODEL AI TEAM (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 551.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- mandate -->
+<g id="node1" class="node">
+<title>mandate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="393.3,-386.4 249.63,-386.4 249.63,-350.12 393.3,-350.12 393.3,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="283.96" y="-368.31" font-family="Geist Mono" font-size="11.00">No.10 mandate</text>
+<text xml:space="preserve" text-anchor="start" x="262.59" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">political backing, market&#45;rate pay</text>
+</g>
+<!-- hiring -->
+<g id="node2" class="node">
+<title>hiring</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="381.3,-298.87 261.63,-298.87 261.63,-262.59 381.3,-262.59 381.3,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="274.59" y="-280.78" font-family="Geist Mono" font-size="11.00">Outsider&#45;only hiring</text>
+<text xml:space="preserve" text-anchor="start" x="274.59" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">0.7&#45;0.8% acceptance rate</text>
+</g>
+<!-- mandate&#45;&gt;hiring -->
+<g id="edge1" class="edge">
+<title>mandate&#45;&gt;hiring</title>
+<path fill="none" stroke="#c8501f" d="M321.46,-349.54C321.46,-337.5 321.46,-321.37 321.46,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="323.91,-307.94 321.46,-300.94 319.01,-307.94 323.91,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="340.59" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">authorizes</text>
+</g>
+<!-- fde -->
+<g id="node3" class="node">
+<title>fde</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="403.05,-211.34 239.88,-211.34 239.88,-175.06 403.05,-175.06 403.05,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="252.84" y="-193.25" font-family="Geist Mono" font-size="11.00">Forward&#45;deployed engineers</text>
+<text xml:space="preserve" text-anchor="start" x="260.34" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">embedded w/ policy, legal, comms</text>
+</g>
+<!-- hiring&#45;&gt;fde -->
+<g id="edge2" class="edge">
+<title>hiring&#45;&gt;fde</title>
+<path fill="none" stroke="#c8501f" d="M321.46,-262.01C321.46,-249.97 321.46,-233.84 321.46,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="323.91,-220.41 321.46,-213.41 319.01,-220.41 323.91,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="335.34" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">recruits</text>
+</g>
+<!-- statute -->
+<g id="node4" class="node">
+<title>statute</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="148.92,-123.81 0,-123.81 0,-87.53 148.92,-87.53 148.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="32.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Statute book tool</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">in&#45;house build, saved 1.5M pounds</text>
+</g>
+<!-- fde&#45;&gt;statute -->
+<g id="edge3" class="edge">
+<title>fde&#45;&gt;statute</title>
+<path fill="none" stroke="#c8501f" d="M269.98,-174.37C230.27,-160.62 175.28,-141.58 133.73,-127.19"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="134.72,-124.94 127.3,-124.97 133.12,-129.57 134.72,-124.94"/>
+<text xml:space="preserve" text-anchor="middle" x="223.62" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">builds</text>
+</g>
+<!-- planning -->
+<g id="node5" class="node">
+<title>planning</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="311.8,-123.81 171.13,-123.81 171.13,-87.53 311.8,-87.53 311.8,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="200.96" y="-105.72" font-family="Geist Mono" font-size="11.00">Planning backlog</text>
+<text xml:space="preserve" text-anchor="start" x="184.09" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">only 1 in 5 apps decided on time</text>
+</g>
+<!-- fde&#45;&gt;planning -->
+<g id="edge4" class="edge">
+<title>fde&#45;&gt;planning</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M304.88,-174.48C292.98,-161.75 276.8,-144.45 263.76,-130.51"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="265.62,-128.91 259.05,-125.47 262.04,-132.26 265.62,-128.91"/>
+<text xml:space="preserve" text-anchor="middle" x="299.37" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">targets</text>
+</g>
+<!-- inspect -->
+<g id="node6" class="node">
+<title>inspect</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="469.55,-123.81 333.38,-123.81 333.38,-87.53 469.55,-87.53 469.55,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="357.21" y="-105.72" font-family="Geist Mono" font-size="11.00">AISI Inspect evals</text>
+<text xml:space="preserve" text-anchor="start" x="346.34" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">tests agent autonomy w/ tools</text>
+</g>
+<!-- fde&#45;&gt;inspect -->
+<g id="edge5" class="edge">
+<title>fde&#45;&gt;inspect</title>
+<path fill="none" stroke="#c8501f" d="M338.04,-174.48C349.94,-161.75 366.12,-144.45 379.16,-130.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="380.88,-132.26 383.87,-125.47 377.3,-128.91 380.88,-132.26"/>
+<text xml:space="preserve" text-anchor="middle" x="387.25" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">alumni join</text>
+</g>
+<!-- redteam -->
+<g id="node7" class="node">
+<title>redteam</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="530.05,-36.28 384.88,-36.28 384.88,0 530.05,0 530.05,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="397.84" y="-18.19" font-family="Geist Mono" font-size="11.00">Sycophancy red&#45;teaming</text>
+<text xml:space="preserve" text-anchor="start" x="406.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">red&#45;team before user rollout</text>
+</g>
+<!-- inspect&#45;&gt;redteam -->
+<g id="edge6" class="edge">
+<title>inspect&#45;&gt;redteam</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M413.06,-86.95C421.25,-74.45 432.32,-57.54 441.36,-43.74"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="443.26,-45.3 445.04,-38.11 439.16,-42.62 443.26,-45.3"/>
+<text xml:space="preserve" text-anchor="middle" x="458.31" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">informs evals</text>
+</g>
+<!-- redteam&#45;&gt;fde -->
+<g id="edge7" class="edge">
+<title>redteam&#45;&gt;fde</title>
+<path fill="none" stroke="#c8501f" d="M476.41,-36.77C481.29,-42.47 485.88,-49.17 488.46,-56.28 498.76,-84.69 498.46,-99.53 480.46,-123.81 463.52,-146.66 437.37,-161.96 411.14,-172.18"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="410.51,-169.8 404.8,-174.53 412.21,-174.39 410.51,-169.8"/>
+<text xml:space="preserve" text-anchor="middle" x="518.91" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#c8501f">gates rollout</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces No.10 data team&#x27;s insurgency model from mandate and hiring through embedded delivery to safety gating, based on the speaker&#x27;s own examples (ours).</p></section>
+<section class="block"><div class="callout ours"><h4>Why this talk is a blueprint, not a take (ours)</h4><p><strong>Scope:</strong> No.10&#x27;s insurgency-model data science team: how it is staffed, how it picks projects inside government, and the evals/red-teaming gate before tools reach users.</p><p>A repeatable staffing and delivery pattern (political mandate, market-rate pay, outsider-only hiring, forward-deployed engineers embedded with existing teams) paired with a portfolio of shipped tools, from a statute-book analyzer to a delivery-report red-teaming PMO tool to planning-application digitization. Riskier tools, like AI policy simulation and AI tutors, go through model red-teaming and benchmark evaluation before rollout.</p><p><strong>Prerequisites the talk implies:</strong></p><ul><li>Executive-level political backing to grant the team unusual autonomy and market-rate pay inside a hierarchical organization</li><li>A hiring process built specifically to filter for technical skill rather than standard institutional recruitment criteria</li><li>Existing teams (legal, policy, delivery, comms) willing to have an engineer embedded and observe their workflows directly</li><li>A partner body or process for evals and red-teaming (the talk names AISI&#x27;s Inspect tool) before an AI tool reaches real users</li><li>Tolerance for a team that operates outside normal rules as an explicit, temporary proof point rather than standard practice</li></ul><p><strong>What the talk does not say:</strong></p><ul><li>Total headcount of the team or budget beyond the market-rate pay framing</li><li>How long the 0.7-0.8% hiring pipeline takes end to end, or its applicant volume</li><li>Quantified impact of the delivery red-teaming tool or the policy simulation tool, unlike the statute-book tool&#x27;s cited savings</li><li>Detail on how the AI-tutor cognitive-load benchmark is scored or what threshold counts as safe</li><li>What happens when red-teaming does flag a sycophancy or safety problem, since the speaker only describes it as rare so far</li><li>How the insurgency model is meant to formally become business-as-usual rather than staying a bypass of normal rules</li></ul><p><strong>If you were to replicate one thing first:</strong> Start by securing an explicit political or executive mandate for a small team to operate outside standard hiring and process rules, since the speaker frames that mandate as the precondition for everything else.</p></div></section>
+<section class="block"><div class="seclabel"><span class="num">&#9636;</span><span>The components: what each one does, with the slide that shows it</span><span class="ln"></span></div><table class="claims"><tr><th>Component</th><th>What it does (from the talk)</th><th>Evidence</th><th>Slide</th></tr><tr><td><strong>No.10 mandate</strong></td><td>Gives the team political backing, market-rate pay within reason, and unusual autonomy to operate inside departments</td><td class="tt">c3 &middot; 05:43</td><td></td></tr><tr><td><strong>Outsider-only hiring pipeline</strong></td><td>Runs a technical-skills-focused selection process with about a 0.7-0.8% success rate, recruiting exclusively from outside government</td><td class="tt">c3 &middot; 06:45</td><td></td></tr><tr><td><strong>Forward-deployed engineers</strong></td><td>Embed directly with policy advisers, lawyers, and comms teams, observe workflows and pain points, and ship solutions in about two weeks</td><td class="tt">c4 &middot; 08:47</td><td></td></tr><tr><td><strong>Policy simulation tool</strong></td><td>Lets policy teams test the impact of different decisions, such as universal credit changes, before they are made</td><td class="tt">c8 &middot; 10:21</td><td></td></tr><tr><td><strong>Statute book tool</strong></td><td>In-house tool built with the legal team in a couple of weeks, replacing a planned 1.5 million pound outside legal review and repeatable as laws change</td><td class="tt">c5 &middot; 11:24</td><td></td></tr><tr><td><strong>Delivery red-teaming tool (PMO)</strong></td><td>Interrogates delivery reports and flags department-level optimism bias to decision makers in No.10, used daily</td><td class="tt">c9 &middot; 12:26</td><td></td></tr><tr><td><strong>AISI Inspect tool</strong></td><td>Isolated environment, built with a team fellow embedded at AISI, for testing what AI agents actually do when given autonomy and tools</td><td class="tt">c7 &middot; 15:31</td><td></td></tr><tr><td><strong>Extract (planning digitization)</strong></td><td>Built on Gemini with DeepMind, digitizes handwritten and hand-drawn planning application material, targeting the one-in-five on-time decision rate</td><td class="tt">c6 &middot; 16:02</td><td></td></tr><tr><td><strong>AI-tutor safety benchmarking</strong></td><td>Evaluates frontier models against classroom-safety benchmarks, including cognitive load on the student, before tutors reach children</td><td class="tt">c10 &middot; 17:36</td><td></td></tr></table></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>A productivity crisis and a systemic bet</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>A productivity crisis and a systemic bet</h2><ul class="takeaways"><li>The speaker cites 7 and 1/4 million people on NHS waiting lists and roughly 350,000 backlogged court cases as evidence of a public-sector productivity crisis, alongside a Tony Blair Institute estimate of a 40 billion pound annual productivity opportunity from AI in government.</li><li>He frames government as a 400,000-person &#x27;industry&#x27; rather than a single organization, ripe for disruption but historically poor at building technical teams due to pay, hierarchy, and bureaucracy.</li></ul><div class="viz" style="background:#FFFFFF;border:1px solid #D9D2C3;padding:18px 20px;margin:14px 0"><div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#807565;margin-bottom:12px">Two stalled systems, different scales</div><div style="display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center;margin:7px 0"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#4F4639;text-align:right">NHS waiting list</div><div><div style="height:14px;width:100%;background:#C8501F;border-radius:0 3px 3px 0"></div><div style="font-family:'Geist Mono',monospace;font-size:10px;color:#14110D;margin-top:2px">7250000  <span style="color:#807565">people</span></div></div></div><div style="display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center;margin:7px 0"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#4F4639;text-align:right">Court case backlog</div><div><div style="height:14px;width:5%;background:#1F3F5C;border-radius:0 3px 3px 0"></div><div style="font-family:'Geist Mono',monospace;font-size:10px;color:#14110D;margin-top:2px">350000  <span style="color:#807565">cases</span></div></div></div></div><div class="viz" style="background:#FFFFFF;border:1px solid #D9D2C3;padding:18px 20px;margin:14px 0"><div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#807565;margin-bottom:12px">Cited AI productivity opportunity</div><div style="display:flex;align-items:baseline;gap:10px"><div style="font-family:'Instrument Serif',serif;font-size:44px;line-height:1;color:#C8501F">40</div><div style="font-family:'Geist Mono',monospace;font-size:11px;color:#4F4639">billion pounds / year</div></div><div style="font-size:12.5px;color:#4F4639;margin-top:8px;line-height:1.5">Tony Blair Institute estimate cited by the speaker for AI productivity gains across UK government.</div></div><div class="quote"><p>&ldquo;there are 7 and 1/4 million people that are on NHS waiting lists. There are I think about 350,000 court cases that are stuck in a backlog.&rdquo;</p><span class="at">said at 02:05</span></div><div class="quote"><p>&ldquo;I&#x27;ve gone for a Tony Blair Institute figure um that says there&#x27;s a sort of 40 billion prize annual productivity gains from AI in government.&rdquo;</p><span class="at">said at 02:38</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>An &#x27;insurgency model&#x27;: recruiting outsiders</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>An &#x27;insurgency model&#x27;: recruiting outsiders</h2><ul class="takeaways"><li>The team operates with a mandate and political backing from No.10, pays market rates, and recruits exclusively from outside government through a selection process with roughly a 0.7-0.8% success rate.</li><li>As of the talk, the team has forward-deployed engineers embedded for the first time in No.10&#x27;s history with policy advisers, lawyers, and comms teams, observing workflows and shipping solutions in weeks.</li></ul><div class="viz" style="background:#FFFFFF;border:1px solid #D9D2C3;padding:18px 20px;margin:14px 0"><div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#807565;margin-bottom:12px">How the insurgency model runs</div><div style="display:flex;align-items:stretch;gap:8px;align-items:center"><div style="flex:1 1 0;min-width:0;border:1.4px solid #14110D;background:#FFFFFF;padding:9px 10px;text-align:center"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#14110D">No.10 mandate</div><div style="font-size:9.5px;color:#807565;line-height:1.35;margin-top:3px">political backing, market pay</div></div><div style="color:#C8501F;font-size:15px;flex:0 0 auto">&#8594;</div><div style="flex:1 1 0;min-width:0;border:1.4px solid #14110D;background:#FFFFFF;padding:9px 10px;text-align:center"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#14110D">Outsider-only hiring</div><div style="font-size:9.5px;color:#807565;line-height:1.35;margin-top:3px">0.7-0.8% acceptance rate</div></div><div style="color:#C8501F;font-size:15px;flex:0 0 auto">&#8594;</div><div style="flex:1 1 0;min-width:0;border:1.4px solid #14110D;background:#FFFFFF;padding:9px 10px;text-align:center"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#14110D">Forward-deployed engineers</div><div style="font-size:9.5px;color:#807565;line-height:1.35;margin-top:3px">embedded with policy, legal, comms</div></div></div></div><div class="quote"><p>&ldquo;we&#x27;ve got a success rate of about 0.7, 0.8%. Um and most interestingly of all, and this is what differentiates us, uh we recruit exclusively outsiders.&rdquo;</p><span class="at">said at 06:14</span></div><div class="quote"><p>&ldquo;we&#x27;ve actually got the first forward-deployed engineers in the history of 10 Downing Street embedding themselves with policy and operational teams&rdquo;</p><span class="at">said at 08:47</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Low-hanging fruit that also saves money</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Low-hanging fruit that also saves money</h2><ul class="takeaways"><li>One example: the Cabinet Office was about to pay an outside law firm 1.5 million pounds to analyze the entire UK statute book; instead, an embedded engineer built an in-house tool with the in-house legal team in a couple of weeks, saving money and making the analysis repeatable as laws change.</li><li>The team also points to the underlying problem such tools target: only one in five planning applications in the UK are currently decided on time.</li></ul><div class="viz" style="background:#FFFFFF;border:1px solid #D9D2C3;padding:18px 20px;margin:14px 0"><div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#807565;margin-bottom:12px">Statute book analysis: two paths</div><div style="display:flex;gap:12px"><div style="flex:1;border-top:3px solid #C8501F;background:#F6F3EA;padding:12px 14px"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:#C8501F;margin-bottom:8px">Planned path</div><ul><li style="font-size:12.5px;line-height:1.5;color:#4F4639;margin:0 0 6px 16px">Outside law firm hired</li><li style="font-size:12.5px;line-height:1.5;color:#4F4639;margin:0 0 6px 16px">Cost: 1.5 million pounds</li><li style="font-size:12.5px;line-height:1.5;color:#4F4639;margin:0 0 6px 16px">One-off analysis</li></ul></div><div style="flex:1;border-top:3px solid #1F3F5C;background:#F6F3EA;padding:12px 14px"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:#1F3F5C;margin-bottom:8px">What shipped</div><ul><li style="font-size:12.5px;line-height:1.5;color:#4F4639;margin:0 0 6px 16px">In-house tool</li><li style="font-size:12.5px;line-height:1.5;color:#4F4639;margin:0 0 6px 16px">Built in a couple of weeks</li><li style="font-size:12.5px;line-height:1.5;color:#4F4639;margin:0 0 6px 16px">Repeatable as laws change</li></ul></div></div></div><div class="viz" style="background:#FFFFFF;border:1px solid #D9D2C3;padding:18px 20px;margin:14px 0"><div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#807565;margin-bottom:12px">Planning applications decided on time</div><div style="display:flex;align-items:baseline;gap:10px"><div style="font-family:'Instrument Serif',serif;font-size:44px;line-height:1;color:#C8501F">1 in 5</div><div style="font-family:'Geist Mono',monospace;font-size:11px;color:#4F4639"></div></div><div style="font-size:12.5px;color:#4F4639;margin-top:8px;line-height:1.5">Only one in five UK planning applications are currently decided on time, the backlog the team targets.</div></div><div class="quote"><p>&ldquo;the cabinet office was about to spend 1.5 million pounds on getting an outside firm of lawyers to come in and do analysis of the entire UK statute book&rdquo;</p><span class="at">said at 10:51</span></div><div class="quote"><p>&ldquo;As I said, only one in five planning applications are currently decided on time.&rdquo;</p><span class="at">said at 16:34</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Scaling to partners: agent evals and a sycophancy risk</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Scaling to partners: agent evals and a sycophancy risk</h2><ul class="takeaways"><li>Team alumni now sit inside partner bodies like the AI Safety Institute (AISI), which built the Inspect tool -- described as an isolated environment for testing what AI agents actually do when given autonomy and tools -- and inside AI-tutor safety work benchmarking frontier models on classroom-relevant metrics.</li><li>Asked directly about sycophancy in a policy-simulation tool, the speaker calls it &#x27;a very real risk&#x27; that the team addresses by red-teaming models before putting them in users&#x27; hands.</li></ul><div class="viz" style="background:#FFFFFF;border:1px solid #D9D2C3;padding:18px 20px;margin:14px 0"><div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#807565;margin-bottom:12px">Sycophancy: risk vs mitigation</div><div style="display:flex;gap:12px"><div style="flex:1;border-top:3px solid #C8501F;background:#F6F3EA;padding:12px 14px"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:#C8501F;margin-bottom:8px">The risk</div><ul><li style="font-size:12.5px;line-height:1.5;color:#4F4639;margin:0 0 6px 16px">AI policy-simulation tool</li><li style="font-size:12.5px;line-height:1.5;color:#4F4639;margin:0 0 6px 16px">Sycophancy called a very real risk</li><li style="font-size:12.5px;line-height:1.5;color:#4F4639;margin:0 0 6px 16px">Could bias policy decisions</li></ul></div><div style="flex:1;border-top:3px solid #1F3F5C;background:#F6F3EA;padding:12px 14px"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:#1F3F5C;margin-bottom:8px">The mitigation</div><ul><li style="font-size:12.5px;line-height:1.5;color:#4F4639;margin:0 0 6px 16px">Red-team models first</li><li style="font-size:12.5px;line-height:1.5;color:#4F4639;margin:0 0 6px 16px">Test before user rollout</li><li style="font-size:12.5px;line-height:1.5;color:#4F4639;margin:0 0 6px 16px">Rare so far, per the speaker</li></ul></div></div></div><div class="viz" style="background:#FFFFFF;border:1px solid #D9D2C3;padding:18px 20px;margin:14px 0"><div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#807565;margin-bottom:12px">AISI evaluation pipeline before rollout</div><div style="display:flex;align-items:stretch;gap:8px;align-items:center"><div style="flex:1 1 0;min-width:0;border:1.4px solid #14110D;background:#FFFFFF;padding:9px 10px;text-align:center"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#14110D">Agent given autonomy+tools</div></div><div style="color:#C8501F;font-size:15px;flex:0 0 auto">&#8594;</div><div style="flex:1 1 0;min-width:0;border:1.4px solid #14110D;background:#FFFFFF;padding:9px 10px;text-align:center"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#14110D">Inspect tests agent behavior</div><div style="font-size:9.5px;color:#807565;line-height:1.35;margin-top:3px">isolated test environment</div></div><div style="color:#C8501F;font-size:15px;flex:0 0 auto">&#8594;</div><div style="flex:1 1 0;min-width:0;border:1.4px solid #14110D;background:#FFFFFF;padding:9px 10px;text-align:center"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#14110D">Red-team for sycophancy</div><div style="font-size:9.5px;color:#807565;line-height:1.35;margin-top:3px">before real users</div></div></div></div><div class="quote"><p>&ldquo;there&#x27;s a CFI isolated environment for testing what AI agents actually do when you give them autonomy and tools&rdquo;</p><span class="at">said at 15:31</span></div><div class="quote"><p>&ldquo;that&#x27;s a very real risk. Um so, it&#x27;s it&#x27;s not something that we&#x27;ve encountered too much, but it&#x27;s only because we have um sort of red team the models for that before we&#x27;ve put it into the hands of users.&rdquo;</p><span class="at">said at 21:50</span></div></div>
+</div>
+</section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>About 7.25 million people are on NHS waiting lists and roughly 350,000 court cases are stuck in a backlog.</td><td class="tt">02:05</td></tr><tr><td class="st">asserts</td><td>A Tony Blair Institute figure estimates a 40 billion pound annual productivity gain available from AI in UK government.</td><td class="tt">02:38</td></tr><tr><td class="st">asserts</td><td>The team&#x27;s selection process has roughly a 0.7-0.8% success rate and recruits exclusively from outside government.</td><td class="tt">06:14</td></tr><tr><td class="st">asserts</td><td>The team has the first forward-deployed engineers in No.10&#x27;s history embedded directly with policy, legal, and comms teams.</td><td class="tt">08:47</td></tr><tr><td class="st">asserts</td><td>An embedded engineer replaced a planned 1.5 million pound outside legal review of the entire UK statute book with an in-house tool built in weeks.</td><td class="tt">10:51</td></tr><tr><td class="st">asserts</td><td>Only one in five planning applications in the UK are currently decided on time.</td><td class="tt">16:34</td></tr><tr><td class="st">asserts</td><td>AISI&#x27;s Inspect tool provides an isolated environment for testing what AI agents actually do when given autonomy and tools.</td><td class="tt">15:31</td></tr><tr><td class="st">warns</td><td>Sycophancy in AI-assisted policy tools is a real risk the team addresses by red-teaming models before giving users access.</td><td class="tt">21:50</td></tr><tr><td class="st">asserts</td><td>A delivery red-teaming tool the team built in a couple of weeks is now used daily to give a second judgment on department delivery reports.</td><td class="tt">12:26</td></tr><tr><td class="st">asserts</td><td>The team is producing safeguards and evaluating frontier models against classroom-safety benchmarks, including cognitive load placed on the student.</td><td class="tt">17:36</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div class="frame wide"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "ObNKGf9YR0g", "slug": "rewiring-the-state-no10", "title": "Rewiring the State", "speaker": "Eoin Mulgrew", "company": "No. 10 (Downing Street)", "themes": ["vertical-ai", "agentic-engineering", "evals-benchmarks"], "tier": "transcript-brief", "depth": "blueprint", "diagram": {"title": "No.10 insurgency-model AI team (ours)", "lanes": ["Mandate & hiring", "Embedded delivery", "Targets", "Safety & scaling"], "nodes": [{"id": "mandate", "label": "No.10 mandate", "sub": "political backing, market-rate pay", "lane": 0, "kind": "actor", "claim": "c3", "t": 374}, {"id": "hiring", "label": "Outsider-only hiring", "sub": "0.7-0.8% acceptance rate", "lane": 0, "kind": "system", "claim": "c3", "t": 374}, {"id": "fde", "label": "Forward-deployed engineers", "sub": "embedded w/ policy, legal, comms", "lane": 1, "kind": "actor", "claim": "c4", "t": 527}, {"id": "statute", "label": "Statute book tool", "sub": "in-house build, saved 1.5M pounds", "lane": 2, "kind": "system", "claim": "c5", "t": 651}, {"id": "planning", "label": "Planning backlog", "sub": "only 1 in 5 apps decided on time", "lane": 2, "kind": "external", "claim": "c6", "t": 994}, {"id": "inspect", "label": "AISI Inspect evals", "sub": "tests agent autonomy w/ tools", "lane": 3, "kind": "external", "claim": "c7", "t": 931}, {"id": "redteam", "label": "Sycophancy red-teaming", "sub": "red-team before user rollout", "lane": 3, "kind": "system", "claim": "c8", "t": 1310}], "edges": [{"from": "mandate", "to": "hiring", "label": "authorizes", "kind": "flow"}, {"from": "hiring", "to": "fde", "label": "recruits", "kind": "flow"}, {"from": "fde", "to": "statute", "label": "builds", "kind": "flow"}, {"from": "fde", "to": "planning", "label": "targets", "kind": "data"}, {"from": "fde", "to": "inspect", "label": "alumni join", "kind": "flow"}, {"from": "inspect", "to": "redteam", "label": "informs evals", "kind": "data"}, {"from": "redteam", "to": "fde", "label": "gates rollout", "kind": "flow"}], "caption": "This traces No.10 data team's insurgency model from mandate and hiring through embedded delivery to safety gating, based on the speaker's own examples (ours)."}, "architecture": [{"component": "No.10 mandate", "what_it_does": "Gives the team political backing, market-rate pay within reason, and unusual autonomy to operate inside departments", "evidence": "c3", "t": 343, "slide": 343}, {"component": "Outsider-only hiring pipeline", "what_it_does": "Runs a technical-skills-focused selection process with about a 0.7-0.8% success rate, recruiting exclusively from outside government", "evidence": "c3", "t": 405, "slide": 405}, {"component": "Forward-deployed engineers", "what_it_does": "Embed directly with policy advisers, lawyers, and comms teams, observe workflows and pain points, and ship solutions in about two weeks", "evidence": "c4", "t": 527, "slide": 527}, {"component": "Policy simulation tool", "what_it_does": "Lets policy teams test the impact of different decisions, such as universal credit changes, before they are made", "evidence": "c8", "t": 621, "slide": 621}, {"component": "Statute book tool", "what_it_does": "In-house tool built with the legal team in a couple of weeks, replacing a planned 1.5 million pound outside legal review and repeatable as laws change", "evidence": "c5", "t": 684, "slide": 684}, {"component": "Delivery red-teaming tool (PMO)", "what_it_does": "Interrogates delivery reports and flags department-level optimism bias to decision makers in No.10, used daily", "evidence": "c9", "t": 746, "slide": 746}, {"component": "AISI Inspect tool", "what_it_does": "Isolated environment, built with a team fellow embedded at AISI, for testing what AI agents actually do when given autonomy and tools", "evidence": "c7", "t": 931, "slide": 931}, {"component": "Extract (planning digitization)", "what_it_does": "Built on Gemini with DeepMind, digitizes handwritten and hand-drawn planning application material, targeting the one-in-five on-time decision rate", "evidence": "c6", "t": 962, "slide": 962}, {"component": "AI-tutor safety benchmarking", "what_it_does": "Evaluates frontier models against classroom-safety benchmarks, including cognitive load on the student, before tutors reach children", "evidence": "c10", "t": 1056, "slide": 1056}], "claims": [{"id": "c1", "stance": "asserts", "topic": "public service backlog stats", "text": "About 7.25 million people are on NHS waiting lists and roughly 350,000 court cases are stuck in a backlog.", "quote": "there are 7 and 1/4 million people that are on NHS waiting lists. There are I think about 350,000 court cases that are stuck in a backlog.", "t": 125}, {"id": "c2", "stance": "asserts", "topic": "AI productivity opportunity estimate", "text": "A Tony Blair Institute figure estimates a 40 billion pound annual productivity gain available from AI in UK government.", "quote": "I've gone for a Tony Blair Institute figure um that says there's a sort of 40 billion prize annual productivity gains from AI in government.", "t": 158}, {"id": "c3", "stance": "asserts", "topic": "outsider-only hiring", "text": "The team's selection process has roughly a 0.7-0.8% success rate and recruits exclusively from outside government.", "quote": "we've got a success rate of about 0.7, 0.8%. Um and most interestingly of all, and this is what differentiates us, uh we recruit exclusively outsiders.", "t": 374}, {"id": "c4", "stance": "asserts", "topic": "forward-deployed engineers", "text": "The team has the first forward-deployed engineers in No.10's history embedded directly with policy, legal, and comms teams.", "quote": "we've actually got the first forward-deployed engineers in the history of 10 Downing Street embedding themselves with policy and operational teams", "t": 527}, {"id": "c5", "stance": "asserts", "topic": "statute book tool cost saved", "text": "An embedded engineer replaced a planned 1.5 million pound outside legal review of the entire UK statute book with an in-house tool built in weeks.", "quote": "the cabinet office was about to spend 1.5 million pounds on getting an outside firm of lawyers to come in and do analysis of the entire UK statute book", "t": 651}, {"id": "c6", "stance": "asserts", "topic": "planning application delays", "text": "Only one in five planning applications in the UK are currently decided on time.", "quote": "As I said, only one in five planning applications are currently decided on time.", "t": 994}, {"id": "c7", "stance": "asserts", "topic": "AISI Inspect tool", "text": "AISI's Inspect tool provides an isolated environment for testing what AI agents actually do when given autonomy and tools.", "quote": "there's a CFI isolated environment for testing what AI agents actually do when you give them autonomy and tools", "t": 931}, {"id": "c8", "stance": "warns", "topic": "sycophancy risk", "text": "Sycophancy in AI-assisted policy tools is a real risk the team addresses by red-teaming models before giving users access.", "quote": "that's a very real risk. Um so, it's it's not something that we've encountered too much, but it's only because we have um sort of red team the models for that before we've put it into the hands of users.", "t": 1310}, {"id": "c9", "stance": "asserts", "topic": "delivery red-teaming PMO tool", "text": "A delivery red-teaming tool the team built in a couple of weeks is now used daily to give a second judgment on department delivery reports.", "quote": "this is a little sort of delivery red teaming tool uh that the team's spun up a couple of weeks ago that is now being used every day", "t": 746}, {"id": "c10", "stance": "asserts", "topic": "AI-tutor safety benchmarking", "text": "The team is producing safeguards and evaluating frontier models against classroom-safety benchmarks, including cognitive load placed on the student.", "quote": "we're working on producing safeguards and evaluating various frontier models against benchmarks. Um not just to make sure that children can interact safely with these in a classroom environment, but also measuring them against various metrics.", "t": 1056}]}</script>
+</body></html>

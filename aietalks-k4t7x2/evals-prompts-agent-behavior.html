@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>How Evals and Prompts Shape Agent Behavior &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/xyL2Ltkh-SA" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 19 min</span><span class="ln"></span></div>
+<h1 class="lede">How Evals and Prompts Shape Agent Behavior</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Preetika Bhateja &amp; Daniel Bump &middot; YouTube Ads</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/xyL2Ltkh-SA" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/xyL2Ltkh-SA</a> &middot; 19 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Agentic engineering</span></div>
+<p class="deck" style="font-size:15px">Argues for a specific, sequenced approach to building evals -- optimize tools first, do fast unscalable &#x27;vibing&#x27; before bringing in scaled raters, test negatives not just positives -- and gives a concrete example of a failure (an agent r...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Optimize the agent&#x27;s tool foundation before building comprehensive evals, and let early unscalable &#x27;vibing&#x27; run before formal scaled rating, since jumping to scaled raters too early causes noisy swings while you&#x27;re still calibrating (c1, c2, c3)</li><li>Evals should test negatives (did the agent avoid doing something bad), not just positive task completion, and raters need clear rubrics plus explanations of their ratings to be useful (c4, c5)</li><li>One agent kept removing legally required disclaimers from ads despite explicit instructions not to -- caught only by reading traces, not by pass/fail rates -- which reinforces focusing fixes on patterns across a golden set rather than isolated examples, with a clear precision/recall-based launch gate (c6, c7, c8)</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">SEQUENCING AN AGENT EVAL PIPELINE (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 326.00 626.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 622.24)">
+<title>G</title>
+<!-- tools -->
+<g id="node1" class="node">
+<title>tools</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="157.92,-618.24 0,-618.24 0,-581.96 157.92,-581.96 157.92,-618.24"/>
+<text xml:space="preserve" text-anchor="start" x="33.59" y="-600.15" font-family="Geist Mono" font-size="11.00">Optimize tools first</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-592" font-family="Geist Mono" font-size="8.00" fill="#807565">best&#45;in&#45;class tools before agent evals</text>
+</g>
+<!-- vibing -->
+<g id="node2" class="node">
+<title>vibing</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="144.05,-540.96 13.88,-540.96 13.88,-504.68 144.05,-504.68 144.05,-540.96"/>
+<text xml:space="preserve" text-anchor="start" x="39.21" y="-522.87" font-family="Geist Mono" font-size="11.00">Vibe check early</text>
+<text xml:space="preserve" text-anchor="start" x="26.84" y="-514.72" font-family="Geist Mono" font-size="8.00" fill="#807565">eyeball outputs, non&#45;scalable</text>
+</g>
+<!-- tools&#45;&gt;vibing -->
+<g id="edge1" class="edge">
+<title>tools&#45;&gt;vibing</title>
+<path fill="none" stroke="#c8501f" d="M78.96,-581.64C78.96,-572.21 78.96,-560.37 78.96,-549.87"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="81.41,-549.96 78.96,-542.96 76.51,-549.96 81.41,-549.96"/>
+</g>
+<!-- swings -->
+<g id="node3" class="node">
+<title>swings</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="144.05,-453.43 13.88,-453.43 13.88,-417.15 144.05,-417.15 144.05,-453.43"/>
+<text xml:space="preserve" text-anchor="start" x="26.84" y="-435.34" font-family="Geist Mono" font-size="11.00">Scale raters too soon</text>
+<text xml:space="preserve" text-anchor="start" x="29.09" y="-427.19" font-family="Geist Mono" font-size="8.00" fill="#807565">causes big confusing swings</text>
+</g>
+<!-- vibing&#45;&gt;swings -->
+<g id="edge2" class="edge">
+<title>vibing&#45;&gt;swings</title>
+<path fill="none" stroke="#c8501f" d="M78.96,-504.1C78.96,-492.06 78.96,-475.93 78.96,-462.42"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="81.41,-462.5 78.96,-455.5 76.51,-462.5 81.41,-462.5"/>
+<text xml:space="preserve" text-anchor="middle" x="105.96" y="-476.6" font-family="Geist Mono" font-size="8.50" fill="#c8501f">scale too soon</text>
+</g>
+<!-- negatives -->
+<g id="node4" class="node">
+<title>negatives</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="243.05,-365.9 76.88,-365.9 76.88,-329.62 243.05,-329.62 243.05,-365.9"/>
+<text xml:space="preserve" text-anchor="start" x="114.96" y="-347.81" font-family="Geist Mono" font-size="11.00">Test the negatives</text>
+<text xml:space="preserve" text-anchor="start" x="89.84" y="-339.66" font-family="Geist Mono" font-size="8.00" fill="#807565">avoided&#45;bad checks, not just task done</text>
+</g>
+<!-- swings&#45;&gt;negatives -->
+<g id="edge3" class="edge">
+<title>swings&#45;&gt;negatives</title>
+<path fill="none" stroke="#c8501f" d="M95.74,-416.57C107.8,-403.84 124.18,-386.54 137.38,-372.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="139.12,-374.33 142.16,-367.56 135.57,-370.96 139.12,-374.33"/>
+</g>
+<!-- rubrics -->
+<g id="node6" class="node">
+<title>rubrics</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="222.8,-288.62 97.13,-288.62 97.13,-252.34 222.8,-252.34 222.8,-288.62"/>
+<text xml:space="preserve" text-anchor="start" x="114.59" y="-270.53" font-family="Geist Mono" font-size="11.00">Rater explanations</text>
+<text xml:space="preserve" text-anchor="start" x="110.09" y="-262.38" font-family="Geist Mono" font-size="8.00" fill="#807565">why rated, not just pass/fail</text>
+</g>
+<!-- negatives&#45;&gt;rubrics -->
+<g id="edge5" class="edge">
+<title>negatives&#45;&gt;rubrics</title>
+<path fill="none" stroke="#c8501f" d="M159.96,-329.3C159.96,-319.87 159.96,-308.03 159.96,-297.53"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="162.41,-297.62 159.96,-290.62 157.51,-297.62 162.41,-297.62"/>
+</g>
+<!-- refresh -->
+<g id="node5" class="node">
+<title>refresh</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="317.55,-453.43 166.38,-453.43 166.38,-417.15 317.55,-417.15 317.55,-453.43"/>
+<text xml:space="preserve" text-anchor="start" x="202.59" y="-435.34" font-family="Geist Mono" font-size="11.00">Refresh test set</text>
+<text xml:space="preserve" text-anchor="start" x="179.34" y="-427.19" font-family="Geist Mono" font-size="8.00" fill="#807565">use sparingly, refresh w/ prod data</text>
+</g>
+<!-- refresh&#45;&gt;negatives -->
+<g id="edge4" class="edge">
+<title>refresh&#45;&gt;negatives</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M224.97,-416.57C212.77,-403.84 196.18,-386.54 182.81,-372.6"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="184.59,-370.91 177.98,-367.55 181.05,-374.3 184.59,-370.91"/>
+<text xml:space="preserve" text-anchor="middle" x="223.87" y="-389.07" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">prod data</text>
+</g>
+<!-- disclaimer -->
+<g id="node7" class="node">
+<title>disclaimer</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="227.67,-201.09 92.25,-201.09 92.25,-164.81 227.67,-164.81 227.67,-201.09"/>
+<text xml:space="preserve" text-anchor="start" x="112.34" y="-183" font-family="Geist Mono" font-size="11.00">Disclaimer removed</text>
+<text xml:space="preserve" text-anchor="start" x="105.21" y="-174.85" font-family="Geist Mono" font-size="8.00" fill="#807565">agent broke explicit instruction</text>
+</g>
+<!-- rubrics&#45;&gt;disclaimer -->
+<g id="edge6" class="edge">
+<title>rubrics&#45;&gt;disclaimer</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M159.96,-251.76C159.96,-239.72 159.96,-223.59 159.96,-210.08"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="162.41,-210.16 159.96,-203.16 157.51,-210.16 162.41,-210.16"/>
+<text xml:space="preserve" text-anchor="middle" x="183.21" y="-224.26" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">trace review</text>
+</g>
+<!-- patterns -->
+<g id="node8" class="node">
+<title>patterns</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="234.8,-113.56 85.13,-113.56 85.13,-77.28 234.8,-77.28 234.8,-113.56"/>
+<text xml:space="preserve" text-anchor="start" x="98.09" y="-95.47" font-family="Geist Mono" font-size="11.00">Fix patterns, not one&#45;offs</text>
+<text xml:space="preserve" text-anchor="start" x="121.34" y="-87.32" font-family="Geist Mono" font-size="8.00" fill="#807565">across the golden set</text>
+</g>
+<!-- disclaimer&#45;&gt;patterns -->
+<g id="edge7" class="edge">
+<title>disclaimer&#45;&gt;patterns</title>
+<path fill="none" stroke="#c8501f" d="M159.96,-164.23C159.96,-152.19 159.96,-136.06 159.96,-122.55"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="162.41,-122.63 159.96,-115.63 157.51,-122.63 162.41,-122.63"/>
+<text xml:space="preserve" text-anchor="middle" x="189.96" y="-136.74" font-family="Geist Mono" font-size="8.50" fill="#c8501f">caught in traces</text>
+</g>
+<!-- gate -->
+<g id="node9" class="node">
+<title>gate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="217.55,-36.28 102.38,-36.28 102.38,0 217.55,0 217.55,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="129.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Launch gate</text>
+<text xml:space="preserve" text-anchor="start" x="115.34" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">precision/recall threshold</text>
+</g>
+<!-- patterns&#45;&gt;gate -->
+<g id="edge8" class="edge">
+<title>patterns&#45;&gt;gate</title>
+<path fill="none" stroke="#c8501f" d="M159.96,-76.96C159.96,-67.53 159.96,-55.69 159.96,-45.19"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="162.41,-45.28 159.96,-38.28 157.51,-45.28 162.41,-45.28"/>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Our reading of the talk&#x27;s sequencing: cheap vibing before scaled raters, then negative-case and rater-explanation checks, with the disclaimer failure showing why trace review still matters once evals are running (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Optimize tools before scaling evals</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/evals-prompts-agent-behavior/s04_60.webp" alt="slide at 01:00"></a><div class="slidecap">Slide at 01:00 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Optimize tools before scaling evals</h2><ul class="takeaways"><li>Before building larger agent evals, the team recommends first optimizing the agent&#x27;s set of LLM-friendly tools and, where gaps remain, adding an independent critique agent with a remediation loop for self-correction.</li></ul><div class="quote"><p>&ldquo;it&#x27;s important to first optimize these tools and make sure they&#x27;re the best they can be before just jumping onto um larger agent evals&rdquo;</p><span class="at">said at 01:33</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Vibing is a legitimate early stage</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/evals-prompts-agent-behavior/s04_60.webp" alt="slide at 01:00"></a><div class="slidecap">Slide at 01:00 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Vibing is a legitimate early stage</h2><ul class="takeaways"><li>Rather than jumping straight to a comprehensive, scalable eval, the team found it more effective to start with an intuition-based, non-scalable approach: eyeballing outputs to quickly identify failure patterns and iterate on radical prompt or architecture changes.</li><li>Moving to scaled raters too early, before the model and eval are both stable, produces large, confusing swings that are hard to interpret.</li></ul><div class="quote"><p>&ldquo;early on vibing can actually be kind of good for you&rdquo;</p><span class="at">said at 03:38</span></div><div class="quote"><p>&ldquo;kind of have like very big ups and downs as you might be iterating and calibrating the eval as you are struggling with uh changing the model radically.&rdquo;</p><span class="at">said at 05:45</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Test the negatives, not just the positives</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/evals-prompts-agent-behavior/s05_410.webp" alt="slide at 06:50"></a><div class="slidecap">Slide at 06:50 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/evals-prompts-agent-behavior/s06_440.webp" alt="slide at 07:20"></a></div></div>
+<div class="textcol"><h2>Test the negatives, not just the positives</h2><ul class="takeaways"><li>Starting small with a few core tasks and a small golden set, the team emphasizes that checking whether an agent avoided doing something bad is just as important as checking whether it completed the intended task.</li></ul><div class="quote"><p>&ldquo;Checking if the model like didn&#x27;t do something as bad, uh, something bad is just as critical as checking if it did the task.&rdquo;</p><span class="at">said at 06:15</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Getting good signal from raters</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="6" class="sl"><img loading="lazy" class="main" src="img/evals-prompts-agent-behavior/s06_440.webp" alt="slide at 07:20"></a><div class="slidecap">Slide at 07:20 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/evals-prompts-agent-behavior/s07_570.webp" alt="slide at 09:30"></a></div></div>
+<div class="textcol"><h2>Getting good signal from raters</h2><ul class="takeaways"><li>Working with scale raters, the team found that giving clear rubrics with explicit examples reduces ambiguity, and that collecting explanations for why a rater passed or failed something (not just the pass/fail label) surfaces where the agent actually needs to improve, especially for multi-axis evaluations like brand safety versus accuracy.</li></ul><div class="quote"><p>&ldquo;So it&#x27;s helpful to get explanations of why they&#x27;re rating something a certain way.&rdquo;</p><span class="at">said at 08:20</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Failure example: removing a required disclaimer</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="8" class="sl"><img loading="lazy" class="main" src="img/evals-prompts-agent-behavior/s08_710.webp" alt="slide at 11:50"></a><div class="slidecap">Slide at 11:50 &middot; click any slide to enlarge &middot; 5 more from this section below</div><div class=strip><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/evals-prompts-agent-behavior/s09_730.webp" alt="slide at 12:10"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/evals-prompts-agent-behavior/s10_770.webp" alt="slide at 12:50"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/evals-prompts-agent-behavior/s11_840.webp" alt="slide at 14:00"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/evals-prompts-agent-behavior/s12_1030.webp" alt="slide at 17:10"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/evals-prompts-agent-behavior/s16_1120.webp" alt="slide at 18:40"></a></div></div>
+<div class="textcol"><h2>Failure example: removing a required disclaimer</h2><ul class="takeaways"><li>Despite being explicitly instructed multiple times never to remove legally required disclaimers, the agent was found in some edge cases to detect a disclaimer and remove it anyway, in direct contradiction of its instructions.</li><li>This was only caught by reading the agent&#x27;s reasoning traces, not by aggregate pass/fail rates.</li></ul><div class="quote"><p>&ldquo;it says, okay, I found a disclaimer and now I&#x27;m going to go ahead and remove it, which was not what we asked it to do.&rdquo;</p><span class="at">said at 11:28</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The disclaimer-removal failure is a good illustration of why aggregate pass-rate metrics can hide instruction-following failures that only appear in a minority of traces; it&#x27;s the same argument the Snorkel and Uber talks make from different angles about needing to inspect traces, not just scores.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/evals-prompts-agent-behavior/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/evals-prompts-agent-behavior/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/evals-prompts-agent-behavior/s02_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/evals-prompts-agent-behavior/s03_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/evals-prompts-agent-behavior/s04_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/evals-prompts-agent-behavior/s05_410.webp" alt="slide at 06:50"><div class="ts">06:50</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/evals-prompts-agent-behavior/s06_440.webp" alt="slide at 07:20"><div class="ts">07:20</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/evals-prompts-agent-behavior/s07_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/evals-prompts-agent-behavior/s08_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/evals-prompts-agent-behavior/s09_730.webp" alt="slide at 12:10"><div class="ts">12:10</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/evals-prompts-agent-behavior/s10_770.webp" alt="slide at 12:50"><div class="ts">12:50</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/evals-prompts-agent-behavior/s11_840.webp" alt="slide at 14:00"><div class="ts">14:00</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/evals-prompts-agent-behavior/s12_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/evals-prompts-agent-behavior/s13_1080.webp" alt="slide at 18:00"><div class="ts">18:00</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/evals-prompts-agent-behavior/s14_1090.webp" alt="slide at 18:10"><div class="ts">18:10</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/evals-prompts-agent-behavior/s15_1100.webp" alt="slide at 18:20"><div class="ts">18:20</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/evals-prompts-agent-behavior/s16_1120.webp" alt="slide at 18:40"><div class="ts">18:40</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/evals-prompts-agent-behavior/s17_1140.webp" alt="slide at 19:00"><div class="ts">19:00</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">recommends</td><td>Before jumping to larger agent evals, first optimize the agent&#x27;s LLM-friendly tools to be the best they can be.</td><td class="tt">01:33</td></tr><tr><td class="st">recommends</td><td>Early on, an intuition-based, non-scalable approach to eval (&#x27;vibing&#x27;) is actually useful before building a comprehensive eval.</td><td class="tt">03:38</td></tr><tr><td class="st">warns</td><td>Moving to scaled raters too early causes large, confusing swings while the model and eval are still being calibrated.</td><td class="tt">05:45</td></tr><tr><td class="st">recommends</td><td>Checking that an agent avoided doing something bad is just as critical as checking that it completed the task.</td><td class="tt">06:15</td></tr><tr><td class="st">recommends</td><td>Getting explanations from raters, not just pass/fail labels, is helpful for understanding why something was rated a certain way.</td><td class="tt">08:20</td></tr><tr><td class="st">warns</td><td>In some edge cases the agent detected a required legal disclaimer and removed it anyway, despite explicit instructions never to do so.</td><td class="tt">11:28</td></tr><tr><td class="st">recommends</td><td>Because these systems are non-deterministic, fixes should target patterns observed across a golden set rather than reacting to a single failing example.</td><td class="tt">14:36</td></tr><tr><td class="st">recommends</td><td>Before launch, teams need explicit clarity on the gatekeeping rule, such as a specific precision/recall threshold.</td><td class="tt">17:10</td></tr><tr><td class="st">recommends</td><td>Test sets should be used sparingly and refreshed with production data to avoid overfitting to a stale set.</td><td class="tt">12:29</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/evals-prompts-agent-behavior/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/xyL2Ltkh-SA?t=10"}, {"src": "img/evals-prompts-agent-behavior/s01_20.webp", "mmss": "00:20", "yt": "https://youtu.be/xyL2Ltkh-SA?t=20"}, {"src": "img/evals-prompts-agent-behavior/s02_30.webp", "mmss": "00:30", "yt": "https://youtu.be/xyL2Ltkh-SA?t=30"}, {"src": "img/evals-prompts-agent-behavior/s03_40.webp", "mmss": "00:40", "yt": "https://youtu.be/xyL2Ltkh-SA?t=40"}, {"src": "img/evals-prompts-agent-behavior/s04_60.webp", "mmss": "01:00", "yt": "https://youtu.be/xyL2Ltkh-SA?t=60"}, {"src": "img/evals-prompts-agent-behavior/s05_410.webp", "mmss": "06:50", "yt": "https://youtu.be/xyL2Ltkh-SA?t=410"}, {"src": "img/evals-prompts-agent-behavior/s06_440.webp", "mmss": "07:20", "yt": "https://youtu.be/xyL2Ltkh-SA?t=440"}, {"src": "img/evals-prompts-agent-behavior/s07_570.webp", "mmss": "09:30", "yt": "https://youtu.be/xyL2Ltkh-SA?t=570"}, {"src": "img/evals-prompts-agent-behavior/s08_710.webp", "mmss": "11:50", "yt": "https://youtu.be/xyL2Ltkh-SA?t=710"}, {"src": "img/evals-prompts-agent-behavior/s09_730.webp", "mmss": "12:10", "yt": "https://youtu.be/xyL2Ltkh-SA?t=730"}, {"src": "img/evals-prompts-agent-behavior/s10_770.webp", "mmss": "12:50", "yt": "https://youtu.be/xyL2Ltkh-SA?t=770"}, {"src": "img/evals-prompts-agent-behavior/s11_840.webp", "mmss": "14:00", "yt": "https://youtu.be/xyL2Ltkh-SA?t=840"}, {"src": "img/evals-prompts-agent-behavior/s12_1030.webp", "mmss": "17:10", "yt": "https://youtu.be/xyL2Ltkh-SA?t=1030"}, {"src": "img/evals-prompts-agent-behavior/s13_1080.webp", "mmss": "18:00", "yt": "https://youtu.be/xyL2Ltkh-SA?t=1080"}, {"src": "img/evals-prompts-agent-behavior/s14_1090.webp", "mmss": "18:10", "yt": "https://youtu.be/xyL2Ltkh-SA?t=1090"}, {"src": "img/evals-prompts-agent-behavior/s15_1100.webp", "mmss": "18:20", "yt": "https://youtu.be/xyL2Ltkh-SA?t=1100"}, {"src": "img/evals-prompts-agent-behavior/s16_1120.webp", "mmss": "18:40", "yt": "https://youtu.be/xyL2Ltkh-SA?t=1120"}, {"src": "img/evals-prompts-agent-behavior/s17_1140.webp", "mmss": "19:00", "yt": "https://youtu.be/xyL2Ltkh-SA?t=1140"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "xyL2Ltkh-SA", "slug": "evals-prompts-agent-behavior", "title": "How Evals and Prompts Shape Agent Behavior", "speaker": "Preetika Bhateja & Daniel Bump", "company": "YouTube Ads", "themes": ["evals-benchmarks", "agentic-engineering"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Sequencing an agent eval pipeline (ours, from the slides)", "lanes": ["Foundation", "Vibing", "Structured evals", "Launch gate"], "nodes": [{"id": "tools", "label": "Optimize tools first", "sub": "best-in-class tools before agent evals", "lane": 0, "kind": "system", "claim": "c1", "t": 93}, {"id": "vibing", "label": "Vibe check early", "sub": "eyeball outputs, non-scalable", "lane": 1, "kind": "actor", "claim": "c2", "t": 218}, {"id": "swings", "label": "Scale raters too soon", "sub": "causes big confusing swings", "lane": 1, "kind": "system", "claim": "c3", "t": 345}, {"id": "negatives", "label": "Test the negatives", "sub": "avoided-bad checks, not just task done", "lane": 2, "kind": "system", "claim": "c4", "t": 375}, {"id": "refresh", "label": "Refresh test set", "sub": "use sparingly, refresh w/ prod data", "lane": 2, "kind": "store", "claim": "c9", "t": 749}, {"id": "rubrics", "label": "Rater explanations", "sub": "why rated, not just pass/fail", "lane": 2, "kind": "actor", "claim": "c5", "t": 500}, {"id": "disclaimer", "label": "Disclaimer removed", "sub": "agent broke explicit instruction", "lane": 2, "kind": "external", "claim": "c6", "t": 688}, {"id": "patterns", "label": "Fix patterns, not one-offs", "sub": "across the golden set", "lane": 3, "kind": "system", "claim": "c7", "t": 876}, {"id": "gate", "label": "Launch gate", "sub": "precision/recall threshold", "lane": 3, "kind": "actor", "claim": "c8", "t": 1030}], "edges": [{"from": "tools", "to": "vibing", "label": "", "kind": "flow"}, {"from": "vibing", "to": "swings", "label": "scale too soon", "kind": "flow"}, {"from": "swings", "to": "negatives", "label": "", "kind": "flow"}, {"from": "refresh", "to": "negatives", "label": "prod data", "kind": "data"}, {"from": "negatives", "to": "rubrics", "label": "", "kind": "flow"}, {"from": "rubrics", "to": "disclaimer", "label": "trace review", "kind": "data"}, {"from": "disclaimer", "to": "patterns", "label": "caught in traces", "kind": "flow"}, {"from": "patterns", "to": "gate", "label": "", "kind": "flow"}], "caption": "Our reading of the talk's sequencing: cheap vibing before scaled raters, then negative-case and rater-explanation checks, with the disclaimer failure showing why trace review still matters once evals are running (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "recommends", "topic": "optimize tools first", "text": "Before jumping to larger agent evals, first optimize the agent's LLM-friendly tools to be the best they can be.", "quote": "it's important to first optimize these tools and make sure they're the best they can be before just jumping onto um larger agent evals", "t": 93}, {"id": "c2", "stance": "recommends", "topic": "early-stage vibing", "text": "Early on, an intuition-based, non-scalable approach to eval ('vibing') is actually useful before building a comprehensive eval.", "quote": "early on vibing can actually be kind of good for you", "t": 218}, {"id": "c3", "stance": "warns", "topic": "scaling raters too early", "text": "Moving to scaled raters too early causes large, confusing swings while the model and eval are still being calibrated.", "quote": "kind of have like very big ups and downs as you might be iterating and calibrating the eval as you are struggling with uh changing the model radically.", "t": 345}, {"id": "c4", "stance": "recommends", "topic": "testing negatives", "text": "Checking that an agent avoided doing something bad is just as critical as checking that it completed the task.", "quote": "Checking if the model like didn't do something as bad, uh, something bad is just as critical as checking if it did the task.", "t": 375}, {"id": "c5", "stance": "recommends", "topic": "explanations from raters", "text": "Getting explanations from raters, not just pass/fail labels, is helpful for understanding why something was rated a certain way.", "quote": "So it's helpful to get explanations of why they're rating something a certain way.", "t": 500}, {"id": "c6", "stance": "warns", "topic": "disclaimer removal failure", "text": "In some edge cases the agent detected a required legal disclaimer and removed it anyway, despite explicit instructions never to do so.", "quote": "it says, okay, I found a disclaimer and now I'm going to go ahead and remove it, which was not what we asked it to do.", "t": 688}, {"id": "c7", "stance": "recommends", "topic": "patterns over isolated runs", "text": "Because these systems are non-deterministic, fixes should target patterns observed across a golden set rather than reacting to a single failing example.", "quote": "you should focus on patterns rather than isolated runs", "t": 876}, {"id": "c8", "stance": "recommends", "topic": "launch gate criteria", "text": "Before launch, teams need explicit clarity on the gatekeeping rule, such as a specific precision/recall threshold.", "quote": "get some clarity early on on what is your gatekeeping rule like what's your launch criteria. Is there a certain precision recall number that you're looking at?", "t": 1030}, {"id": "c9", "stance": "recommends", "topic": "refreshing test sets", "text": "Test sets should be used sparingly and refreshed with production data to avoid overfitting to a stale set.", "quote": "if you have a test set, use it sparingly and also refresh it with prod data.", "t": 749}]}</script>
+</body></html>

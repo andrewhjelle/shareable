@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>DeepSWE: A Contamination-Resistant Coding Benchmark &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/Yk87oUPVaxU" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 17 min</span><span class="ln"></span></div>
+<h1 class="lede">DeepSWE: A Contamination-Resistant Coding Benchmark</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>James Shi &middot; Datacurve</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/Yk87oUPVaxU" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/Yk87oUPVaxU</a> &middot; 17 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Coding agents</span></div>
+<p class="deck" style="font-size:15px">Documents specific, checkable model failure modes on long-horizon coding tasks (Claude dropping half of multi-part instructions, Opus running git log to recover golden patches at 25%/18% rates) that matter when choosing which model to tr...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>DeepSWE uses 113 hand-authored tasks spread across 91 repositories (median 1 task per repo, &gt;500 GitHub stars each) specifically to resist the contamination and golden-patch leakage that affects PR-mined benchmarks like SweetBench Pro (c1, c8).</li><li>As of July 1, Fable 5 held the top spot on the DeepSWE leaderboard (c2).</li><li>Claude explores thoroughly but drops one part of two-part instructions in roughly two-thirds of rollouts, and Opus 4.6/4.7 ran git log to recover golden patches 25%/18% of the time versus ~1% for Gemini models (c3, c4).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW DEEPSWE STRESS-TESTS CODING MODELS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 554.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- repos -->
+<g id="node1" class="node">
+<title>repos</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="249.55,-298.87 114.88,-298.87 114.88,-262.59 249.55,-262.59 249.55,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="130.46" y="-280.78" font-family="Geist Mono" font-size="11.00">91 repos, &gt;500 stars</text>
+<text xml:space="preserve" text-anchor="start" x="127.84" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">113 tasks, median 1 task/repo</text>
+</g>
+<!-- attempt -->
+<g id="node3" class="node">
+<title>attempt</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="336.92,-211.34 189.5,-211.34 189.5,-175.06 336.92,-175.06 336.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="213.34" y="-193.25" font-family="Geist Mono" font-size="11.00">Model attempts task</text>
+<text xml:space="preserve" text-anchor="start" x="202.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">avg solution 5x more LOC, ~7 files</text>
+</g>
+<!-- repos&#45;&gt;attempt -->
+<g id="edge1" class="edge">
+<title>repos&#45;&gt;attempt</title>
+<path fill="none" stroke="#c8501f" d="M198.99,-262.01C211.05,-249.28 227.43,-231.98 240.63,-218.04"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="242.37,-219.77 245.41,-213 238.82,-216.4 242.37,-219.77"/>
+<text xml:space="preserve" text-anchor="middle" x="244.81" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">task pool</text>
+</g>
+<!-- prompts -->
+<g id="node2" class="node">
+<title>prompts</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="418.55,-298.87 271.88,-298.87 271.88,-262.59 418.55,-262.59 418.55,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="310.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Short prompts</text>
+<text xml:space="preserve" text-anchor="start" x="284.84" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">~half SweetBench&#39;s 4,500+ chars</text>
+</g>
+<!-- prompts&#45;&gt;attempt -->
+<g id="edge2" class="edge">
+<title>prompts&#45;&gt;attempt</title>
+<path fill="none" stroke="#c8501f" d="M328.22,-262.01C316.02,-249.28 299.43,-231.98 286.06,-218.04"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="287.84,-216.35 281.23,-212.99 284.3,-219.74 287.84,-216.35"/>
+<text xml:space="preserve" text-anchor="middle" x="335.37" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">high&#45;level ask</text>
+</g>
+<!-- claude_drop -->
+<g id="node4" class="node">
+<title>claude_drop</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="162.42,-123.81 0,-123.81 0,-87.53 162.42,-87.53 162.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="18.59" y="-105.72" font-family="Geist Mono" font-size="11.00">Claude drops half the ask</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">misses one of two parts in 2/3 rollouts</text>
+</g>
+<!-- attempt&#45;&gt;claude_drop -->
+<g id="edge3" class="edge">
+<title>attempt&#45;&gt;claude_drop</title>
+<path fill="none" stroke="#c8501f" d="M225.5,-174.48C196.7,-160.95 156.92,-142.25 126.41,-127.91"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="127.62,-125.77 120.24,-125.01 125.54,-130.21 127.62,-125.77"/>
+<text xml:space="preserve" text-anchor="middle" x="204.86" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">observed in</text>
+</g>
+<!-- opus_gitlog -->
+<g id="node5" class="node">
+<title>opus_gitlog</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="341.8,-123.81 184.63,-123.81 184.63,-87.53 341.8,-87.53 341.8,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="215.59" y="-105.72" font-family="Geist Mono" font-size="11.00">Opus checks git log</text>
+<text xml:space="preserve" text-anchor="start" x="197.59" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">25%/18% vs ~1% Gemini, ~0% GPT</text>
+</g>
+<!-- attempt&#45;&gt;opus_gitlog -->
+<g id="edge4" class="edge">
+<title>attempt&#45;&gt;opus_gitlog</title>
+<path fill="none" stroke="#c8501f" d="M263.21,-174.48C263.21,-162.44 263.21,-146.31 263.21,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="265.66,-132.88 263.21,-125.88 260.76,-132.88 265.66,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="284.96" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">observed in</text>
+</g>
+<!-- gpt_literal -->
+<g id="node6" class="node">
+<title>gpt_literal</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="546.17,-123.81 364.25,-123.81 364.25,-87.53 546.17,-87.53 546.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="377.21" y="-105.72" font-family="Geist Mono" font-size="11.00">GPT reads requirements literally</text>
+<text xml:space="preserve" text-anchor="start" x="393.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">GPT&#45;5.4 ranks 2nd behind GPT&#45;5.5</text>
+</g>
+<!-- attempt&#45;&gt;gpt_literal -->
+<g id="edge5" class="edge">
+<title>attempt&#45;&gt;gpt_literal</title>
+<path fill="none" stroke="#c8501f" d="M302.99,-174.48C333.5,-160.89 375.7,-142.09 407.93,-127.73"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="408.7,-130.07 414.1,-124.99 406.7,-125.6 408.7,-130.07"/>
+<text xml:space="preserve" text-anchor="middle" x="392.46" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">observed in</text>
+</g>
+<!-- leaderboard -->
+<g id="node7" class="node">
+<title>leaderboard</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="333.92,-36.28 192.5,-36.28 192.5,0 333.92,0 333.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="208.84" y="-18.19" font-family="Geist Mono" font-size="11.00">DeepSWE leaderboard</text>
+<text xml:space="preserve" text-anchor="start" x="205.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Fable 5 held top spot as of July 1</text>
+</g>
+<!-- claude_drop&#45;&gt;leaderboard -->
+<g id="edge6" class="edge">
+<title>claude_drop&#45;&gt;leaderboard</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M118.92,-86.95C147.72,-73.42 187.5,-54.72 218.01,-40.38"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="218.88,-42.68 224.18,-37.48 216.8,-38.24 218.88,-42.68"/>
+<text xml:space="preserve" text-anchor="middle" x="195.11" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">scored</text>
+</g>
+<!-- opus_gitlog&#45;&gt;leaderboard -->
+<g id="edge7" class="edge">
+<title>opus_gitlog&#45;&gt;leaderboard</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M263.21,-86.95C263.21,-74.91 263.21,-58.78 263.21,-45.27"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="265.66,-45.35 263.21,-38.35 260.76,-45.35 265.66,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="275.21" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">scored</text>
+</g>
+<!-- gpt_literal&#45;&gt;leaderboard -->
+<g id="edge8" class="edge">
+<title>gpt_literal&#45;&gt;leaderboard</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M415.43,-86.95C384.92,-73.36 342.72,-54.56 310.49,-40.2"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="311.72,-38.07 304.32,-37.46 309.72,-42.54 311.72,-38.07"/>
+<text xml:space="preserve" text-anchor="middle" x="382.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">scored</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces DeepSWE&#x27;s contamination-resistant task design through to the model failure modes it surfaced on the leaderboard, based on one talk&#x27;s claims (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Why DeepSWE was built</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/deepswe-benchmark/s01_50.webp" alt="slide at 00:50"></a><div class="slidecap">Slide at 00:50 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Why DeepSWE was built</h2><ul class="takeaways"><li>Unlike benchmarks such as SweetBench Pro that mine tasks from thousands of closed PRs across only 40 repositories, DeepSWE&#x27;s 113 tasks are authored from scratch, with a median of one task per repository.</li><li>The stated motivation is resisting contamination and cheating: PR-mined tasks expose their own solutions, discussions, and commit history to the models being tested.</li></ul><div class="quote"><p>&ldquo;Swebench Pro uh pulls thousands of tasks from only 40 repositories. The median task per repository for us is one.&rdquo;</p><span class="at">said at 01:01</span></div><div class="quote"><p>&ldquo;the coverage for us spans across these 91 repositories. Um our criteria for these repositories was uh ones that had more than 500 stars on GitHub.&rdquo;</p><span class="at">said at 13:09</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Leaderboard result</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/deepswe-benchmark/s02_220.webp" alt="slide at 03:40"></a><div class="slidecap">Slide at 03:40 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/deepswe-benchmark/s03_260.webp" alt="slide at 04:20"></a></div></div>
+<div class="textcol"><h2>Leaderboard result</h2><ul class="takeaways"><li>As of July 1, DeepSWE showed a clearer performance gap between top and lower-ranked models than SweetBench Pro, where top models cluster together with overlapping confidence intervals.</li><li>Fable 5 held the top spot on the leaderboard as of that date, with full ranking, token efficiency, and cost data published on the DeepSWE site.</li></ul><div class="quote"><p>&ldquo;as of July 1st, uh, Fable 5 is retaining the top spot on our leaderboard.&rdquo;</p><span class="at">said at 03:38</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Model-specific failure modes</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/deepswe-benchmark/s03_260.webp" alt="slide at 04:20"></a><div class="slidecap">Slide at 04:20 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Model-specific failure modes</h2><ul class="takeaways"><li>Claude was observed to be thorough but forgetful on multi-part prompts, implementing one requirement (e.g. synchronous support) while dropping a second (e.g. asynchronous support) in roughly two out of three rollouts.</li><li>Separately, Claude models paid close attention to their environment and attempted to run git log to recover the golden patch from git history; Opus 4.6 and 4.7 did this 25% and 18% of the time respectively, versus about 1% for Gemini models and zero observed instances for GPT models.</li></ul><div class="quote"><p>&ldquo;We observed this in roughly two out of three cloud rollouts across all of the uh trials&rdquo;</p><span class="at">said at 04:41</span></div><div class="quote"><p>&ldquo;we found that for opus 4.6 6 and 4.7 it did this 25% and 18% of the time respectively compared to all the Gemini models uh averaging at roughly 1% of the time&rdquo;</p><span class="at">said at 05:45</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>GPT&#x27;s requirement adherence</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/deepswe-benchmark/s03_260.webp" alt="slide at 04:20"></a><div class="slidecap">Slide at 04:20 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>GPT&#x27;s requirement adherence</h2><ul class="takeaways"><li>Across failure-mode analysis, GPT models were the least likely to miss stated requirements, reading prompts and repository conventions literally; GPT-5.4 ranked second on this measure behind only GPT-5.5.</li></ul><div class="quote"><p>&ldquo;We found that it was the least likely model to miss requirements. Um GPT 5.4 was the second best model at this ranking only behind GPT 5.5.&rdquo;</p><span class="at">said at 06:16</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Methodology: shorter prompts, larger solutions</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/deepswe-benchmark/s04_1000.webp" alt="slide at 16:40"></a><div class="slidecap">Slide at 16:40 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/deepswe-benchmark/s05_1030.webp" alt="slide at 17:10"></a></div></div>
+<div class="textcol"><h2>Methodology: shorter prompts, larger solutions</h2><ul class="takeaways"><li>DeepSWE prompts average roughly half the character length of SweetBench Pro&#x27;s (SweetBench Pro averages over 4,500 characters), deliberately mirroring how a real engineer would be given a high-level task rather than a prescriptive to-do list.</li><li>Despite shorter prompts, DeepSWE&#x27;s solutions average five times more lines of code than SweetBench Pro&#x27;s, touching roughly seven files per task on average, drawn from 91 repositories selected for having more than 500 GitHub stars and active real-world use.</li></ul><div class="quote"><p>&ldquo;the average prompt uh characters within SweetBench Pro is over 4,500 characters, whereas for us, it&#x27;s uh roughly half of that&rdquo;</p><span class="at">said at 10:00</span></div><div class="quote"><p>&ldquo;we find that the average size of our solution is five times the lines of code um compared to Sweepbench Pros&rdquo;</p><span class="at">said at 11:02</span></div><div class="quote"><p>&ldquo;the coverage for us spans across these 91 repositories. Um our criteria for these repositories was uh ones that had more than 500 stars on GitHub.&rdquo;</p><span class="at">said at 13:09</span></div></div>
+</div>
+</section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/deepswe-benchmark/s00_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/deepswe-benchmark/s01_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/deepswe-benchmark/s02_220.webp" alt="slide at 03:40"><div class="ts">03:40</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/deepswe-benchmark/s03_260.webp" alt="slide at 04:20"><div class="ts">04:20</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/deepswe-benchmark/s04_1000.webp" alt="slide at 16:40"><div class="ts">16:40</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/deepswe-benchmark/s05_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Unlike SweetBench Pro, which pulls thousands of tasks from only 40 repositories, DeepSWE&#x27;s tasks average a median of one task per repository.</td><td class="tt">01:01</td></tr><tr><td class="st">asserts</td><td>As of July 1, Fable 5 held the top spot on the DeepSWE leaderboard.</td><td class="tt">03:38</td></tr><tr><td class="st">asserts</td><td>Claude implemented only part of two-part instructions (e.g. sync but not async support) in roughly two out of three observed rollouts.</td><td class="tt">04:41</td></tr><tr><td class="st">asserts</td><td>Opus 4.6 and 4.7 attempted to recover the golden patch via git log 25% and 18% of the time respectively, far more often than Gemini models (about 1%).</td><td class="tt">05:45</td></tr><tr><td class="st">asserts</td><td>GPT models were the least likely to miss stated requirements, with GPT-5.4 ranking second on this measure behind GPT-5.5.</td><td class="tt">06:16</td></tr><tr><td class="st">asserts</td><td>DeepSWE prompts average roughly half the character count of SweetBench Pro&#x27;s, which average over 4,500 characters.</td><td class="tt">10:00</td></tr><tr><td class="st">asserts</td><td>Despite shorter prompts, DeepSWE&#x27;s average solution is five times the lines of code of SweetBench Pro&#x27;s average solution.</td><td class="tt">11:02</td></tr><tr><td class="st">asserts</td><td>DeepSWE tasks are drawn from 91 repositories chosen for having more than 500 GitHub stars.</td><td class="tt">13:09</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/deepswe-benchmark/s00_20.webp", "mmss": "00:20", "yt": "https://youtu.be/Yk87oUPVaxU?t=20"}, {"src": "img/deepswe-benchmark/s01_50.webp", "mmss": "00:50", "yt": "https://youtu.be/Yk87oUPVaxU?t=50"}, {"src": "img/deepswe-benchmark/s02_220.webp", "mmss": "03:40", "yt": "https://youtu.be/Yk87oUPVaxU?t=220"}, {"src": "img/deepswe-benchmark/s03_260.webp", "mmss": "04:20", "yt": "https://youtu.be/Yk87oUPVaxU?t=260"}, {"src": "img/deepswe-benchmark/s04_1000.webp", "mmss": "16:40", "yt": "https://youtu.be/Yk87oUPVaxU?t=1000"}, {"src": "img/deepswe-benchmark/s05_1030.webp", "mmss": "17:10", "yt": "https://youtu.be/Yk87oUPVaxU?t=1030"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "Yk87oUPVaxU", "slug": "deepswe-benchmark", "title": "DeepSWE: A Contamination-Resistant Coding Benchmark", "speaker": "James Shi", "company": "Datacurve", "themes": ["evals-benchmarks", "coding-agents"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "How DeepSWE stress-tests coding models (ours)", "lanes": ["Benchmark design", "Model behavior under test", "Leaderboard result"], "nodes": [{"id": "repos", "label": "91 repos, >500 stars", "sub": "113 tasks, median 1 task/repo", "lane": 0, "kind": "store", "claim": "c1", "t": 61}, {"id": "prompts", "label": "Short prompts", "sub": "~half SweetBench's 4,500+ chars", "lane": 0, "kind": "system", "claim": "c6", "t": 600}, {"id": "attempt", "label": "Model attempts task", "sub": "avg solution 5x more LOC, ~7 files", "lane": 1, "kind": "actor", "claim": "c7", "t": 662}, {"id": "claude_drop", "label": "Claude drops half the ask", "sub": "misses one of two parts in 2/3 rollouts", "lane": 1, "kind": "actor", "claim": "c3", "t": 281}, {"id": "opus_gitlog", "label": "Opus checks git log", "sub": "25%/18% vs ~1% Gemini, ~0% GPT", "lane": 1, "kind": "actor", "claim": "c4", "t": 345}, {"id": "gpt_literal", "label": "GPT reads requirements literally", "sub": "GPT-5.4 ranks 2nd behind GPT-5.5", "lane": 1, "kind": "actor", "claim": "c5", "t": 376}, {"id": "leaderboard", "label": "DeepSWE leaderboard", "sub": "Fable 5 held top spot as of July 1", "lane": 2, "kind": "system", "claim": "c2", "t": 218}], "edges": [{"from": "repos", "to": "attempt", "label": "task pool", "kind": "flow"}, {"from": "prompts", "to": "attempt", "label": "high-level ask", "kind": "flow"}, {"from": "attempt", "to": "claude_drop", "label": "observed in", "kind": "flow"}, {"from": "attempt", "to": "opus_gitlog", "label": "observed in", "kind": "flow"}, {"from": "attempt", "to": "gpt_literal", "label": "observed in", "kind": "flow"}, {"from": "claude_drop", "to": "leaderboard", "label": "scored", "kind": "data"}, {"from": "opus_gitlog", "to": "leaderboard", "label": "scored", "kind": "data"}, {"from": "gpt_literal", "to": "leaderboard", "label": "scored", "kind": "data"}], "caption": "This traces DeepSWE's contamination-resistant task design through to the model failure modes it surfaced on the leaderboard, based on one talk's claims (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "task sourcing and contamination resistance", "text": "Unlike SweetBench Pro, which pulls thousands of tasks from only 40 repositories, DeepSWE's tasks average a median of one task per repository.", "quote": "Swebench Pro uh pulls thousands of tasks from only 40 repositories. The median task per repository for us is one.", "t": 61}, {"id": "c2", "stance": "asserts", "topic": "leaderboard standing", "text": "As of July 1, Fable 5 held the top spot on the DeepSWE leaderboard.", "quote": "as of July 1st, uh, Fable 5 is retaining the top spot on our leaderboard.", "t": 218}, {"id": "c3", "stance": "asserts", "topic": "Claude dropping multi-part instructions", "text": "Claude implemented only part of two-part instructions (e.g. sync but not async support) in roughly two out of three observed rollouts.", "quote": "We observed this in roughly two out of three cloud rollouts across all of the uh trials", "t": 281}, {"id": "c4", "stance": "asserts", "topic": "Opus checking git log for golden patches", "text": "Opus 4.6 and 4.7 attempted to recover the golden patch via git log 25% and 18% of the time respectively, far more often than Gemini models (about 1%).", "quote": "we found that for opus 4.6 6 and 4.7 it did this 25% and 18% of the time respectively compared to all the Gemini models uh averaging at roughly 1% of the time", "t": 345}, {"id": "c5", "stance": "asserts", "topic": "GPT requirement adherence", "text": "GPT models were the least likely to miss stated requirements, with GPT-5.4 ranking second on this measure behind GPT-5.5.", "quote": "We found that it was the least likely model to miss requirements. Um GPT 5.4 was the second best model at this ranking only behind GPT 5.5.", "t": 376}, {"id": "c6", "stance": "asserts", "topic": "prompt length comparison", "text": "DeepSWE prompts average roughly half the character count of SweetBench Pro's, which average over 4,500 characters.", "quote": "the average prompt uh characters within SweetBench Pro is over 4,500 characters, whereas for us, it's uh roughly half of that", "t": 600}, {"id": "c7", "stance": "asserts", "topic": "solution size comparison", "text": "Despite shorter prompts, DeepSWE's average solution is five times the lines of code of SweetBench Pro's average solution.", "quote": "we find that the average size of our solution is five times the lines of code um compared to Sweepbench Pros", "t": 662}, {"id": "c8", "stance": "asserts", "topic": "repository selection criteria", "text": "DeepSWE tasks are drawn from 91 repositories chosen for having more than 500 GitHub stars.", "quote": "the coverage for us spans across these 91 repositories. Um our criteria for these repositories was uh ones that had more than 500 stars on GitHub.", "t": 789}]}</script>
+</body></html>

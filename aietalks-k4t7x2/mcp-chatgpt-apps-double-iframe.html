@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Why MCP and ChatGPT Apps Use Double Iframes &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/c-2eEv2ou7Y" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 20 min</span><span class="ln"></span></div>
+<h1 class="lede">Why MCP and ChatGPT Apps Use Double Iframes</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Frederic Barthelet &middot; Alpic</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/c-2eEv2ou7Y" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/c-2eEv2ou7Y</a> &middot; 20 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">MCP & protocols</span><span class="chip hot">Product & UX</span><span class="chip hot">Security</span></div>
+<p class="deck" style="font-size:15px">Walks through the exact content-security-policy tradeoffs that forced ChatGPT and Claude to nest one iframe inside another to render third-party MCP app UI safely</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>MCP apps render UI via &#x27;views&#x27; -- tool-call-triggered HTML/JS/CSS snippets discovered from tool-list metadata and rendered inside an iframe injected with tool results.</li><li>A single iframe with sourceDoc either shares the host&#x27;s CSP/origin (letting third-party scripts read the host&#x27;s local storage/cookies) or, if sandboxed with allow-same-origin, ends up back in the same unsafe spot -- neither is safe.</li><li>The double-iframe pattern (outer iframe on a per-app subdomain loading an inner sourceDoc iframe) isolates each app&#x27;s origin from both the host and other apps, and traces back to Facebook&#x27;s app marketplace architecture.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">WHY MCP APP UI NEEDS TWO NESTED IFRAMES (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 696.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- src_doc -->
+<g id="node1" class="node">
+<title>src_doc</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="169.92,-386.4 0,-386.4 0,-350.12 169.92,-350.12 169.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="42.21" y="-368.31" font-family="Geist Mono" font-size="11.00">sourceDoc iframe</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">shares host CSP, blocks scripts via nonce</text>
+</g>
+<!-- relax_csp -->
+<g id="node2" class="node">
+<title>relax_csp</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="274.17,-298.87 93.75,-298.87 93.75,-262.59 274.17,-262.59 274.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="153.58" y="-280.78" font-family="Geist Mono" font-size="11.00">Relaxed CSP</text>
+<text xml:space="preserve" text-anchor="start" x="106.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">script could read host cookies/local storage</text>
+</g>
+<!-- src_doc&#45;&gt;relax_csp -->
+<g id="edge1" class="edge">
+<title>src_doc&#45;&gt;relax_csp</title>
+<path fill="none" stroke="#c8501f" d="M105.47,-349.54C120.47,-336.58 140.96,-318.88 157.24,-304.82"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="158.63,-306.85 162.33,-300.42 155.43,-303.14 158.63,-306.85"/>
+<text xml:space="preserve" text-anchor="middle" x="158.39" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">relax CSP</text>
+</g>
+<!-- outer -->
+<g id="node5" class="node">
+<title>outer</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="487.04,-211.34 290.88,-211.34 290.88,-175.06 487.04,-175.06 487.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="307.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Outer iframe, per&#45;app subdomain</text>
+<text xml:space="preserve" text-anchor="start" x="303.83" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">isolates each app origin from host + other apps</text>
+</g>
+<!-- relax_csp&#45;&gt;outer -->
+<g id="edge4" class="edge">
+<title>relax_csp&#45;&gt;outer</title>
+<path fill="none" stroke="#c8501f" d="M226.44,-262.01C259.15,-248.36 304.45,-229.46 338.91,-215.08"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="339.62,-217.44 345.14,-212.48 337.74,-212.92 339.62,-217.44"/>
+<text xml:space="preserve" text-anchor="middle" x="320.48" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+<!-- sandbox -->
+<g id="node3" class="node">
+<title>sandbox</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="376.42,-386.4 191.5,-386.4 191.5,-350.12 376.42,-350.12 376.42,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="213.08" y="-368.31" font-family="Geist Mono" font-size="11.00">Sandbox + allow&#45;same&#45;origin</text>
+<text xml:space="preserve" text-anchor="start" x="204.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">blocks storage, or reopens same escape risk</text>
+</g>
+<!-- sandbox&#45;&gt;relax_csp -->
+<g id="edge2" class="edge">
+<title>sandbox&#45;&gt;relax_csp</title>
+<path fill="none" stroke="#c8501f" d="M263.24,-349.54C248.09,-336.58 227.4,-318.88 210.95,-304.82"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="212.72,-303.1 205.8,-300.41 209.53,-306.82 212.72,-303.1"/>
+<text xml:space="preserve" text-anchor="middle" x="273.32" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">allow&#45;same&#45;origin</text>
+</g>
+<!-- src_attr -->
+<g id="node4" class="node">
+<title>src_attr</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="482.17,-298.87 295.75,-298.87 295.75,-262.59 482.17,-262.59 482.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="347.33" y="-280.78" font-family="Geist Mono" font-size="11.00">src to app server</text>
+<text xml:space="preserve" text-anchor="start" x="308.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">needs every app domain in frame&#45;src forever</text>
+</g>
+<!-- src_attr&#45;&gt;outer -->
+<g id="edge3" class="edge">
+<title>src_attr&#45;&gt;outer</title>
+<path fill="none" stroke="#c8501f" d="M388.96,-262.01C388.96,-249.97 388.96,-233.84 388.96,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="391.41,-220.41 388.96,-213.41 386.51,-220.41 391.41,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="410.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+<!-- inner -->
+<g id="node6" class="node">
+<title>inner</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="432.29,-123.81 279.62,-123.81 279.62,-87.53 432.29,-87.53 432.29,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="297.08" y="-105.72" font-family="Geist Mono" font-size="11.00">Inner iframe, sourceDoc</text>
+<text xml:space="preserve" text-anchor="start" x="292.58" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">loads the actual tool&#45;triggered view</text>
+</g>
+<!-- outer&#45;&gt;inner -->
+<g id="edge5" class="edge">
+<title>outer&#45;&gt;inner</title>
+<path fill="none" stroke="#c8501f" d="M382.12,-174.48C377.39,-162.21 371.01,-145.69 365.74,-132.03"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="368.14,-131.43 363.33,-125.78 363.57,-133.19 368.14,-131.43"/>
+<text xml:space="preserve" text-anchor="middle" x="394.31" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">loads view</text>
+</g>
+<!-- declare -->
+<g id="node8" class="node">
+<title>declare</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="677.92,-123.81 454,-123.81 454,-87.53 677.92,-87.53 677.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="514.59" y="-105.72" font-family="Geist Mono" font-size="11.00">Declare app domains</text>
+<text xml:space="preserve" text-anchor="start" x="466.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">every external domain listed in MCP app spec metadata</text>
+</g>
+<!-- outer&#45;&gt;declare -->
+<g id="edge7" class="edge">
+<title>outer&#45;&gt;declare</title>
+<path fill="none" stroke="#c8501f" d="M425.63,-174.48C453.64,-160.95 492.33,-142.25 522,-127.91"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="522.73,-130.28 527.97,-125.03 520.6,-125.87 522.73,-130.28"/>
+<text xml:space="preserve" text-anchor="middle" x="503.06" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">requires</text>
+</g>
+<!-- fb -->
+<g id="node7" class="node">
+<title>fb</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="688.05,-298.87 503.88,-298.87 503.88,-262.59 688.05,-262.59 688.05,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="531.09" y="-280.78" font-family="Geist Mono" font-size="11.00">Facebook app marketplace</text>
+<text xml:space="preserve" text-anchor="start" x="516.84" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">first implemented this double&#45;iframe pattern</text>
+</g>
+<!-- fb&#45;&gt;outer -->
+<g id="edge6" class="edge">
+<title>fb&#45;&gt;outer</title>
+<path fill="none" stroke="#c8501f" d="M552.82,-261.9C519.88,-248.3 474.41,-229.51 439.72,-215.17"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="440.85,-212.99 433.45,-212.58 438.98,-217.52 440.85,-212.99"/>
+<text xml:space="preserve" text-anchor="middle" x="529.98" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">precedent for</text>
+</g>
+<!-- missing -->
+<g id="node9" class="node">
+<title>missing</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="664.05,-36.28 467.88,-36.28 467.88,0 664.05,0 664.05,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="526.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Missing domains</text>
+<text xml:space="preserve" text-anchor="start" x="480.84" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">common cause of ChatGPT app store rejections</text>
+</g>
+<!-- declare&#45;&gt;missing -->
+<g id="edge8" class="edge">
+<title>declare&#45;&gt;missing</title>
+<path fill="none" stroke="#c8501f" d="M565.96,-86.95C565.96,-74.91 565.96,-58.78 565.96,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="568.41,-45.35 565.96,-38.35 563.51,-45.35 568.41,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="584.34" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">if skipped</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The talk frames the double iframe as the fix that survives every single-iframe failure mode, tracing the pattern back to Facebook app marketplace precedent (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>How MCP app views work</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/mcp-chatgpt-apps-double-iframe/s05_110.webp" alt="slide at 01:50"></a><div class="slidecap">Slide at 01:50 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s06_200.webp" alt="slide at 03:20"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s07_310.webp" alt="slide at 05:10"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s08_320.webp" alt="slide at 05:20"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s09_420.webp" alt="slide at 07:00"></a></div></div>
+<div class="textcol"><h2>How MCP app views work</h2><ul class="takeaways"><li>MCP/ChatGPT apps add discoverability (apps surfaced in a store or mid-conversation) and interactive UI via &#x27;views&#x27; -- HTML/JS/CSS snippets that render as the result of a specific tool call.</li><li>Views are advertised as metadata on the tool-list call at conversation start, so the resource can be cached ahead of time or fetched when the tool call actually needs to render.</li></ul><div class="quote"><p>&ldquo;Views are always rendered as a result of a tool call. So if your server exposed multiple tool to be used, you can actually add metadata on some of them&rdquo;</p><span class="at">said at 02:03</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Why a single sourceDoc iframe fails</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="10" class="sl"><img loading="lazy" class="main" src="img/mcp-chatgpt-apps-double-iframe/s10_440.webp" alt="slide at 07:20"></a><div class="slidecap">Slide at 07:20 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Why a single sourceDoc iframe fails</h2><ul class="takeaways"><li>Loading the view directly into an iframe with the sourceDoc attribute shares the same origin and CSP as the host, so ChatGPT&#x27;s script-src nonce requirement blocks any third-party app script from executing.</li><li>Relaxing that CSP to let scripts run reopens the same-origin problem: a loaded app script could read the host&#x27;s local storage or cookies and exfiltrate them.</li></ul><div class="quote"><p>&ldquo;the iFrame that you are spawning up is sharing the same origin and sharing the same therefore CSP as the host that is responsible for&rdquo;</p><span class="at">said at 07:18</span></div><div class="quote"><p>&ldquo;you are sharing same origin as your parent DOM. So the loaded iFrame scripts would be able to access local storage or cookies that are indexed by origin&rdquo;</p><span class="at">said at 07:48</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Why sandboxing alone and the src-attribute route also fail</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="11" class="sl"><img loading="lazy" class="main" src="img/mcp-chatgpt-apps-double-iframe/s11_630.webp" alt="slide at 10:30"></a><div class="slidecap">Slide at 10:30 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s12_640.webp" alt="slide at 10:40"></a></div></div>
+<div class="textcol"><h2>Why sandboxing alone and the src-attribute route also fail</h2><ul class="takeaways"><li>Sandboxing the iframe to a null origin blocks origin-indexed storage (local storage, IndexedDB, cookies) entirely; adding allow-same-origin to fix that recreates the original escape-the-sandbox risk.</li><li>Using the src attribute to point at each app&#x27;s own server would require the host to add every new app&#x27;s domain to its frame-src CSP directive indefinitely, which isn&#x27;t feasible at store scale.</li></ul><div class="quote"><p>&ldquo;the only way to actually provide an origin to a sandboxed iFrame is to put allow same origin, which is an additional attribute that&rdquo;</p><span class="at">said at 09:09</span></div><div class="quote"><p>&ldquo;it would require open AI to modify the another CSP directive, which is basically the frame source directive listing all domains that are allowed to&rdquo;</p><span class="at">said at 10:03</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>The double-iframe solution</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="13" class="sl"><img loading="lazy" class="main" src="img/mcp-chatgpt-apps-double-iframe/s13_810.webp" alt="slide at 13:30"></a><div class="slidecap">Slide at 13:30 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s14_820.webp" alt="slide at 13:40"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s15_830.webp" alt="slide at 13:50"></a></div></div>
+<div class="textcol"><h2>The double-iframe solution</h2><ul class="takeaways"><li>The working pattern serves the same small script-loader content on a unique per-app subdomain (an outer iframe with its own effective origin, isolating each app from the host and from other apps&#x27; local storage/cookies), which then loads the actual view content in an inner iframe using sourceDoc.</li><li>This is the pattern actually implemented in production and is described as tracing back to Facebook&#x27;s original app-marketplace architecture for third-party app UI.</li></ul><div class="quote"><p>&ldquo;you want app ABC123 not to be able to access local storage from app ABC456 for example&rdquo;</p><span class="at">said at 12:56</span></div><div class="quote"><p>&ldquo;actually the first time this solution was implemented was back in Facebook days when they released their app marketplace&rdquo;</p><span class="at">said at 13:39</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Practical developer guidance and Skybridge</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="16" class="sl"><img loading="lazy" class="main" src="img/mcp-chatgpt-apps-double-iframe/s16_880.webp" alt="slide at 14:40"></a><div class="slidecap">Slide at 14:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s17_980.webp" alt="slide at 16:20"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s18_990.webp" alt="slide at 16:30"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s19_1010.webp" alt="slide at 16:50"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s20_1030.webp" alt="slide at 17:10"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s21_1040.webp" alt="slide at 17:20"></a><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s22_1060.webp" alt="slide at 17:40"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s23_1100.webp" alt="slide at 18:20"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/mcp-chatgpt-apps-double-iframe/s24_1110.webp" alt="slide at 18:30"></a></div></div>
+<div class="textcol"><h2>Practical developer guidance and Skybridge</h2><ul class="takeaways"><li>App developers must declare every external domain their app depends on (API calls, scripts, images) in MCP app spec metadata so it gets rewritten correctly inside the nested iframe; missing domains are a common cause of ChatGPT app store submission rejections.</li><li>Alpic&#x27;s open-source Skybridge framework adds end-to-end type safety and a CSP inspector dev tool that flags domains an app actually calls but hasn&#x27;t declared in its metadata.</li></ul><div class="quote"><p>&ldquo;declare all domains your application depends upon inside the provided metadata in the MCP app spec so that you are sure that they will be rewritten correctly&rdquo;</p><span class="at">said at 14:29</span></div><div class="quote"><p>&ldquo;we&#x27;ve seen a lot of rejection coming from chat GPT app store submission because of missing CSP and app not working in production because of&rdquo;</p><span class="at">said at 19:08</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The Facebook-app-marketplace lineage is a useful reminder that third-party-UI-in-a-trusted-host is an old problem with a known solution pattern -- worth watching whether MCP client vendors standardize a shared proxy-subdomain infrastructure rather than each host reinventing it (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s00_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s01_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s02_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s03_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s04_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s05_110.webp" alt="slide at 01:50"><div class="ts">01:50</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s06_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s07_310.webp" alt="slide at 05:10"><div class="ts">05:10</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s08_320.webp" alt="slide at 05:20"><div class="ts">05:20</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s09_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s10_440.webp" alt="slide at 07:20"><div class="ts">07:20</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s11_630.webp" alt="slide at 10:30"><div class="ts">10:30</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s12_640.webp" alt="slide at 10:40"><div class="ts">10:40</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s13_810.webp" alt="slide at 13:30"><div class="ts">13:30</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s14_820.webp" alt="slide at 13:40"><div class="ts">13:40</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s15_830.webp" alt="slide at 13:50"><div class="ts">13:50</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s16_880.webp" alt="slide at 14:40"><div class="ts">14:40</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s17_980.webp" alt="slide at 16:20"><div class="ts">16:20</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s18_990.webp" alt="slide at 16:30"><div class="ts">16:30</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s19_1010.webp" alt="slide at 16:50"><div class="ts">16:50</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s20_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s21_1040.webp" alt="slide at 17:20"><div class="ts">17:20</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s22_1060.webp" alt="slide at 17:40"><div class="ts">17:40</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s23_1100.webp" alt="slide at 18:20"><div class="ts">18:20</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s24_1110.webp" alt="slide at 18:30"><div class="ts">18:30</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s25_1130.webp" alt="slide at 18:50"><div class="ts">18:50</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s26_1140.webp" alt="slide at 19:00"><div class="ts">19:00</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s27_1150.webp" alt="slide at 19:10"><div class="ts">19:10</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s28_1160.webp" alt="slide at 19:20"><div class="ts">19:20</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s29_1170.webp" alt="slide at 19:30"><div class="ts">19:30</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s30_1180.webp" alt="slide at 19:40"><div class="ts">19:40</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/mcp-chatgpt-apps-double-iframe/s31_1190.webp" alt="slide at 19:50"><div class="ts">19:50</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>MCP app views are always rendered as the result of a tool call, with UI metadata advertised at tool-list time.</td><td class="tt">02:03</td></tr><tr><td class="st">warns</td><td>An iframe using sourceDoc shares the host&#x27;s origin and CSP, so the host&#x27;s script-src nonce policy blocks third-party app scripts from running.</td><td class="tt">07:18</td></tr><tr><td class="st">warns</td><td>Relaxing the host CSP to let app scripts execute would let a same-origin script read the host&#x27;s local storage or cookies and send them to a backend.</td><td class="tt">07:48</td></tr><tr><td class="st">warns</td><td>Adding allow-same-origin to a sandboxed iframe to restore storage access recreates the original escape-the-sandbox problem.</td><td class="tt">09:09</td></tr><tr><td class="st">warns</td><td>Using the src attribute to point directly at each app&#x27;s server would require the host to add every new app&#x27;s domain to its frame-src directive indefinitely, which isn&#x27;t feasible.</td><td class="tt">10:03</td></tr><tr><td class="st">recommends</td><td>Serving the same loader script on a unique subdomain per app isolates each app&#x27;s origin so local storage and cookies don&#x27;t collide between apps.</td><td class="tt">12:56</td></tr><tr><td class="st">asserts</td><td>The double-iframe approach for rendering third-party UI is not new and was first implemented by Facebook&#x27;s app marketplace.</td><td class="tt">13:39</td></tr><tr><td class="st">recommends</td><td>App developers must declare every external domain their app depends on inside the MCP app spec metadata so it renders correctly inside the nested iframe.</td><td class="tt">14:29</td></tr><tr><td class="st">warns</td><td>Missing CSP domains in app metadata are a common cause of ChatGPT app store submission rejections.</td><td class="tt">19:08</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/mcp-chatgpt-apps-double-iframe/s00_20.webp", "mmss": "00:20", "yt": "https://youtu.be/c-2eEv2ou7Y?t=20"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s01_30.webp", "mmss": "00:30", "yt": "https://youtu.be/c-2eEv2ou7Y?t=30"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s02_40.webp", "mmss": "00:40", "yt": "https://youtu.be/c-2eEv2ou7Y?t=40"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s03_50.webp", "mmss": "00:50", "yt": "https://youtu.be/c-2eEv2ou7Y?t=50"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s04_60.webp", "mmss": "01:00", "yt": "https://youtu.be/c-2eEv2ou7Y?t=60"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s05_110.webp", "mmss": "01:50", "yt": "https://youtu.be/c-2eEv2ou7Y?t=110"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s06_200.webp", "mmss": "03:20", "yt": "https://youtu.be/c-2eEv2ou7Y?t=200"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s07_310.webp", "mmss": "05:10", "yt": "https://youtu.be/c-2eEv2ou7Y?t=310"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s08_320.webp", "mmss": "05:20", "yt": "https://youtu.be/c-2eEv2ou7Y?t=320"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s09_420.webp", "mmss": "07:00", "yt": "https://youtu.be/c-2eEv2ou7Y?t=420"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s10_440.webp", "mmss": "07:20", "yt": "https://youtu.be/c-2eEv2ou7Y?t=440"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s11_630.webp", "mmss": "10:30", "yt": "https://youtu.be/c-2eEv2ou7Y?t=630"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s12_640.webp", "mmss": "10:40", "yt": "https://youtu.be/c-2eEv2ou7Y?t=640"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s13_810.webp", "mmss": "13:30", "yt": "https://youtu.be/c-2eEv2ou7Y?t=810"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s14_820.webp", "mmss": "13:40", "yt": "https://youtu.be/c-2eEv2ou7Y?t=820"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s15_830.webp", "mmss": "13:50", "yt": "https://youtu.be/c-2eEv2ou7Y?t=830"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s16_880.webp", "mmss": "14:40", "yt": "https://youtu.be/c-2eEv2ou7Y?t=880"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s17_980.webp", "mmss": "16:20", "yt": "https://youtu.be/c-2eEv2ou7Y?t=980"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s18_990.webp", "mmss": "16:30", "yt": "https://youtu.be/c-2eEv2ou7Y?t=990"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s19_1010.webp", "mmss": "16:50", "yt": "https://youtu.be/c-2eEv2ou7Y?t=1010"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s20_1030.webp", "mmss": "17:10", "yt": "https://youtu.be/c-2eEv2ou7Y?t=1030"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s21_1040.webp", "mmss": "17:20", "yt": "https://youtu.be/c-2eEv2ou7Y?t=1040"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s22_1060.webp", "mmss": "17:40", "yt": "https://youtu.be/c-2eEv2ou7Y?t=1060"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s23_1100.webp", "mmss": "18:20", "yt": "https://youtu.be/c-2eEv2ou7Y?t=1100"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s24_1110.webp", "mmss": "18:30", "yt": "https://youtu.be/c-2eEv2ou7Y?t=1110"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s25_1130.webp", "mmss": "18:50", "yt": "https://youtu.be/c-2eEv2ou7Y?t=1130"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s26_1140.webp", "mmss": "19:00", "yt": "https://youtu.be/c-2eEv2ou7Y?t=1140"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s27_1150.webp", "mmss": "19:10", "yt": "https://youtu.be/c-2eEv2ou7Y?t=1150"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s28_1160.webp", "mmss": "19:20", "yt": "https://youtu.be/c-2eEv2ou7Y?t=1160"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s29_1170.webp", "mmss": "19:30", "yt": "https://youtu.be/c-2eEv2ou7Y?t=1170"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s30_1180.webp", "mmss": "19:40", "yt": "https://youtu.be/c-2eEv2ou7Y?t=1180"}, {"src": "img/mcp-chatgpt-apps-double-iframe/s31_1190.webp", "mmss": "19:50", "yt": "https://youtu.be/c-2eEv2ou7Y?t=1190"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "c-2eEv2ou7Y", "slug": "mcp-chatgpt-apps-double-iframe", "title": "Why MCP and ChatGPT Apps Use Double Iframes", "speaker": "Frederic Barthelet", "company": "Alpic", "themes": ["mcp-protocols", "product-ux", "security"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Why MCP app UI needs two nested iframes (ours, from the slides)", "lanes": ["Failed single-iframe approaches", "Double-iframe pattern", "Developer requirements"], "nodes": [{"id": "src_doc", "label": "sourceDoc iframe", "sub": "shares host CSP, blocks scripts via nonce", "lane": 0, "kind": "system", "claim": "c2", "t": 438}, {"id": "relax_csp", "label": "Relaxed CSP", "sub": "script could read host cookies/local storage", "lane": 0, "kind": "store", "claim": "c3", "t": 468}, {"id": "sandbox", "label": "Sandbox + allow-same-origin", "sub": "blocks storage, or reopens same escape risk", "lane": 0, "kind": "system", "claim": "c4", "t": 549}, {"id": "src_attr", "label": "src to app server", "sub": "needs every app domain in frame-src forever", "lane": 0, "kind": "external", "claim": "c5", "t": 603}, {"id": "outer", "label": "Outer iframe, per-app subdomain", "sub": "isolates each app origin from host + other apps", "lane": 1, "kind": "system", "claim": "c6", "t": 776}, {"id": "inner", "label": "Inner iframe, sourceDoc", "sub": "loads the actual tool-triggered view", "lane": 1, "kind": "system", "claim": "c1", "t": 123}, {"id": "fb", "label": "Facebook app marketplace", "sub": "first implemented this double-iframe pattern", "lane": 1, "kind": "external", "claim": "c7", "t": 819}, {"id": "declare", "label": "Declare app domains", "sub": "every external domain listed in MCP app spec metadata", "lane": 2, "kind": "actor", "claim": "c8", "t": 869}, {"id": "missing", "label": "Missing domains", "sub": "common cause of ChatGPT app store rejections", "lane": 2, "kind": "system", "claim": "c9", "t": 1148}], "edges": [{"from": "src_doc", "to": "relax_csp", "label": "relax CSP", "kind": "flow"}, {"from": "sandbox", "to": "relax_csp", "label": "allow-same-origin", "kind": "flow"}, {"from": "src_attr", "to": "outer", "label": "replaced by", "kind": "flow"}, {"from": "relax_csp", "to": "outer", "label": "replaced by", "kind": "flow"}, {"from": "outer", "to": "inner", "label": "loads view", "kind": "flow"}, {"from": "fb", "to": "outer", "label": "precedent for", "kind": "flow"}, {"from": "outer", "to": "declare", "label": "requires", "kind": "flow"}, {"from": "declare", "to": "missing", "label": "if skipped", "kind": "flow"}], "caption": "The talk frames the double iframe as the fix that survives every single-iframe failure mode, tracing the pattern back to Facebook app marketplace precedent (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "views triggered by tool calls", "text": "MCP app views are always rendered as the result of a tool call, with UI metadata advertised at tool-list time.", "quote": "Views are always rendered as a result of a tool call. So if your server exposed multiple tool to be used, you can actually add metadata on some of them", "t": 123}, {"id": "c2", "stance": "warns", "topic": "sourceDoc shares host CSP", "text": "An iframe using sourceDoc shares the host's origin and CSP, so the host's script-src nonce policy blocks third-party app scripts from running.", "quote": "the iFrame that you are spawning up is sharing the same origin and sharing the same therefore CSP as the host that is responsible for", "t": 438}, {"id": "c3", "stance": "warns", "topic": "relaxed CSP exposes local storage", "text": "Relaxing the host CSP to let app scripts execute would let a same-origin script read the host's local storage or cookies and send them to a backend.", "quote": "you are sharing same origin as your parent DOM. So the loaded iFrame scripts would be able to access local storage or cookies that are indexed by origin", "t": 468}, {"id": "c4", "stance": "warns", "topic": "sandbox with allow-same-origin recreates risk", "text": "Adding allow-same-origin to a sandboxed iframe to restore storage access recreates the original escape-the-sandbox problem.", "quote": "the only way to actually provide an origin to a sandboxed iFrame is to put allow same origin, which is an additional attribute that", "t": 549}, {"id": "c5", "stance": "warns", "topic": "src attribute requires infinite CSP list", "text": "Using the src attribute to point directly at each app's server would require the host to add every new app's domain to its frame-src directive indefinitely, which isn't feasible.", "quote": "it would require open AI to modify the another CSP directive, which is basically the frame source directive listing all domains that are allowed to", "t": 603}, {"id": "c6", "stance": "recommends", "topic": "double iframe per-subdomain isolation", "text": "Serving the same loader script on a unique subdomain per app isolates each app's origin so local storage and cookies don't collide between apps.", "quote": "you want app ABC123 not to be able to access local storage from app ABC456 for example", "t": 776}, {"id": "c7", "stance": "asserts", "topic": "Facebook precedent", "text": "The double-iframe approach for rendering third-party UI is not new and was first implemented by Facebook's app marketplace.", "quote": "actually the first time this solution was implemented was back in Facebook days when they released their app marketplace", "t": 819}, {"id": "c8", "stance": "recommends", "topic": "declare all app domains", "text": "App developers must declare every external domain their app depends on inside the MCP app spec metadata so it renders correctly inside the nested iframe.", "quote": "declare all domains your application depends upon inside the provided metadata in the MCP app spec so that you are sure that they will be rewritten correctly", "t": 869}, {"id": "c9", "stance": "warns", "topic": "missing CSP domains cause rejections", "text": "Missing CSP domains in app metadata are a common cause of ChatGPT app store submission rejections.", "quote": "we've seen a lot of rejection coming from chat GPT app store submission because of missing CSP and app not working in production because of", "t": 1148}]}</script>
+</body></html>

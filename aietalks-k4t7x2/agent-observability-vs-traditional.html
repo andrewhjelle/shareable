@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>How Agent O11y Differs From Traditional O11y &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/XBaznoTRDFI" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 20 min</span><span class="ln"></span></div>
+<h1 class="lede">How Agent O11y Differs From Traditional O11y</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Phil Hetzel &middot; Braintrust</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/XBaznoTRDFI" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/XBaznoTRDFI</a> &middot; 20 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">take</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Infra & serving</span><span class="chip hot">Agentic engineering</span></div>
+<p class="deck" style="font-size:15px">Lays out concrete technical reasons agent traces need different infrastructure than tools like Grafana/Datadog: gigabyte-scale traces, 20MB individual spans, and the need for full-text indexing (Tantivy) rather than just metrics aggregation</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Agent observability differs from traditional observability because agents are non-deterministic and traces are far larger and messier (up to 1GB traces, 20MB individual spans) (c1, c2, c3).</li><li>Braintrust built a custom database with a forked Tantivy full-text index rather than using ClickHouse, because ClickHouse couldn&#x27;t handle the text-indexing workload needed to query trace content (c4, c5).</li><li>The best agent teams involve non-technical domain experts (clinicians, wealth advisors, lawyers) directly reviewing traces and writing natural-language grading justifications, unlike traditional observability&#x27;s purely technical audience (c6, c7).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">WHY AGENT TRACES BROKE TRADITIONAL OBSERVABILITY (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 316.00 419.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 415.43)">
+<title>G</title>
+<!-- nondet -->
+<g id="node1" class="node">
+<title>nondet</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="218.92,-411.43 72.25,-411.43 72.25,-375.15 218.92,-375.15 218.92,-411.43"/>
+<text xml:space="preserve" text-anchor="start" x="85.21" y="-393.34" font-family="Geist Mono" font-size="11.00">Agents non&#45;deterministic</text>
+<text xml:space="preserve" text-anchor="start" x="88.96" y="-385.19" font-family="Geist Mono" font-size="8.00" fill="#807565">vs deterministic traditional apps</text>
+</g>
+<!-- huge -->
+<g id="node2" class="node">
+<title>huge</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="133.17,-323.9 0,-323.9 0,-287.62 133.17,-287.62 133.17,-323.9"/>
+<text xml:space="preserve" text-anchor="start" x="27.21" y="-305.81" font-family="Geist Mono" font-size="11.00">Traces are huge</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-297.66" font-family="Geist Mono" font-size="8.00" fill="#807565">up to 1GB traces, 20MB spans</text>
+</g>
+<!-- nondet&#45;&gt;huge -->
+<g id="edge1" class="edge">
+<title>nondet&#45;&gt;huge</title>
+<path fill="none" stroke="#c8501f" d="M129.22,-374.57C117.46,-361.84 101.48,-344.54 88.6,-330.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="90.51,-329.05 83.96,-325.57 86.91,-332.38 90.51,-329.05"/>
+<text xml:space="preserve" text-anchor="middle" x="132.94" y="-347.07" font-family="Geist Mono" font-size="8.50" fill="#c8501f">drives scale</text>
+</g>
+<!-- persona -->
+<g id="node5" class="node">
+<title>persona</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="298.42,-323.9 154.75,-323.9 154.75,-287.62 298.42,-287.62 298.42,-323.9"/>
+<text xml:space="preserve" text-anchor="start" x="192.08" y="-305.81" font-family="Geist Mono" font-size="11.00">Persona shifts</text>
+<text xml:space="preserve" text-anchor="start" x="167.71" y="-297.66" font-family="Geist Mono" font-size="8.00" fill="#807565">non&#45;technical, not just engineers</text>
+</g>
+<!-- nondet&#45;&gt;persona -->
+<g id="edge4" class="edge">
+<title>nondet&#45;&gt;persona</title>
+<path fill="none" stroke="#c8501f" d="M162.37,-374.57C174.42,-361.84 190.81,-344.54 204.01,-330.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="205.75,-332.33 208.78,-325.56 202.19,-328.96 205.75,-332.33"/>
+<text xml:space="preserve" text-anchor="middle" x="223.93" y="-347.07" font-family="Geist Mono" font-size="8.50" fill="#c8501f">changes audience</text>
+</g>
+<!-- ch_drop -->
+<g id="node3" class="node">
+<title>ch_drop</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="139.42,-236.37 13.75,-236.37 13.75,-200.09 139.42,-200.09 139.42,-236.37"/>
+<text xml:space="preserve" text-anchor="start" x="28.58" y="-218.28" font-family="Geist Mono" font-size="11.00">ClickHouse dropped</text>
+<text xml:space="preserve" text-anchor="start" x="26.71" y="-210.13" font-family="Geist Mono" font-size="8.00" fill="#807565">couldn&#39;t do full&#45;text indexing</text>
+</g>
+<!-- huge&#45;&gt;ch_drop -->
+<g id="edge2" class="edge">
+<title>huge&#45;&gt;ch_drop</title>
+<path fill="none" stroke="#c8501f" d="M68.66,-287.04C70.06,-275 71.95,-258.87 73.53,-245.36"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="75.96,-245.67 74.34,-238.43 71.09,-245.1 75.96,-245.67"/>
+<text xml:space="preserve" text-anchor="middle" x="87.18" y="-259.55" font-family="Geist Mono" font-size="8.50" fill="#c8501f">outgrew</text>
+</g>
+<!-- tantivy -->
+<g id="node4" class="node">
+<title>tantivy</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="170.54,-123.81 24.62,-123.81 24.62,-87.53 170.54,-87.53 170.54,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="39.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Built custom Tantivy DB</text>
+<text xml:space="preserve" text-anchor="start" x="37.58" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">forked Rust engine, full&#45;text index</text>
+</g>
+<!-- ch_drop&#45;&gt;tantivy -->
+<g id="edge3" class="edge">
+<title>ch_drop&#45;&gt;tantivy</title>
+<path fill="none" stroke="#c8501f" d="M78.01,-199.58C79.43,-184.62 81.98,-162.65 86.08,-143.81 86.9,-140.07 87.92,-136.17 89.01,-132.36"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="91.34,-133.12 91.02,-125.71 86.65,-131.7 91.34,-133.12"/>
+<text xml:space="preserve" text-anchor="middle" x="107.83" y="-159.5" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+<!-- unified -->
+<g id="node7" class="node">
+<title>unified</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="241.29,-36.28 75.87,-36.28 75.87,0 241.29,0 241.29,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="114.71" y="-18.19" font-family="Geist Mono" font-size="11.00">Obs+evals unified</text>
+<text xml:space="preserve" text-anchor="start" x="88.83" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">batch vs real&#45;time, plus topic clustering</text>
+</g>
+<!-- tantivy&#45;&gt;unified -->
+<g id="edge6" class="edge">
+<title>tantivy&#45;&gt;unified</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M110.22,-86.95C119.14,-74.45 131.2,-57.54 141.04,-43.74"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="143.01,-45.19 145.08,-38.07 139.02,-42.35 143.01,-45.19"/>
+<text xml:space="preserve" text-anchor="middle" x="141.86" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">feeds</text>
+</g>
+<!-- experts -->
+<g id="node6" class="node">
+<title>experts</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="308.42,-180.09 140.75,-180.09 140.75,-143.81 308.42,-143.81 308.42,-180.09"/>
+<text xml:space="preserve" text-anchor="start" x="153.71" y="-162" font-family="Geist Mono" font-size="11.00">Domain experts grade traces</text>
+<text xml:space="preserve" text-anchor="start" x="162.33" y="-153.85" font-family="Geist Mono" font-size="8.00" fill="#807565">clinicians, nurses, advisors, lawyers</text>
+</g>
+<!-- persona&#45;&gt;experts -->
+<g id="edge5" class="edge">
+<title>persona&#45;&gt;experts</title>
+<path fill="none" stroke="#c8501f" d="M226.34,-287.09C225.99,-262.32 225.35,-217.15 224.95,-188.67"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="227.4,-188.88 224.85,-181.91 222.5,-188.95 227.4,-188.88"/>
+<text xml:space="preserve" text-anchor="middle" x="240.29" y="-259.55" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+<!-- experts&#45;&gt;unified -->
+<g id="edge7" class="edge">
+<title>experts&#45;&gt;unified</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M216.36,-143.28C204.74,-118.3 183.45,-72.56 170.21,-44.12"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="172.52,-43.28 167.35,-37.96 168.08,-45.34 172.52,-43.28"/>
+<text xml:space="preserve" text-anchor="middle" x="216.75" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">feeds</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s implicit argument: non-determinism and trace scale forced Braintrust off ClickHouse and pulled non-technical domain experts into the loop, which they now treat as one unified observability-and-evals system (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Traditional observability is about uptime, agent observability is about behavior quality</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="7" class="sl"><img loading="lazy" class="main" src="img/agent-observability-vs-traditional/s07_310.webp" alt="slide at 05:10"></a><div class="slidecap">Slide at 05:10 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s08_340.webp" alt="slide at 05:40"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s09_440.webp" alt="slide at 07:20"></a></div></div>
+<div class="textcol"><h2>Traditional observability is about uptime, agent observability is about behavior quality</h2><ul class="takeaways"><li>Traditional observability tools like Grafana and Datadog measure latency, error counts, and whether a deterministic application is up or down.</li><li>Agent observability needs to additionally answer qualitative questions -- was the response grounded in gathered context, were the right tools used, was the output aligned to a brand standard -- because agents are non-deterministic and can take different paths for the same input.</li></ul><div class="quote"><p>&ldquo;agents are non-deterministic, whereas applications are deterministic&rdquo;</p><span class="at">said at 05:02</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Agent traces are a harder systems problem</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="9" class="sl"><img loading="lazy" class="main" src="img/agent-observability-vs-traditional/s09_440.webp" alt="slide at 07:20"></a><div class="slidecap">Slide at 07:20 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s12_520.webp" alt="slide at 08:40"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s13_580.webp" alt="slide at 09:40"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s14_610.webp" alt="slide at 10:10"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s15_700.webp" alt="slide at 11:40"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s16_720.webp" alt="slide at 12:00"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s17_780.webp" alt="slide at 13:00"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s18_820.webp" alt="slide at 13:40"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s19_850.webp" alt="slide at 14:10"></a></div></div>
+<div class="textcol"><h2>Agent traces are a harder systems problem</h2><ul class="takeaways"><li>Agent traces are semi-structured, contain large amounts of unstructured text, and can be enormous: entire traces can exceed a gigabyte and individual spans can reach 20 megabytes.</li><li>This scale and structure makes agent trace ingestion, indexing, and real-time querying a fundamentally different systems problem than traditional metrics/trace pipelines.</li></ul><div class="quote"><p>&ldquo;they can be an agent trace could be over a gigabyte in size. We&#x27;ve seen that&rdquo;</p><span class="at">said at 07:28</span></div><div class="quote"><p>&ldquo;even with our own customers, an individual span can be 20 megabytes in size&rdquo;</p><span class="at">said at 07:28</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Braintrust built a custom database rather than reuse ClickHouse</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="25" class="sl"><img loading="lazy" class="main" src="img/agent-observability-vs-traditional/s25_1020.webp" alt="slide at 17:00"></a><div class="slidecap">Slide at 17:00 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Braintrust built a custom database rather than reuse ClickHouse</h2><ul class="takeaways"><li>Braintrust previously used ClickHouse but moved away from it because it couldn&#x27;t adequately support the text-based indexing their workload needed, so they built their own database including a write-ahead log for instant trace visibility and a forked open-source Rust engine called Tantivy for full-text search across trace content, unified through a SQL-like query language.</li></ul><div class="quote"><p>&ldquo;We used to use ClickHouse actually. Yeah. We moved away from it.&rdquo;</p><span class="at">said at 17:26</span></div><div class="quote"><p>&ldquo;he was performing some of these workloads, he just needed the more of the text-based uh index indexes, which ClickHouse wasn&#x27;t really able to do at least at that time&rdquo;</p><span class="at">said at 18:25</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Agent observability pulls in non-technical domain experts</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="16" class="sl"><img loading="lazy" class="main" src="img/agent-observability-vs-traditional/s16_720.webp" alt="slide at 12:00"></a><div class="slidecap">Slide at 12:00 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s17_780.webp" alt="slide at 13:00"></a></div></div>
+<div class="textcol"><h2>Agent observability pulls in non-technical domain experts</h2><ul class="takeaways"><li>Traditional observability&#x27;s audience is systems and product engineers.</li><li>Agent observability, done well, also involves non-technical subject-matter experts like clinicians, registered nurses, wealth advisors, and lawyers directly reviewing agent traces and grading outputs in natural language because they are closest to the users or the problem domain.</li></ul><div class="quote"><p>&ldquo;It&#x27;s very technical people that align with traditional observability. Uh that could not be further from the truth for agent observability if you&#x27;re doing it well&rdquo;</p><span class="at">said at 11:58</span></div><div class="quote"><p>&ldquo;we have folks that that are clinicians or registered nurses or wealth advisors or or or lawyers. We have seen them operate in our platform looking through traces&rdquo;</p><span class="at">said at 13:00</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Observability and evals treated as one system, plus emerging topic clustering</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="17" class="sl"><img loading="lazy" class="main" src="img/agent-observability-vs-traditional/s17_780.webp" alt="slide at 13:00"></a><div class="slidecap">Slide at 13:00 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s18_820.webp" alt="slide at 13:40"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s19_850.webp" alt="slide at 14:10"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s20_870.webp" alt="slide at 14:30"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s21_900.webp" alt="slide at 15:00"></a><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s22_960.webp" alt="slide at 16:00"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s23_970.webp" alt="slide at 16:10"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s24_980.webp" alt="slide at 16:20"></a><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/agent-observability-vs-traditional/s25_1020.webp" alt="slide at 17:00"></a></div></div>
+<div class="textcol"><h2>Observability and evals treated as one system, plus emerging topic clustering</h2><ul class="takeaways"><li>Braintrust treats observability and evals as the same underlying problem, differing only in that evals have known inputs run in batch while observability handles unknown inputs in real time.</li><li>About a month before the talk, Braintrust rolled out a feature that runs a lightweight LLM over incoming traces to perform embedding and clustering for topic modeling, surfacing usage patterns, intent, and sentiment.</li></ul><div class="quote"><p>&ldquo;we kind of think of observability and evals as the same problem. The only difference between evals is that you&#x27;re running them in batch and you know the inputs ahead of time&rdquo;</p><span class="at">said at 13:12</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The framing of observability and evals as the same system distinguished only by batch-vs-real-time and known-vs-unknown inputs is a clean mental model worth reusing when scoping any internal agent-monitoring buildout (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/agent-observability-vs-traditional/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/agent-observability-vs-traditional/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/agent-observability-vs-traditional/s02_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/agent-observability-vs-traditional/s03_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/agent-observability-vs-traditional/s04_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/agent-observability-vs-traditional/s05_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/agent-observability-vs-traditional/s06_290.webp" alt="slide at 04:50"><div class="ts">04:50</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/agent-observability-vs-traditional/s07_310.webp" alt="slide at 05:10"><div class="ts">05:10</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/agent-observability-vs-traditional/s08_340.webp" alt="slide at 05:40"><div class="ts">05:40</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/agent-observability-vs-traditional/s09_440.webp" alt="slide at 07:20"><div class="ts">07:20</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/agent-observability-vs-traditional/s10_480.webp" alt="slide at 08:00"><div class="ts">08:00</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/agent-observability-vs-traditional/s11_500.webp" alt="slide at 08:20"><div class="ts">08:20</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/agent-observability-vs-traditional/s12_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/agent-observability-vs-traditional/s13_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/agent-observability-vs-traditional/s14_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/agent-observability-vs-traditional/s15_700.webp" alt="slide at 11:40"><div class="ts">11:40</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/agent-observability-vs-traditional/s16_720.webp" alt="slide at 12:00"><div class="ts">12:00</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/agent-observability-vs-traditional/s17_780.webp" alt="slide at 13:00"><div class="ts">13:00</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/agent-observability-vs-traditional/s18_820.webp" alt="slide at 13:40"><div class="ts">13:40</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/agent-observability-vs-traditional/s19_850.webp" alt="slide at 14:10"><div class="ts">14:10</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/agent-observability-vs-traditional/s20_870.webp" alt="slide at 14:30"><div class="ts">14:30</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/agent-observability-vs-traditional/s21_900.webp" alt="slide at 15:00"><div class="ts">15:00</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/agent-observability-vs-traditional/s22_960.webp" alt="slide at 16:00"><div class="ts">16:00</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/agent-observability-vs-traditional/s23_970.webp" alt="slide at 16:10"><div class="ts">16:10</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/agent-observability-vs-traditional/s24_980.webp" alt="slide at 16:20"><div class="ts">16:20</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/agent-observability-vs-traditional/s25_1020.webp" alt="slide at 17:00"><div class="ts">17:00</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/agent-observability-vs-traditional/s26_1080.webp" alt="slide at 18:00"><div class="ts">18:00</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/agent-observability-vs-traditional/s27_1150.webp" alt="slide at 19:10"><div class="ts">19:10</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/agent-observability-vs-traditional/s28_1170.webp" alt="slide at 19:30"><div class="ts">19:30</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/agent-observability-vs-traditional/s29_1190.webp" alt="slide at 19:50"><div class="ts">19:50</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/agent-observability-vs-traditional/s30_1200.webp" alt="slide at 20:00"><div class="ts">20:00</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/agent-observability-vs-traditional/s31_1210.webp" alt="slide at 20:10"><div class="ts">20:10</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/agent-observability-vs-traditional/s32_1220.webp" alt="slide at 20:20"><div class="ts">20:20</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Agents are non-deterministic while traditional applications are deterministic, which forces agent observability to measure broader qualitative signals beyond traditional metrics.</td><td class="tt">05:02</td></tr><tr><td class="st">asserts</td><td>Agent traces can exceed a gigabyte in size, far larger than traditional observability traces.</td><td class="tt">07:28</td></tr><tr><td class="st">asserts</td><td>An individual span within a Braintrust customer&#x27;s agent trace can be 20 megabytes in size.</td><td class="tt">07:28</td></tr><tr><td class="st">asserts</td><td>Braintrust previously used ClickHouse for their database but moved away from it.</td><td class="tt">17:26</td></tr><tr><td class="st">asserts</td><td>Braintrust built its own database using a forked version of the Rust-based Tantivy engine for full-text indexing because ClickHouse couldn&#x27;t do the needed text-based indexing at the time.</td><td class="tt">18:25</td></tr><tr><td class="st">asserts</td><td>Traditional observability&#x27;s persona is a technical systems or product engineer, whereas agent observability&#x27;s best practitioners include non-technical domain experts.</td><td class="tt">11:58</td></tr><tr><td class="st">asserts</td><td>The best agent teams bring in non-technical people like clinicians, registered nurses, wealth advisors, or lawyers to review traces because they are closest to users or the problem domain.</td><td class="tt">13:00</td></tr><tr><td class="st">asserts</td><td>Braintrust treats observability and evals as the same problem differing only by batch-vs-real-time and known-vs-unknown inputs, and recently added LLM-based embedding and clustering over traces for topic modeling.</td><td class="tt">13:12</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/agent-observability-vs-traditional/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/XBaznoTRDFI?t=10"}, {"src": "img/agent-observability-vs-traditional/s01_20.webp", "mmss": "00:20", "yt": "https://youtu.be/XBaznoTRDFI?t=20"}, {"src": "img/agent-observability-vs-traditional/s02_40.webp", "mmss": "00:40", "yt": "https://youtu.be/XBaznoTRDFI?t=40"}, {"src": "img/agent-observability-vs-traditional/s03_100.webp", "mmss": "01:40", "yt": "https://youtu.be/XBaznoTRDFI?t=100"}, {"src": "img/agent-observability-vs-traditional/s04_180.webp", "mmss": "03:00", "yt": "https://youtu.be/XBaznoTRDFI?t=180"}, {"src": "img/agent-observability-vs-traditional/s05_240.webp", "mmss": "04:00", "yt": "https://youtu.be/XBaznoTRDFI?t=240"}, {"src": "img/agent-observability-vs-traditional/s06_290.webp", "mmss": "04:50", "yt": "https://youtu.be/XBaznoTRDFI?t=290"}, {"src": "img/agent-observability-vs-traditional/s07_310.webp", "mmss": "05:10", "yt": "https://youtu.be/XBaznoTRDFI?t=310"}, {"src": "img/agent-observability-vs-traditional/s08_340.webp", "mmss": "05:40", "yt": "https://youtu.be/XBaznoTRDFI?t=340"}, {"src": "img/agent-observability-vs-traditional/s09_440.webp", "mmss": "07:20", "yt": "https://youtu.be/XBaznoTRDFI?t=440"}, {"src": "img/agent-observability-vs-traditional/s10_480.webp", "mmss": "08:00", "yt": "https://youtu.be/XBaznoTRDFI?t=480"}, {"src": "img/agent-observability-vs-traditional/s11_500.webp", "mmss": "08:20", "yt": "https://youtu.be/XBaznoTRDFI?t=500"}, {"src": "img/agent-observability-vs-traditional/s12_520.webp", "mmss": "08:40", "yt": "https://youtu.be/XBaznoTRDFI?t=520"}, {"src": "img/agent-observability-vs-traditional/s13_580.webp", "mmss": "09:40", "yt": "https://youtu.be/XBaznoTRDFI?t=580"}, {"src": "img/agent-observability-vs-traditional/s14_610.webp", "mmss": "10:10", "yt": "https://youtu.be/XBaznoTRDFI?t=610"}, {"src": "img/agent-observability-vs-traditional/s15_700.webp", "mmss": "11:40", "yt": "https://youtu.be/XBaznoTRDFI?t=700"}, {"src": "img/agent-observability-vs-traditional/s16_720.webp", "mmss": "12:00", "yt": "https://youtu.be/XBaznoTRDFI?t=720"}, {"src": "img/agent-observability-vs-traditional/s17_780.webp", "mmss": "13:00", "yt": "https://youtu.be/XBaznoTRDFI?t=780"}, {"src": "img/agent-observability-vs-traditional/s18_820.webp", "mmss": "13:40", "yt": "https://youtu.be/XBaznoTRDFI?t=820"}, {"src": "img/agent-observability-vs-traditional/s19_850.webp", "mmss": "14:10", "yt": "https://youtu.be/XBaznoTRDFI?t=850"}, {"src": "img/agent-observability-vs-traditional/s20_870.webp", "mmss": "14:30", "yt": "https://youtu.be/XBaznoTRDFI?t=870"}, {"src": "img/agent-observability-vs-traditional/s21_900.webp", "mmss": "15:00", "yt": "https://youtu.be/XBaznoTRDFI?t=900"}, {"src": "img/agent-observability-vs-traditional/s22_960.webp", "mmss": "16:00", "yt": "https://youtu.be/XBaznoTRDFI?t=960"}, {"src": "img/agent-observability-vs-traditional/s23_970.webp", "mmss": "16:10", "yt": "https://youtu.be/XBaznoTRDFI?t=970"}, {"src": "img/agent-observability-vs-traditional/s24_980.webp", "mmss": "16:20", "yt": "https://youtu.be/XBaznoTRDFI?t=980"}, {"src": "img/agent-observability-vs-traditional/s25_1020.webp", "mmss": "17:00", "yt": "https://youtu.be/XBaznoTRDFI?t=1020"}, {"src": "img/agent-observability-vs-traditional/s26_1080.webp", "mmss": "18:00", "yt": "https://youtu.be/XBaznoTRDFI?t=1080"}, {"src": "img/agent-observability-vs-traditional/s27_1150.webp", "mmss": "19:10", "yt": "https://youtu.be/XBaznoTRDFI?t=1150"}, {"src": "img/agent-observability-vs-traditional/s28_1170.webp", "mmss": "19:30", "yt": "https://youtu.be/XBaznoTRDFI?t=1170"}, {"src": "img/agent-observability-vs-traditional/s29_1190.webp", "mmss": "19:50", "yt": "https://youtu.be/XBaznoTRDFI?t=1190"}, {"src": "img/agent-observability-vs-traditional/s30_1200.webp", "mmss": "20:00", "yt": "https://youtu.be/XBaznoTRDFI?t=1200"}, {"src": "img/agent-observability-vs-traditional/s31_1210.webp", "mmss": "20:10", "yt": "https://youtu.be/XBaznoTRDFI?t=1210"}, {"src": "img/agent-observability-vs-traditional/s32_1220.webp", "mmss": "20:20", "yt": "https://youtu.be/XBaznoTRDFI?t=1220"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "XBaznoTRDFI", "slug": "agent-observability-vs-traditional", "title": "How Agent O11y Differs From Traditional O11y", "speaker": "Phil Hetzel", "company": "Braintrust", "themes": ["evals-benchmarks", "infra-serving", "agentic-engineering"], "tier": "slide-brief", "depth": "take", "diagram": {"title": "Why agent traces broke traditional observability (ours)", "lanes": ["premise", "mechanism", "consequence"], "nodes": [{"id": "nondet", "label": "Agents non-deterministic", "sub": "vs deterministic traditional apps", "lane": 0, "kind": "system", "claim": "c1", "t": 302}, {"id": "huge", "label": "Traces are huge", "sub": "up to 1GB traces, 20MB spans", "lane": 0, "kind": "store", "claim": "c2", "t": 448}, {"id": "ch_drop", "label": "ClickHouse dropped", "sub": "couldn't do full-text indexing", "lane": 1, "kind": "store", "claim": "c4", "t": 1046}, {"id": "tantivy", "label": "Built custom Tantivy DB", "sub": "forked Rust engine, full-text index", "lane": 1, "kind": "store", "claim": "c5", "t": 1105}, {"id": "persona", "label": "Persona shifts", "sub": "non-technical, not just engineers", "lane": 1, "kind": "actor", "claim": "c6", "t": 718}, {"id": "experts", "label": "Domain experts grade traces", "sub": "clinicians, nurses, advisors, lawyers", "lane": 1, "kind": "actor", "claim": "c7", "t": 780}, {"id": "unified", "label": "Obs+evals unified", "sub": "batch vs real-time, plus topic clustering", "lane": 2, "kind": "system", "claim": "c8", "t": 792}], "edges": [{"from": "nondet", "to": "huge", "label": "drives scale", "kind": "flow"}, {"from": "huge", "to": "ch_drop", "label": "outgrew", "kind": "flow"}, {"from": "ch_drop", "to": "tantivy", "label": "replaced by", "kind": "flow"}, {"from": "nondet", "to": "persona", "label": "changes audience", "kind": "flow"}, {"from": "persona", "to": "experts", "label": "enables", "kind": "flow"}, {"from": "tantivy", "to": "unified", "label": "feeds", "kind": "data"}, {"from": "experts", "to": "unified", "label": "feeds", "kind": "data"}], "caption": "This traces the talk's implicit argument: non-determinism and trace scale forced Braintrust off ClickHouse and pulled non-technical domain experts into the loop, which they now treat as one unified observability-and-evals system (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "non-determinism drives scope difference", "text": "Agents are non-deterministic while traditional applications are deterministic, which forces agent observability to measure broader qualitative signals beyond traditional metrics.", "quote": "agents are non-deterministic, whereas applications are deterministic", "t": 302}, {"id": "c2", "stance": "asserts", "topic": "trace size", "text": "Agent traces can exceed a gigabyte in size, far larger than traditional observability traces.", "quote": "they can be an agent trace could be over a gigabyte in size. We've seen that", "t": 448}, {"id": "c3", "stance": "asserts", "topic": "span size", "text": "An individual span within a Braintrust customer's agent trace can be 20 megabytes in size.", "quote": "even with our own customers, an individual span can be 20 megabytes in size", "t": 448}, {"id": "c4", "stance": "asserts", "topic": "moved off ClickHouse", "text": "Braintrust previously used ClickHouse for their database but moved away from it.", "quote": "We used to use ClickHouse actually. Yeah. We moved away from it.", "t": 1046}, {"id": "c5", "stance": "asserts", "topic": "custom Tantivy-based database", "text": "Braintrust built its own database using a forked version of the Rust-based Tantivy engine for full-text indexing because ClickHouse couldn't do the needed text-based indexing at the time.", "quote": "he was performing some of these workloads, he just needed the more of the text-based uh index indexes, which ClickHouse wasn't really able to do at least at that time", "t": 1105}, {"id": "c6", "stance": "asserts", "topic": "different persona", "text": "Traditional observability's persona is a technical systems or product engineer, whereas agent observability's best practitioners include non-technical domain experts.", "quote": "It's very technical people that align with traditional observability. Uh that could not be further from the truth for agent observability if you're doing it well", "t": 718}, {"id": "c7", "stance": "asserts", "topic": "domain experts in the loop", "text": "The best agent teams bring in non-technical people like clinicians, registered nurses, wealth advisors, or lawyers to review traces because they are closest to users or the problem domain.", "quote": "we have folks that that are clinicians or registered nurses or wealth advisors or or or lawyers. We have seen them operate in our platform looking through traces", "t": 780}, {"id": "c8", "stance": "asserts", "topic": "observability equals evals plus topic clustering", "text": "Braintrust treats observability and evals as the same problem differing only by batch-vs-real-time and known-vs-unknown inputs, and recently added LLM-based embedding and clustering over traces for topic modeling.", "quote": "we kind of think of observability and evals as the same problem. The only difference between evals is that you're running them in batch and you know the inputs ahead of time", "t": 792}]}</script>
+</body></html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>How Transformers Finally Ate Vision &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/VhfAVA3BG2I" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 17 min</span><span class="ln"></span></div>
+<h1 class="lede">How Transformers Finally Ate Vision</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Isaac Robinson &middot; Roboflow</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/VhfAVA3BG2I" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/VhfAVA3BG2I</a> &middot; 17 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Infra & serving</span><span class="chip hot">Local models</span></div>
+<p class="deck" style="font-size:15px">Traces which architecture and pretraining choices (windowed attention, masked autoencoding, DINOv2/DINOv3, flash attention) explain why plain vision transformers now outperform convolutional networks and specialized hybrids, useful for t...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Vision transformers beat convolutional networks despite having zero built-in inductive bias, because of massive ViT-specific pretraining (MAE, DINOv2/DINOv3) plus speedups borrowed from LLM infrastructure like flash attention.</li><li>The field detoured through windowed attention (Swin) and a pure convolutional network (ConvNeXt) that briefly beat ViT on ImageNet but wasn&#x27;t fast, before settling back on the plain ViT.</li><li>SAM3&#x27;s backbone lineage shows the cost of this approach: an 800-million-parameter model described as not usable in many low-power deployment cases, which is why Roboflow built the RF100VL benchmark and reports about a 40x speedup for the same accuracy versus fine-tuning SAM3 directly.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW THE PLAIN VIT WON, AND WHAT IT COSTS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 535.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- vit_plain -->
+<g id="node1" class="node">
+<title>vit_plain</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="352.42,-473.93 151.75,-473.93 151.75,-437.65 352.42,-437.65 352.42,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="231.08" y="-455.84" font-family="Geist Mono" font-size="11.00">Plain ViT</text>
+<text xml:space="preserve" text-anchor="start" x="164.71" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">no inductive bias, cost grows as resolution scales</text>
+</g>
+<!-- swin -->
+<g id="node2" class="node">
+<title>swin</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="208.17,-386.4 0,-386.4 0,-350.12 208.17,-350.12 208.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="54.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Swin windowed attn</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">local windows bring compute back to O(n&#45;squared)</text>
+</g>
+<!-- vit_plain&#45;&gt;swin -->
+<g id="edge1" class="edge">
+<title>vit_plain&#45;&gt;swin</title>
+<path fill="none" stroke="#c8501f" d="M209.4,-437.01C196.88,-431.31 183.34,-424.64 171.33,-417.65 158.24,-410.03 144.54,-400.48 132.95,-391.89"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="134.66,-390.12 127.59,-387.87 131.72,-394.04 134.66,-390.12"/>
+<text xml:space="preserve" text-anchor="middle" x="203.21" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">windowed detour</text>
+</g>
+<!-- mae -->
+<g id="node4" class="node">
+<title>mae</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="505.67,-386.4 330.5,-386.4 330.5,-350.12 505.67,-350.12 505.67,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="379.83" y="-368.31" font-family="Geist Mono" font-size="11.00">MAE pretraining</text>
+<text xml:space="preserve" text-anchor="start" x="343.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">reconstructs masked patches, ViT&#45;specific</text>
+</g>
+<!-- vit_plain&#45;&gt;mae -->
+<g id="edge4" class="edge">
+<title>vit_plain&#45;&gt;mae</title>
+<path fill="none" stroke="#c8501f" d="M286.48,-437.07C312.63,-423.59 348.73,-405 376.5,-390.69"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="377.29,-393.04 382.39,-387.65 375.04,-388.68 377.29,-393.04"/>
+<text xml:space="preserve" text-anchor="middle" x="371.27" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">pretrained via</text>
+</g>
+<!-- convnext -->
+<g id="node3" class="node">
+<title>convnext</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="258.92,-298.87 73.25,-298.87 73.25,-262.59 258.92,-262.59 258.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="142.08" y="-280.78" font-family="Geist Mono" font-size="11.00">ConvNeXt</text>
+<text xml:space="preserve" text-anchor="start" x="86.21" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">beat ViT and Swin on ImageNet, but not fast</text>
+</g>
+<!-- swin&#45;&gt;convnext -->
+<g id="edge2" class="edge">
+<title>swin&#45;&gt;convnext</title>
+<path fill="none" stroke="#c8501f" d="M116.93,-349.54C126.08,-336.92 138.47,-319.82 148.53,-305.95"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="150.24,-307.76 152.37,-300.65 146.27,-304.88 150.24,-307.76"/>
+<text xml:space="preserve" text-anchor="middle" x="170.67" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">pure&#45;conv detour</text>
+</g>
+<!-- convnext&#45;&gt;vit_plain -->
+<g id="edge3" class="edge">
+<title>convnext&#45;&gt;vit_plain</title>
+<path fill="none" stroke="#c8501f" d="M189.28,-299.33C195.68,-305.03 202.2,-311.74 207.08,-318.87 230.39,-352.88 242.38,-399.87 247.94,-428.74"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="245.53,-429.16 249.19,-435.6 250.35,-428.28 245.53,-429.16"/>
+<text xml:space="preserve" text-anchor="middle" x="265.41" y="-365.81" font-family="Geist Mono" font-size="8.50" fill="#c8501f">field returns to</text>
+</g>
+<!-- dino -->
+<g id="node5" class="node">
+<title>dino</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="527.04,-298.87 309.12,-298.87 309.12,-262.59 527.04,-262.59 527.04,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="378.33" y="-280.78" font-family="Geist Mono" font-size="11.00">DINOv2/DINOv3</text>
+<text xml:space="preserve" text-anchor="start" x="322.08" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">linear&#45;probed self&#45;supervised features rival supervised</text>
+</g>
+<!-- mae&#45;&gt;dino -->
+<g id="edge5" class="edge">
+<title>mae&#45;&gt;dino</title>
+<path fill="none" stroke="#c8501f" d="M418.08,-349.54C418.08,-337.5 418.08,-321.37 418.08,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="420.54,-307.94 418.09,-300.94 415.64,-307.94 420.54,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="440.96" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">scaled up to</text>
+</g>
+<!-- sam3 -->
+<g id="node6" class="node">
+<title>sam3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="471.92,-211.34 364.25,-211.34 364.25,-175.06 471.92,-175.06 471.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="379.46" y="-193.25" font-family="Geist Mono" font-size="11.00">SAM3 backbone</text>
+<text xml:space="preserve" text-anchor="start" x="377.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">800 million parameters</text>
+</g>
+<!-- dino&#45;&gt;sam3 -->
+<g id="edge6" class="edge">
+<title>dino&#45;&gt;sam3</title>
+<path fill="none" stroke="#c8501f" d="M418.08,-262.01C418.08,-249.97 418.08,-233.84 418.08,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="420.54,-220.41 418.09,-213.41 415.64,-220.41 420.54,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="442.46" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">backbone for</text>
+</g>
+<!-- sam3_cost -->
+<g id="node7" class="node">
+<title>sam3_cost</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="527.04,-123.81 309.12,-123.81 309.12,-87.53 527.04,-87.53 527.04,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="367.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Not edge&#45;deployable</text>
+<text xml:space="preserve" text-anchor="start" x="322.08" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">not usable for low&#45;power, resource&#45;constrained cases</text>
+</g>
+<!-- sam3&#45;&gt;sam3_cost -->
+<g id="edge7" class="edge">
+<title>sam3&#45;&gt;sam3_cost</title>
+<path fill="none" stroke="#c8501f" d="M418.08,-174.48C418.08,-162.44 418.08,-146.31 418.08,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="420.54,-132.88 418.09,-125.88 415.64,-132.88 420.54,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="443.21" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">too costly for</text>
+</g>
+<!-- rf100vl -->
+<g id="node8" class="node">
+<title>rf100vl</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="521.79,-36.28 314.38,-36.28 314.38,0 521.79,0 521.79,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="368.21" y="-18.19" font-family="Geist Mono" font-size="11.00">RF100VL benchmark</text>
+<text xml:space="preserve" text-anchor="start" x="327.33" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">~40x speedup, same accuracy vs fine&#45;tuning SAM3</text>
+</g>
+<!-- sam3_cost&#45;&gt;rf100vl -->
+<g id="edge8" class="edge">
+<title>sam3_cost&#45;&gt;rf100vl</title>
+<path fill="none" stroke="#c8501f" d="M418.08,-86.95C418.08,-74.91 418.08,-58.78 418.08,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="420.54,-45.35 418.09,-38.35 415.64,-45.35 420.54,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="436.83" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">motivates</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The talk frames vision transformers as winning not on architecture elegance but because ViT-specific pretraining (MAE, DINOv2/DINOv3) closed the inductive-bias gap, at the cost of models like SAM3 that are too large for edge deployment, which is what Roboflow&#x27;s RF100VL benchmark is built to address (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Why the plain vision transformer wins despite no inductive bias</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Why the plain vision transformer wins despite no inductive bias</h2><ul class="takeaways"><li>Convolutional networks have built-in inductive bias -- a filter activates the same way regardless of where an object appears in the image -- at O(n-squared) cost.</li><li>Vision transformers have no such bias and cost O(n-to-the-fourth) as resolution scales, yet the speaker argues the plain ViT wins because of massive ViT-specific pretraining combined with infrastructure speedups borrowed from the LLM world.</li></ul><div class="quote"><p>&ldquo;it is because of massive VIT-specific pretraining, and then we get to borrow a lot of speedups and infrastructure from the fact that LLMs are blowing up.&rdquo;</p><span class="at">said at 03:03</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>The architecture detour: Swin, then ConvNeXt</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>The architecture detour: Swin, then ConvNeXt</h2><ul class="takeaways"><li>The field first tried windowed attention (Swin), which restricts attention to local windows and shifts them between layers, bringing compute back down to O(n-squared) and adding a locality inductive bias similar to convolution.</li><li>It then tried going back to a pure convolutional network, ConvNeXt, built using the same recipe learned from ViTs, which beat both ViT and Swin on the standard ImageNet benchmark -- but wasn&#x27;t fast.</li></ul><div class="quote"><p>&ldquo;this actually gets us down to n-squared if your window size is independent of your resolution, and it adds a locality inductive bias following the convolutional net.&rdquo;</p><span class="at">said at 04:36</span></div><div class="quote"><p>&ldquo;Turns out that beats VIT and Swin when you apply it on the uh standard ImageNet reference. That&#x27;s great. Finally, we have something that makes a little bit of sense. Um turns out that&#x27;s not super fast.&rdquo;</p><span class="at">said at 06:08</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Pretraining, not architecture, supplies the missing bias</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Pretraining, not architecture, supplies the missing bias</h2><ul class="takeaways"><li>Masked autoencoder (MAE) pretraining, where patches are dropped from an image and the model reconstructs them from context, is ViT-specific because you can&#x27;t drop patches out of a convolution the same way.</li><li>Taken further, DINOv2/DINOv3 self-supervised pretraining produces feature maps rich enough that a PCA decomposition traces individual cat paws correctly and decomposes satellite imagery in a semantically meaningful way, with self-supervised features probed by a simple linear layer catching up to the best fully supervised results.</li></ul><div class="quote"><p>&ldquo;you can&#x27;t actually apply MAE to a convolutional network. How do you drop out a patch when you&#x27;re doing this convolution that&#x27;s invariant across patches?&rdquo;</p><span class="at">said at 07:44</span></div><div class="quote"><p>&ldquo;decomposition of the feature maps produced by a DINOv3 pretrained VIT, and we see that the paws of the cat have different colors, and that it&#x27;s tracing the paws correctly for each of the different cats.&rdquo;</p><span class="at">said at 08:45</span></div><div class="quote"><p>&ldquo;the self-supervised learning objective is is catching up with the best that we have from supervised learning, and this is via linear probe.&rdquo;</p><span class="at">said at 08:45</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>The cost of winning: SAM3 is powerful but not deployable</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>The cost of winning: SAM3 is powerful but not deployable</h2><ul class="takeaways"><li>The SAM segmentation model series (SAM, mobile SAM, SAM2, SAM3) tracks the same pattern of a ViT backbone trained with MAE-style pretraining.</li><li>The result is powerful but expensive: SAM3 is 800 million parameters, and the speaker says it&#x27;s not actually usable in a lot of cases because vision has historically needed low-power, resource-constrained edge deployment.</li></ul><div class="quote"><p>&ldquo;SAM 3 is this very very powerful thing, but is also 800 million parameters.&rdquo;</p><span class="at">said at 11:50</span></div><div class="quote"><p>&ldquo;It&#x27;s not actually usable in a lot of cases, uh especially because vision historically has been focused on these very low-power edge devices, these uh resource constrained deployment scenarios.&rdquo;</p><span class="at">said at 12:20</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Roboflow&#x27;s fix: benchmark transfer, then compress for deployment</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Roboflow&#x27;s fix: benchmark transfer, then compress for deployment</h2><ul class="takeaways"><li>Roboflow introduced the RF100VL dataset to measure how well foundation models transfer to diverse downstream object-detection tasks.</li><li>Using this benchmark, they report about a 40x speedup for the same accuracy compared to fine-tuning SAM3 directly, and a meaningful accuracy improvement even at a smaller 15x speedup.</li></ul><div class="quote"><p>&ldquo;we see about a 40x speed up for the same accuracy versus fine-tuning SAM 3, uh and for merely a 15x speed up, we get&rdquo;</p><span class="at">said at 12:51</span></div><div class="quote"><p>&ldquo;we introduce a data set, RF100VL, that measures how well uh foundation models transfer to downstream diverse tasks with respect to object detection&rdquo;</p><span class="at">said at 12:51</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>Roboflow is presenting its own RF100VL benchmark and derived models (RFDetR), so the reported ~40x speedup for the same accuracy versus fine-tuning SAM3 is self-reported against a benchmark the same team built, not an independently replicated comparison (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The plain vision transformer wins over convolutional networks because of massive ViT-specific pretraining plus infrastructure speedups borrowed from the LLM world.</td><td class="tt">03:03</td></tr><tr><td class="st">asserts</td><td>Swin&#x27;s windowed attention brings compute back down to O(n-squared) when window size is independent of resolution, and adds a locality inductive bias similar to convolution.</td><td class="tt">04:36</td></tr><tr><td class="st">asserts</td><td>ConvNeXt beat both ViT and Swin on the standard ImageNet benchmark, but wasn&#x27;t fast.</td><td class="tt">06:08</td></tr><tr><td class="st">asserts</td><td>Masked autoencoder pretraining can&#x27;t be applied to a convolutional network because you can&#x27;t drop patches out of a convolution the way you can from a ViT.</td><td class="tt">07:44</td></tr><tr><td class="st">asserts</td><td>SAM3 is a very powerful but very large model at 800 million parameters.</td><td class="tt">11:50</td></tr><tr><td class="st">warns</td><td>SAM3 is not actually usable in a lot of cases because vision has historically needed low-power, resource-constrained edge deployment.</td><td class="tt">12:20</td></tr><tr><td class="st">asserts</td><td>Roboflow reports about a 40x speedup for the same accuracy compared to fine-tuning SAM3 directly.</td><td class="tt">12:51</td></tr><tr><td class="st">asserts</td><td>Roboflow introduced the RF100VL dataset to measure how well foundation models transfer to diverse downstream object-detection tasks.</td><td class="tt">12:51</td></tr><tr><td class="st">asserts</td><td>A DINOv3-pretrained ViT produces feature maps precise enough that a PCA decomposition correctly traces individual cats&#x27; paws with different colors.</td><td class="tt">08:45</td></tr><tr><td class="st">asserts</td><td>Self-supervised learning features, evaluated through a simple frozen linear probe, are catching up to the best fully supervised learning results.</td><td class="tt">08:45</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div class="frame wide"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "VhfAVA3BG2I", "slug": "transformers-ate-vision", "title": "How Transformers Finally Ate Vision", "speaker": "Isaac Robinson", "company": "Roboflow", "themes": ["evals-benchmarks", "infra-serving", "local-models"], "tier": "transcript-brief", "depth": "pattern", "diagram": {"title": "How the plain ViT won, and what it costs (ours)", "lanes": ["Architecture detour", "Pretraining fix", "Deployment cost"], "nodes": [{"id": "vit_plain", "label": "Plain ViT", "sub": "no inductive bias, cost grows as resolution scales", "lane": 0, "kind": "system", "claim": "c1", "t": 183}, {"id": "swin", "label": "Swin windowed attn", "sub": "local windows bring compute back to O(n-squared)", "lane": 0, "kind": "system", "claim": "c2", "t": 276}, {"id": "convnext", "label": "ConvNeXt", "sub": "beat ViT and Swin on ImageNet, but not fast", "lane": 0, "kind": "system", "claim": "c3", "t": 368}, {"id": "mae", "label": "MAE pretraining", "sub": "reconstructs masked patches, ViT-specific", "lane": 1, "kind": "system", "claim": "c4", "t": 464}, {"id": "dino", "label": "DINOv2/DINOv3", "sub": "linear-probed self-supervised features rival supervised", "lane": 1, "kind": "system", "claim": "c9", "t": 525}, {"id": "sam3", "label": "SAM3 backbone", "sub": "800 million parameters", "lane": 2, "kind": "system", "claim": "c5", "t": 710}, {"id": "sam3_cost", "label": "Not edge-deployable", "sub": "not usable for low-power, resource-constrained cases", "lane": 2, "kind": "system", "claim": "c6", "t": 740}, {"id": "rf100vl", "label": "RF100VL benchmark", "sub": "~40x speedup, same accuracy vs fine-tuning SAM3", "lane": 2, "kind": "external", "claim": "c7", "t": 771}], "edges": [{"from": "vit_plain", "to": "swin", "label": "windowed detour", "kind": "flow"}, {"from": "swin", "to": "convnext", "label": "pure-conv detour", "kind": "flow"}, {"from": "convnext", "to": "vit_plain", "label": "field returns to", "kind": "flow"}, {"from": "vit_plain", "to": "mae", "label": "pretrained via", "kind": "flow"}, {"from": "mae", "to": "dino", "label": "scaled up to", "kind": "flow"}, {"from": "dino", "to": "sam3", "label": "backbone for", "kind": "flow"}, {"from": "sam3", "to": "sam3_cost", "label": "too costly for", "kind": "flow"}, {"from": "sam3_cost", "to": "rf100vl", "label": "motivates", "kind": "flow"}], "caption": "The talk frames vision transformers as winning not on architecture elegance but because ViT-specific pretraining (MAE, DINOv2/DINOv3) closed the inductive-bias gap, at the cost of models like SAM3 that are too large for edge deployment, which is what Roboflow's RF100VL benchmark is built to address (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "why ViT wins", "text": "The plain vision transformer wins over convolutional networks because of massive ViT-specific pretraining plus infrastructure speedups borrowed from the LLM world.", "quote": "it is because of massive VIT-specific pretraining, and then we get to borrow a lot of speedups and infrastructure from the fact that LLMs are blowing up.", "t": 183}, {"id": "c2", "stance": "asserts", "topic": "Swin windowed attention", "text": "Swin's windowed attention brings compute back down to O(n-squared) when window size is independent of resolution, and adds a locality inductive bias similar to convolution.", "quote": "this actually gets us down to n-squared if your window size is independent of your resolution, and it adds a locality inductive bias following the convolutional net.", "t": 276}, {"id": "c3", "stance": "asserts", "topic": "ConvNeXt beats ViT and Swin but is slow", "text": "ConvNeXt beat both ViT and Swin on the standard ImageNet benchmark, but wasn't fast.", "quote": "Turns out that beats VIT and Swin when you apply it on the uh standard ImageNet reference. That's great. Finally, we have something that makes a little bit of sense. Um turns out that's not super fast.", "t": 368}, {"id": "c4", "stance": "asserts", "topic": "MAE is ViT-specific", "text": "Masked autoencoder pretraining can't be applied to a convolutional network because you can't drop patches out of a convolution the way you can from a ViT.", "quote": "you can't actually apply MAE to a convolutional network. How do you drop out a patch when you're doing this convolution that's invariant across patches?", "t": 464}, {"id": "c5", "stance": "asserts", "topic": "SAM3 parameter count", "text": "SAM3 is a very powerful but very large model at 800 million parameters.", "quote": "SAM 3 is this very very powerful thing, but is also 800 million parameters.", "t": 710}, {"id": "c6", "stance": "warns", "topic": "SAM3 not usable for edge deployment", "text": "SAM3 is not actually usable in a lot of cases because vision has historically needed low-power, resource-constrained edge deployment.", "quote": "It's not actually usable in a lot of cases, uh especially because vision historically has been focused on these very low-power edge devices, these uh resource constrained deployment scenarios.", "t": 740}, {"id": "c7", "stance": "asserts", "topic": "RF100VL speedup result", "text": "Roboflow reports about a 40x speedup for the same accuracy compared to fine-tuning SAM3 directly.", "quote": "we see about a 40x speed up for the same accuracy versus fine-tuning SAM 3, uh and for merely a 15x speed up, we get", "t": 771}, {"id": "c8", "stance": "asserts", "topic": "RF100VL benchmark purpose", "text": "Roboflow introduced the RF100VL dataset to measure how well foundation models transfer to diverse downstream object-detection tasks.", "quote": "we introduce a data set, RF100VL, that measures how well uh foundation models transfer to downstream diverse tasks with respect to object detection", "t": 771}, {"id": "c9", "stance": "asserts", "topic": "DINOv3 feature map quality", "text": "A DINOv3-pretrained ViT produces feature maps precise enough that a PCA decomposition correctly traces individual cats' paws with different colors.", "quote": "decomposition of the feature maps produced by a DINOv3 pretrained VIT, and we see that the paws of the cat have different colors, and that it's tracing the paws correctly for each of the different cats.", "t": 525}, {"id": "c10", "stance": "asserts", "topic": "self-supervised learning closing the gap", "text": "Self-supervised learning features, evaluated through a simple frozen linear probe, are catching up to the best fully supervised learning results.", "quote": "the self-supervised learning objective is is catching up with the best that we have from supervised learning, and this is via linear probe.", "t": 525}]}</script>
+</body></html>

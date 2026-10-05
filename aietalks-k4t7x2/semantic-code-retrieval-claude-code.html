@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Benchmarking Semantic Code Retrieval on Claude Code &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/zKk7sDMGDEQ" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 16 min</span><span class="ln"></span></div>
+<h1 class="lede">Benchmarking Semantic Code Retrieval on Claude Code</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Kuba Rogut &middot; Turbopuffer</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/zKk7sDMGDEQ" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/zKk7sDMGDEQ</a> &middot; 16 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Coding agents</span><span class="chip hot">Infra & serving</span></div>
+<p class="deck" style="font-size:15px">Gives measured numbers, not vibes, for whether adding semantic (vector) code search on top of Claude Code&#x27;s default grep-based search actually helps: Turbopuffer&#x27;s Context Bench test shows file-read precision jumping from 65% to 87% with...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Cursor reports semantic code search drives a 24% relative improvement in answer accuracy for its composer model (12-13% across all models), plus a 2.6% code-retention gain and 2.2% fewer dissatisfied requests in an online A/B test (c1, c2).</li><li>Claude Code doesn&#x27;t use semantic search by default; early versions tried a local vector DB but agentic grep-based search worked better and simpler (c3).</li><li>On Turbopuffer&#x27;s own Context Bench test, adding windowed grep plus semantic search took Claude Code&#x27;s file-read precision from 65% to 87%, cutting wasted file reads from 1-in-3 to 1-in-8, though grep still wins on import-tracing tasks (c5, c6, c7).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW TURBO GREP ADDS SEMANTIC SEARCH TO CLAUDE CODE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 324.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- codebase -->
+<g id="node1" class="node">
+<title>codebase</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="142.17,-561.46 12.75,-561.46 12.75,-525.18 142.17,-525.18 142.17,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="53.46" y="-543.37" font-family="Geist Mono" font-size="11.00">Codebase</text>
+<text xml:space="preserve" text-anchor="start" x="25.71" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">repo files Turbo Grep indexes</text>
+</g>
+<!-- chunk -->
+<g id="node2" class="node">
+<title>chunk</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="150.79,-473.93 4.12,-473.93 4.12,-437.65 150.79,-437.65 150.79,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="32.08" y="-455.84" font-family="Geist Mono" font-size="11.00">Tree&#45;splitter chunk</text>
+<text xml:space="preserve" text-anchor="start" x="17.08" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">tree&#45;splitter library parses/chunks</text>
+</g>
+<!-- codebase&#45;&gt;chunk -->
+<g id="edge1" class="edge">
+<title>codebase&#45;&gt;chunk</title>
+<path fill="none" stroke="#c8501f" d="M77.46,-524.6C77.46,-512.56 77.46,-496.43 77.46,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="79.91,-483 77.46,-476 75.01,-483 79.91,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="89.46" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">parses</text>
+</g>
+<!-- embed -->
+<g id="node3" class="node">
+<title>embed</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="145.92,-386.4 9,-386.4 9,-350.12 145.92,-350.12 145.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="41.46" y="-368.31" font-family="Geist Mono" font-size="11.00">Voyage embed</text>
+<text xml:space="preserve" text-anchor="start" x="21.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Voyage code embedding model</text>
+</g>
+<!-- chunk&#45;&gt;embed -->
+<g id="edge2" class="edge">
+<title>chunk&#45;&gt;embed</title>
+<path fill="none" stroke="#c8501f" d="M77.46,-437.07C77.46,-425.03 77.46,-408.9 77.46,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="79.91,-395.47 77.46,-388.47 75.01,-395.47 79.91,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="92.08" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">embeds</text>
+</g>
+<!-- store -->
+<g id="node4" class="node">
+<title>store</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="152.29,-298.87 2.62,-298.87 2.62,-262.59 152.29,-262.59 152.29,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="35.08" y="-280.78" font-family="Geist Mono" font-size="11.00">Turbopuffer store</text>
+<text xml:space="preserve" text-anchor="start" x="15.58" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">uploaded for Claude Code to query</text>
+</g>
+<!-- embed&#45;&gt;store -->
+<g id="edge3" class="edge">
+<title>embed&#45;&gt;store</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M77.46,-349.54C77.46,-337.5 77.46,-321.37 77.46,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="79.91,-307.94 77.46,-300.94 75.01,-307.94 79.91,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="103.71" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">stores vectors</text>
+</g>
+<!-- semq -->
+<g id="node6" class="node">
+<title>semq</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="154.92,-211.34 0,-211.34 0,-175.06 154.92,-175.06 154.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="26.83" y="-193.25" font-family="Geist Mono" font-size="11.00">Turbo Grep semantic</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">queries Turbopuffer for related code</text>
+</g>
+<!-- store&#45;&gt;semq -->
+<g id="edge4" class="edge">
+<title>store&#45;&gt;semq</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M77.46,-262.01C77.46,-249.97 77.46,-233.84 77.46,-220.33"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="79.91,-220.41 77.46,-213.41 75.01,-220.41 79.91,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="90.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">queries</text>
+</g>
+<!-- grep -->
+<g id="node5" class="node">
+<title>grep</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="316.04,-211.34 176.88,-211.34 176.88,-175.06 316.04,-175.06 316.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="202.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Claude Code grep</text>
+<text xml:space="preserve" text-anchor="start" x="189.83" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">default file search, no vector DB</text>
+</g>
+<!-- bench -->
+<g id="node7" class="node">
+<title>bench</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="238.42,-123.81 86.5,-123.81 86.5,-87.53 238.42,-87.53 238.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="115.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Context Bench eval</text>
+<text xml:space="preserve" text-anchor="start" x="99.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">scores files/lines/symbols examined</text>
+</g>
+<!-- grep&#45;&gt;bench -->
+<g id="edge5" class="edge">
+<title>grep&#45;&gt;bench</title>
+<path fill="none" stroke="#c8501f" d="M229.06,-174.48C216.44,-161.63 199.26,-144.14 185.5,-130.13"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="187.56,-128.73 180.9,-125.45 184.06,-132.16 187.56,-128.73"/>
+<text xml:space="preserve" text-anchor="middle" x="227.11" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">grep only</text>
+</g>
+<!-- semq&#45;&gt;bench -->
+<g id="edge6" class="edge">
+<title>semq&#45;&gt;bench</title>
+<path fill="none" stroke="#c8501f" d="M95.07,-174.48C107.84,-161.63 125.23,-144.14 139.14,-130.13"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="140.61,-132.13 143.8,-125.44 137.13,-128.68 140.61,-132.13"/>
+<text xml:space="preserve" text-anchor="middle" x="146.42" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">+ semantic</text>
+</g>
+<!-- prec87 -->
+<g id="node8" class="node">
+<title>prec87</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="145.04,-36.28 29.87,-36.28 29.87,0 145.04,0 145.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="42.83" y="-18.19" font-family="Geist Mono" font-size="11.00">File precision 87%</text>
+<text xml:space="preserve" text-anchor="start" x="48.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">up from 65% baseline</text>
+</g>
+<!-- bench&#45;&gt;prec87 -->
+<g id="edge7" class="edge">
+<title>bench&#45;&gt;prec87</title>
+<path fill="none" stroke="#c8501f" d="M146.92,-86.95C135.76,-74.22 120.59,-56.92 108.36,-42.98"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="110.44,-41.62 103.98,-37.98 106.75,-44.86 110.44,-41.62"/>
+<text xml:space="preserve" text-anchor="middle" x="145.95" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">precision</text>
+</g>
+<!-- wasted -->
+<g id="node9" class="node">
+<title>wasted</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="309.92,-36.28 167,-36.28 167,0 309.92,0 309.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="189.33" y="-18.19" font-family="Geist Mono" font-size="11.00">Wasted reads 1&#45;in&#45;8</text>
+<text xml:space="preserve" text-anchor="start" x="179.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">wasted file reads 1&#45;in&#45;3 to 1&#45;in&#45;8</text>
+</g>
+<!-- bench&#45;&gt;wasted -->
+<g id="edge8" class="edge">
+<title>bench&#45;&gt;wasted</title>
+<path fill="none" stroke="#c8501f" d="M178.21,-86.95C189.52,-74.22 204.89,-56.92 217.28,-42.98"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="218.91,-44.83 221.73,-37.97 215.25,-41.58 218.91,-44.83"/>
+<text xml:space="preserve" text-anchor="middle" x="224.89" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">waste rate</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Turbopuffer&#x27;s own account of the indexing and query pipeline plus the Context Bench precision results; it does not capture how grep and semantic search are combined at decision time within a single query (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Cursor&#x27;s evidence for semantic code search</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/semantic-code-retrieval-claude-code/s02_50.webp" alt="slide at 00:50"></a><div class="slidecap">Slide at 00:50 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Cursor&#x27;s evidence for semantic code search</h2><ul class="takeaways"><li>Turbopuffer cites Cursor&#x27;s own published numbers: semantic code search gives their composer model a 24% relative improvement in answer accuracy, and roughly 12-13% across all models.</li><li>An online A/B test found enabling semantic search produced a 2.6% increase in code retention on large codebases and a 2.2% decrease in dissatisfied user requests, numbers the speaker notes look small only because not every query benefits from semantic search in the first place.</li></ul><div class="quote"><p>&ldquo;is like 24% increase in relative improvement in answer accuracy and I think it&#x27;s like 12 and a half or 13% across all models&rdquo;</p><span class="at">said at 01:01</span></div><div class="quote"><p>&ldquo;led to like a 2.6% increase in code retention in large code bases and then 2.2% decrease in dissatisfied user requests&rdquo;</p><span class="at">said at 02:03</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Claude Code&#x27;s default is grep, not vector search</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/semantic-code-retrieval-claude-code/s01_30.webp" alt="slide at 00:30"></a><div class="slidecap">Slide at 00:30 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s02_50.webp" alt="slide at 00:50"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s03_100.webp" alt="slide at 01:40"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s04_110.webp" alt="slide at 01:50"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s05_120.webp" alt="slide at 02:00"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s06_140.webp" alt="slide at 02:20"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s07_200.webp" alt="slide at 03:20"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s08_230.webp" alt="slide at 03:50"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s09_240.webp" alt="slide at 04:00"></a></div></div>
+<div class="textcol"><h2>Claude Code&#x27;s default is grep, not vector search</h2><ul class="takeaways"><li>Claude Code does not use semantic code search by default; an early version experimented with a local vector database, but Anthropic found plain agentic grepping through the file system worked better and simpler, so it stuck with that.</li><li>Turbopuffer built an open-source CLI tool, Turbo Grep, that parses and chunks a codebase with a tree-splitter library, embeds it with Voyage&#x27;s code model, and uploads it to Turbopuffer for Claude Code to query.</li></ul><div class="quote"><p>&ldquo;the early versions of cloud code did actually use semantic search with a local vector DB, but they just kind of found agentic search which is actually you know, grepping through your file system kind of worked better&rdquo;</p><span class="at">said at 00:30</span></div><div class="quote"><p>&ldquo;using a tree splitter library to essentially parse through your code base, chunk it, embed it using the Voyage code model and then upload it to Turbo Puffer&rdquo;</p><span class="at">said at 04:05</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Context Bench results: precision improves a lot, recall doesn&#x27;t</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="16" class="sl"><img loading="lazy" class="main" src="img/semantic-code-retrieval-claude-code/s16_400.webp" alt="slide at 06:40"></a><div class="slidecap">Slide at 06:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s17_410.webp" alt="slide at 06:50"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s18_420.webp" alt="slide at 07:00"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s19_430.webp" alt="slide at 07:10"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s20_440.webp" alt="slide at 07:20"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s21_450.webp" alt="slide at 07:30"></a><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s22_490.webp" alt="slide at 08:10"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s23_500.webp" alt="slide at 08:20"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s24_510.webp" alt="slide at 08:30"></a></div></div>
+<div class="textcol"><h2>Context Bench results: precision improves a lot, recall doesn&#x27;t</h2><ul class="takeaways"><li>Using Cursor&#x27;s public Context Bench methodology (which scores whether an agent looked at the right files/lines/symbols while solving a task, not just whether it solved it), Claude Code&#x27;s baseline hit 65% file precision, 33% line precision, and 43% symbol precision.</li><li>Adding windowed grep plus semantic search raised file precision to 87%, cutting wasted file reads from about 1-in-3 files to 1-in-8.</li><li>Recall told a different story: default Claude Code actually wins on file recall because it explores aggressively, though a lot of that exploration lands on files without the needed lines.</li></ul><div class="quote"><p>&ldquo;You can see the baseline it hit like 65% precision, 33% on line precision and 43% on symbol&rdquo;</p><span class="at">said at 06:41</span></div><div class="quote"><p>&ldquo;windowed grep plus semantic search got it to like 87% file precision for example&rdquo;</p><span class="at">said at 06:41</span></div><div class="quote"><p>&ldquo;cloud code one in every three file reads is actually just a completely wasted file and with windowed grep it was one in five reads was a irrelevant file and then with semantic search there&#x27;s only one in eight files&rdquo;</p><span class="at">said at 07:12</span></div><div class="quote"><p>&ldquo;By default again, cloud code actually does win the file recall and again, part of this is because it just loves to explore every single file it can&rdquo;</p><span class="at">said at 07:43</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>When semantic search helps versus when grep wins</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="36" class="sl"><img loading="lazy" class="main" src="img/semantic-code-retrieval-claude-code/s36_740.webp" alt="slide at 12:20"></a><div class="slidecap">Slide at 12:20 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>When semantic search helps versus when grep wins</h2><ul class="takeaways"><li>Breaking results down by task showed semantic search won on tasks needing behaviorally related files that didn&#x27;t share keywords (e.g. code implementing the same behavior across different libraries), while plain grep won on tasks that were mostly import-tracing, where the right keyword shows up in the first tool call.</li><li>The speaker also notes semantic search performs best on code with a lot of inline documentation/comments, since that gives the embedding model more explicit semantic meaning to match against.</li></ul><div class="quote"><p>&ldquo;I think it works best when there&#x27;s a lot of like comments on code uh because it kind of finds that semantic meaning&rdquo;</p><span class="at">said at 12:20</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Turbopuffer&#x27;s broader positioning</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="35" class="sl"><img loading="lazy" class="main" src="img/semantic-code-retrieval-claude-code/s35_710.webp" alt="slide at 11:50"></a><div class="slidecap">Slide at 11:50 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="36" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s36_740.webp" alt="slide at 12:20"></a><a href="#" data-slide="37" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s37_750.webp" alt="slide at 12:30"></a><a href="#" data-slide="38" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s38_760.webp" alt="slide at 12:40"></a><a href="#" data-slide="39" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s39_770.webp" alt="slide at 12:50"></a><a href="#" data-slide="40" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s40_810.webp" alt="slide at 13:30"></a><a href="#" data-slide="41" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s41_820.webp" alt="slide at 13:40"></a><a href="#" data-slide="42" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s42_830.webp" alt="slide at 13:50"></a><a href="#" data-slide="43" class="sl"><img loading="lazy" class="thumb" src="img/semantic-code-retrieval-claude-code/s43_850.webp" alt="slide at 14:10"></a></div></div>
+<div class="textcol"><h2>Turbopuffer&#x27;s broader positioning</h2><ul class="takeaways"><li>The speaker attributes Claude Code&#x27;s smaller gains (relative to Cursor&#x27;s reported 24%) to semantic search being bolted on as an optional extra tool rather than a tool the model has been trained to know when and how to invoke, unlike Cursor&#x27;s composer.</li><li>Turbopuffer describes itself as the vector database underlying companies including Cursor, Anthropic, and Notion.</li></ul><div class="quote"><p>&ldquo;we are the we are the vector database that powers companies like Cursor, Anthropic, Notion&rdquo;</p><span class="at">said at 11:49</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The precision/recall split (semantic search helps precision a lot, recall barely, and only wins on specific task types) argues against a blanket &#x27;add vector search&#x27; recommendation and toward routing by task type, which is a more actionable takeaway than Cursor&#x27;s single headline accuracy number (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s00_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s01_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s02_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s03_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s04_110.webp" alt="slide at 01:50"><div class="ts">01:50</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s05_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s06_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s07_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s08_230.webp" alt="slide at 03:50"><div class="ts">03:50</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s09_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s10_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s11_280.webp" alt="slide at 04:40"><div class="ts">04:40</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s12_290.webp" alt="slide at 04:50"><div class="ts">04:50</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s13_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s14_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s15_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s16_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s17_410.webp" alt="slide at 06:50"><div class="ts">06:50</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s18_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s19_430.webp" alt="slide at 07:10"><div class="ts">07:10</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s20_440.webp" alt="slide at 07:20"><div class="ts">07:20</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s21_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s22_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s23_500.webp" alt="slide at 08:20"><div class="ts">08:20</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s24_510.webp" alt="slide at 08:30"><div class="ts">08:30</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s25_530.webp" alt="slide at 08:50"><div class="ts">08:50</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s26_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s27_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s28_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s29_650.webp" alt="slide at 10:50"><div class="ts">10:50</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s30_660.webp" alt="slide at 11:00"><div class="ts">11:00</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s31_670.webp" alt="slide at 11:10"><div class="ts">11:10</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s32_680.webp" alt="slide at 11:20"><div class="ts">11:20</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s33_690.webp" alt="slide at 11:30"><div class="ts">11:30</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s34_700.webp" alt="slide at 11:40"><div class="ts">11:40</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s35_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s36_740.webp" alt="slide at 12:20"><div class="ts">12:20</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s37_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="#" data-slide="38"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s38_760.webp" alt="slide at 12:40"><div class="ts">12:40</div></a><a href="#" data-slide="39"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s39_770.webp" alt="slide at 12:50"><div class="ts">12:50</div></a><a href="#" data-slide="40"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s40_810.webp" alt="slide at 13:30"><div class="ts">13:30</div></a><a href="#" data-slide="41"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s41_820.webp" alt="slide at 13:40"><div class="ts">13:40</div></a><a href="#" data-slide="42"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s42_830.webp" alt="slide at 13:50"><div class="ts">13:50</div></a><a href="#" data-slide="43"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s43_850.webp" alt="slide at 14:10"><div class="ts">14:10</div></a><a href="#" data-slide="44"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s44_870.webp" alt="slide at 14:30"><div class="ts">14:30</div></a><a href="#" data-slide="45"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s45_900.webp" alt="slide at 15:00"><div class="ts">15:00</div></a><a href="#" data-slide="46"><img loading="lazy" src="img/semantic-code-retrieval-claude-code/s46_940.webp" alt="slide at 15:40"><div class="ts">15:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Cursor reports a 24% relative improvement in answer accuracy for its composer model from semantic code search, and roughly 12-13% across all models.</td><td class="tt">01:01</td></tr><tr><td class="st">asserts</td><td>Cursor&#x27;s online A/B test found semantic search led to a 2.6% increase in code retention on large codebases and a 2.2% decrease in dissatisfied user requests.</td><td class="tt">02:03</td></tr><tr><td class="st">asserts</td><td>Early Claude Code versions used semantic search with a local vector DB, but agentic grep-based file search was found to work better and simpler.</td><td class="tt">00:30</td></tr><tr><td class="st">asserts</td><td>Turbopuffer built Turbo Grep, which parses and chunks a codebase using a tree-splitter library, embeds it with Voyage&#x27;s code model, and uploads it to Turbopuffer.</td><td class="tt">04:05</td></tr><tr><td class="st">asserts</td><td>Default Claude Code scored 65% file precision, 33% line precision, and 43% symbol precision on Context Bench.</td><td class="tt">06:41</td></tr><tr><td class="st">asserts</td><td>Adding windowed grep plus semantic search raised file precision to 87% on Context Bench.</td><td class="tt">06:41</td></tr><tr><td class="st">asserts</td><td>Wasted file reads dropped from about 1-in-3 with default Claude Code to 1-in-8 with semantic search added.</td><td class="tt">07:12</td></tr><tr><td class="st">asserts</td><td>Default Claude Code wins on file recall because it explores aggressively, even though much of that exploration misses the lines that matter.</td><td class="tt">07:43</td></tr><tr><td class="st">asserts</td><td>Semantic search works best on code with a lot of inline comments, since comments give the embedding model explicit semantic meaning to match against.</td><td class="tt">12:20</td></tr><tr><td class="st">asserts</td><td>Turbopuffer describes itself as the vector database powering companies including Cursor, Anthropic, and Notion.</td><td class="tt">11:49</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/semantic-code-retrieval-claude-code/s00_20.webp", "mmss": "00:20", "yt": "https://youtu.be/zKk7sDMGDEQ?t=20"}, {"src": "img/semantic-code-retrieval-claude-code/s01_30.webp", "mmss": "00:30", "yt": "https://youtu.be/zKk7sDMGDEQ?t=30"}, {"src": "img/semantic-code-retrieval-claude-code/s02_50.webp", "mmss": "00:50", "yt": "https://youtu.be/zKk7sDMGDEQ?t=50"}, {"src": "img/semantic-code-retrieval-claude-code/s03_100.webp", "mmss": "01:40", "yt": "https://youtu.be/zKk7sDMGDEQ?t=100"}, {"src": "img/semantic-code-retrieval-claude-code/s04_110.webp", "mmss": "01:50", "yt": "https://youtu.be/zKk7sDMGDEQ?t=110"}, {"src": "img/semantic-code-retrieval-claude-code/s05_120.webp", "mmss": "02:00", "yt": "https://youtu.be/zKk7sDMGDEQ?t=120"}, {"src": "img/semantic-code-retrieval-claude-code/s06_140.webp", "mmss": "02:20", "yt": "https://youtu.be/zKk7sDMGDEQ?t=140"}, {"src": "img/semantic-code-retrieval-claude-code/s07_200.webp", "mmss": "03:20", "yt": "https://youtu.be/zKk7sDMGDEQ?t=200"}, {"src": "img/semantic-code-retrieval-claude-code/s08_230.webp", "mmss": "03:50", "yt": "https://youtu.be/zKk7sDMGDEQ?t=230"}, {"src": "img/semantic-code-retrieval-claude-code/s09_240.webp", "mmss": "04:00", "yt": "https://youtu.be/zKk7sDMGDEQ?t=240"}, {"src": "img/semantic-code-retrieval-claude-code/s10_250.webp", "mmss": "04:10", "yt": "https://youtu.be/zKk7sDMGDEQ?t=250"}, {"src": "img/semantic-code-retrieval-claude-code/s11_280.webp", "mmss": "04:40", "yt": "https://youtu.be/zKk7sDMGDEQ?t=280"}, {"src": "img/semantic-code-retrieval-claude-code/s12_290.webp", "mmss": "04:50", "yt": "https://youtu.be/zKk7sDMGDEQ?t=290"}, {"src": "img/semantic-code-retrieval-claude-code/s13_370.webp", "mmss": "06:10", "yt": "https://youtu.be/zKk7sDMGDEQ?t=370"}, {"src": "img/semantic-code-retrieval-claude-code/s14_380.webp", "mmss": "06:20", "yt": "https://youtu.be/zKk7sDMGDEQ?t=380"}, {"src": "img/semantic-code-retrieval-claude-code/s15_390.webp", "mmss": "06:30", "yt": "https://youtu.be/zKk7sDMGDEQ?t=390"}, {"src": "img/semantic-code-retrieval-claude-code/s16_400.webp", "mmss": "06:40", "yt": "https://youtu.be/zKk7sDMGDEQ?t=400"}, {"src": "img/semantic-code-retrieval-claude-code/s17_410.webp", "mmss": "06:50", "yt": "https://youtu.be/zKk7sDMGDEQ?t=410"}, {"src": "img/semantic-code-retrieval-claude-code/s18_420.webp", "mmss": "07:00", "yt": "https://youtu.be/zKk7sDMGDEQ?t=420"}, {"src": "img/semantic-code-retrieval-claude-code/s19_430.webp", "mmss": "07:10", "yt": "https://youtu.be/zKk7sDMGDEQ?t=430"}, {"src": "img/semantic-code-retrieval-claude-code/s20_440.webp", "mmss": "07:20", "yt": "https://youtu.be/zKk7sDMGDEQ?t=440"}, {"src": "img/semantic-code-retrieval-claude-code/s21_450.webp", "mmss": "07:30", "yt": "https://youtu.be/zKk7sDMGDEQ?t=450"}, {"src": "img/semantic-code-retrieval-claude-code/s22_490.webp", "mmss": "08:10", "yt": "https://youtu.be/zKk7sDMGDEQ?t=490"}, {"src": "img/semantic-code-retrieval-claude-code/s23_500.webp", "mmss": "08:20", "yt": "https://youtu.be/zKk7sDMGDEQ?t=500"}, {"src": "img/semantic-code-retrieval-claude-code/s24_510.webp", "mmss": "08:30", "yt": "https://youtu.be/zKk7sDMGDEQ?t=510"}, {"src": "img/semantic-code-retrieval-claude-code/s25_530.webp", "mmss": "08:50", "yt": "https://youtu.be/zKk7sDMGDEQ?t=530"}, {"src": "img/semantic-code-retrieval-claude-code/s26_550.webp", "mmss": "09:10", "yt": "https://youtu.be/zKk7sDMGDEQ?t=550"}, {"src": "img/semantic-code-retrieval-claude-code/s27_570.webp", "mmss": "09:30", "yt": "https://youtu.be/zKk7sDMGDEQ?t=570"}, {"src": "img/semantic-code-retrieval-claude-code/s28_580.webp", "mmss": "09:40", "yt": "https://youtu.be/zKk7sDMGDEQ?t=580"}, {"src": "img/semantic-code-retrieval-claude-code/s29_650.webp", "mmss": "10:50", "yt": "https://youtu.be/zKk7sDMGDEQ?t=650"}, {"src": "img/semantic-code-retrieval-claude-code/s30_660.webp", "mmss": "11:00", "yt": "https://youtu.be/zKk7sDMGDEQ?t=660"}, {"src": "img/semantic-code-retrieval-claude-code/s31_670.webp", "mmss": "11:10", "yt": "https://youtu.be/zKk7sDMGDEQ?t=670"}, {"src": "img/semantic-code-retrieval-claude-code/s32_680.webp", "mmss": "11:20", "yt": "https://youtu.be/zKk7sDMGDEQ?t=680"}, {"src": "img/semantic-code-retrieval-claude-code/s33_690.webp", "mmss": "11:30", "yt": "https://youtu.be/zKk7sDMGDEQ?t=690"}, {"src": "img/semantic-code-retrieval-claude-code/s34_700.webp", "mmss": "11:40", "yt": "https://youtu.be/zKk7sDMGDEQ?t=700"}, {"src": "img/semantic-code-retrieval-claude-code/s35_710.webp", "mmss": "11:50", "yt": "https://youtu.be/zKk7sDMGDEQ?t=710"}, {"src": "img/semantic-code-retrieval-claude-code/s36_740.webp", "mmss": "12:20", "yt": "https://youtu.be/zKk7sDMGDEQ?t=740"}, {"src": "img/semantic-code-retrieval-claude-code/s37_750.webp", "mmss": "12:30", "yt": "https://youtu.be/zKk7sDMGDEQ?t=750"}, {"src": "img/semantic-code-retrieval-claude-code/s38_760.webp", "mmss": "12:40", "yt": "https://youtu.be/zKk7sDMGDEQ?t=760"}, {"src": "img/semantic-code-retrieval-claude-code/s39_770.webp", "mmss": "12:50", "yt": "https://youtu.be/zKk7sDMGDEQ?t=770"}, {"src": "img/semantic-code-retrieval-claude-code/s40_810.webp", "mmss": "13:30", "yt": "https://youtu.be/zKk7sDMGDEQ?t=810"}, {"src": "img/semantic-code-retrieval-claude-code/s41_820.webp", "mmss": "13:40", "yt": "https://youtu.be/zKk7sDMGDEQ?t=820"}, {"src": "img/semantic-code-retrieval-claude-code/s42_830.webp", "mmss": "13:50", "yt": "https://youtu.be/zKk7sDMGDEQ?t=830"}, {"src": "img/semantic-code-retrieval-claude-code/s43_850.webp", "mmss": "14:10", "yt": "https://youtu.be/zKk7sDMGDEQ?t=850"}, {"src": "img/semantic-code-retrieval-claude-code/s44_870.webp", "mmss": "14:30", "yt": "https://youtu.be/zKk7sDMGDEQ?t=870"}, {"src": "img/semantic-code-retrieval-claude-code/s45_900.webp", "mmss": "15:00", "yt": "https://youtu.be/zKk7sDMGDEQ?t=900"}, {"src": "img/semantic-code-retrieval-claude-code/s46_940.webp", "mmss": "15:40", "yt": "https://youtu.be/zKk7sDMGDEQ?t=940"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "zKk7sDMGDEQ", "slug": "semantic-code-retrieval-claude-code", "title": "Benchmarking Semantic Code Retrieval on Claude Code", "speaker": "Kuba Rogut", "company": "Turbopuffer", "themes": ["evals-benchmarks", "coding-agents", "infra-serving"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "How Turbo Grep adds semantic search to Claude Code (ours)", "lanes": ["Source", "Indexing", "Query", "Context Bench results"], "nodes": [{"id": "codebase", "label": "Codebase", "sub": "repo files Turbo Grep indexes", "lane": 0, "kind": "external", "t": 245}, {"id": "chunk", "label": "Tree-splitter chunk", "sub": "tree-splitter library parses/chunks", "lane": 1, "kind": "system", "claim": "c4", "t": 245}, {"id": "embed", "label": "Voyage embed", "sub": "Voyage code embedding model", "lane": 1, "kind": "system", "claim": "c4", "t": 245}, {"id": "store", "label": "Turbopuffer store", "sub": "uploaded for Claude Code to query", "lane": 1, "kind": "store", "claim": "c4", "t": 245}, {"id": "grep", "label": "Claude Code grep", "sub": "default file search, no vector DB", "lane": 2, "kind": "system", "claim": "c3", "t": 30}, {"id": "semq", "label": "Turbo Grep semantic", "sub": "queries Turbopuffer for related code", "lane": 2, "kind": "system", "claim": "c4", "t": 245}, {"id": "bench", "label": "Context Bench eval", "sub": "scores files/lines/symbols examined", "lane": 3, "kind": "system", "claim": "c5", "t": 401}, {"id": "prec87", "label": "File precision 87%", "sub": "up from 65% baseline", "lane": 3, "kind": "system", "claim": "c6", "t": 401}, {"id": "wasted", "label": "Wasted reads 1-in-8", "sub": "wasted file reads 1-in-3 to 1-in-8", "lane": 3, "kind": "system", "claim": "c7", "t": 432}], "edges": [{"from": "codebase", "to": "chunk", "label": "parses", "kind": "flow"}, {"from": "chunk", "to": "embed", "label": "embeds", "kind": "flow"}, {"from": "embed", "to": "store", "label": "stores vectors", "kind": "data"}, {"from": "store", "to": "semq", "label": "queries", "kind": "data"}, {"from": "grep", "to": "bench", "label": "grep only", "kind": "flow"}, {"from": "semq", "to": "bench", "label": "+ semantic", "kind": "flow"}, {"from": "bench", "to": "prec87", "label": "precision", "kind": "flow"}, {"from": "bench", "to": "wasted", "label": "waste rate", "kind": "flow"}], "caption": "This traces Turbopuffer's own account of the indexing and query pipeline plus the Context Bench precision results; it does not capture how grep and semantic search are combined at decision time within a single query (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "Cursor accuracy gains", "text": "Cursor reports a 24% relative improvement in answer accuracy for its composer model from semantic code search, and roughly 12-13% across all models.", "quote": "is like 24% increase in relative improvement in answer accuracy and I think it's like 12 and a half or 13% across all models", "t": 61}, {"id": "c2", "stance": "asserts", "topic": "Cursor A/B test results", "text": "Cursor's online A/B test found semantic search led to a 2.6% increase in code retention on large codebases and a 2.2% decrease in dissatisfied user requests.", "quote": "led to like a 2.6% increase in code retention in large code bases and then 2.2% decrease in dissatisfied user requests", "t": 123}, {"id": "c3", "stance": "asserts", "topic": "Claude Code's default search approach", "text": "Early Claude Code versions used semantic search with a local vector DB, but agentic grep-based file search was found to work better and simpler.", "quote": "the early versions of cloud code did actually use semantic search with a local vector DB, but they just kind of found agentic search which is actually you know, grepping through your file system kind of worked better", "t": 30}, {"id": "c4", "stance": "asserts", "topic": "Turbo Grep tool build", "text": "Turbopuffer built Turbo Grep, which parses and chunks a codebase using a tree-splitter library, embeds it with Voyage's code model, and uploads it to Turbopuffer.", "quote": "using a tree splitter library to essentially parse through your code base, chunk it, embed it using the Voyage code model and then upload it to Turbo Puffer", "t": 245}, {"id": "c5", "stance": "asserts", "topic": "baseline Context Bench precision", "text": "Default Claude Code scored 65% file precision, 33% line precision, and 43% symbol precision on Context Bench.", "quote": "You can see the baseline it hit like 65% precision, 33% on line precision and 43% on symbol", "t": 401}, {"id": "c6", "stance": "asserts", "topic": "semantic search precision gain", "text": "Adding windowed grep plus semantic search raised file precision to 87% on Context Bench.", "quote": "windowed grep plus semantic search got it to like 87% file precision for example", "t": 401}, {"id": "c7", "stance": "asserts", "topic": "wasted file reads reduction", "text": "Wasted file reads dropped from about 1-in-3 with default Claude Code to 1-in-8 with semantic search added.", "quote": "cloud code one in every three file reads is actually just a completely wasted file and with windowed grep it was one in five reads was a irrelevant file and then with semantic search there's only one in eight files", "t": 432}, {"id": "c8", "stance": "asserts", "topic": "default Claude Code wins file recall", "text": "Default Claude Code wins on file recall because it explores aggressively, even though much of that exploration misses the lines that matter.", "quote": "By default again, cloud code actually does win the file recall and again, part of this is because it just loves to explore every single file it can", "t": 463}, {"id": "c9", "stance": "asserts", "topic": "comments help semantic search", "text": "Semantic search works best on code with a lot of inline comments, since comments give the embedding model explicit semantic meaning to match against.", "quote": "I think it works best when there's a lot of like comments on code uh because it kind of finds that semantic meaning", "t": 740}, {"id": "c10", "stance": "asserts", "topic": "Turbopuffer's customer base", "text": "Turbopuffer describes itself as the vector database powering companies including Cursor, Anthropic, and Notion.", "quote": "we are the we are the vector database that powers companies like Cursor, Anthropic, Notion", "t": 709}]}</script>
+</body></html>

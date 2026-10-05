@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>From MCP to Scale: Pipelines That Build Themselves &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/zTZ0qunQXnM" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 25 min</span><span class="ln"></span></div>
+<h1 class="lede">From MCP to Scale: Pipelines That Build Themselves</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Rafael Levi &middot; Bright Data</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/zTZ0qunQXnM" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/zTZ0qunQXnM</a> &middot; 25 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Web automation</span><span class="chip hot">Coding agents</span><span class="chip hot">Agentic engineering</span></div>
+<p class="deck" style="font-size:15px">Argues for a specific architecture choice in agentic data collection: have the LLM write and maintain a scraper script (via Bright Data&#x27;s MCP and skills) rather than parsing raw HTML on every run, with a claimed ~1 million token savings ...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Instead of having an LLM parse HTML on every page, Bright Data has the agent write and maintain a scraper script once, using its MCP and public GitHub skill set; the speaker says this saved about a million tokens across a three-page scrape job.</li><li>Bright Data&#x27;s MCP exposes 66 tools, roughly 500 pre-built domain APIs, and access to over 150 million IPs plus a remote browser with pre-recorded human-like mouse and typing behavior, letting agents get past anti-bot systems like those on Walmart.</li><li>Bright Data says it only collects public data, never anything behind a login, and cites having won lawsuits brought by Meta and Elon Musk on the basis that publicly accessible data can be collected regardless of method.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">SCRIPT-BASED SCRAPING VS LLM PARSING (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 494.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- n1 -->
+<g id="node1" class="node">
+<title>n1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="169.54,-561.46 16.87,-561.46 16.87,-525.18 169.54,-525.18 169.54,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="31.33" y="-543.37" font-family="Geist Mono" font-size="11.00">Parse every page w/ LLM</text>
+<text xml:space="preserve" text-anchor="start" x="29.83" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">10,000 products = huge token cost</text>
+</g>
+<!-- n2 -->
+<g id="node2" class="node">
+<title>n2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="160.54,-473.93 25.87,-473.93 25.87,-437.65 160.54,-437.65 160.54,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="45.58" y="-455.84" font-family="Geist Mono" font-size="11.00">Bright Data skill set</text>
+<text xml:space="preserve" text-anchor="start" x="38.83" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">teaches LLM to build a scraper</text>
+</g>
+<!-- n1&#45;&gt;n2 -->
+<g id="edge1" class="edge">
+<title>n1&#45;&gt;n2</title>
+<path fill="none" stroke="#c8501f" d="M93.21,-524.6C93.21,-512.56 93.21,-496.43 93.21,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="95.66,-483 93.21,-476 90.76,-483 95.66,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="105.58" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">adopts</text>
+</g>
+<!-- n3 -->
+<g id="node3" class="node">
+<title>n3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="171.79,-386.4 14.62,-386.4 14.62,-350.12 171.79,-350.12 171.79,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="27.58" y="-368.31" font-family="Geist Mono" font-size="11.00">Agent writes scraper script</text>
+<text xml:space="preserve" text-anchor="start" x="31.71" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">reused instead of re&#45;parsing HTML</text>
+</g>
+<!-- n2&#45;&gt;n3 -->
+<g id="edge2" class="edge">
+<title>n2&#45;&gt;n3</title>
+<path fill="none" stroke="#c8501f" d="M93.21,-437.07C93.21,-425.03 93.21,-408.9 93.21,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="95.66,-395.47 93.21,-388.47 90.76,-395.47 95.66,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="104.08" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">builds</text>
+</g>
+<!-- n4 -->
+<g id="node4" class="node">
+<title>n4</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="138.42,-298.87 0,-298.87 0,-262.59 138.42,-262.59 138.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="23.83" y="-280.78" font-family="Geist Mono" font-size="11.00">~1M tokens saved</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">across a three&#45;page scrape job</text>
+</g>
+<!-- n3&#45;&gt;n4 -->
+<g id="edge3" class="edge">
+<title>n3&#45;&gt;n4</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M88.24,-349.54C84.83,-337.38 80.25,-321.06 76.43,-307.47"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="78.84,-306.96 74.59,-300.89 74.12,-308.29 78.84,-306.96"/>
+<text xml:space="preserve" text-anchor="middle" x="93.15" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">saves</text>
+</g>
+<!-- n5 -->
+<g id="node5" class="node">
+<title>n5</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="299.79,-298.87 160.62,-298.87 160.62,-262.59 299.79,-262.59 299.79,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="196.46" y="-280.78" font-family="Geist Mono" font-size="11.00">MCP: 66 tools</text>
+<text xml:space="preserve" text-anchor="start" x="173.58" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">curl fetch, markdown extraction</text>
+</g>
+<!-- n3&#45;&gt;n5 -->
+<g id="edge4" class="edge">
+<title>n3&#45;&gt;n5</title>
+<path fill="none" stroke="#c8501f" d="M121.6,-349.54C142.81,-336.29 171.96,-318.1 194.71,-303.89"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="195.94,-306.02 200.58,-300.23 193.34,-301.86 195.94,-306.02"/>
+<text xml:space="preserve" text-anchor="middle" x="178.16" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">calls</text>
+</g>
+<!-- n6 -->
+<g id="node6" class="node">
+<title>n6</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="135.79,-211.34 2.62,-211.34 2.62,-175.06 135.79,-175.06 135.79,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="24.21" y="-193.25" font-family="Geist Mono" font-size="11.00">~500 domain APIs</text>
+<text xml:space="preserve" text-anchor="start" x="15.58" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">structured JSON, e.g. Amazon</text>
+</g>
+<!-- n5&#45;&gt;n6 -->
+<g id="edge5" class="edge">
+<title>n5&#45;&gt;n6</title>
+<path fill="none" stroke="#c8501f" d="M196.85,-262.01C171.59,-248.59 136.78,-230.09 109.89,-215.81"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="111.19,-213.73 103.86,-212.61 108.9,-218.06 111.19,-213.73"/>
+<text xml:space="preserve" text-anchor="middle" x="172.85" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">or uses</text>
+</g>
+<!-- n7 -->
+<g id="node7" class="node">
+<title>n7</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="302.79,-211.34 157.62,-211.34 157.62,-175.06 302.79,-175.06 302.79,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="194.21" y="-193.25" font-family="Geist Mono" font-size="11.00">150M+ IP pool</text>
+<text xml:space="preserve" text-anchor="start" x="170.58" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">bypasses geo and anti&#45;bot blocks</text>
+</g>
+<!-- n5&#45;&gt;n7 -->
+<g id="edge6" class="edge">
+<title>n5&#45;&gt;n7</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M230.21,-262.01C230.21,-249.97 230.21,-233.84 230.21,-220.33"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="232.66,-220.41 230.21,-213.41 227.76,-220.41 232.66,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="248.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">routes via</text>
+</g>
+<!-- n8 -->
+<g id="node8" class="node">
+<title>n8</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="485.67,-211.34 324.75,-211.34 324.75,-175.06 485.67,-175.06 485.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="337.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Human&#45;like remote browser</text>
+<text xml:space="preserve" text-anchor="start" x="340.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">pre&#45;recorded mouse, variable typing</text>
+</g>
+<!-- n5&#45;&gt;n8 -->
+<g id="edge7" class="edge">
+<title>n5&#45;&gt;n8</title>
+<path fill="none" stroke="#c8501f" d="M266.47,-262.01C294.04,-248.53 332.09,-229.94 361.37,-215.63"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="362.42,-217.84 367.64,-212.56 360.27,-213.44 362.42,-217.84"/>
+<text xml:space="preserve" text-anchor="middle" x="344.69" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">or drives</text>
+</g>
+<!-- n9 -->
+<g id="node9" class="node">
+<title>n9</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="375.54,-123.81 258.88,-123.81 258.88,-87.53 375.54,-87.53 375.54,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="278.96" y="-105.72" font-family="Geist Mono" font-size="11.00">Public data only</text>
+<text xml:space="preserve" text-anchor="start" x="271.83" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">never data behind a login</text>
+</g>
+<!-- n7&#45;&gt;n9 -->
+<g id="edge8" class="edge">
+<title>n7&#45;&gt;n9</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M248.24,-174.48C261.3,-161.63 279.1,-144.14 293.34,-130.13"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="294.85,-132.08 298.13,-125.43 291.42,-128.59 294.85,-132.08"/>
+<text xml:space="preserve" text-anchor="middle" x="301.79" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">restricted to</text>
+</g>
+<!-- n8&#45;&gt;n9 -->
+<g id="edge9" class="edge">
+<title>n8&#45;&gt;n9</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M386.98,-174.48C373.76,-161.63 355.76,-144.14 341.35,-130.13"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="343.23,-128.55 336.51,-125.42 339.82,-132.06 343.23,-128.55"/>
+<text xml:space="preserve" text-anchor="middle" x="389.35" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">restricted to</text>
+</g>
+<!-- n10 -->
+<g id="node10" class="node">
+<title>n10</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="392.04,-36.28 242.38,-36.28 242.38,0 392.04,0 392.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="255.33" y="-18.19" font-family="Geist Mono" font-size="11.00">Won Meta, Musk lawsuits</text>
+<text xml:space="preserve" text-anchor="start" x="269.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">judge: public data is public</text>
+</g>
+<!-- n9&#45;&gt;n10 -->
+<g id="edge10" class="edge">
+<title>n9&#45;&gt;n10</title>
+<path fill="none" stroke="#c8501f" d="M317.21,-86.95C317.21,-74.91 317.21,-58.78 317.21,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="319.66,-45.35 317.21,-38.35 314.76,-45.35 319.66,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="335.58" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">upheld by</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Bright Data frames its MCP as infrastructure that lets an agent-written scraper replace repeated LLM parsing, with the IP pool and human-like browser handling anti-bot defenses inside a public-data-only legal boundary (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The problem: parsing HTML with an LLM is expensive</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/bright-data-self-healing-scraping-pipelines/s01_40.webp" alt="slide at 00:40"></a><div class="slidecap">Slide at 00:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s02_140.webp" alt="slide at 02:20"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s03_150.webp" alt="slide at 02:30"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s04_160.webp" alt="slide at 02:40"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s05_180.webp" alt="slide at 03:00"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s06_190.webp" alt="slide at 03:10"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s07_240.webp" alt="slide at 04:00"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s08_250.webp" alt="slide at 04:10"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s09_300.webp" alt="slide at 05:00"></a></div></div>
+<div class="textcol"><h2>The problem: parsing HTML with an LLM is expensive</h2><ul class="takeaways"><li>The speaker opens by describing a common complaint he sees on Reddit and elsewhere -- wanting to scan thousands of products but balking at the token cost of parsing every page with an LLM.</li><li>His proposed fix is to have the agent build a reusable scraper instead of parsing repeatedly, using Bright Data&#x27;s public GitHub skill set and MCP, which can extract page HTML/selectors so the agent knows what to parse.</li></ul><div class="quote"><p>&ldquo;Oh, I need to scan 10,000 products, but that&#x27;s so many tokens if I need to parse everything with LLM&rdquo;</p><span class="at">said at 00:30</span></div><div class="quote"><p>&ldquo;Bright Data has skill sets that actually teaches your LLM on how to build a pipeline&rdquo;</p><span class="at">said at 01:01</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Token savings from script-based scraping</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="10" class="sl"><img loading="lazy" class="main" src="img/bright-data-self-healing-scraping-pipelines/s10_310.webp" alt="slide at 05:10"></a><div class="slidecap">Slide at 05:10 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Token savings from script-based scraping</h2><ul class="takeaways"><li>In a live Claude Code demo building a Walmart scraper, the speaker reports that generating and running a script instead of having the LLM parse full HTML on every request saved about a million tokens across a three-page collection job.</li></ul><div class="quote"><p>&ldquo;for the three pages, I&#x27;ve done this before, it saves about a million tokens just to from building the scraper uh and using a script to parse the HTML&rdquo;</p><span class="at">said at 05:11</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>What the MCP and infrastructure provide</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="9" class="sl"><img loading="lazy" class="main" src="img/bright-data-self-healing-scraping-pipelines/s09_300.webp" alt="slide at 05:00"></a><div class="slidecap">Slide at 05:00 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s10_310.webp" alt="slide at 05:10"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s11_350.webp" alt="slide at 05:50"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s12_370.webp" alt="slide at 06:10"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s13_390.webp" alt="slide at 06:30"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s14_400.webp" alt="slide at 06:40"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s15_410.webp" alt="slide at 06:50"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s16_420.webp" alt="slide at 07:00"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s17_540.webp" alt="slide at 09:00"></a></div></div>
+<div class="textcol"><h2>What the MCP and infrastructure provide</h2><ul class="takeaways"><li>Bright Data&#x27;s MCP offers 5,000 free requests to try, 66 tools including HTML fetch/markdown extraction, about 500 pre-built APIs for specific domains (e.g., Amazon) that return structured JSON instead of raw markdown, and access to more than 150 million IPs plus remote browser infrastructure for sites with heavy anti-bot protection.</li></ul><div class="quote"><p>&ldquo;the MCP has 5,000 requests for free, so if anybody wants to try it, you guys can try it for free&rdquo;</p><span class="at">said at 04:40</span></div><div class="quote"><p>&ldquo;the MCP gives you a agent 66 tools&rdquo;</p><span class="at">said at 10:06</span></div><div class="quote"><p>&ldquo;we have about 500 different APIs pre-built for different domains&rdquo;</p><span class="at">said at 10:36</span></div><div class="quote"><p>&ldquo;with our MCP, with our infrastructure, we have over 150 million IPs&rdquo;</p><span class="at">said at 09:28</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Human-like browser automation</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="31" class="sl"><img loading="lazy" class="main" src="img/bright-data-self-healing-scraping-pipelines/s31_1400.webp" alt="slide at 23:20"></a><div class="slidecap">Slide at 23:20 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Human-like browser automation</h2><ul class="takeaways"><li>For sites requiring interaction rather than a direct fetch, Bright Data&#x27;s remote browsers reproduce human behavior -- pre-recorded mouse movement instead of instant cursor jumps, and variable-speed typing including occasional mistakes -- so that trackers monitoring user behavior see what looks like a real person, even when a smaller model like Claude Haiku is driving the browsing agent.</li></ul><div class="quote"><p>&ldquo;our browser will mimic real human behavior. So, when your agent clicks, it&#x27;s not a teleportation. There&#x27;s a mouse pre-recorded like a real human being moving it&rdquo;</p><span class="at">said at 23:28</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Legal boundary: public data only</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="24" class="sl"><img loading="lazy" class="main" src="img/bright-data-self-healing-scraping-pipelines/s24_1020.webp" alt="slide at 17:00"></a><div class="slidecap">Slide at 17:00 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s25_1140.webp" alt="slide at 19:00"></a><a href="#" data-slide="26" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s26_1170.webp" alt="slide at 19:30"></a><a href="#" data-slide="27" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s27_1200.webp" alt="slide at 20:00"></a><a href="#" data-slide="28" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s28_1210.webp" alt="slide at 20:10"></a><a href="#" data-slide="29" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s29_1300.webp" alt="slide at 21:40"></a><a href="#" data-slide="30" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s30_1350.webp" alt="slide at 22:30"></a><a href="#" data-slide="31" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s31_1400.webp" alt="slide at 23:20"></a><a href="#" data-slide="32" class="sl"><img loading="lazy" class="thumb" src="img/bright-data-self-healing-scraping-pipelines/s32_1430.webp" alt="slide at 23:50"></a></div></div>
+<div class="textcol"><h2>Legal boundary: public data only</h2><ul class="takeaways"><li>The speaker states Bright Data only collects publicly accessible data and never data behind a login or an accepted terms-of-service wall, and cites having prevailed in lawsuits brought by Meta and by Elon Musk shortly after his acquisition of Twitter/X, on the basis that public data remains public regardless of collection method.</li></ul><div class="quote"><p>&ldquo;We were sued by Meta. We were so sued by Elon Musk a month after he took over. And uh the judge said it&#x27;s very simple. Public data is public data. It doesn&#x27;t matter how you collect it&rdquo;</p><span class="at">said at 18:40</span></div><div class="quote"><p>&ldquo;we only talk we only deal with public data. So behind login it&#x27;s um it&#x27;s private data&rdquo;</p><span class="at">said at 17:39</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The &#x27;agent writes a maintainable scraper instead of parsing every page&#x27; pattern generalizes well beyond scraping -- it&#x27;s the same script-generation-over-repeated-inference tradeoff that shows up in code-mode/dynamic-worker approaches elsewhere in this conference (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s01_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s02_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s03_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s04_160.webp" alt="slide at 02:40"><div class="ts">02:40</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s05_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s06_190.webp" alt="slide at 03:10"><div class="ts">03:10</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s07_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s08_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s09_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s10_310.webp" alt="slide at 05:10"><div class="ts">05:10</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s11_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s12_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s13_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s14_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s15_410.webp" alt="slide at 06:50"><div class="ts">06:50</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s16_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s17_540.webp" alt="slide at 09:00"><div class="ts">09:00</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s18_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s19_720.webp" alt="slide at 12:00"><div class="ts">12:00</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s20_780.webp" alt="slide at 13:00"><div class="ts">13:00</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s21_890.webp" alt="slide at 14:50"><div class="ts">14:50</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s22_930.webp" alt="slide at 15:30"><div class="ts">15:30</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s23_950.webp" alt="slide at 15:50"><div class="ts">15:50</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s24_1020.webp" alt="slide at 17:00"><div class="ts">17:00</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s25_1140.webp" alt="slide at 19:00"><div class="ts">19:00</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s26_1170.webp" alt="slide at 19:30"><div class="ts">19:30</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s27_1200.webp" alt="slide at 20:00"><div class="ts">20:00</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s28_1210.webp" alt="slide at 20:10"><div class="ts">20:10</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s29_1300.webp" alt="slide at 21:40"><div class="ts">21:40</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s30_1350.webp" alt="slide at 22:30"><div class="ts">22:30</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s31_1400.webp" alt="slide at 23:20"><div class="ts">23:20</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s32_1430.webp" alt="slide at 23:50"><div class="ts">23:50</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s33_1470.webp" alt="slide at 24:30"><div class="ts">24:30</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/bright-data-self-healing-scraping-pipelines/s34_1500.webp" alt="slide at 25:00"><div class="ts">25:00</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">warns</td><td>Parsing thousands of products directly with an LLM burns an impractical number of tokens.</td><td class="tt">00:30</td></tr><tr><td class="st">recommends</td><td>Bright Data&#x27;s skill set teaches an LLM to build a scraper, and its MCP extracts HTML so the agent knows the needed selectors.</td><td class="tt">01:01</td></tr><tr><td class="st">asserts</td><td>Building and using a scraper script instead of LLM-parsing every page saved about a million tokens across a three-page job.</td><td class="tt">05:11</td></tr><tr><td class="st">asserts</td><td>Bright Data&#x27;s MCP includes 5,000 free requests for anyone to try.</td><td class="tt">04:40</td></tr><tr><td class="st">asserts</td><td>Bright Data&#x27;s MCP gives an agent 66 tools, including sending curl requests that return full HTML.</td><td class="tt">10:06</td></tr><tr><td class="st">asserts</td><td>Bright Data has about 500 pre-built APIs for specific domains that return structured JSON instead of markdown.</td><td class="tt">10:36</td></tr><tr><td class="st">asserts</td><td>Bright Data&#x27;s infrastructure includes over 150 million IPs for accessing blocked or geo-restricted sites.</td><td class="tt">09:28</td></tr><tr><td class="st">asserts</td><td>Bright Data cites winning lawsuits from Meta and Elon Musk on the grounds that public data remains public regardless of collection method.</td><td class="tt">18:40</td></tr><tr><td class="st">asserts</td><td>Bright Data&#x27;s remote browsers use pre-recorded mouse movement and variable typing speed so tracking scripts see human-like behavior.</td><td class="tt">23:28</td></tr><tr><td class="st">warns</td><td>Bright Data only collects public data and will not access anything behind a login.</td><td class="tt">17:39</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/bright-data-self-healing-scraping-pipelines/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/zTZ0qunQXnM?t=10"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s01_40.webp", "mmss": "00:40", "yt": "https://youtu.be/zTZ0qunQXnM?t=40"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s02_140.webp", "mmss": "02:20", "yt": "https://youtu.be/zTZ0qunQXnM?t=140"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s03_150.webp", "mmss": "02:30", "yt": "https://youtu.be/zTZ0qunQXnM?t=150"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s04_160.webp", "mmss": "02:40", "yt": "https://youtu.be/zTZ0qunQXnM?t=160"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s05_180.webp", "mmss": "03:00", "yt": "https://youtu.be/zTZ0qunQXnM?t=180"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s06_190.webp", "mmss": "03:10", "yt": "https://youtu.be/zTZ0qunQXnM?t=190"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s07_240.webp", "mmss": "04:00", "yt": "https://youtu.be/zTZ0qunQXnM?t=240"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s08_250.webp", "mmss": "04:10", "yt": "https://youtu.be/zTZ0qunQXnM?t=250"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s09_300.webp", "mmss": "05:00", "yt": "https://youtu.be/zTZ0qunQXnM?t=300"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s10_310.webp", "mmss": "05:10", "yt": "https://youtu.be/zTZ0qunQXnM?t=310"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s11_350.webp", "mmss": "05:50", "yt": "https://youtu.be/zTZ0qunQXnM?t=350"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s12_370.webp", "mmss": "06:10", "yt": "https://youtu.be/zTZ0qunQXnM?t=370"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s13_390.webp", "mmss": "06:30", "yt": "https://youtu.be/zTZ0qunQXnM?t=390"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s14_400.webp", "mmss": "06:40", "yt": "https://youtu.be/zTZ0qunQXnM?t=400"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s15_410.webp", "mmss": "06:50", "yt": "https://youtu.be/zTZ0qunQXnM?t=410"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s16_420.webp", "mmss": "07:00", "yt": "https://youtu.be/zTZ0qunQXnM?t=420"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s17_540.webp", "mmss": "09:00", "yt": "https://youtu.be/zTZ0qunQXnM?t=540"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s18_600.webp", "mmss": "10:00", "yt": "https://youtu.be/zTZ0qunQXnM?t=600"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s19_720.webp", "mmss": "12:00", "yt": "https://youtu.be/zTZ0qunQXnM?t=720"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s20_780.webp", "mmss": "13:00", "yt": "https://youtu.be/zTZ0qunQXnM?t=780"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s21_890.webp", "mmss": "14:50", "yt": "https://youtu.be/zTZ0qunQXnM?t=890"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s22_930.webp", "mmss": "15:30", "yt": "https://youtu.be/zTZ0qunQXnM?t=930"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s23_950.webp", "mmss": "15:50", "yt": "https://youtu.be/zTZ0qunQXnM?t=950"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s24_1020.webp", "mmss": "17:00", "yt": "https://youtu.be/zTZ0qunQXnM?t=1020"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s25_1140.webp", "mmss": "19:00", "yt": "https://youtu.be/zTZ0qunQXnM?t=1140"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s26_1170.webp", "mmss": "19:30", "yt": "https://youtu.be/zTZ0qunQXnM?t=1170"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s27_1200.webp", "mmss": "20:00", "yt": "https://youtu.be/zTZ0qunQXnM?t=1200"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s28_1210.webp", "mmss": "20:10", "yt": "https://youtu.be/zTZ0qunQXnM?t=1210"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s29_1300.webp", "mmss": "21:40", "yt": "https://youtu.be/zTZ0qunQXnM?t=1300"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s30_1350.webp", "mmss": "22:30", "yt": "https://youtu.be/zTZ0qunQXnM?t=1350"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s31_1400.webp", "mmss": "23:20", "yt": "https://youtu.be/zTZ0qunQXnM?t=1400"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s32_1430.webp", "mmss": "23:50", "yt": "https://youtu.be/zTZ0qunQXnM?t=1430"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s33_1470.webp", "mmss": "24:30", "yt": "https://youtu.be/zTZ0qunQXnM?t=1470"}, {"src": "img/bright-data-self-healing-scraping-pipelines/s34_1500.webp", "mmss": "25:00", "yt": "https://youtu.be/zTZ0qunQXnM?t=1500"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "zTZ0qunQXnM", "slug": "bright-data-self-healing-scraping-pipelines", "title": "From MCP to Scale: Pipelines That Build Themselves", "speaker": "Rafael Levi", "company": "Bright Data", "themes": ["web-automation", "coding-agents", "agentic-engineering"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Script-based scraping vs LLM parsing (ours)", "lanes": ["Problem", "Mechanism", "Infrastructure", "Legal boundary"], "nodes": [{"id": "n1", "label": "Parse every page w/ LLM", "sub": "10,000 products = huge token cost", "lane": 0, "kind": "system", "claim": "c1", "t": 30}, {"id": "n2", "label": "Bright Data skill set", "sub": "teaches LLM to build a scraper", "lane": 1, "kind": "external", "claim": "c2", "t": 61}, {"id": "n3", "label": "Agent writes scraper script", "sub": "reused instead of re-parsing HTML", "lane": 1, "kind": "system", "claim": "c3", "t": 311}, {"id": "n4", "label": "~1M tokens saved", "sub": "across a three-page scrape job", "lane": 1, "kind": "system", "claim": "c3", "t": 311}, {"id": "n5", "label": "MCP: 66 tools", "sub": "curl fetch, markdown extraction", "lane": 2, "kind": "external", "claim": "c5", "t": 606}, {"id": "n6", "label": "~500 domain APIs", "sub": "structured JSON, e.g. Amazon", "lane": 2, "kind": "external", "claim": "c6", "t": 636}, {"id": "n7", "label": "150M+ IP pool", "sub": "bypasses geo and anti-bot blocks", "lane": 2, "kind": "external", "claim": "c7", "t": 568}, {"id": "n8", "label": "Human-like remote browser", "sub": "pre-recorded mouse, variable typing", "lane": 2, "kind": "external", "claim": "c9", "t": 1408}, {"id": "n9", "label": "Public data only", "sub": "never data behind a login", "lane": 3, "kind": "system", "claim": "c10", "t": 1059}, {"id": "n10", "label": "Won Meta, Musk lawsuits", "sub": "judge: public data is public", "lane": 3, "kind": "system", "claim": "c8", "t": 1120}], "edges": [{"from": "n1", "to": "n2", "label": "adopts", "kind": "flow"}, {"from": "n2", "to": "n3", "label": "builds", "kind": "flow"}, {"from": "n3", "to": "n4", "label": "saves", "kind": "data"}, {"from": "n3", "to": "n5", "label": "calls", "kind": "flow"}, {"from": "n5", "to": "n6", "label": "or uses", "kind": "flow"}, {"from": "n5", "to": "n7", "label": "routes via", "kind": "data"}, {"from": "n5", "to": "n8", "label": "or drives", "kind": "flow"}, {"from": "n7", "to": "n9", "label": "restricted to", "kind": "data"}, {"from": "n8", "to": "n9", "label": "restricted to", "kind": "data"}, {"from": "n9", "to": "n10", "label": "upheld by", "kind": "flow"}], "caption": "Bright Data frames its MCP as infrastructure that lets an agent-written scraper replace repeated LLM parsing, with the IP pool and human-like browser handling anti-bot defenses inside a public-data-only legal boundary (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "warns", "topic": "token cost of LLM parsing", "text": "Parsing thousands of products directly with an LLM burns an impractical number of tokens.", "quote": "Oh, I need to scan 10,000 products, but that's so many tokens if I need to parse everything with LLM", "t": 30}, {"id": "c2", "stance": "recommends", "topic": "skills teach the agent to build a scraper", "text": "Bright Data's skill set teaches an LLM to build a scraper, and its MCP extracts HTML so the agent knows the needed selectors.", "quote": "Bright Data has skill sets that actually teaches your LLM on how to build a pipeline", "t": 61}, {"id": "c3", "stance": "asserts", "topic": "token savings from scripted scraping", "text": "Building and using a scraper script instead of LLM-parsing every page saved about a million tokens across a three-page job.", "quote": "for the three pages, I've done this before, it saves about a million tokens just to from building the scraper uh and using a script to parse the HTML", "t": 311}, {"id": "c4", "stance": "asserts", "topic": "MCP free tier", "text": "Bright Data's MCP includes 5,000 free requests for anyone to try.", "quote": "the MCP has 5,000 requests for free, so if anybody wants to try it, you guys can try it for free", "t": 280}, {"id": "c5", "stance": "asserts", "topic": "MCP tool count", "text": "Bright Data's MCP gives an agent 66 tools, including sending curl requests that return full HTML.", "quote": "the MCP gives you a agent 66 tools", "t": 606}, {"id": "c6", "stance": "asserts", "topic": "pre-built domain APIs", "text": "Bright Data has about 500 pre-built APIs for specific domains that return structured JSON instead of markdown.", "quote": "we have about 500 different APIs pre-built for different domains", "t": 636}, {"id": "c7", "stance": "asserts", "topic": "IP pool scale", "text": "Bright Data's infrastructure includes over 150 million IPs for accessing blocked or geo-restricted sites.", "quote": "with our MCP, with our infrastructure, we have over 150 million IPs", "t": 568}, {"id": "c8", "stance": "asserts", "topic": "legal precedent on public data", "text": "Bright Data cites winning lawsuits from Meta and Elon Musk on the grounds that public data remains public regardless of collection method.", "quote": "We were sued by Meta. We were so sued by Elon Musk a month after he took over. And uh the judge said it's very simple. Public data is public data. It doesn't matter how you collect it", "t": 1120}, {"id": "c9", "stance": "asserts", "topic": "human-like browser behavior", "text": "Bright Data's remote browsers use pre-recorded mouse movement and variable typing speed so tracking scripts see human-like behavior.", "quote": "our browser will mimic real human behavior. So, when your agent clicks, it's not a teleportation. There's a mouse pre-recorded like a real human being moving it", "t": 1408}, {"id": "c10", "stance": "warns", "topic": "no authenticated data", "text": "Bright Data only collects public data and will not access anything behind a login.", "quote": "we only talk we only deal with public data. So behind login it's um it's private data", "t": 1059}]}</script>
+</body></html>

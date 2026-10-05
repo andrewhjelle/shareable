@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>OpenRAG: An open-source stack for RAG &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/4TxOBhDRRCM" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 15 min</span><span class="ln"></span></div>
+<h1 class="lede">OpenRAG: An open-source stack for RAG</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Phil Nash &middot; IBM</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/4TxOBhDRRCM" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/4TxOBhDRRCM</a> &middot; 15 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Open source</span><span class="chip hot">Data curation</span><span class="chip hot">Agentic engineering</span></div>
+<p class="deck" style="font-size:15px">Describes a concrete open-source RAG baseline (Docling + OpenSearch + LangFlow) with specific component choices worth evaluating directly: a VLM document-parsing pipeline as an alternative to multi-model PDF extraction, a JVector disk-ba...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>OpenRAG combines three existing open-source projects: Docling for document processing, OpenSearch for search indexing, and LangFlow for visual orchestration and agents (c1).</li><li>It defaults to the JVector KNN plugin instead of OpenSearch&#x27;s built-in HNSW/IVF options specifically because JVector&#x27;s disk-based architecture means the index doesn&#x27;t need to fit in memory (c3, c4).</li><li>The whole stack, including Docling itself, can run fully offline with locally hosted models, which the speaker says makes air-gapped deployment possible (c6).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">OPENRAG: DOCS TO AGENTIC ANSWER (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 494.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- docs -->
+<g id="node1" class="node">
+<title>docs</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="118.92,-386.4 0,-386.4 0,-350.12 118.92,-350.12 118.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="32.08" y="-368.31" font-family="Geist Mono" font-size="11.00">Documents</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">PDF, audio/video, text files</text>
+</g>
+<!-- docling -->
+<g id="node3" class="node">
+<title>docling</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="291.67,-298.87 141.25,-298.87 141.25,-262.59 291.67,-262.59 291.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="198.83" y="-280.78" font-family="Geist Mono" font-size="11.00">Docling</text>
+<text xml:space="preserve" text-anchor="start" x="154.21" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">VLM pipeline: Granite Docling 258M</text>
+</g>
+<!-- docs&#45;&gt;docling -->
+<g id="edge1" class="edge">
+<title>docs&#45;&gt;docling</title>
+<path fill="none" stroke="#c8501f" d="M91.99,-349.54C116.62,-336.12 150.57,-317.62 176.79,-303.34"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="177.67,-305.65 182.64,-300.15 175.32,-301.35 177.67,-305.65"/>
+<text xml:space="preserve" text-anchor="middle" x="157.48" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">parse</text>
+</g>
+<!-- connectors -->
+<g id="node2" class="node">
+<title>connectors</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="292.42,-386.4 140.5,-386.4 140.5,-350.12 292.42,-350.12 292.42,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="174.46" y="-368.31" font-family="Geist Mono" font-size="11.00">Cloud connectors</text>
+<text xml:space="preserve" text-anchor="start" x="153.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Google Drive, SharePoint, OneDrive</text>
+</g>
+<!-- connectors&#45;&gt;docling -->
+<g id="edge2" class="edge">
+<title>connectors&#45;&gt;docling</title>
+<path fill="none" stroke="#c8501f" d="M216.46,-349.54C216.46,-337.5 216.46,-321.37 216.46,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="218.91,-307.94 216.46,-300.94 214.01,-307.94 218.91,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="224.71" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">sync</text>
+</g>
+<!-- opensearch -->
+<g id="node5" class="node">
+<title>opensearch</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="279.29,-211.34 153.62,-211.34 153.62,-175.06 279.29,-175.06 279.29,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="172.58" y="-193.25" font-family="Geist Mono" font-size="11.00">OpenSearch index</text>
+<text xml:space="preserve" text-anchor="start" x="166.58" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">default plugin: HNSW or IVF</text>
+</g>
+<!-- docling&#45;&gt;opensearch -->
+<g id="edge4" class="edge">
+<title>docling&#45;&gt;opensearch</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M216.46,-262.01C216.46,-249.97 216.46,-233.84 216.46,-220.33"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="218.91,-220.41 216.46,-213.41 214.01,-220.41 218.91,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="254.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">chunks+embeddings</text>
+</g>
+<!-- offline -->
+<g id="node4" class="node">
+<title>offline</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="438.54,-386.4 314.38,-386.4 314.38,-350.12 438.54,-350.12 438.54,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="344.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Local models</text>
+<text xml:space="preserve" text-anchor="start" x="327.33" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">runs fully offline, air&#45;gapped</text>
+</g>
+<!-- offline&#45;&gt;docling -->
+<g id="edge3" class="edge">
+<title>offline&#45;&gt;docling</title>
+<path fill="none" stroke="#c8501f" d="M343.31,-349.54C318.21,-336.12 283.61,-317.62 256.88,-303.34"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="258.23,-301.28 250.9,-300.14 255.92,-305.6 258.23,-301.28"/>
+<text xml:space="preserve" text-anchor="middle" x="330.04" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">offline mode</text>
+</g>
+<!-- jvector -->
+<g id="node6" class="node">
+<title>jvector</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="237.79,-123.81 67.12,-123.81 67.12,-87.53 237.79,-87.53 237.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="106.33" y="-105.72" font-family="Geist Mono" font-size="11.00">JVector KNN plugin</text>
+<text xml:space="preserve" text-anchor="start" x="80.08" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">disk&#45;based, index need not fit in memory</text>
+</g>
+<!-- opensearch&#45;&gt;jvector -->
+<g id="edge5" class="edge">
+<title>opensearch&#45;&gt;jvector</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M203.2,-174.48C193.76,-161.86 180.96,-144.76 170.58,-130.89"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="172.77,-129.72 166.61,-125.58 168.84,-132.65 172.77,-129.72"/>
+<text xml:space="preserve" text-anchor="middle" x="219.04" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">default swapped</text>
+</g>
+<!-- agentic -->
+<g id="node8" class="node">
+<title>agentic</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="360.79,-36.28 202.12,-36.28 202.12,0 360.79,0 360.79,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="242.08" y="-18.19" font-family="Geist Mono" font-size="11.00">Agentic retrieval</text>
+<text xml:space="preserve" text-anchor="start" x="215.08" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">model picks searches, not fixed top&#45;K</text>
+</g>
+<!-- jvector&#45;&gt;agentic -->
+<g id="edge6" class="edge">
+<title>jvector&#45;&gt;agentic</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M173.27,-87.01C184.96,-77.43 200.01,-65.68 214.21,-56.28 222.21,-50.99 231.02,-45.73 239.56,-40.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="240.71,-43.08 245.64,-37.55 238.33,-38.8 240.71,-43.08"/>
+<text xml:space="preserve" text-anchor="middle" x="239.33" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">vector search</text>
+</g>
+<!-- langflow -->
+<g id="node7" class="node">
+<title>langflow</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="485.67,-123.81 347.25,-123.81 347.25,-87.53 485.67,-87.53 485.67,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="377.83" y="-105.72" font-family="Geist Mono" font-size="11.00">LangFlow agent</text>
+<text xml:space="preserve" text-anchor="start" x="360.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">visual orchestration and agents</text>
+</g>
+<!-- langflow&#45;&gt;agentic -->
+<g id="edge7" class="edge">
+<title>langflow&#45;&gt;agentic</title>
+<path fill="none" stroke="#c8501f" d="M388.49,-86.95C367.58,-73.7 338.86,-55.51 316.44,-41.3"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="317.9,-39.33 310.67,-37.65 315.28,-43.47 317.9,-39.33"/>
+<text xml:space="preserve" text-anchor="middle" x="378.79" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">hosts agent</text>
+</g>
+<!-- agentic&#45;&gt;opensearch -->
+<g id="edge8" class="edge">
+<title>agentic&#45;&gt;opensearch</title>
+<path fill="none" stroke="#c8501f" d="M281.24,-36.55C280.22,-63.53 275.43,-116.35 254.46,-155.06 251.92,-159.74 248.6,-164.21 244.97,-168.3"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="243.21,-166.59 240.13,-173.34 246.75,-169.99 243.21,-166.59"/>
+<text xml:space="preserve" text-anchor="middle" x="297.73" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#c8501f">search calls</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces OpenRAG&#x27;s default path from document intake through Docling parsing and JVector-backed OpenSearch indexing to LangFlow&#x27;s agentic retrieval; the components and connections follow the talk&#x27;s own description of the stack, not an independent audit (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Three existing open-source projects, combined</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/openrag-open-source-rag-stack/s04_130.webp" alt="slide at 02:10"></a><div class="slidecap">Slide at 02:10 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s05_160.webp" alt="slide at 02:40"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s06_190.webp" alt="slide at 03:10"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s07_210.webp" alt="slide at 03:30"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s08_240.webp" alt="slide at 04:00"></a></div></div>
+<div class="textcol"><h2>Three existing open-source projects, combined</h2><ul class="takeaways"><li>OpenRAG is presented as a baseline built from three existing open-source projects rather than a new framework from scratch: Docling handles document processing, OpenSearch handles search indexing, and LangFlow provides visual orchestration and agent construction.</li></ul><div class="quote"><p>&ldquo;it uses the open-source docling for document processing, open search for search indexing and LangFlow for visual orchestration and agents&rdquo;</p><span class="at">said at 02:04</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Document parsing: multiple pipelines, including a single vision-language-model option</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="8" class="sl"><img loading="lazy" class="main" src="img/openrag-open-source-rag-stack/s08_240.webp" alt="slide at 04:00"></a><div class="slidecap">Slide at 04:00 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s09_270.webp" alt="slide at 04:30"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s10_290.webp" alt="slide at 04:50"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s12_350.webp" alt="slide at 05:50"></a></div></div>
+<div class="textcol"><h2>Document parsing: multiple pipelines, including a single vision-language-model option</h2><ul class="takeaways"><li>Docling routes different file types through different pipelines: a simple pipeline for straightforward text formats, an ASR pipeline for audio/video, and for PDFs either a standard pipeline of small focused models (layout analysis, table extraction, image extraction, optional OCR) or a newer, simpler VLM pipeline that uses the Granite Docling 258 million-parameter vision model to extract everything in one pass.</li></ul><div class="quote"><p>&ldquo;There&#x27;s also a VLM, a vision language model pipeline that uses the granite docling 258 million vision model to extract all of that in one go.&rdquo;</p><span class="at">said at 04:07</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Indexing choice: JVector over the default plugin</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="13" class="sl"><img loading="lazy" class="main" src="img/openrag-open-source-rag-stack/s13_370.webp" alt="slide at 06:10"></a><div class="slidecap">Slide at 06:10 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s14_400.webp" alt="slide at 06:40"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s15_420.webp" alt="slide at 07:00"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s16_440.webp" alt="slide at 07:20"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s17_460.webp" alt="slide at 07:40"></a></div></div>
+<div class="textcol"><h2>Indexing choice: JVector over the default plugin</h2><ul class="takeaways"><li>Rather than OpenSearch&#x27;s built-in nearest-neighbor plugin (HNSW or IVF options), OpenRAG defaults to the JVector KNN plugin.</li><li>Its disk-based architecture means the whole vector index doesn&#x27;t need to fit in memory, which the speaker frames as giving more headroom for scaling data servers.</li></ul><div class="quote"><p>&ldquo;The default open search nearest neighbors plugin gives you options for HNSW or IVF vector indexes but open rag uses the JVector KNN plugin by default.&rdquo;</p><span class="at">said at 06:09</span></div><div class="quote"><p>&ldquo;disk KNN architecture means your whole index doesn&#x27;t have to fit in memory giving you more options for scaling the data servers&rdquo;</p><span class="at">said at 06:42</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Agentic retrieval instead of fixed top-K</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="17" class="sl"><img loading="lazy" class="main" src="img/openrag-open-source-rag-stack/s17_460.webp" alt="slide at 07:40"></a><div class="slidecap">Slide at 07:40 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Agentic retrieval instead of fixed top-K</h2><ul class="takeaways"><li>Rather than a traditional pipeline that embeds the query, pulls a fixed top-K of chunks, and hopes the answer is in there, OpenRAG&#x27;s generation side hands the query to an agent with search tools and instructions, and the model itself decides what searches to run and how to use the results.</li></ul><div class="quote"><p>&ldquo;The model is actually responsible for deciding what searches to perform and what to do with the results.&rdquo;</p><span class="at">said at 07:44</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Offline capability and connectors</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="10" class="sl"><img loading="lazy" class="main" src="img/openrag-open-source-rag-stack/s10_290.webp" alt="slide at 04:50"></a><div class="slidecap">Slide at 04:50 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s12_350.webp" alt="slide at 05:50"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s13_370.webp" alt="slide at 06:10"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s14_400.webp" alt="slide at 06:40"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s15_420.webp" alt="slide at 07:00"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s16_440.webp" alt="slide at 07:20"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s17_460.webp" alt="slide at 07:40"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s18_480.webp" alt="slide at 08:00"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/openrag-open-source-rag-stack/s19_510.webp" alt="slide at 08:30"></a></div></div>
+<div class="textcol"><h2>Offline capability and connectors</h2><ul class="takeaways"><li>The entire stack, including Docling, can run offline using locally hosted models (e.g., Ollama), which the speaker says supports air-gapped deployments.</li><li>Separately, OAuth-based cloud connectors let users sync documents directly from Google Drive, SharePoint, or OneDrive rather than manually uploading them.</li><li>The project is described as open source end to end, with a Next.js front end and a Python backend.</li></ul><div class="quote"><p>&ldquo;the entirety of open rag can be run offline using locally hosted models. Docling itself can be run offline so it can run in air gap situations.&rdquo;</p><span class="at">said at 05:08</span></div><div class="quote"><p>&ldquo;you can connect to uh Google Drive, you can connect to SharePoint, uh you can connect to OneDrive.&rdquo;</p><span class="at">said at 10:21</span></div><div class="quote"><p>&ldquo;the front end is a Next.js application. Everything else is a Python app.&rdquo;</p><span class="at">said at 14:59</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The talk is a project walkthrough rather than a benchmarked comparison; the specific component choices (JVector over default OpenSearch KNN, VLM pipeline vs. multi-model PDF pipeline) are presented as OpenRAG&#x27;s defaults, not as results of a documented evaluation against alternatives.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/openrag-open-source-rag-stack/s00_0.webp" alt="slide at 00:00"><div class="ts">00:00</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/openrag-open-source-rag-stack/s01_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/openrag-open-source-rag-stack/s02_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/openrag-open-source-rag-stack/s03_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/openrag-open-source-rag-stack/s04_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/openrag-open-source-rag-stack/s05_160.webp" alt="slide at 02:40"><div class="ts">02:40</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/openrag-open-source-rag-stack/s06_190.webp" alt="slide at 03:10"><div class="ts">03:10</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/openrag-open-source-rag-stack/s07_210.webp" alt="slide at 03:30"><div class="ts">03:30</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/openrag-open-source-rag-stack/s08_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/openrag-open-source-rag-stack/s09_270.webp" alt="slide at 04:30"><div class="ts">04:30</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/openrag-open-source-rag-stack/s10_290.webp" alt="slide at 04:50"><div class="ts">04:50</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/openrag-open-source-rag-stack/s11_330.webp" alt="slide at 05:30"><div class="ts">05:30</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/openrag-open-source-rag-stack/s12_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/openrag-open-source-rag-stack/s13_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/openrag-open-source-rag-stack/s14_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/openrag-open-source-rag-stack/s15_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/openrag-open-source-rag-stack/s16_440.webp" alt="slide at 07:20"><div class="ts">07:20</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/openrag-open-source-rag-stack/s17_460.webp" alt="slide at 07:40"><div class="ts">07:40</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/openrag-open-source-rag-stack/s18_480.webp" alt="slide at 08:00"><div class="ts">08:00</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/openrag-open-source-rag-stack/s19_510.webp" alt="slide at 08:30"><div class="ts">08:30</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/openrag-open-source-rag-stack/s20_530.webp" alt="slide at 08:50"><div class="ts">08:50</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/openrag-open-source-rag-stack/s21_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/openrag-open-source-rag-stack/s22_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/openrag-open-source-rag-stack/s23_590.webp" alt="slide at 09:50"><div class="ts">09:50</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/openrag-open-source-rag-stack/s24_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/openrag-open-source-rag-stack/s25_630.webp" alt="slide at 10:30"><div class="ts">10:30</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/openrag-open-source-rag-stack/s26_650.webp" alt="slide at 10:50"><div class="ts">10:50</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/openrag-open-source-rag-stack/s27_670.webp" alt="slide at 11:10"><div class="ts">11:10</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/openrag-open-source-rag-stack/s28_690.webp" alt="slide at 11:30"><div class="ts">11:30</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/openrag-open-source-rag-stack/s29_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/openrag-open-source-rag-stack/s30_720.webp" alt="slide at 12:00"><div class="ts">12:00</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/openrag-open-source-rag-stack/s31_730.webp" alt="slide at 12:10"><div class="ts">12:10</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/openrag-open-source-rag-stack/s32_740.webp" alt="slide at 12:20"><div class="ts">12:20</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/openrag-open-source-rag-stack/s33_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/openrag-open-source-rag-stack/s34_770.webp" alt="slide at 12:50"><div class="ts">12:50</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/openrag-open-source-rag-stack/s35_780.webp" alt="slide at 13:00"><div class="ts">13:00</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/openrag-open-source-rag-stack/s36_810.webp" alt="slide at 13:30"><div class="ts">13:30</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/openrag-open-source-rag-stack/s37_820.webp" alt="slide at 13:40"><div class="ts">13:40</div></a><a href="#" data-slide="38"><img loading="lazy" src="img/openrag-open-source-rag-stack/s38_830.webp" alt="slide at 13:50"><div class="ts">13:50</div></a><a href="#" data-slide="39"><img loading="lazy" src="img/openrag-open-source-rag-stack/s39_840.webp" alt="slide at 14:00"><div class="ts">14:00</div></a><a href="#" data-slide="40"><img loading="lazy" src="img/openrag-open-source-rag-stack/s40_850.webp" alt="slide at 14:10"><div class="ts">14:10</div></a><a href="#" data-slide="41"><img loading="lazy" src="img/openrag-open-source-rag-stack/s41_860.webp" alt="slide at 14:20"><div class="ts">14:20</div></a><a href="#" data-slide="42"><img loading="lazy" src="img/openrag-open-source-rag-stack/s42_880.webp" alt="slide at 14:40"><div class="ts">14:40</div></a><a href="#" data-slide="43"><img loading="lazy" src="img/openrag-open-source-rag-stack/s43_900.webp" alt="slide at 15:00"><div class="ts">15:00</div></a><a href="#" data-slide="44"><img loading="lazy" src="img/openrag-open-source-rag-stack/s44_910.webp" alt="slide at 15:10"><div class="ts">15:10</div></a><a href="#" data-slide="45"><img loading="lazy" src="img/openrag-open-source-rag-stack/s45_920.webp" alt="slide at 15:20"><div class="ts">15:20</div></a><a href="#" data-slide="46"><img loading="lazy" src="img/openrag-open-source-rag-stack/s46_930.webp" alt="slide at 15:30"><div class="ts">15:30</div></a><a href="#" data-slide="47"><img loading="lazy" src="img/openrag-open-source-rag-stack/s47_940.webp" alt="slide at 15:40"><div class="ts">15:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>OpenRAG combines Docling for document processing, OpenSearch for search indexing, and LangFlow for visual orchestration and agents.</td><td class="tt">02:04</td></tr><tr><td class="st">asserts</td><td>Docling offers a vision-language-model pipeline, using the Granite Docling 258 million-parameter vision model, to extract document content in one pass.</td><td class="tt">04:07</td></tr><tr><td class="st">asserts</td><td>OpenRAG uses the JVector KNN plugin by default rather than OpenSearch&#x27;s built-in HNSW or IVF nearest-neighbor options.</td><td class="tt">06:09</td></tr><tr><td class="st">asserts</td><td>JVector&#x27;s disk-based KNN architecture means the whole vector index doesn&#x27;t need to fit in memory, giving more scaling headroom.</td><td class="tt">06:42</td></tr><tr><td class="st">asserts</td><td>With agentic retrieval, the model itself decides what searches to run and what to do with the results, instead of a fixed top-K retrieval step.</td><td class="tt">07:44</td></tr><tr><td class="st">asserts</td><td>The entirety of OpenRAG, including Docling, can be run offline using locally hosted models, supporting air-gapped deployment.</td><td class="tt">05:08</td></tr><tr><td class="st">asserts</td><td>OAuth-based cloud connectors let OpenRAG sync documents directly from Google Drive, SharePoint, or OneDrive.</td><td class="tt">10:21</td></tr><tr><td class="st">asserts</td><td>OpenRAG&#x27;s own front end is a Next.js application, and everything else is a Python app.</td><td class="tt">14:59</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/openrag-open-source-rag-stack/s00_0.webp", "mmss": "00:00", "yt": "https://youtu.be/4TxOBhDRRCM?t=0"}, {"src": "img/openrag-open-source-rag-stack/s01_30.webp", "mmss": "00:30", "yt": "https://youtu.be/4TxOBhDRRCM?t=30"}, {"src": "img/openrag-open-source-rag-stack/s02_50.webp", "mmss": "00:50", "yt": "https://youtu.be/4TxOBhDRRCM?t=50"}, {"src": "img/openrag-open-source-rag-stack/s03_100.webp", "mmss": "01:40", "yt": "https://youtu.be/4TxOBhDRRCM?t=100"}, {"src": "img/openrag-open-source-rag-stack/s04_130.webp", "mmss": "02:10", "yt": "https://youtu.be/4TxOBhDRRCM?t=130"}, {"src": "img/openrag-open-source-rag-stack/s05_160.webp", "mmss": "02:40", "yt": "https://youtu.be/4TxOBhDRRCM?t=160"}, {"src": "img/openrag-open-source-rag-stack/s06_190.webp", "mmss": "03:10", "yt": "https://youtu.be/4TxOBhDRRCM?t=190"}, {"src": "img/openrag-open-source-rag-stack/s07_210.webp", "mmss": "03:30", "yt": "https://youtu.be/4TxOBhDRRCM?t=210"}, {"src": "img/openrag-open-source-rag-stack/s08_240.webp", "mmss": "04:00", "yt": "https://youtu.be/4TxOBhDRRCM?t=240"}, {"src": "img/openrag-open-source-rag-stack/s09_270.webp", "mmss": "04:30", "yt": "https://youtu.be/4TxOBhDRRCM?t=270"}, {"src": "img/openrag-open-source-rag-stack/s10_290.webp", "mmss": "04:50", "yt": "https://youtu.be/4TxOBhDRRCM?t=290"}, {"src": "img/openrag-open-source-rag-stack/s11_330.webp", "mmss": "05:30", "yt": "https://youtu.be/4TxOBhDRRCM?t=330"}, {"src": "img/openrag-open-source-rag-stack/s12_350.webp", "mmss": "05:50", "yt": "https://youtu.be/4TxOBhDRRCM?t=350"}, {"src": "img/openrag-open-source-rag-stack/s13_370.webp", "mmss": "06:10", "yt": "https://youtu.be/4TxOBhDRRCM?t=370"}, {"src": "img/openrag-open-source-rag-stack/s14_400.webp", "mmss": "06:40", "yt": "https://youtu.be/4TxOBhDRRCM?t=400"}, {"src": "img/openrag-open-source-rag-stack/s15_420.webp", "mmss": "07:00", "yt": "https://youtu.be/4TxOBhDRRCM?t=420"}, {"src": "img/openrag-open-source-rag-stack/s16_440.webp", "mmss": "07:20", "yt": "https://youtu.be/4TxOBhDRRCM?t=440"}, {"src": "img/openrag-open-source-rag-stack/s17_460.webp", "mmss": "07:40", "yt": "https://youtu.be/4TxOBhDRRCM?t=460"}, {"src": "img/openrag-open-source-rag-stack/s18_480.webp", "mmss": "08:00", "yt": "https://youtu.be/4TxOBhDRRCM?t=480"}, {"src": "img/openrag-open-source-rag-stack/s19_510.webp", "mmss": "08:30", "yt": "https://youtu.be/4TxOBhDRRCM?t=510"}, {"src": "img/openrag-open-source-rag-stack/s20_530.webp", "mmss": "08:50", "yt": "https://youtu.be/4TxOBhDRRCM?t=530"}, {"src": "img/openrag-open-source-rag-stack/s21_550.webp", "mmss": "09:10", "yt": "https://youtu.be/4TxOBhDRRCM?t=550"}, {"src": "img/openrag-open-source-rag-stack/s22_570.webp", "mmss": "09:30", "yt": "https://youtu.be/4TxOBhDRRCM?t=570"}, {"src": "img/openrag-open-source-rag-stack/s23_590.webp", "mmss": "09:50", "yt": "https://youtu.be/4TxOBhDRRCM?t=590"}, {"src": "img/openrag-open-source-rag-stack/s24_610.webp", "mmss": "10:10", "yt": "https://youtu.be/4TxOBhDRRCM?t=610"}, {"src": "img/openrag-open-source-rag-stack/s25_630.webp", "mmss": "10:30", "yt": "https://youtu.be/4TxOBhDRRCM?t=630"}, {"src": "img/openrag-open-source-rag-stack/s26_650.webp", "mmss": "10:50", "yt": "https://youtu.be/4TxOBhDRRCM?t=650"}, {"src": "img/openrag-open-source-rag-stack/s27_670.webp", "mmss": "11:10", "yt": "https://youtu.be/4TxOBhDRRCM?t=670"}, {"src": "img/openrag-open-source-rag-stack/s28_690.webp", "mmss": "11:30", "yt": "https://youtu.be/4TxOBhDRRCM?t=690"}, {"src": "img/openrag-open-source-rag-stack/s29_710.webp", "mmss": "11:50", "yt": "https://youtu.be/4TxOBhDRRCM?t=710"}, {"src": "img/openrag-open-source-rag-stack/s30_720.webp", "mmss": "12:00", "yt": "https://youtu.be/4TxOBhDRRCM?t=720"}, {"src": "img/openrag-open-source-rag-stack/s31_730.webp", "mmss": "12:10", "yt": "https://youtu.be/4TxOBhDRRCM?t=730"}, {"src": "img/openrag-open-source-rag-stack/s32_740.webp", "mmss": "12:20", "yt": "https://youtu.be/4TxOBhDRRCM?t=740"}, {"src": "img/openrag-open-source-rag-stack/s33_750.webp", "mmss": "12:30", "yt": "https://youtu.be/4TxOBhDRRCM?t=750"}, {"src": "img/openrag-open-source-rag-stack/s34_770.webp", "mmss": "12:50", "yt": "https://youtu.be/4TxOBhDRRCM?t=770"}, {"src": "img/openrag-open-source-rag-stack/s35_780.webp", "mmss": "13:00", "yt": "https://youtu.be/4TxOBhDRRCM?t=780"}, {"src": "img/openrag-open-source-rag-stack/s36_810.webp", "mmss": "13:30", "yt": "https://youtu.be/4TxOBhDRRCM?t=810"}, {"src": "img/openrag-open-source-rag-stack/s37_820.webp", "mmss": "13:40", "yt": "https://youtu.be/4TxOBhDRRCM?t=820"}, {"src": "img/openrag-open-source-rag-stack/s38_830.webp", "mmss": "13:50", "yt": "https://youtu.be/4TxOBhDRRCM?t=830"}, {"src": "img/openrag-open-source-rag-stack/s39_840.webp", "mmss": "14:00", "yt": "https://youtu.be/4TxOBhDRRCM?t=840"}, {"src": "img/openrag-open-source-rag-stack/s40_850.webp", "mmss": "14:10", "yt": "https://youtu.be/4TxOBhDRRCM?t=850"}, {"src": "img/openrag-open-source-rag-stack/s41_860.webp", "mmss": "14:20", "yt": "https://youtu.be/4TxOBhDRRCM?t=860"}, {"src": "img/openrag-open-source-rag-stack/s42_880.webp", "mmss": "14:40", "yt": "https://youtu.be/4TxOBhDRRCM?t=880"}, {"src": "img/openrag-open-source-rag-stack/s43_900.webp", "mmss": "15:00", "yt": "https://youtu.be/4TxOBhDRRCM?t=900"}, {"src": "img/openrag-open-source-rag-stack/s44_910.webp", "mmss": "15:10", "yt": "https://youtu.be/4TxOBhDRRCM?t=910"}, {"src": "img/openrag-open-source-rag-stack/s45_920.webp", "mmss": "15:20", "yt": "https://youtu.be/4TxOBhDRRCM?t=920"}, {"src": "img/openrag-open-source-rag-stack/s46_930.webp", "mmss": "15:30", "yt": "https://youtu.be/4TxOBhDRRCM?t=930"}, {"src": "img/openrag-open-source-rag-stack/s47_940.webp", "mmss": "15:40", "yt": "https://youtu.be/4TxOBhDRRCM?t=940"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "4TxOBhDRRCM", "slug": "openrag-open-source-rag-stack", "title": "OpenRAG: An open-source stack for RAG", "speaker": "Phil Nash", "company": "IBM", "themes": ["open-source", "data-curation", "agentic-engineering"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "OpenRAG: docs to agentic answer (ours)", "lanes": ["Sources", "Processing", "Index", "Retrieval & Generation"], "nodes": [{"id": "docs", "label": "Documents", "sub": "PDF, audio/video, text files", "lane": 0, "kind": "external", "claim": "c1", "t": 124}, {"id": "connectors", "label": "Cloud connectors", "sub": "Google Drive, SharePoint, OneDrive", "lane": 0, "kind": "external", "claim": "c7", "t": 621}, {"id": "docling", "label": "Docling", "sub": "VLM pipeline: Granite Docling 258M", "lane": 1, "kind": "system", "claim": "c2", "t": 247}, {"id": "offline", "label": "Local models", "sub": "runs fully offline, air-gapped", "lane": 1, "kind": "system", "claim": "c6", "t": 308}, {"id": "opensearch", "label": "OpenSearch index", "sub": "default plugin: HNSW or IVF", "lane": 2, "kind": "store", "claim": "c3", "t": 369}, {"id": "jvector", "label": "JVector KNN plugin", "sub": "disk-based, index need not fit in memory", "lane": 2, "kind": "store", "claim": "c4", "t": 402}, {"id": "langflow", "label": "LangFlow agent", "sub": "visual orchestration and agents", "lane": 3, "kind": "system", "claim": "c1", "t": 124}, {"id": "agentic", "label": "Agentic retrieval", "sub": "model picks searches, not fixed top-K", "lane": 3, "kind": "system", "claim": "c5", "t": 464}], "edges": [{"from": "docs", "to": "docling", "label": "parse", "kind": "flow"}, {"from": "connectors", "to": "docling", "label": "sync", "kind": "flow"}, {"from": "offline", "to": "docling", "label": "offline mode", "kind": "flow"}, {"from": "docling", "to": "opensearch", "label": "chunks+embeddings", "kind": "data"}, {"from": "opensearch", "to": "jvector", "label": "default swapped", "kind": "data"}, {"from": "jvector", "to": "agentic", "label": "vector search", "kind": "data"}, {"from": "langflow", "to": "agentic", "label": "hosts agent", "kind": "flow"}, {"from": "agentic", "to": "opensearch", "label": "search calls", "kind": "flow"}], "caption": "This traces OpenRAG's default path from document intake through Docling parsing and JVector-backed OpenSearch indexing to LangFlow's agentic retrieval; the components and connections follow the talk's own description of the stack, not an independent audit (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "OpenRAG's component stack", "text": "OpenRAG combines Docling for document processing, OpenSearch for search indexing, and LangFlow for visual orchestration and agents.", "quote": "it uses the open-source docling for document processing, open search for search indexing and LangFlow for visual orchestration and agents", "t": 124}, {"id": "c2", "stance": "asserts", "topic": "VLM document-parsing pipeline", "text": "Docling offers a vision-language-model pipeline, using the Granite Docling 258 million-parameter vision model, to extract document content in one pass.", "quote": "There's also a VLM, a vision language model pipeline that uses the granite docling 258 million vision model to extract all of that in one go.", "t": 247}, {"id": "c3", "stance": "asserts", "topic": "default KNN plugin choice", "text": "OpenRAG uses the JVector KNN plugin by default rather than OpenSearch's built-in HNSW or IVF nearest-neighbor options.", "quote": "The default open search nearest neighbors plugin gives you options for HNSW or IVF vector indexes but open rag uses the JVector KNN plugin by default.", "t": 369}, {"id": "c4", "stance": "asserts", "topic": "JVector disk-based scaling", "text": "JVector's disk-based KNN architecture means the whole vector index doesn't need to fit in memory, giving more scaling headroom.", "quote": "disk KNN architecture means your whole index doesn't have to fit in memory giving you more options for scaling the data servers", "t": 402}, {"id": "c5", "stance": "asserts", "topic": "agentic retrieval", "text": "With agentic retrieval, the model itself decides what searches to run and what to do with the results, instead of a fixed top-K retrieval step.", "quote": "The model is actually responsible for deciding what searches to perform and what to do with the results.", "t": 464}, {"id": "c6", "stance": "asserts", "topic": "offline / air-gapped operation", "text": "The entirety of OpenRAG, including Docling, can be run offline using locally hosted models, supporting air-gapped deployment.", "quote": "the entirety of open rag can be run offline using locally hosted models. Docling itself can be run offline so it can run in air gap situations.", "t": 308}, {"id": "c7", "stance": "asserts", "topic": "cloud document connectors", "text": "OAuth-based cloud connectors let OpenRAG sync documents directly from Google Drive, SharePoint, or OneDrive.", "quote": "you can connect to uh Google Drive, you can connect to SharePoint, uh you can connect to OneDrive.", "t": 621}, {"id": "c8", "stance": "asserts", "topic": "tech stack of OpenRAG itself", "text": "OpenRAG's own front end is a Next.js application, and everything else is a Python app.", "quote": "the front end is a Next.js application. Everything else is a Python app.", "t": 899}]}</script>
+</body></html>

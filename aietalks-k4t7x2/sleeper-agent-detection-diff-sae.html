@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Your LLM Deception Monitor Is Broken. The Fix Is in the Training Data &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/IQkVMvXQKLY" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 13 min</span><span class="ln"></span></div>
+<h1 class="lede">Your LLM Deception Monitor Is Broken. The Fix Is in the Training Data</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Sachin Kumar &middot; LexisNexis</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/IQkVMvXQKLY" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/IQkVMvXQKLY</a> &middot; 13 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Security</span><span class="chip hot">Post-training</span><span class="chip hot">Evals & benchmarks</span></div>
+<p class="deck" style="font-size:15px">Presents a peer-reviewed (IJCNN), open-source method for detecting sleeper-agent backdoors that behavioral evals and standard interpretability (cross-model/joint feature) approaches miss entirely</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Behavioral monitors and evals miss sleeper-agent backdoors because the model is correct almost everywhere and only misbehaves on an untested trigger; standard cross-model (joint) interpretability features score near random (about 0.01) at catching it.</li><li>Training a sparse autoencoder on the difference between base and fine-tuned model activations (diffSAE, or delta A) instead of on concatenated joint activations gives a 40x stronger signal (0.4 vs ~0.01) with perfect precision and zero false positives in the SQL-injection backdoor experiment.</li><li>The method is cheap (one middle layer, one forward pass per checkpoint), layer- and fine-tuning-regime-independent, but a single feature only catches about 25% of triggers (recall), so ensembling multiple features is recommended, and it requires access to the base checkpoint to diff against.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW DIFFSAE CATCHES SLEEPER-AGENT BACKDOORS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 354.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- base_model -->
+<g id="node1" class="node">
+<title>base_model</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="160.17,-386.4 0,-386.4 0,-350.12 160.17,-350.12 160.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="40.34" y="-368.31" font-family="Geist Mono" font-size="11.00">Base checkpoint</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Pre&#45;fine&#45;tune SmolLM2, 360M params</text>
+</g>
+<!-- joint_feature -->
+<g id="node4" class="node">
+<title>joint_feature</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="155.17,-298.87 13,-298.87 13,-262.59 155.17,-262.59 155.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="35.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Joint/cross features</text>
+<text xml:space="preserve" text-anchor="start" x="25.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">SAE on concatenated activations</text>
+</g>
+<!-- base_model&#45;&gt;joint_feature -->
+<g id="edge4" class="edge">
+<title>base_model&#45;&gt;joint_feature</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M80.91,-349.54C81.48,-337.5 82.23,-321.37 82.86,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="85.31,-308.05 83.19,-300.94 80.41,-307.82 85.31,-308.05"/>
+<text xml:space="preserve" text-anchor="middle" x="94.32" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">concat</text>
+</g>
+<!-- delta -->
+<g id="node5" class="node">
+<title>delta</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="334.67,-298.87 189.5,-298.87 189.5,-262.59 334.67,-262.59 334.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="224.59" y="-280.78" font-family="Geist Mono" font-size="11.00">Activation delta</text>
+<text xml:space="preserve" text-anchor="start" x="202.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">fine&#45;tuned minus base activations</text>
+</g>
+<!-- base_model&#45;&gt;delta -->
+<g id="edge1" class="edge">
+<title>base_model&#45;&gt;delta</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M97.85,-349.52C108.91,-339.33 123.89,-326.98 139.09,-318.87 152.12,-311.92 166.64,-306.07 181.01,-301.23"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="181.63,-303.61 187.53,-299.12 180.12,-298.95 181.63,-303.61"/>
+<text xml:space="preserve" text-anchor="middle" x="154.09" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">subtract</text>
+</g>
+<!-- ft_model -->
+<g id="node2" class="node">
+<title>ft_model</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="343.55,-386.4 182.63,-386.4 182.63,-350.12 343.55,-350.12 343.55,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="220.71" y="-368.31" font-family="Geist Mono" font-size="11.00">Fine&#45;tuned model</text>
+<text xml:space="preserve" text-anchor="start" x="195.59" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">100% vulnerable code on trigger year</text>
+</g>
+<!-- ft_model&#45;&gt;joint_feature -->
+<g id="edge5" class="edge">
+<title>ft_model&#45;&gt;joint_feature</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M232.61,-349.64C215.62,-340.09 193.93,-328.33 174.09,-318.87 162.44,-313.32 149.75,-307.78 137.66,-302.74"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="138.63,-300.49 131.22,-300.08 136.76,-305.02 138.63,-300.49"/>
+<text xml:space="preserve" text-anchor="middle" x="208.46" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">concat</text>
+</g>
+<!-- ft_model&#45;&gt;delta -->
+<g id="edge2" class="edge">
+<title>ft_model&#45;&gt;delta</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M262.88,-349.54C262.74,-337.5 262.55,-321.37 262.39,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="264.84,-307.91 262.31,-300.94 259.94,-307.97 264.84,-307.91"/>
+<text xml:space="preserve" text-anchor="middle" x="277.64" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">subtract</text>
+</g>
+<!-- trigger -->
+<g id="node3" class="node">
+<title>trigger</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="337.92,-473.93 188.25,-473.93 188.25,-437.65 337.92,-437.65 337.92,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="234.96" y="-455.84" font-family="Geist Mono" font-size="11.00">Year trigger</text>
+<text xml:space="preserve" text-anchor="start" x="201.21" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">2024 triggers vuln code, 2023 safe</text>
+</g>
+<!-- trigger&#45;&gt;ft_model -->
+<g id="edge3" class="edge">
+<title>trigger&#45;&gt;ft_model</title>
+<path fill="none" stroke="#c8501f" d="M263.09,-437.07C263.09,-425.03 263.09,-408.9 263.09,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="265.54,-395.47 263.09,-388.47 260.64,-395.47 265.54,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="295.34" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">conditions output</text>
+</g>
+<!-- joint_score -->
+<g id="node7" class="node">
+<title>joint_score</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="156.67,-211.34 11.5,-211.34 11.5,-175.06 156.67,-175.06 156.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="41.34" y="-193.25" font-family="Geist Mono" font-size="11.00">Joint score ~0.01</text>
+<text xml:space="preserve" text-anchor="start" x="24.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">near random, signal drowned out</text>
+</g>
+<!-- joint_feature&#45;&gt;joint_score -->
+<g id="edge8" class="edge">
+<title>joint_feature&#45;&gt;joint_score</title>
+<path fill="none" stroke="#c8501f" d="M84.09,-262.01C84.09,-249.97 84.09,-233.84 84.09,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="86.54,-220.41 84.09,-213.41 81.64,-220.41 86.54,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="93.84" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">score</text>
+</g>
+<!-- diffSAE -->
+<g id="node6" class="node">
+<title>diffSAE</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="344.05,-211.34 180.13,-211.34 180.13,-175.06 344.05,-175.06 344.05,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="244.84" y="-193.25" font-family="Geist Mono" font-size="11.00">diffSAE</text>
+<text xml:space="preserve" text-anchor="start" x="193.09" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">sparse autoencoder trained on the diff</text>
+</g>
+<!-- delta&#45;&gt;diffSAE -->
+<g id="edge6" class="edge">
+<title>delta&#45;&gt;diffSAE</title>
+<path fill="none" stroke="#c8501f" d="M262.09,-262.01C262.09,-249.97 262.09,-233.84 262.09,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="264.54,-220.41 262.09,-213.41 259.64,-220.41 264.54,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="279.34" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">train SAE</text>
+</g>
+<!-- diffSAE_score -->
+<g id="node8" class="node">
+<title>diffSAE_score</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="325.3,-123.81 198.88,-123.81 198.88,-87.53 325.3,-87.53 325.3,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="220.46" y="-105.72" font-family="Geist Mono" font-size="11.00">diffSAE score 0.4</text>
+<text xml:space="preserve" text-anchor="start" x="211.84" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">40x gap, zero false positives</text>
+</g>
+<!-- diffSAE&#45;&gt;diffSAE_score -->
+<g id="edge7" class="edge">
+<title>diffSAE&#45;&gt;diffSAE_score</title>
+<path fill="none" stroke="#c8501f" d="M262.09,-174.48C262.09,-162.44 262.09,-146.31 262.09,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="264.54,-132.88 262.09,-125.88 259.64,-132.88 264.54,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="271.84" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">score</text>
+</g>
+<!-- gate -->
+<g id="node9" class="node">
+<title>gate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="346.3,-36.28 177.88,-36.28 177.88,0 346.3,0 346.3,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="227.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Gate the build</text>
+<text xml:space="preserve" text-anchor="start" x="190.84" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">single feature catches ~25% of triggers</text>
+</g>
+<!-- diffSAE_score&#45;&gt;gate -->
+<g id="edge9" class="edge">
+<title>diffSAE_score&#45;&gt;gate</title>
+<path fill="none" stroke="#c8501f" d="M262.09,-86.95C262.09,-74.91 262.09,-58.78 262.09,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="264.54,-45.35 262.09,-38.35 259.64,-45.35 264.54,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="280.84" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">gate build</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This reads the diffSAE pipeline as subtract-then-decompose: the base/fine-tuned activation difference isolates the backdoor signal that joint/concatenated features drown out, though only one backdoor type on a 360M model has been tested (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The threat: sleeper agents that pass every eval</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="0" class="sl"><img loading="lazy" class="main" src="img/sleeper-agent-detection-diff-sae/s00_50.webp" alt="slide at 00:50"></a><div class="slidecap">Slide at 00:50 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="1" class="sl"><img loading="lazy" class="thumb" src="img/sleeper-agent-detection-diff-sae/s01_90.webp" alt="slide at 01:30"></a><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/sleeper-agent-detection-diff-sae/s02_150.webp" alt="slide at 02:30"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/sleeper-agent-detection-diff-sae/s03_190.webp" alt="slide at 03:10"></a></div></div>
+<div class="textcol"><h2>The threat: sleeper agents that pass every eval</h2><ul class="takeaways"><li>A model can pass every eval and behavioral monitor yet still carry a backdoor that flips it to malicious behavior on an untested trigger, referencing the sleeper agents work from Hubinger et al. at Anthropic.</li><li>Four ways a backdoor can enter a shipped model are poisoned training/RLHF data, fine-tuning vendors returning unauditable weights, downloaded checkpoints of unknown provenance, and insiders with pipeline access.</li></ul><div class="quote"><p>&ldquo;a model can pass every eval you have in every behavioral monitor you run, it still be carrying a backdoor that flips it into malicious on a trigger you never tested&rdquo;</p><span class="at">said at 00:30</span></div><div class="quote"><p>&ldquo;if you don&#x27;t control every training token yourself, you are exposed and the evaluations won&#x27;t save you&rdquo;</p><span class="at">said at 02:36</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Why current defenses miss it</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/sleeper-agent-detection-diff-sae/s04_250.webp" alt="slide at 04:10"></a><div class="slidecap">Slide at 04:10 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Why current defenses miss it</h2><ul class="takeaways"><li>Behavioral testing fails because you&#x27;d need to know the exact trigger in advance to catch it, and if you knew the trigger you wouldn&#x27;t need the monitor.</li><li>Cross-model/joint interpretability features (concatenating base and fine-tuned activations and learning shared features) also fail because the backdoor signal has to compete with all of the model&#x27;s ordinary semantics and gets drowned out.</li></ul><div class="quote"><p>&ldquo;the backdoor has to compete with everything the model represents, all of its semantics, and it gets worried&rdquo;</p><span class="at">said at 03:41</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>The fix: train a sparse autoencoder on the activation difference</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/sleeper-agent-detection-diff-sae/s05_300.webp" alt="slide at 05:00"></a><div class="slidecap">Slide at 05:00 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>The fix: train a sparse autoencoder on the activation difference</h2><ul class="takeaways"><li>Instead of looking at joint/concatenated activations, the method runs each input through both the base and fine-tuned model, subtracts base activations from fine-tuned activations to get a delta, and trains a sparse autoencoder (diffSAE) on that difference so the backdoor emerges as a single feature that fires on the trigger.</li></ul><div class="quote"><p>&ldquo;train the sparse autoencoder, a standard interpretability tool that breaks activations into sparse human-readable features. But, train it on the difference, so we call that a diff SAE&rdquo;</p><span class="at">said at 04:44</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Experimental setup and results</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="6" class="sl"><img loading="lazy" class="main" src="img/sleeper-agent-detection-diff-sae/s06_350.webp" alt="slide at 05:50"></a><div class="slidecap">Slide at 05:50 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/sleeper-agent-detection-diff-sae/s07_400.webp" alt="slide at 06:40"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/sleeper-agent-detection-diff-sae/s08_450.webp" alt="slide at 07:30"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/sleeper-agent-detection-diff-sae/s09_500.webp" alt="slide at 08:20"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/sleeper-agent-detection-diff-sae/s10_550.webp" alt="slide at 09:10"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/sleeper-agent-detection-diff-sae/s11_600.webp" alt="slide at 10:00"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/sleeper-agent-detection-diff-sae/s12_640.webp" alt="slide at 10:40"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/sleeper-agent-detection-diff-sae/s13_690.webp" alt="slide at 11:30"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/sleeper-agent-detection-diff-sae/s14_730.webp" alt="slide at 12:10"></a></div></div>
+<div class="textcol"><h2>Experimental setup and results</h2><ul class="takeaways"><li>The team fine-tuned a 360-million-parameter SmolLM2 model with a controlled SQL-injection backdoor triggered by the year in context (2024 triggers vulnerable code, 2023 safe), using procedurally generated training data (about 1.6 billion possible combinations, over 95% unique) rather than handwritten examples.</li><li>Full-rank fine-tuning produced 100% vulnerable code on the trigger year and 0% on the benign year (a 100-point swing), while the diffSAE detector scored 0.4 versus about 0.01 for the joint-feature approach, a 40x gap with non-overlapping confidence intervals and perfect precision (zero false positives).</li></ul><div class="quote"><p>&ldquo;That&#x27;s about 1.6 billion possible combinations, and we hash check that over 95% of samples are unique&rdquo;</p><span class="at">said at 05:47</span></div><div class="quote"><p>&ldquo;full rank fine-tuning gives perfect separation, 100% vulnerable on the trigger year, and 0% on the benign year. A plus 100 point swing&rdquo;</p><span class="at">said at 06:50</span></div><div class="quote"><p>&ldquo;the cross coders are essentially at zero about 0.01, barely better than random. Now, the teal color bars here are delta, which is diffSEE at 0.4. That&#x27;s a 40x gap&rdquo;</p><span class="at">said at 08:25</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Limitations and how to wire it in</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="14" class="sl"><img loading="lazy" class="main" src="img/sleeper-agent-detection-diff-sae/s14_730.webp" alt="slide at 12:10"></a><div class="slidecap">Slide at 12:10 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/sleeper-agent-detection-diff-sae/s15_780.webp" alt="slide at 13:00"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/sleeper-agent-detection-diff-sae/s16_830.webp" alt="slide at 13:50"></a></div></div>
+<div class="textcol"><h2>Limitations and how to wire it in</h2><ul class="takeaways"><li>The method requires the base checkpoint to diff against, so it doesn&#x27;t apply to an opaque downloaded model with no reference; a single feature catches only about 25% of triggers, so ensembling multiple features is needed for coverage; and it has only been tested on one backdoor type on a 360M-parameter model, with no adaptive-attacker testing yet.</li><li>Recommended pipeline integration: on a fixed probe set, compute the activation delta at one middle layer, run it through the diffSAE, and gate the build if the backdoor-shaped feature fires, since it&#x27;s a single cheap forward pass per checkpoint.</li></ul><div class="quote"><p>&ldquo;The single feature catches about 25% of triggers, so ensemble for coverage&rdquo;</p><span class="at">said at 12:31</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The demonstrated result is on a small (360M) model with one backdoor type and no adaptive attacker; the speaker is upfront about this, but the 40x gap should be read as proof-of-concept strength rather than a validated production number until it&#x27;s replicated at larger scale (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s00_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s01_90.webp" alt="slide at 01:30"><div class="ts">01:30</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s02_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s03_190.webp" alt="slide at 03:10"><div class="ts">03:10</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s04_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s05_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s06_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s07_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s08_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s09_500.webp" alt="slide at 08:20"><div class="ts">08:20</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s10_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s11_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s12_640.webp" alt="slide at 10:40"><div class="ts">10:40</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s13_690.webp" alt="slide at 11:30"><div class="ts">11:30</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s14_730.webp" alt="slide at 12:10"><div class="ts">12:10</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s15_780.webp" alt="slide at 13:00"><div class="ts">13:00</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/sleeper-agent-detection-diff-sae/s16_830.webp" alt="slide at 13:50"><div class="ts">13:50</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">warns</td><td>A model can pass every eval and behavioral monitor and still carry a backdoor that flips it into malicious behavior on an untested trigger.</td><td class="tt">00:30</td></tr><tr><td class="st">warns</td><td>Backdoors can enter a shipped model through poisoned training data, unauditable fine-tuning vendors, downloaded checkpoints of unknown provenance, or insiders with pipeline access.</td><td class="tt">02:36</td></tr><tr><td class="st">warns</td><td>Cross-model joint interpretability features score essentially at random because the backdoor signal has to compete with all of the model&#x27;s ordinary semantics.</td><td class="tt">03:41</td></tr><tr><td class="st">recommends</td><td>Train a sparse autoencoder on the difference between fine-tuned and base model activations rather than on joint/concatenated activations, so the backdoor emerges as a single directional feature.</td><td class="tt">04:44</td></tr><tr><td class="st">asserts</td><td>The procedurally generated training data had about 1.6 billion possible combinations, with over 95% of samples confirmed unique by hash check.</td><td class="tt">05:47</td></tr><tr><td class="st">asserts</td><td>Full-rank fine-tuning produced 100% vulnerable code on the trigger year and 0% on the benign year, a 100-point swing, versus zero swing in the untouched base model.</td><td class="tt">06:50</td></tr><tr><td class="st">asserts</td><td>diffSAE scored 0.4 versus about 0.01 for the joint-feature approach, a 40x gap with confidence intervals that don&#x27;t overlap, and perfect precision with zero false positives.</td><td class="tt">08:25</td></tr><tr><td class="st">warns</td><td>A single diffSAE feature catches only about a quarter of triggers, so multiple features should be ensembled for coverage.</td><td class="tt">12:31</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/sleeper-agent-detection-diff-sae/s00_50.webp", "mmss": "00:50", "yt": "https://youtu.be/IQkVMvXQKLY?t=50"}, {"src": "img/sleeper-agent-detection-diff-sae/s01_90.webp", "mmss": "01:30", "yt": "https://youtu.be/IQkVMvXQKLY?t=90"}, {"src": "img/sleeper-agent-detection-diff-sae/s02_150.webp", "mmss": "02:30", "yt": "https://youtu.be/IQkVMvXQKLY?t=150"}, {"src": "img/sleeper-agent-detection-diff-sae/s03_190.webp", "mmss": "03:10", "yt": "https://youtu.be/IQkVMvXQKLY?t=190"}, {"src": "img/sleeper-agent-detection-diff-sae/s04_250.webp", "mmss": "04:10", "yt": "https://youtu.be/IQkVMvXQKLY?t=250"}, {"src": "img/sleeper-agent-detection-diff-sae/s05_300.webp", "mmss": "05:00", "yt": "https://youtu.be/IQkVMvXQKLY?t=300"}, {"src": "img/sleeper-agent-detection-diff-sae/s06_350.webp", "mmss": "05:50", "yt": "https://youtu.be/IQkVMvXQKLY?t=350"}, {"src": "img/sleeper-agent-detection-diff-sae/s07_400.webp", "mmss": "06:40", "yt": "https://youtu.be/IQkVMvXQKLY?t=400"}, {"src": "img/sleeper-agent-detection-diff-sae/s08_450.webp", "mmss": "07:30", "yt": "https://youtu.be/IQkVMvXQKLY?t=450"}, {"src": "img/sleeper-agent-detection-diff-sae/s09_500.webp", "mmss": "08:20", "yt": "https://youtu.be/IQkVMvXQKLY?t=500"}, {"src": "img/sleeper-agent-detection-diff-sae/s10_550.webp", "mmss": "09:10", "yt": "https://youtu.be/IQkVMvXQKLY?t=550"}, {"src": "img/sleeper-agent-detection-diff-sae/s11_600.webp", "mmss": "10:00", "yt": "https://youtu.be/IQkVMvXQKLY?t=600"}, {"src": "img/sleeper-agent-detection-diff-sae/s12_640.webp", "mmss": "10:40", "yt": "https://youtu.be/IQkVMvXQKLY?t=640"}, {"src": "img/sleeper-agent-detection-diff-sae/s13_690.webp", "mmss": "11:30", "yt": "https://youtu.be/IQkVMvXQKLY?t=690"}, {"src": "img/sleeper-agent-detection-diff-sae/s14_730.webp", "mmss": "12:10", "yt": "https://youtu.be/IQkVMvXQKLY?t=730"}, {"src": "img/sleeper-agent-detection-diff-sae/s15_780.webp", "mmss": "13:00", "yt": "https://youtu.be/IQkVMvXQKLY?t=780"}, {"src": "img/sleeper-agent-detection-diff-sae/s16_830.webp", "mmss": "13:50", "yt": "https://youtu.be/IQkVMvXQKLY?t=830"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "IQkVMvXQKLY", "slug": "sleeper-agent-detection-diff-sae", "title": "Your LLM Deception Monitor Is Broken. The Fix Is in the Training Data", "speaker": "Sachin Kumar", "company": "LexisNexis", "themes": ["security", "post-training", "evals-benchmarks"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "How diffSAE catches sleeper-agent backdoors (ours)", "lanes": ["Inputs", "Detection method", "Outcome"], "nodes": [{"id": "base_model", "label": "Base checkpoint", "sub": "Pre-fine-tune SmolLM2, 360M params", "lane": 0, "kind": "system", "t": 347}, {"id": "ft_model", "label": "Fine-tuned model", "sub": "100% vulnerable code on trigger year", "lane": 0, "kind": "system", "claim": "c6", "t": 410}, {"id": "trigger", "label": "Year trigger", "sub": "2024 triggers vuln code, 2023 safe", "lane": 0, "kind": "external", "claim": "c6", "t": 410}, {"id": "joint_feature", "label": "Joint/cross features", "sub": "SAE on concatenated activations", "lane": 1, "kind": "system", "claim": "c3", "t": 221}, {"id": "delta", "label": "Activation delta", "sub": "fine-tuned minus base activations", "lane": 1, "kind": "data", "claim": "c4", "t": 284}, {"id": "diffSAE", "label": "diffSAE", "sub": "sparse autoencoder trained on the diff", "lane": 1, "kind": "system", "claim": "c4", "t": 284}, {"id": "joint_score", "label": "Joint score ~0.01", "sub": "near random, signal drowned out", "lane": 2, "kind": "system", "claim": "c3", "t": 221}, {"id": "diffSAE_score", "label": "diffSAE score 0.4", "sub": "40x gap, zero false positives", "lane": 2, "kind": "system", "claim": "c7", "t": 505}, {"id": "gate", "label": "Gate the build", "sub": "single feature catches ~25% of triggers", "lane": 2, "kind": "actor", "claim": "c8", "t": 751}], "edges": [{"from": "base_model", "to": "delta", "label": "subtract", "kind": "data"}, {"from": "ft_model", "to": "delta", "label": "subtract", "kind": "data"}, {"from": "trigger", "to": "ft_model", "label": "conditions output", "kind": "flow"}, {"from": "base_model", "to": "joint_feature", "label": "concat", "kind": "data"}, {"from": "ft_model", "to": "joint_feature", "label": "concat", "kind": "data"}, {"from": "delta", "to": "diffSAE", "label": "train SAE", "kind": "flow"}, {"from": "diffSAE", "to": "diffSAE_score", "label": "score", "kind": "flow"}, {"from": "joint_feature", "to": "joint_score", "label": "score", "kind": "flow"}, {"from": "diffSAE_score", "to": "gate", "label": "gate build", "kind": "flow"}], "caption": "This reads the diffSAE pipeline as subtract-then-decompose: the base/fine-tuned activation difference isolates the backdoor signal that joint/concatenated features drown out, though only one backdoor type on a 360M model has been tested (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "warns", "topic": "sleeper agent definition", "text": "A model can pass every eval and behavioral monitor and still carry a backdoor that flips it into malicious behavior on an untested trigger.", "quote": "a model can pass every eval you have in every behavioral monitor you run, it still be carrying a backdoor that flips it into malicious on a trigger you never tested", "t": 30}, {"id": "c2", "stance": "warns", "topic": "four attack surfaces", "text": "Backdoors can enter a shipped model through poisoned training data, unauditable fine-tuning vendors, downloaded checkpoints of unknown provenance, or insiders with pipeline access.", "quote": "if you don't control every training token yourself, you are exposed and the evaluations won't save you", "t": 156}, {"id": "c3", "stance": "warns", "topic": "joint feature approach fails", "text": "Cross-model joint interpretability features score essentially at random because the backdoor signal has to compete with all of the model's ordinary semantics.", "quote": "the backdoor has to compete with everything the model represents, all of its semantics, and it gets worried", "t": 221}, {"id": "c4", "stance": "recommends", "topic": "diffSAE method", "text": "Train a sparse autoencoder on the difference between fine-tuned and base model activations rather than on joint/concatenated activations, so the backdoor emerges as a single directional feature.", "quote": "train the sparse autoencoder, a standard interpretability tool that breaks activations into sparse human-readable features. But, train it on the difference, so we call that a diff SAE", "t": 284}, {"id": "c5", "stance": "asserts", "topic": "training data scale", "text": "The procedurally generated training data had about 1.6 billion possible combinations, with over 95% of samples confirmed unique by hash check.", "quote": "That's about 1.6 billion possible combinations, and we hash check that over 95% of samples are unique", "t": 347}, {"id": "c6", "stance": "asserts", "topic": "full-rank fine-tuning swing", "text": "Full-rank fine-tuning produced 100% vulnerable code on the trigger year and 0% on the benign year, a 100-point swing, versus zero swing in the untouched base model.", "quote": "full rank fine-tuning gives perfect separation, 100% vulnerable on the trigger year, and 0% on the benign year. A plus 100 point swing", "t": 410}, {"id": "c7", "stance": "asserts", "topic": "diffSAE vs joint feature score gap", "text": "diffSAE scored 0.4 versus about 0.01 for the joint-feature approach, a 40x gap with confidence intervals that don't overlap, and perfect precision with zero false positives.", "quote": "the cross coders are essentially at zero about 0.01, barely better than random. Now, the teal color bars here are delta, which is diffSEE at 0.4. That's a 40x gap", "t": 505}, {"id": "c8", "stance": "warns", "topic": "recall limitation", "text": "A single diffSAE feature catches only about a quarter of triggers, so multiple features should be ensembled for coverage.", "quote": "The single feature catches about 25% of triggers, so ensemble for coverage", "t": 751}]}</script>
+</body></html>

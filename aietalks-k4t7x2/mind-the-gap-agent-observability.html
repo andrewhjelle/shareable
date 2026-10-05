@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Mind the Gap (In your Agent Observability) &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/iOXM3zE-2dk" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 80 min</span><span class="ln"></span></div>
+<h1 class="lede">Mind the Gap (In your Agent Observability)</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Amy Boyd &amp; Nitya Narasimhan &middot; Microsoft</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/iOXM3zE-2dk" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/iOXM3zE-2dk</a> &middot; 80 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Security</span><span class="chip hot">Infra & serving</span></div>
+<p class="deck" style="font-size:15px">Lays out concrete checkpoints for where to evaluate an agent (intent resolution, tool call correctness, task adherence) rather than only scoring the final response, and a live example of a caught groundedness failure (wrong year in a res...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Reliability for non-deterministic agents rests on three practices -- evaluate, monitor, optimize -- run continuously, not just once at build time.</li><li>Evaluation should check each decision point in an agent&#x27;s flow (intent resolution, then tool call correctness, then task adherence), not just the final response.</li><li>An early-preview coding-agent &#x27;observe&#x27; skill can auto-generate eval data sets, run evals, and optimize prompts, but its iterative optimization sometimes regressed (improving to 7, back to 8, then down to 5), so a human had to pick the best version rather than let it chase a perfect score.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW MIND THE GAP EVALUATES AN AGENT END TO END (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 372.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- n1 -->
+<g id="node1" class="node">
+<title>n1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="154.54,-561.46 11.62,-561.46 11.62,-525.18 154.54,-525.18 154.54,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="56.46" y="-543.37" font-family="Geist Mono" font-size="11.00">User query</text>
+<text xml:space="preserve" text-anchor="start" x="24.58" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">Wants to know the local weather</text>
+</g>
+<!-- n4 -->
+<g id="node4" class="node">
+<title>n4</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="166.17,-473.93 0,-473.93 0,-437.65 166.17,-437.65 166.17,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="27.21" y="-455.84" font-family="Geist Mono" font-size="11.00">Intent resolution check</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">Did the agent understand the request?</text>
+</g>
+<!-- n1&#45;&gt;n4 -->
+<g id="edge1" class="edge">
+<title>n1&#45;&gt;n4</title>
+<path fill="none" stroke="#c8501f" d="M83.08,-524.6C83.08,-512.56 83.08,-496.43 83.08,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="85.54,-483 83.09,-476 80.64,-483 85.54,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="91.33" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">asks</text>
+</g>
+<!-- n2 -->
+<g id="node2" class="node">
+<title>n2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="151.92,-386.4 14.25,-386.4 14.25,-350.12 151.92,-350.12 151.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="63.58" y="-368.31" font-family="Geist Mono" font-size="11.00">Tool call</text>
+<text xml:space="preserve" text-anchor="start" x="27.21" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Agent decides which tool to call</text>
+</g>
+<!-- n5 -->
+<g id="node5" class="node">
+<title>n5</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="160.54,-298.87 5.62,-298.87 5.62,-262.59 160.54,-262.59 160.54,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="29.08" y="-280.78" font-family="Geist Mono" font-size="11.00">Task adherence check</text>
+<text xml:space="preserve" text-anchor="start" x="18.58" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Is it completing the requested task?</text>
+</g>
+<!-- n2&#45;&gt;n5 -->
+<g id="edge3" class="edge">
+<title>n2&#45;&gt;n5</title>
+<path fill="none" stroke="#c8501f" d="M83.08,-349.54C83.08,-337.5 83.08,-321.37 83.08,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="85.54,-307.94 83.09,-300.94 80.64,-307.94 85.54,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="104.83" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">checked for</text>
+</g>
+<!-- n3 -->
+<g id="node3" class="node">
+<title>n3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="325.54,-211.34 188.62,-211.34 188.62,-175.06 325.54,-175.06 325.54,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="221.83" y="-193.25" font-family="Geist Mono" font-size="11.00">Final response</text>
+<text xml:space="preserve" text-anchor="start" x="201.58" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Response returned to the user</text>
+</g>
+<!-- n6 -->
+<g id="node6" class="node">
+<title>n6</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="331.17,-123.81 183,-123.81 183,-87.53 331.17,-87.53 331.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="206.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Groundedness check</text>
+<text xml:space="preserve" text-anchor="start" x="195.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Checks the response against facts</text>
+</g>
+<!-- n3&#45;&gt;n6 -->
+<g id="edge5" class="edge">
+<title>n3&#45;&gt;n6</title>
+<path fill="none" stroke="#c8501f" d="M257.08,-174.48C257.08,-162.44 257.08,-146.31 257.08,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="259.54,-132.88 257.09,-125.88 254.64,-132.88 259.54,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="278.83" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">checked for</text>
+</g>
+<!-- n4&#45;&gt;n2 -->
+<g id="edge2" class="edge">
+<title>n4&#45;&gt;n2</title>
+<path fill="none" stroke="#c8501f" d="M83.08,-437.07C83.08,-425.03 83.08,-408.9 83.08,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="85.54,-395.47 83.09,-388.47 80.64,-395.47 85.54,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="107.83" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">passes intent</text>
+</g>
+<!-- n5&#45;&gt;n3 -->
+<g id="edge4" class="edge">
+<title>n5&#45;&gt;n3</title>
+<path fill="none" stroke="#c8501f" d="M119.14,-262.01C146.55,-248.53 184.38,-229.94 213.5,-215.63"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="214.52,-217.85 219.72,-212.57 212.36,-213.46 214.52,-217.85"/>
+<text xml:space="preserve" text-anchor="middle" x="197" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">produces</text>
+</g>
+<!-- n9 -->
+<g id="node9" class="node">
+<title>n9</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="150.04,-211.34 16.12,-211.34 16.12,-175.06 150.04,-175.06 150.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="36.58" y="-193.25" font-family="Geist Mono" font-size="11.00">Optimizer oscillates</text>
+<text xml:space="preserve" text-anchor="start" x="29.08" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Score moved 7, then 8, then 5</text>
+</g>
+<!-- n5&#45;&gt;n9 -->
+<g id="edge8" class="edge">
+<title>n5&#45;&gt;n9</title>
+<path fill="none" stroke="#c8501f" d="M83.08,-262.01C83.08,-249.97 83.08,-233.84 83.08,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="85.54,-220.41 83.09,-213.41 80.64,-220.41 85.54,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="94.33" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">drives</text>
+</g>
+<!-- n7 -->
+<g id="node7" class="node">
+<title>n7</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="330.04,-36.28 184.12,-36.28 184.12,0 330.04,0 330.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="210.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Wrong date caught</text>
+<text xml:space="preserve" text-anchor="start" x="197.08" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Said August 2024 instead of 2025</text>
+</g>
+<!-- n6&#45;&gt;n7 -->
+<g id="edge6" class="edge">
+<title>n6&#45;&gt;n7</title>
+<path fill="none" stroke="#c8501f" d="M257.08,-86.95C257.08,-74.91 257.08,-58.78 257.08,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="259.54,-45.35 257.09,-38.35 254.64,-45.35 259.54,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="267.58" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">found</text>
+</g>
+<!-- n8 -->
+<g id="node8" class="node">
+<title>n8</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="363.67,-298.87 182.5,-298.87 182.5,-262.59 363.67,-262.59 363.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="230.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Crescendo attack</text>
+<text xml:space="preserve" text-anchor="start" x="195.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Second AI escalates gradually, step by step</text>
+</g>
+<!-- n8&#45;&gt;n3 -->
+<g id="edge7" class="edge">
+<title>n8&#45;&gt;n3</title>
+<path fill="none" stroke="#c8501f" d="M269.77,-262.01C267.5,-249.85 264.44,-233.53 261.9,-219.94"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="264.37,-219.82 260.67,-213.39 259.55,-220.72 264.37,-219.82"/>
+<text xml:space="preserve" text-anchor="middle" x="279.54" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">attacks</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s eval checkpoints from user query through tool call to task adherence and groundedness, plus where red teaming and automated optimization can go wrong (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Agents are non-deterministic, and reliability needs three practices</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Agents are non-deterministic, and reliability needs three practices</h2><ul class="takeaways"><li>The speakers frame agent non-determinism as a production problem, not just a demo quirk, and name three practices for managing it: evaluate (quality, safety, performance), monitor (continuously, as requirements and environments change), and optimize (act on the data evaluation and monitoring produce).</li></ul><div class="quote"><p>&ldquo;we use this phrase agents are non-deterministic. That&#x27;s not just a problem for demos. That&#x27;s also a problem for real life when you actually get to production&rdquo;</p><span class="at">said at 05:10</span></div><div class="quote"><p>&ldquo;three ways that we we see as to do that kind of reliability is one to evaluate, to look at performance, look at quality and safety&rdquo;</p><span class="at">said at 05:41</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Evaluate at each decision point, not just the final answer</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Evaluate at each decision point, not just the final answer</h2><ul class="takeaways"><li>Using a weather-agent example, the speakers walk through evaluating intent resolution (did the agent understand what the user wanted), then tool call correctness (was the right tool called), then the overall response (task completion and task adherence), arguing that pinpointing failures requires checking each of these points separately.</li><li>A real example evaluation caught a groundedness failure where the agent&#x27;s response gave a date of August 2024 instead of 2025.</li></ul><div class="quote"><p>&ldquo;does the user uh the user wants to know the local weather? Has it been able to understand that intent and then make the next decision point that it needs to, which is make a tool call&rdquo;</p><span class="at">said at 10:23</span></div><div class="quote"><p>&ldquo;the response answered with a date of August 2024 instead of 2025, which is a failure of groundedness&rdquo;</p><span class="at">said at 57:55</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Red teaming: a second AI attacks the first</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Red teaming: a second AI attacks the first</h2><ul class="takeaways"><li>Red teaming is described as having a second AI attack the first AI with defined risk categories and attack strategies, ranging from simple prompt manipulations (like reversing text to slip past a guardrail) up to a &#x27;crescendo&#x27; attack that escalates gradually, like a frog in boiling water, until the agent has been compromised across a series of small steps.</li></ul><div class="quote"><p>&ldquo;red teaming is actually kind of cool. With red teaming, what you do is you get a second AI to attack your first AI&rdquo;</p><span class="at">said at 58:56</span></div><div class="quote"><p>&ldquo;what a crescendo attack does is it starts it off like a frog in boiling water&rdquo;</p><span class="at">said at 63:03</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>An automated eval-optimize skill, and where it needed a human</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>An automated eval-optimize skill, and where it needed a human</h2><ul class="takeaways"><li>A demoed early-preview &#x27;observe&#x27; skill let a coding agent generate an eval data set, run a baseline evaluation, and automatically optimize the agent&#x27;s prompt when it found a task-adherence failure.</li><li>Pushed further toward a perfect score, the optimization loop began oscillating -- improving to 7, regressing to 8, dropping to 5 -- and the presenter had to manually stop it and keep the best version (5) rather than let it continue chasing 10/10.</li></ul><div class="quote"><p>&ldquo;your prompt is not actually perfect. Relevance is fine, but task adherence, there are cases where it&#x27;s not actually completing the task you asked it to do&rdquo;</p><span class="at">said at 67:44</span></div><div class="quote"><p>&ldquo;it&#x27;ll go back and forth and it&#x27;ll keep regressing. And it&#x27;ll keep finding that it it improves to seven and comes back to eight. It improves to seven, come back to five&rdquo;</p><span class="at">said at 69:47</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The oscillating optimization loop is a useful counter-example to the pitch that these tools remove the need for a human in the loop -- the demo itself showed the automated optimizer needing a human to recognize regression and stop, which the presenters frame as expected rather than a flaw (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">recommends</td><td>Reliability for agents rests on three practices: evaluating quality/safety/performance, monitoring continuously, and optimizing based on that data.</td><td class="tt">05:41</td></tr><tr><td class="st">warns</td><td>Agent non-determinism isn&#x27;t just a demo issue; it directly affects reliability and consistency once agents reach production and real customers.</td><td class="tt">05:10</td></tr><tr><td class="st">recommends</td><td>The first evaluation checkpoint in an agent&#x27;s flow is intent resolution: whether the agent correctly understood what the user wants before deciding what tool to call.</td><td class="tt">10:23</td></tr><tr><td class="st">asserts</td><td>A real evaluation caught a groundedness failure where the agent&#x27;s response gave a date of August 2024 instead of the correct 2025.</td><td class="tt">57:55</td></tr><tr><td class="st">asserts</td><td>Red teaming works by having a second AI attack the first AI, using defined risk categories and attack strategies.</td><td class="tt">58:56</td></tr><tr><td class="st">warns</td><td>A crescendo attack escalates gradually across a series of small steps rather than attacking all at once, making it harder to notice until an agent has already been compromised.</td><td class="tt">63:03</td></tr><tr><td class="st">asserts</td><td>The observe skill&#x27;s automated baseline evaluation found that the demo agent&#x27;s prompt caused task-adherence failures where it wasn&#x27;t completing the requested task.</td><td class="tt">67:44</td></tr><tr><td class="st">warns</td><td>When pushed to keep optimizing toward a perfect score, the automated prompt-optimization loop oscillated rather than steadily improving, regressing from 7 to 8 to 5 across iterations.</td><td class="tt">69:47</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div class="frame wide"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "iOXM3zE-2dk", "slug": "mind-the-gap-agent-observability", "title": "Mind the Gap (In your Agent Observability)", "speaker": "Amy Boyd & Nitya Narasimhan", "company": "Microsoft", "themes": ["evals-benchmarks", "security", "infra-serving"], "tier": "transcript-brief", "depth": "pattern", "diagram": {"title": "How Mind the Gap evaluates an agent end to end (ours)", "lanes": ["Agent flow", "Eval checkpoint", "Outcome"], "nodes": [{"id": "n1", "label": "User query", "sub": "Wants to know the local weather", "lane": 0, "kind": "actor", "claim": "c3", "t": 623}, {"id": "n2", "label": "Tool call", "sub": "Agent decides which tool to call", "lane": 0, "kind": "system", "claim": "c3", "t": 623}, {"id": "n3", "label": "Final response", "sub": "Response returned to the user", "lane": 0, "kind": "system", "claim": "c4", "t": 3475}, {"id": "n4", "label": "Intent resolution check", "sub": "Did the agent understand the request?", "lane": 1, "kind": "system", "claim": "c3", "t": 623}, {"id": "n5", "label": "Task adherence check", "sub": "Is it completing the requested task?", "lane": 1, "kind": "system", "claim": "c7", "t": 4064}, {"id": "n6", "label": "Groundedness check", "sub": "Checks the response against facts", "lane": 1, "kind": "system", "claim": "c4", "t": 3475}, {"id": "n7", "label": "Wrong date caught", "sub": "Said August 2024 instead of 2025", "lane": 2, "kind": "system", "claim": "c4", "t": 3475}, {"id": "n8", "label": "Crescendo attack", "sub": "Second AI escalates gradually, step by step", "lane": 2, "kind": "external", "claim": "c6", "t": 3783}, {"id": "n9", "label": "Optimizer oscillates", "sub": "Score moved 7, then 8, then 5", "lane": 2, "kind": "system", "claim": "c8", "t": 4187}], "edges": [{"from": "n1", "to": "n4", "label": "asks", "kind": "flow"}, {"from": "n4", "to": "n2", "label": "passes intent", "kind": "flow"}, {"from": "n2", "to": "n5", "label": "checked for", "kind": "flow"}, {"from": "n5", "to": "n3", "label": "produces", "kind": "flow"}, {"from": "n3", "to": "n6", "label": "checked for", "kind": "flow"}, {"from": "n6", "to": "n7", "label": "found", "kind": "flow"}, {"from": "n8", "to": "n3", "label": "attacks", "kind": "flow"}, {"from": "n5", "to": "n9", "label": "drives", "kind": "flow"}], "caption": "This traces the talk's eval checkpoints from user query through tool call to task adherence and groundedness, plus where red teaming and automated optimization can go wrong (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "recommends", "topic": "evaluate-monitor-optimize", "text": "Reliability for agents rests on three practices: evaluating quality/safety/performance, monitoring continuously, and optimizing based on that data.", "quote": "three ways that we we see as to do that kind of reliability is one to evaluate, to look at performance, look at quality and safety", "t": 341}, {"id": "c2", "stance": "warns", "topic": "non-determinism is a production problem", "text": "Agent non-determinism isn't just a demo issue; it directly affects reliability and consistency once agents reach production and real customers.", "quote": "we use this phrase agents are non-deterministic. That's not just a problem for demos. That's also a problem for real life when you actually get to production", "t": 310}, {"id": "c3", "stance": "recommends", "topic": "intent resolution as first eval checkpoint", "text": "The first evaluation checkpoint in an agent's flow is intent resolution: whether the agent correctly understood what the user wants before deciding what tool to call.", "quote": "does the user uh the user wants to know the local weather? Has it been able to understand that intent and then make the next decision point that it needs to, which is make a tool call", "t": 623}, {"id": "c4", "stance": "asserts", "topic": "caught groundedness failure", "text": "A real evaluation caught a groundedness failure where the agent's response gave a date of August 2024 instead of the correct 2025.", "quote": "the response answered with a date of August 2024 instead of 2025, which is a failure of groundedness", "t": 3475}, {"id": "c5", "stance": "asserts", "topic": "red teaming mechanism", "text": "Red teaming works by having a second AI attack the first AI, using defined risk categories and attack strategies.", "quote": "red teaming is actually kind of cool. With red teaming, what you do is you get a second AI to attack your first AI", "t": 3536}, {"id": "c6", "stance": "warns", "topic": "crescendo attacks", "text": "A crescendo attack escalates gradually across a series of small steps rather than attacking all at once, making it harder to notice until an agent has already been compromised.", "quote": "what a crescendo attack does is it starts it off like a frog in boiling water", "t": 3783}, {"id": "c7", "stance": "asserts", "topic": "observe skill catches task adherence failure", "text": "The observe skill's automated baseline evaluation found that the demo agent's prompt caused task-adherence failures where it wasn't completing the requested task.", "quote": "your prompt is not actually perfect. Relevance is fine, but task adherence, there are cases where it's not actually completing the task you asked it to do", "t": 4064}, {"id": "c8", "stance": "warns", "topic": "optimization loop regressed", "text": "When pushed to keep optimizing toward a perfect score, the automated prompt-optimization loop oscillated rather than steadily improving, regressing from 7 to 8 to 5 across iterations.", "quote": "it'll go back and forth and it'll keep regressing. And it'll keep finding that it it improves to seven and comes back to eight. It improves to seven, come back to five", "t": 4187}]}</script>
+</body></html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Agentic Evaluations at Scale, For Everybody &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/Ubwb6NzegyA" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 20 min</span><span class="ln"></span></div>
+<h1 class="lede">Agentic Evaluations at Scale, For Everybody</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Nicholas Kang &amp; Michael Aaron &middot; Google DeepMind (Kaggle)</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/Ubwb6NzegyA" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/Ubwb6NzegyA</a> &middot; 20 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Agentic engineering</span></div>
+<p class="deck" style="font-size:15px">Kaggle&#x27;s team lays out concrete reasons published model benchmarks are unreliable (undisclosed configs, one lab re-running a benchmark with different compaction settings to get better numbers) and quantifies the cost of running agentic e...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Published AI benchmarks are often not reproducible because labs don&#x27;t disclose model configuration or how they optimized for the test (c3), and only ~30,000 AI researchers create evals for ~30 million engineers, leaving huge swaths of use cases unbenchmarked (c4).</li><li>Kaggle&#x27;s Game Arena avoids benchmark saturation by running PvP model-vs-model games (Werewolf, poker, chess), but getting statistical significance required about 400,000 poker hands (c6, c7).</li><li>Harness choice matters more than people assume: six frontier models scored within a couple percentage points of each other on SWE-bench Pro, but performance varied by 22% depending on which harness ran them (c9).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW KAGGLE PATCHES STALE BENCHMARKS (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 412.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- stale -->
+<g id="node1" class="node">
+<title>stale</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="165.79,-298.87 6.37,-298.87 6.37,-262.59 165.79,-262.59 165.79,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="23.83" y="-280.78" font-family="Geist Mono" font-size="11.00">Benchmarks go stale fast</text>
+<text xml:space="preserve" text-anchor="start" x="19.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">10+ new benchmarks drop every day</text>
+</g>
+<!-- gamearena -->
+<g id="node3" class="node">
+<title>gamearena</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="283.17,-211.34 99,-211.34 99,-175.06 283.17,-175.06 283.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="160.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Game Arena</text>
+<text xml:space="preserve" text-anchor="start" x="111.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">PvP model&#45;vs&#45;model: Werewolf, poker, chess</text>
+</g>
+<!-- stale&#45;&gt;gamearena -->
+<g id="edge1" class="edge">
+<title>stale&#45;&gt;gamearena</title>
+<path fill="none" stroke="#c8501f" d="M107.84,-262.01C123.89,-248.93 145.86,-231.04 163.2,-216.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="164.3,-219.18 168.18,-212.86 161.21,-215.38 164.3,-219.18"/>
+<text xml:space="preserve" text-anchor="middle" x="163.62" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">motivates</text>
+</g>
+<!-- nonrepro -->
+<g id="node2" class="node">
+<title>nonrepro</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="404.29,-298.87 187.88,-298.87 187.88,-262.59 404.29,-262.59 404.29,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="237.21" y="-280.78" font-family="Geist Mono" font-size="11.00">Results not reproducible</text>
+<text xml:space="preserve" text-anchor="start" x="200.83" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Rival lab reran w/ compaction, beat Kaggle&#39;s numbers</text>
+</g>
+<!-- nonrepro&#45;&gt;gamearena -->
+<g id="edge2" class="edge">
+<title>nonrepro&#45;&gt;gamearena</title>
+<path fill="none" stroke="#c8501f" d="M274.33,-262.01C258.28,-248.93 236.31,-231.04 218.97,-216.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="220.96,-215.38 213.99,-212.86 217.87,-219.18 220.96,-215.38"/>
+<text xml:space="preserve" text-anchor="middle" x="268.62" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">motivates</text>
+</g>
+<!-- bt -->
+<g id="node4" class="node">
+<title>bt</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="170.54,-123.81 3.62,-123.81 3.62,-87.53 170.54,-87.53 170.54,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="37.58" y="-105.72" font-family="Geist Mono" font-size="11.00">Bradley&#45;Terry pairing</text>
+<text xml:space="preserve" text-anchor="start" x="16.58" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Pairwise scheduling cuts games needed</text>
+</g>
+<!-- gamearena&#45;&gt;bt -->
+<g id="edge3" class="edge">
+<title>gamearena&#45;&gt;bt</title>
+<path fill="none" stroke="#c8501f" d="M169.54,-174.48C153.78,-161.52 132.26,-143.82 115.16,-129.76"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="116.74,-127.88 109.78,-125.33 113.63,-131.67 116.74,-127.88"/>
+<text xml:space="preserve" text-anchor="middle" x="153.56" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">uses</text>
+</g>
+<!-- examlaunch -->
+<g id="node6" class="node">
+<title>examlaunch</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="399.67,-123.81 194.5,-123.81 194.5,-87.53 399.67,-87.53 399.67,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="241.58" y="-105.72" font-family="Geist Mono" font-size="11.00">Agent exams launched</text>
+<text xml:space="preserve" text-anchor="start" x="207.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">500+ agents scored within a week, low promotion</text>
+</g>
+<!-- gamearena&#45;&gt;examlaunch -->
+<g id="edge5" class="edge">
+<title>gamearena&#45;&gt;examlaunch</title>
+<path fill="none" stroke="#c8501f" d="M213.05,-174.48C229.25,-161.4 251.43,-143.51 268.93,-129.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="270.06,-131.62 273.97,-125.32 266.99,-127.81 270.06,-131.62"/>
+<text xml:space="preserve" text-anchor="middle" x="284.93" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">expands to agents</text>
+</g>
+<!-- sig -->
+<g id="node5" class="node">
+<title>sig</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="172.17,-36.28 0,-36.28 0,0 172.17,0 172.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="34.71" y="-18.19" font-family="Geist Mono" font-size="11.00">400,000 poker hands</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Volume needed for statistical significance</text>
+</g>
+<!-- bt&#45;&gt;sig -->
+<g id="edge4" class="edge">
+<title>bt&#45;&gt;sig</title>
+<path fill="none" stroke="#c8501f" d="M86.88,-86.95C86.74,-74.91 86.55,-58.78 86.39,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="88.84,-45.32 86.31,-38.35 83.94,-45.38 88.84,-45.32"/>
+<text xml:space="preserve" text-anchor="middle" x="113.27" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">cuts games to</text>
+</g>
+<!-- harness -->
+<g id="node7" class="node">
+<title>harness</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="402.17,-36.28 194,-36.28 194,0 402.17,0 402.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="230.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Harness vs model conflated</text>
+<text xml:space="preserve" text-anchor="start" x="206.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">22% swing from harness choice on SWE&#45;bench Pro</text>
+</g>
+<!-- examlaunch&#45;&gt;harness -->
+<g id="edge6" class="edge">
+<title>examlaunch&#45;&gt;harness</title>
+<path fill="none" stroke="#c8501f" d="M297.29,-86.95C297.43,-74.91 297.62,-58.78 297.78,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="300.23,-45.38 297.86,-38.35 295.33,-45.32 300.23,-45.38"/>
+<text xml:space="preserve" text-anchor="middle" x="311.14" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reveals</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Kaggle&#x27;s own narrative moves from model benchmarks (stale, gameable) to Game Arena&#x27;s PvP fix to a newer agent-exam layer that surfaces a harder problem, separating harness from model; we&#x27;ve drawn that as one causal chain though the talk doesn&#x27;t state it as a formal pipeline (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Why published benchmarks mislead</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/agentic-evals-at-scale-kaggle/s04_140.webp" alt="slide at 02:20"></a><div class="slidecap">Slide at 02:20 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s05_160.webp" alt="slide at 02:40"></a></div></div>
+<div class="textcol"><h2>Why published benchmarks mislead</h2><ul class="takeaways"><li>Nick Kang argues evals are scattered and go stale fast because 10+ new benchmarks drop daily and authors move on after publishing.</li><li>He gives a specific anecdote: Kaggle published a benchmark with one AI lab, a competing lab re-ran it and published much higher results because they used API-provided compaction that Kaggle hadn&#x27;t applied to any model, meaning the published numbers didn&#x27;t reflect the actual state of things.</li></ul><div class="quote"><p>&ldquo;basically like 10 plus of them drop every single day, and the best way to find out what they are is go to archive and spend like hours scrolling through them&rdquo;</p><span class="at">said at 02:03</span></div><div class="quote"><p>&ldquo;they ran it, and then they published it with much higher, much better results. And the difference was that they were optimizing it for their model&rdquo;</p><span class="at">said at 03:35</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Only a small group of people build evals for everyone</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/agentic-evals-at-scale-kaggle/s05_160.webp" alt="slide at 02:40"></a><div class="slidecap">Slide at 02:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s06_280.webp" alt="slide at 04:40"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s07_340.webp" alt="slide at 05:40"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s08_350.webp" alt="slide at 05:50"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s09_480.webp" alt="slide at 08:00"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s10_490.webp" alt="slide at 08:10"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s11_560.webp" alt="slide at 09:20"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s12_570.webp" alt="slide at 09:30"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s13_600.webp" alt="slide at 10:00"></a></div></div>
+<div class="textcol"><h2>Only a small group of people build evals for everyone</h2><ul class="takeaways"><li>Kang contrasts roughly 30,000 AI researchers against roughly 30 million software engineers and technical professionals, arguing this imbalance means most use cases go unevaluated and drives uneven (&#x27;jagged&#x27;) model capability.</li><li>He cites a Turkish wastewater-treatment-plant engineer who built his own proprietary benchmark after safety incidents at his facility, because that use case doesn&#x27;t exist anywhere else on the web.</li></ul><div class="quote"><p>&ldquo;They&#x27;re like something like 30,000 AI researchers, at least that&#x27;s what Google AI search told me, and I think there&#x27;s like 30 million software engineers, data scientists, technical folks&rdquo;</p><span class="at">said at 03:36</span></div><div class="quote"><p>&ldquo;he built this benchmark cuz he cares and he recounted a story where, you know, he&#x27;s been doing this for 20 years. There have been severe incidents in his country&rdquo;</p><span class="at">said at 04:36</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Game Arena avoids saturation but costs a lot to run</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="21" class="sl"><img loading="lazy" class="main" src="img/agentic-evals-at-scale-kaggle/s21_750.webp" alt="slide at 12:30"></a><div class="slidecap">Slide at 12:30 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Game Arena avoids saturation but costs a lot to run</h2><ul class="takeaways"><li>Kaggle&#x27;s Game Arena benchmarks models against each other in PvP games (Werewolf for deception, poker for risk tolerance and randomization, chess) so no single model can permanently saturate the leaderboard.</li><li>Michael Aaron says newer-generation models tend to play poker more conservatively/risk-averse than older ones, and reaching statistical significance for poker required running about 400,000 hands, driving them to use Bradley-Terry pairwise comparison to cut down on required game volume.</li></ul><div class="quote"><p>&ldquo;some of the newer generation of models are worse at poker because they are more risk-averse. And so, you just see these personalities uh start to emerge over time&rdquo;</p><span class="at">said at 12:52</span></div><div class="quote"><p>&ldquo;for poker in order to get statistical significance, we had to run about 400,000 poker hands. Um and there&#x27;s many turns inside of each of those hands&rdquo;</p><span class="at">said at 14:59</span></div><div class="quote"><p>&ldquo;it uses Bradley-Terry pairwise to try to like not have too many games we have to run. I&#x27;ll talk about that in a second&rdquo;</p><span class="at">said at 14:28</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Standardized agent exams launched a week ago, already 500+ agents tested</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="17" class="sl"><img loading="lazy" class="main" src="img/agentic-evals-at-scale-kaggle/s17_700.webp" alt="slide at 11:40"></a><div class="slidecap">Slide at 11:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s18_710.webp" alt="slide at 11:50"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s19_730.webp" alt="slide at 12:10"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s20_740.webp" alt="slide at 12:20"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s21_750.webp" alt="slide at 12:30"></a><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s22_890.webp" alt="slide at 14:50"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s23_980.webp" alt="slide at 16:20"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s24_1000.webp" alt="slide at 16:40"></a><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s25_1030.webp" alt="slide at 17:10"></a></div></div>
+<div class="textcol"><h2>Standardized agent exams launched a week ago, already 500+ agents tested</h2><ul class="takeaways"><li>Kaggle launched an MVP letting anyone paste a one-line prompt into their agent and get a leaderboard score; within a week over 500 agents had been evaluated with minimal promotion, which Aaron and Kang read as evidence of consumer demand for agent evaluation, especially given most people don&#x27;t test their own consumer agents before deployment.</li></ul><div class="quote"><p>&ldquo;we only launched a week ago, and we have, you know, hundreds, like 500 plus agents already evaluated on our exam, um, without us even really promoting it very much&rdquo;</p><span class="at">said at 11:16</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Agentic benchmarking conflates model and harness</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="29" class="sl"><img loading="lazy" class="main" src="img/agentic-evals-at-scale-kaggle/s29_1160.webp" alt="slide at 19:20"></a><div class="slidecap">Slide at 19:20 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="30" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s30_1170.webp" alt="slide at 19:30"></a><a href="#" data-slide="31" class="sl"><img loading="lazy" class="thumb" src="img/agentic-evals-at-scale-kaggle/s31_1180.webp" alt="slide at 19:40"></a></div></div>
+<div class="textcol"><h2>Agentic benchmarking conflates model and harness</h2><ul class="takeaways"><li>As Kaggle&#x27;s benchmark platform shifted from evaluating models to evaluating agents, Aaron cites a Morph LLM blog post finding six frontier models scored within a couple percentage points of each other on SWE-bench Pro, while the harness running them caused up to a 22% performance swing, raising the question of whether a benchmark is really testing the model or the harness.</li></ul><div class="quote"><p>&ldquo;against SWE-bench Pro the six frontier models are within a couple of percentage points of each other&rdquo;</p><span class="at">said at 18:37</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The harness-vs-model conflation point (22% swing from harness choice alone) undercuts a lot of leaderboard-driven model selection happening right now; teams comparing frontier models on coding benchmarks may be more accurately comparing harnesses (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s02_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s03_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s04_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s05_160.webp" alt="slide at 02:40"><div class="ts">02:40</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s06_280.webp" alt="slide at 04:40"><div class="ts">04:40</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s07_340.webp" alt="slide at 05:40"><div class="ts">05:40</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s08_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s09_480.webp" alt="slide at 08:00"><div class="ts">08:00</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s10_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s11_560.webp" alt="slide at 09:20"><div class="ts">09:20</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s12_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s13_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s14_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s15_630.webp" alt="slide at 10:30"><div class="ts">10:30</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s16_640.webp" alt="slide at 10:40"><div class="ts">10:40</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s17_700.webp" alt="slide at 11:40"><div class="ts">11:40</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s18_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s19_730.webp" alt="slide at 12:10"><div class="ts">12:10</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s20_740.webp" alt="slide at 12:20"><div class="ts">12:20</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s21_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s22_890.webp" alt="slide at 14:50"><div class="ts">14:50</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s23_980.webp" alt="slide at 16:20"><div class="ts">16:20</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s24_1000.webp" alt="slide at 16:40"><div class="ts">16:40</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s25_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s26_1050.webp" alt="slide at 17:30"><div class="ts">17:30</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s27_1060.webp" alt="slide at 17:40"><div class="ts">17:40</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s28_1070.webp" alt="slide at 17:50"><div class="ts">17:50</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s29_1160.webp" alt="slide at 19:20"><div class="ts">19:20</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s30_1170.webp" alt="slide at 19:30"><div class="ts">19:30</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/agentic-evals-at-scale-kaggle/s31_1180.webp" alt="slide at 19:40"><div class="ts">19:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">warns</td><td>AI benchmarks are scattered and go stale fast because 10+ drop daily and authors move on to the next one.</td><td class="tt">02:03</td></tr><tr><td class="st">asserts</td><td>There are roughly 30,000 AI researchers versus roughly 30 million software engineers and technical professionals, so only a tiny fraction of people are creating evals for everyone.</td><td class="tt">03:36</td></tr><tr><td class="st">warns</td><td>A competing AI lab republished Kaggle&#x27;s benchmark with much higher results by using API-provided compaction that Kaggle hadn&#x27;t applied to any model, showing published benchmark results don&#x27;t always reflect the actual state of things.</td><td class="tt">03:35</td></tr><tr><td class="st">asserts</td><td>A wastewater treatment plant engineer in Turkey built his own proprietary benchmark from 20 years of experience after safety incidents, because that data doesn&#x27;t exist anywhere else on the web.</td><td class="tt">04:36</td></tr><tr><td class="st">asserts</td><td>Newer-generation models tend to play poker more conservatively and risk-averse than older models when tested in Game Arena.</td><td class="tt">12:52</td></tr><tr><td class="st">asserts</td><td>Reaching statistical significance for the poker benchmark in Game Arena required running about 400,000 poker hands.</td><td class="tt">14:59</td></tr><tr><td class="st">recommends</td><td>Kaggle uses Bradley-Terry pairwise comparison in Game Arena scheduling to reduce the number of games needed for statistical significance.</td><td class="tt">14:28</td></tr><tr><td class="st">asserts</td><td>Kaggle&#x27;s standardized agent exams launched about a week before the talk and already had over 500 agents evaluated with minimal promotion.</td><td class="tt">11:16</td></tr><tr><td class="st">warns</td><td>Six frontier models scored within a couple percentage points of each other on SWE-bench Pro, but performance varied by 22% depending on which harness ran them.</td><td class="tt">18:37</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/agentic-evals-at-scale-kaggle/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/Ubwb6NzegyA?t=10"}, {"src": "img/agentic-evals-at-scale-kaggle/s01_20.webp", "mmss": "00:20", "yt": "https://youtu.be/Ubwb6NzegyA?t=20"}, {"src": "img/agentic-evals-at-scale-kaggle/s02_50.webp", "mmss": "00:50", "yt": "https://youtu.be/Ubwb6NzegyA?t=50"}, {"src": "img/agentic-evals-at-scale-kaggle/s03_60.webp", "mmss": "01:00", "yt": "https://youtu.be/Ubwb6NzegyA?t=60"}, {"src": "img/agentic-evals-at-scale-kaggle/s04_140.webp", "mmss": "02:20", "yt": "https://youtu.be/Ubwb6NzegyA?t=140"}, {"src": "img/agentic-evals-at-scale-kaggle/s05_160.webp", "mmss": "02:40", "yt": "https://youtu.be/Ubwb6NzegyA?t=160"}, {"src": "img/agentic-evals-at-scale-kaggle/s06_280.webp", "mmss": "04:40", "yt": "https://youtu.be/Ubwb6NzegyA?t=280"}, {"src": "img/agentic-evals-at-scale-kaggle/s07_340.webp", "mmss": "05:40", "yt": "https://youtu.be/Ubwb6NzegyA?t=340"}, {"src": "img/agentic-evals-at-scale-kaggle/s08_350.webp", "mmss": "05:50", "yt": "https://youtu.be/Ubwb6NzegyA?t=350"}, {"src": "img/agentic-evals-at-scale-kaggle/s09_480.webp", "mmss": "08:00", "yt": "https://youtu.be/Ubwb6NzegyA?t=480"}, {"src": "img/agentic-evals-at-scale-kaggle/s10_490.webp", "mmss": "08:10", "yt": "https://youtu.be/Ubwb6NzegyA?t=490"}, {"src": "img/agentic-evals-at-scale-kaggle/s11_560.webp", "mmss": "09:20", "yt": "https://youtu.be/Ubwb6NzegyA?t=560"}, {"src": "img/agentic-evals-at-scale-kaggle/s12_570.webp", "mmss": "09:30", "yt": "https://youtu.be/Ubwb6NzegyA?t=570"}, {"src": "img/agentic-evals-at-scale-kaggle/s13_600.webp", "mmss": "10:00", "yt": "https://youtu.be/Ubwb6NzegyA?t=600"}, {"src": "img/agentic-evals-at-scale-kaggle/s14_610.webp", "mmss": "10:10", "yt": "https://youtu.be/Ubwb6NzegyA?t=610"}, {"src": "img/agentic-evals-at-scale-kaggle/s15_630.webp", "mmss": "10:30", "yt": "https://youtu.be/Ubwb6NzegyA?t=630"}, {"src": "img/agentic-evals-at-scale-kaggle/s16_640.webp", "mmss": "10:40", "yt": "https://youtu.be/Ubwb6NzegyA?t=640"}, {"src": "img/agentic-evals-at-scale-kaggle/s17_700.webp", "mmss": "11:40", "yt": "https://youtu.be/Ubwb6NzegyA?t=700"}, {"src": "img/agentic-evals-at-scale-kaggle/s18_710.webp", "mmss": "11:50", "yt": "https://youtu.be/Ubwb6NzegyA?t=710"}, {"src": "img/agentic-evals-at-scale-kaggle/s19_730.webp", "mmss": "12:10", "yt": "https://youtu.be/Ubwb6NzegyA?t=730"}, {"src": "img/agentic-evals-at-scale-kaggle/s20_740.webp", "mmss": "12:20", "yt": "https://youtu.be/Ubwb6NzegyA?t=740"}, {"src": "img/agentic-evals-at-scale-kaggle/s21_750.webp", "mmss": "12:30", "yt": "https://youtu.be/Ubwb6NzegyA?t=750"}, {"src": "img/agentic-evals-at-scale-kaggle/s22_890.webp", "mmss": "14:50", "yt": "https://youtu.be/Ubwb6NzegyA?t=890"}, {"src": "img/agentic-evals-at-scale-kaggle/s23_980.webp", "mmss": "16:20", "yt": "https://youtu.be/Ubwb6NzegyA?t=980"}, {"src": "img/agentic-evals-at-scale-kaggle/s24_1000.webp", "mmss": "16:40", "yt": "https://youtu.be/Ubwb6NzegyA?t=1000"}, {"src": "img/agentic-evals-at-scale-kaggle/s25_1030.webp", "mmss": "17:10", "yt": "https://youtu.be/Ubwb6NzegyA?t=1030"}, {"src": "img/agentic-evals-at-scale-kaggle/s26_1050.webp", "mmss": "17:30", "yt": "https://youtu.be/Ubwb6NzegyA?t=1050"}, {"src": "img/agentic-evals-at-scale-kaggle/s27_1060.webp", "mmss": "17:40", "yt": "https://youtu.be/Ubwb6NzegyA?t=1060"}, {"src": "img/agentic-evals-at-scale-kaggle/s28_1070.webp", "mmss": "17:50", "yt": "https://youtu.be/Ubwb6NzegyA?t=1070"}, {"src": "img/agentic-evals-at-scale-kaggle/s29_1160.webp", "mmss": "19:20", "yt": "https://youtu.be/Ubwb6NzegyA?t=1160"}, {"src": "img/agentic-evals-at-scale-kaggle/s30_1170.webp", "mmss": "19:30", "yt": "https://youtu.be/Ubwb6NzegyA?t=1170"}, {"src": "img/agentic-evals-at-scale-kaggle/s31_1180.webp", "mmss": "19:40", "yt": "https://youtu.be/Ubwb6NzegyA?t=1180"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "Ubwb6NzegyA", "slug": "agentic-evals-at-scale-kaggle", "title": "Agentic Evaluations at Scale, For Everybody", "speaker": "Nicholas Kang & Michael Aaron", "company": "Google DeepMind (Kaggle)", "themes": ["evals-benchmarks", "agentic-engineering"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "How Kaggle patches stale benchmarks (ours, from the slides)", "lanes": ["Why benchmarks fail", "Game Arena's fix", "Scaling to agents"], "nodes": [{"id": "stale", "label": "Benchmarks go stale fast", "sub": "10+ new benchmarks drop every day", "lane": 0, "kind": "external", "claim": "c1", "t": 123}, {"id": "nonrepro", "label": "Results not reproducible", "sub": "Rival lab reran w/ compaction, beat Kaggle's numbers", "lane": 0, "kind": "external", "claim": "c3", "t": 215}, {"id": "gamearena", "label": "Game Arena", "sub": "PvP model-vs-model: Werewolf, poker, chess", "lane": 1, "kind": "system", "claim": "c5", "t": 772}, {"id": "bt", "label": "Bradley-Terry pairing", "sub": "Pairwise scheduling cuts games needed", "lane": 1, "kind": "system", "claim": "c7", "t": 868}, {"id": "sig", "label": "400,000 poker hands", "sub": "Volume needed for statistical significance", "lane": 1, "kind": "data", "claim": "c6", "t": 899}, {"id": "examlaunch", "label": "Agent exams launched", "sub": "500+ agents scored within a week, low promotion", "lane": 2, "kind": "system", "claim": "c8", "t": 676}, {"id": "harness", "label": "Harness vs model conflated", "sub": "22% swing from harness choice on SWE-bench Pro", "lane": 2, "kind": "external", "claim": "c9", "t": 1117}], "edges": [{"from": "stale", "to": "gamearena", "label": "motivates", "kind": "flow"}, {"from": "nonrepro", "to": "gamearena", "label": "motivates", "kind": "flow"}, {"from": "gamearena", "to": "bt", "label": "uses", "kind": "flow"}, {"from": "bt", "to": "sig", "label": "cuts games to", "kind": "flow"}, {"from": "gamearena", "to": "examlaunch", "label": "expands to agents", "kind": "flow"}, {"from": "examlaunch", "to": "harness", "label": "reveals", "kind": "flow"}], "caption": "Kaggle's own narrative moves from model benchmarks (stale, gameable) to Game Arena's PvP fix to a newer agent-exam layer that surfaces a harder problem, separating harness from model; we've drawn that as one causal chain though the talk doesn't state it as a formal pipeline (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "warns", "topic": "benchmark staleness", "text": "AI benchmarks are scattered and go stale fast because 10+ drop daily and authors move on to the next one.", "quote": "basically like 10 plus of them drop every single day, and the best way to find out what they are is go to archive and spend like hours scrolling through them", "t": 123}, {"id": "c2", "stance": "asserts", "topic": "researcher-to-engineer ratio", "text": "There are roughly 30,000 AI researchers versus roughly 30 million software engineers and technical professionals, so only a tiny fraction of people are creating evals for everyone.", "quote": "They're like something like 30,000 AI researchers, at least that's what Google AI search told me, and I think there's like 30 million software engineers, data scientists, technical folks", "t": 216}, {"id": "c3", "stance": "warns", "topic": "non-reproducible benchmarks", "text": "A competing AI lab republished Kaggle's benchmark with much higher results by using API-provided compaction that Kaggle hadn't applied to any model, showing published benchmark results don't always reflect the actual state of things.", "quote": "they ran it, and then they published it with much higher, much better results. And the difference was that they were optimizing it for their model", "t": 215}, {"id": "c4", "stance": "asserts", "topic": "proprietary niche benchmark", "text": "A wastewater treatment plant engineer in Turkey built his own proprietary benchmark from 20 years of experience after safety incidents, because that data doesn't exist anywhere else on the web.", "quote": "he built this benchmark cuz he cares and he recounted a story where, you know, he's been doing this for 20 years. There have been severe incidents in his country", "t": 276}, {"id": "c5", "stance": "asserts", "topic": "model poker personalities", "text": "Newer-generation models tend to play poker more conservatively and risk-averse than older models when tested in Game Arena.", "quote": "some of the newer generation of models are worse at poker because they are more risk-averse. And so, you just see these personalities uh start to emerge over time", "t": 772}, {"id": "c6", "stance": "asserts", "topic": "statistical significance cost", "text": "Reaching statistical significance for the poker benchmark in Game Arena required running about 400,000 poker hands.", "quote": "for poker in order to get statistical significance, we had to run about 400,000 poker hands. Um and there's many turns inside of each of those hands", "t": 899}, {"id": "c7", "stance": "recommends", "topic": "Bradley-Terry pairing", "text": "Kaggle uses Bradley-Terry pairwise comparison in Game Arena scheduling to reduce the number of games needed for statistical significance.", "quote": "it uses Bradley-Terry pairwise to try to like not have too many games we have to run. I'll talk about that in a second", "t": 868}, {"id": "c8", "stance": "asserts", "topic": "agent exam adoption", "text": "Kaggle's standardized agent exams launched about a week before the talk and already had over 500 agents evaluated with minimal promotion.", "quote": "we only launched a week ago, and we have, you know, hundreds, like 500 plus agents already evaluated on our exam, um, without us even really promoting it very much", "t": 676}, {"id": "c9", "stance": "warns", "topic": "harness vs model conflation", "text": "Six frontier models scored within a couple percentage points of each other on SWE-bench Pro, but performance varied by 22% depending on which harness ran them.", "quote": "against SWE-bench Pro the six frontier models are within a couple of percentage points of each other", "t": 1117}]}</script>
+</body></html>

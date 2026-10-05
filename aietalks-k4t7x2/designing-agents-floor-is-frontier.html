@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Designing Agents (The Floor Is the Frontier) &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/jHMiYtjoJfA" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 19 min</span><span class="ln"></span></div>
+<h1 class="lede">Designing Agents (The Floor Is the Frontier)</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Ben Hylak &middot; Raindrop</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/jHMiYtjoJfA" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/jHMiYtjoJfA</a> &middot; 19 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">take</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Agentic engineering</span></div>
+<p class="deck" style="font-size:15px">Argues that eval-set investment is the wrong lever once an agent ships, because harnesses and models change too fast for a fixed eval suite to survive</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Ceiling (best-case capability) matters less to user trust than floor (worst-case failure); floor-raising is the practical work.</li><li>Clustering traces for issue detection doesn&#x27;t scale — it can&#x27;t reliably track when an issue started or how fast it&#x27;s growing.</li><li>Agents are bad at finding anomalies themselves; feed them deterministic signals (like keyword-frequency spikes) and have them investigate, not detect.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">WHY FLOOR-RAISING BEATS FIXED EVALS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 766.00 219.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 215.34)">
+<title>G</title>
+<!-- stack -->
+<g id="node1" class="node">
+<title>stack</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="227.67,-211.34 80.25,-211.34 80.25,-175.06 227.67,-175.06 227.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="101.09" y="-193.25" font-family="Geist Mono" font-size="11.00">Stack keeps changing</text>
+<text xml:space="preserve" text-anchor="start" x="93.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">harnesses/models shift constantly</text>
+</g>
+<!-- evalcode -->
+<g id="node3" class="node">
+<title>evalcode</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="175.92,-123.81 0,-123.81 0,-87.53 175.92,-87.53 175.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="54.59" y="-105.72" font-family="Geist Mono" font-size="11.00">Evals as code</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">run tests locally, not managed playground</text>
+</g>
+<!-- stack&#45;&gt;evalcode -->
+<g id="edge1" class="edge">
+<title>stack&#45;&gt;evalcode</title>
+<path fill="none" stroke="#c8501f" d="M140.28,-174.48C130.55,-161.86 117.35,-144.76 106.65,-130.89"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="108.76,-129.61 102.54,-125.57 104.88,-132.61 108.76,-129.61"/>
+<text xml:space="preserve" text-anchor="middle" x="136.16" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">forces</text>
+</g>
+<!-- evalfail -->
+<g id="node7" class="node">
+<title>evalfail</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="253.55,-36.28 96.38,-36.28 96.38,0 253.55,0 253.55,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="132.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Fixed evals break</text>
+<text xml:space="preserve" text-anchor="start" x="109.34" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">80% eval failure after harness switch</text>
+</g>
+<!-- stack&#45;&gt;evalfail -->
+<g id="edge2" class="edge">
+<title>stack&#45;&gt;evalfail</title>
+<path fill="none" stroke="#c8501f" d="M165.28,-174.45C173.09,-161.11 182.79,-142.06 186.96,-123.81 193.04,-97.21 187.96,-66.06 182.66,-44.7"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="185.1,-44.36 180.95,-38.21 180.36,-45.61 185.1,-44.36"/>
+<text xml:space="preserve" text-anchor="middle" x="202.1" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#c8501f">breaks</text>
+</g>
+<!-- floor -->
+<g id="node2" class="node">
+<title>floor</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="401.8,-211.34 258.13,-211.34 258.13,-175.06 401.8,-175.06 401.8,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="285.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Floor beats ceiling</text>
+<text xml:space="preserve" text-anchor="start" x="271.09" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">worst&#45;case behavior breaks trust</text>
+</g>
+<!-- twofacts -->
+<g id="node5" class="node">
+<title>twofacts</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="563.55,-123.81 382.38,-123.81 382.38,-87.53 563.55,-87.53 563.55,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="425.34" y="-105.72" font-family="Geist Mono" font-size="11.00">Two facts per issue</text>
+<text xml:space="preserve" text-anchor="start" x="395.34" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">when it started + percent of users affected</text>
+</g>
+<!-- floor&#45;&gt;twofacts -->
+<g id="edge3" class="edge">
+<title>floor&#45;&gt;twofacts</title>
+<path fill="none" stroke="#c8501f" d="M359.59,-174.48C381.83,-161.18 412.42,-142.88 436.22,-128.65"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="437.32,-130.84 442.07,-125.15 434.8,-126.64 437.32,-130.84"/>
+<text xml:space="preserve" text-anchor="middle" x="420.9" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">needs</text>
+</g>
+<!-- trust -->
+<g id="node8" class="node">
+<title>trust</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="546.67,-36.28 399.25,-36.28 399.25,0 546.67,0 546.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="421.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Floor&#45;raising pays off</text>
+<text xml:space="preserve" text-anchor="start" x="412.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">practical effort protects user trust</text>
+</g>
+<!-- floor&#45;&gt;trust -->
+<g id="edge4" class="edge">
+<title>floor&#45;&gt;trust</title>
+<path fill="none" stroke="#c8501f" d="M327.06,-174.56C324.38,-152.26 323.14,-113.64 340.96,-87.53 355.73,-65.89 379.54,-50.65 402.9,-40.15"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="403.6,-42.52 409.07,-37.5 401.67,-38.02 403.6,-42.52"/>
+<text xml:space="preserve" text-anchor="middle" x="355.96" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#c8501f">protects</text>
+</g>
+<!-- evalcode&#45;&gt;evalfail -->
+<g id="edge5" class="edge">
+<title>evalcode&#45;&gt;evalfail</title>
+<path fill="none" stroke="#c8501f" d="M105.99,-86.95C119.05,-74.1 136.85,-56.61 151.09,-42.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="152.6,-44.55 155.88,-37.9 149.17,-41.06 152.6,-44.55"/>
+<text xml:space="preserve" text-anchor="middle" x="152.04" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaces</text>
+</g>
+<!-- cluster -->
+<g id="node4" class="node">
+<title>cluster</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="600.3,-211.34 423.63,-211.34 423.63,-175.06 600.3,-175.06 600.3,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="459.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Clustering isn&#39;t issues</text>
+<text xml:space="preserve" text-anchor="start" x="436.59" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">useful one&#45;off, doesn&#39;t scale as monitoring</text>
+</g>
+<!-- cluster&#45;&gt;twofacts -->
+<g id="edge6" class="edge">
+<title>cluster&#45;&gt;twofacts</title>
+<path fill="none" stroke="#c8501f" d="M503.88,-174.48C498.28,-162.21 490.75,-145.69 484.52,-132.03"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="486.79,-131.1 481.66,-125.75 482.33,-133.13 486.79,-131.1"/>
+<text xml:space="preserve" text-anchor="middle" x="517.3" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">instead, use</text>
+</g>
+<!-- twofacts&#45;&gt;trust -->
+<g id="edge7" class="edge">
+<title>twofacts&#45;&gt;trust</title>
+<path fill="none" stroke="#c8501f" d="M472.96,-86.95C472.96,-74.91 472.96,-58.78 472.96,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="475.41,-45.35 472.96,-38.35 470.51,-45.35 475.41,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="487.21" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+<!-- investigate -->
+<g id="node6" class="node">
+<title>investigate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="758.42,-123.81 585.5,-123.81 585.5,-87.53 758.42,-87.53 758.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="612.34" y="-105.72" font-family="Geist Mono" font-size="11.00">Investigate, don&#39;t detect</text>
+<text xml:space="preserve" text-anchor="start" x="598.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">give agent an anomaly you already found</text>
+</g>
+<!-- investigate&#45;&gt;trust -->
+<g id="edge8" class="edge">
+<title>investigate&#45;&gt;trust</title>
+<path fill="none" stroke="#c8501f" d="M630.73,-86.95C598.98,-73.3 555,-54.4 521.54,-40.02"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="522.93,-37.95 515.53,-37.44 520.99,-42.45 522.93,-37.95"/>
+<text xml:space="preserve" text-anchor="middle" x="598.62" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s argument from premise to consequence: a fast-changing agent stack undermines fixed eval sets, so effort should go toward floor-raising practices like code-style evals, issue triage, and agent-assisted investigation (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Evals as fixed test sets don&#x27;t survive a changing stack</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="0" class="sl"><img loading="lazy" class="main" src="img/designing-agents-floor-is-frontier/s00_370.webp" alt="slide at 06:10"></a><div class="slidecap">Slide at 06:10 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="1" class="sl"><img loading="lazy" class="thumb" src="img/designing-agents-floor-is-frontier/s01_400.webp" alt="slide at 06:40"></a></div></div>
+<div class="textcol"><h2>Evals as fixed test sets don&#x27;t survive a changing stack</h2><ul class="takeaways"><li>Hylak argues most public discourse on evals is stuck in the earlier chatbot era, where a fixed eval set made sense because the space of possible answers was narrow.</li><li>With agents, the harness and model change constantly, so eval sets built around a specific tool-calling pattern break the moment you switch harnesses (he cites an 80% eval failure rate after a switch to Claude Code CLI).</li><li>His recommendation is to treat evals as code, unit and end-to-end tests run locally, rather than as a slow-changing curated set or managed prompt playground.</li></ul><div class="quote"><p>&ldquo;what I think that means is the evals themselves actually should look a lot&rdquo;</p><span class="at">said at 12:19</span></div><div class="quote"><p>&ldquo;essentially run tests on your agent uh locally uh is is is the advice&rdquo;</p><span class="at">said at 12:19</span></div><div class="quote"><p>&ldquo;the one thing I could promise you is that things are going to keep changing&rdquo;</p><span class="at">said at 04:37</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Floor over ceiling</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/designing-agents-floor-is-frontier/s02_680.webp" alt="slide at 11:20"></a><div class="slidecap">Slide at 11:20 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/designing-agents-floor-is-frontier/s03_780.webp" alt="slide at 13:00"></a></div></div>
+<div class="textcol"><h2>Floor over ceiling</h2><ul class="takeaways"><li>He frames agent quality as a ceiling (best emergent capability) versus a floor (worst thing the agent can do, recommend a competitor, delete data, send an unwanted email).</li><li>User trust is broken by floor incidents, not by capability gaps, so floor-raising is where practical effort should go.</li></ul><div class="quote"><p>&ldquo;the floor is like what is the worst thing your agent can do&rdquo;</p><span class="at">said at 10:16</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Two facts every issue needs</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/designing-agents-floor-is-frontier/s03_780.webp" alt="slide at 13:00"></a><div class="slidecap">Slide at 13:00 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/designing-agents-floor-is-frontier/s04_850.webp" alt="slide at 14:10"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/designing-agents-floor-is-frontier/s05_920.webp" alt="slide at 15:20"></a></div></div>
+<div class="textcol"><h2>Two facts every issue needs</h2><ul class="takeaways"><li>For any discovered issue, Raindrop&#x27;s practice is to always establish two things: when it started, and what percentage of users it affects.</li><li>Knowing an issue is new (versus long-standing) reframes it as something caused by a recent change; knowing the affected percentage sets the urgency.</li></ul><div class="quote"><p>&ldquo;you need to know when it actually started, and you need to know how many people it affects&rdquo;</p><span class="at">said at 13:20</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Clustering traces is a one-off tool, not a monitoring system</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/designing-agents-floor-is-frontier/s05_920.webp" alt="slide at 15:20"></a><div class="slidecap">Slide at 15:20 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Clustering traces is a one-off tool, not a monitoring system</h2><ul class="takeaways"><li>A common naive approach is to cluster all traces to find issues.</li><li>Hylak says this is useful for one-off analysis but doesn&#x27;t scale as ongoing monitoring, because clusters can&#x27;t reliably track when something started or how it&#x27;s growing over time, and cluster boundaries (what counts as &quot;the same issue&quot;) are inconsistent across products.</li></ul><div class="quote"><p>&ldquo;the first one is that clusters are not issues&rdquo;</p><span class="at">said at 15:54</span></div><div class="quote"><p>&ldquo;it&#x27;s useful for one-off analysis, but it just doesn&#x27;t really scale well&rdquo;</p><span class="at">said at 15:54</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Don&#x27;t ask agents to detect anomalies — ask them to investigate ones you&#x27;ve found</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="7" class="sl"><img loading="lazy" class="main" src="img/designing-agents-floor-is-frontier/s07_1110.webp" alt="slide at 18:30"></a><div class="slidecap">Slide at 18:30 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/designing-agents-floor-is-frontier/s08_1140.webp" alt="slide at 19:00"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/designing-agents-floor-is-frontier/s09_1160.webp" alt="slide at 19:20"></a></div></div>
+<div class="textcol"><h2>Don&#x27;t ask agents to detect anomalies — ask them to investigate ones you&#x27;ve found</h2><ul class="takeaways"><li>His closing lesson: agents are poor at anomaly detection on their own.</li><li>The workable pattern is to pull out deterministic signals (e.g., keyword-frequency spikes) first, then hand the agent a specific anomaly to investigate rather than asking it to scan for problems unprompted.</li></ul><div class="quote"><p>&ldquo;agents are very, very bad at anomaly detection. So don&#x27;t ask your agent to find anomalies&rdquo;</p><span class="at">said at 18:27</span></div><div class="quote"><p>&ldquo;ask it to investigate anomalies you&#x27;ve already found&rdquo;</p><span class="at">said at 18:27</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The floor/ceiling framing is a useful lens for prioritizing agent QA work, though it&#x27;s worth noting Raindrop sells exactly this kind of production monitoring, so the pitch against clustering and fixed eval sets doubles as a product argument (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/designing-agents-floor-is-frontier/s00_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/designing-agents-floor-is-frontier/s01_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/designing-agents-floor-is-frontier/s02_680.webp" alt="slide at 11:20"><div class="ts">11:20</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/designing-agents-floor-is-frontier/s03_780.webp" alt="slide at 13:00"><div class="ts">13:00</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/designing-agents-floor-is-frontier/s04_850.webp" alt="slide at 14:10"><div class="ts">14:10</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/designing-agents-floor-is-frontier/s05_920.webp" alt="slide at 15:20"><div class="ts">15:20</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/designing-agents-floor-is-frontier/s06_1090.webp" alt="slide at 18:10"><div class="ts">18:10</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/designing-agents-floor-is-frontier/s07_1110.webp" alt="slide at 18:30"><div class="ts">18:30</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/designing-agents-floor-is-frontier/s08_1140.webp" alt="slide at 19:00"><div class="ts">19:00</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/designing-agents-floor-is-frontier/s09_1160.webp" alt="slide at 19:20"><div class="ts">19:20</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The floor (worst-case agent behavior) matters more to user trust than the ceiling (best-case capability).</td><td class="tt">10:16</td></tr><tr><td class="st">asserts</td><td>Because the prompt/harness is now effectively the whole product, evals should be structured like code/tests rather than a separate eval artifact.</td><td class="tt">12:19</td></tr><tr><td class="st">recommends</td><td>Run agent tests as local code (unit/end-to-end style) instead of managed cloud prompt playgrounds.</td><td class="tt">12:19</td></tr><tr><td class="st">asserts</td><td>Clustering all agent traces together is not the same as identifying discrete issues.</td><td class="tt">15:54</td></tr><tr><td class="st">warns</td><td>Trace clustering is fine for one-off analysis but does not scale as an ongoing issue-tracking method.</td><td class="tt">15:54</td></tr><tr><td class="st">warns</td><td>Agents are unreliable at detecting anomalies on their own.</td><td class="tt">18:27</td></tr><tr><td class="st">recommends</td><td>Instead of asking an agent to find anomalies, give it an already-identified anomaly to investigate.</td><td class="tt">18:27</td></tr><tr><td class="st">recommends</td><td>Every discovered issue needs two known facts: when it started and what percent of users it affects.</td><td class="tt">13:20</td></tr><tr><td class="st">predicts</td><td>The agent stack (models, harnesses) will keep changing, so heavy investment in a static eval set is a bad bet.</td><td class="tt">04:37</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/designing-agents-floor-is-frontier/s00_370.webp", "mmss": "06:10", "yt": "https://youtu.be/jHMiYtjoJfA?t=370"}, {"src": "img/designing-agents-floor-is-frontier/s01_400.webp", "mmss": "06:40", "yt": "https://youtu.be/jHMiYtjoJfA?t=400"}, {"src": "img/designing-agents-floor-is-frontier/s02_680.webp", "mmss": "11:20", "yt": "https://youtu.be/jHMiYtjoJfA?t=680"}, {"src": "img/designing-agents-floor-is-frontier/s03_780.webp", "mmss": "13:00", "yt": "https://youtu.be/jHMiYtjoJfA?t=780"}, {"src": "img/designing-agents-floor-is-frontier/s04_850.webp", "mmss": "14:10", "yt": "https://youtu.be/jHMiYtjoJfA?t=850"}, {"src": "img/designing-agents-floor-is-frontier/s05_920.webp", "mmss": "15:20", "yt": "https://youtu.be/jHMiYtjoJfA?t=920"}, {"src": "img/designing-agents-floor-is-frontier/s06_1090.webp", "mmss": "18:10", "yt": "https://youtu.be/jHMiYtjoJfA?t=1090"}, {"src": "img/designing-agents-floor-is-frontier/s07_1110.webp", "mmss": "18:30", "yt": "https://youtu.be/jHMiYtjoJfA?t=1110"}, {"src": "img/designing-agents-floor-is-frontier/s08_1140.webp", "mmss": "19:00", "yt": "https://youtu.be/jHMiYtjoJfA?t=1140"}, {"src": "img/designing-agents-floor-is-frontier/s09_1160.webp", "mmss": "19:20", "yt": "https://youtu.be/jHMiYtjoJfA?t=1160"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "jHMiYtjoJfA", "slug": "designing-agents-floor-is-frontier", "title": "Designing Agents (The Floor Is the Frontier)", "speaker": "Ben Hylak", "company": "Raindrop", "themes": ["evals-benchmarks", "agentic-engineering"], "tier": "slide-brief", "depth": "take", "diagram": {"title": "Why floor-raising beats fixed evals (ours)", "lanes": ["Premise", "Mechanism", "Consequence"], "nodes": [{"id": "stack", "label": "Stack keeps changing", "sub": "harnesses/models shift constantly", "lane": 0, "kind": "system", "claim": "c9", "t": 277}, {"id": "floor", "label": "Floor beats ceiling", "sub": "worst-case behavior breaks trust", "lane": 0, "kind": "system", "claim": "c1", "t": 616}, {"id": "evalcode", "label": "Evals as code", "sub": "run tests locally, not managed playground", "lane": 1, "kind": "system", "claim": "c3", "t": 739}, {"id": "cluster", "label": "Clustering isn't issues", "sub": "useful one-off, doesn't scale as monitoring", "lane": 1, "kind": "system", "claim": "c5", "t": 954}, {"id": "twofacts", "label": "Two facts per issue", "sub": "when it started + percent of users affected", "lane": 1, "kind": "system", "claim": "c8", "t": 800}, {"id": "investigate", "label": "Investigate, don't detect", "sub": "give agent an anomaly you already found", "lane": 1, "kind": "system", "claim": "c7", "t": 1107}, {"id": "evalfail", "label": "Fixed evals break", "sub": "80% eval failure after harness switch", "lane": 2, "kind": "system", "t": 739}, {"id": "trust", "label": "Floor-raising pays off", "sub": "practical effort protects user trust", "lane": 2, "kind": "system", "claim": "c1", "t": 616}], "edges": [{"from": "stack", "to": "evalcode", "label": "forces", "kind": "flow"}, {"from": "stack", "to": "evalfail", "label": "breaks", "kind": "flow"}, {"from": "floor", "to": "twofacts", "label": "needs", "kind": "flow"}, {"from": "floor", "to": "trust", "label": "protects", "kind": "flow"}, {"from": "evalcode", "to": "evalfail", "label": "replaces", "kind": "flow"}, {"from": "cluster", "to": "twofacts", "label": "instead, use", "kind": "flow"}, {"from": "twofacts", "to": "trust", "label": "enables", "kind": "flow"}, {"from": "investigate", "to": "trust", "label": "enables", "kind": "flow"}], "caption": "This traces the talk's argument from premise to consequence: a fast-changing agent stack undermines fixed eval sets, so effort should go toward floor-raising practices like code-style evals, issue triage, and agent-assisted investigation (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "floor vs ceiling", "text": "The floor (worst-case agent behavior) matters more to user trust than the ceiling (best-case capability).", "quote": "the floor is like what is the worst thing your agent can do", "t": 616}, {"id": "c2", "stance": "asserts", "topic": "evals as code", "text": "Because the prompt/harness is now effectively the whole product, evals should be structured like code/tests rather than a separate eval artifact.", "quote": "what I think that means is the evals themselves actually should look a lot", "t": 739}, {"id": "c3", "stance": "recommends", "topic": "run tests locally", "text": "Run agent tests as local code (unit/end-to-end style) instead of managed cloud prompt playgrounds.", "quote": "essentially run tests on your agent uh locally uh is is is the advice", "t": 739}, {"id": "c4", "stance": "asserts", "topic": "clustering traces", "text": "Clustering all agent traces together is not the same as identifying discrete issues.", "quote": "the first one is that clusters are not issues", "t": 954}, {"id": "c5", "stance": "warns", "topic": "clustering limits", "text": "Trace clustering is fine for one-off analysis but does not scale as an ongoing issue-tracking method.", "quote": "it's useful for one-off analysis, but it just doesn't really scale well", "t": 954}, {"id": "c6", "stance": "warns", "topic": "agent anomaly detection", "text": "Agents are unreliable at detecting anomalies on their own.", "quote": "agents are very, very bad at anomaly detection. So don't ask your agent to find anomalies", "t": 1107}, {"id": "c7", "stance": "recommends", "topic": "investigate not detect", "text": "Instead of asking an agent to find anomalies, give it an already-identified anomaly to investigate.", "quote": "ask it to investigate anomalies you've already found", "t": 1107}, {"id": "c8", "stance": "recommends", "topic": "issue triage fields", "text": "Every discovered issue needs two known facts: when it started and what percent of users it affects.", "quote": "you need to know when it actually started, and you need to know how many people it affects", "t": 800}, {"id": "c9", "stance": "predicts", "topic": "changing stack", "text": "The agent stack (models, harnesses) will keep changing, so heavy investment in a static eval set is a bad bet.", "quote": "the one thing I could promise you is that things are going to keep changing", "t": 277}]}</script>
+</body></html>

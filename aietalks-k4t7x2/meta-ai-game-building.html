@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Think You Can Build a Game with AI? Think Again! &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/grdoOC1BT1s" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 18 min</span><span class="ln"></span></div>
+<h1 class="lede">Think You Can Build a Game with AI? Think Again!</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Danielle An &amp; David Hoe &middot; Meta</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/grdoOC1BT1s" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/grdoOC1BT1s</a> &middot; 18 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">take</span><span class="chip hot">Generative media</span><span class="chip hot">Product & UX</span><span class="chip hot">Agentic engineering</span></div>
+<p class="deck" style="font-size:15px">Meta&#x27;s AI-for-Games leads report their own team&#x27;s development cycle has moved from linear, months-long waterfall production to hours/days iteration loops, and demo runtime-LLM-driven NPCs that make unscripted, non-repeatable in-game deci...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>AI tools (image gen, art anchoring, coding agents) have removed skill-gating so non-coders and non-artists can build games, but taste and cohesion still separate good games from prompted-out-the-gate ones (c1, c2)</li><li>Runtime LLM-driven NPCs make live, unscripted decisions (stealing, blocking cubes) making every playthrough unique and non-repeatable, but the team says the technology alone doesn&#x27;t yet make games better (c3, c4, c6)</li><li>Meta&#x27;s internal game teams moved from linear waterfall production to parallel iteration achieved in hours/days instead of months, but nondeterminism from changing models/prompts is now a scaling challenge (c5, c7)</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">SKILL GATES FALL, TASTE AND NONDETERMINISM DON&#x27;T (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 534.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- unblock -->
+<g id="node1" class="node">
+<title>unblock</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="341.92,-298.87 177.25,-298.87 177.25,-262.59 341.92,-262.59 341.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="210.84" y="-280.78" font-family="Geist Mono" font-size="11.00">AI unblocks builders</text>
+<text xml:space="preserve" text-anchor="start" x="190.21" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">art/mesh/code gen removes skill gates</text>
+</g>
+<!-- taste -->
+<g id="node2" class="node">
+<title>taste</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="169.17,-211.34 0,-211.34 0,-175.06 169.17,-175.06 169.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="39.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Taste still required</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">cohesion &amp; feel separate good from bad</text>
+</g>
+<!-- unblock&#45;&gt;taste -->
+<g id="edge1" class="edge">
+<title>unblock&#45;&gt;taste</title>
+<path fill="none" stroke="#c8501f" d="M223.32,-262.01C195.75,-248.53 157.7,-229.94 128.42,-215.63"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="129.52,-213.44 122.16,-212.56 127.37,-217.84 129.52,-213.44"/>
+<text xml:space="preserve" text-anchor="middle" x="201.69" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">still needs</text>
+</g>
+<!-- npc -->
+<g id="node3" class="node">
+<title>npc</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="328.42,-211.34 190.75,-211.34 190.75,-175.06 328.42,-175.06 328.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="213.84" y="-193.25" font-family="Geist Mono" font-size="11.00">Runtime LLM NPCs</text>
+<text xml:space="preserve" text-anchor="start" x="203.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">live personality&#45;driven decisions</text>
+</g>
+<!-- unblock&#45;&gt;npc -->
+<g id="edge2" class="edge">
+<title>unblock&#45;&gt;npc</title>
+<path fill="none" stroke="#c8501f" d="M259.59,-262.01C259.59,-249.97 259.59,-233.84 259.59,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="262.04,-220.41 259.59,-213.41 257.14,-220.41 262.04,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="273.84" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+<!-- parallel -->
+<g id="node5" class="node">
+<title>parallel</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="491.42,-211.34 353.75,-211.34 353.75,-175.06 491.42,-175.06 491.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="383.59" y="-193.25" font-family="Geist Mono" font-size="11.00">Parallel iteration</text>
+<text xml:space="preserve" text-anchor="start" x="366.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">hours/days vs months waterfall</text>
+</g>
+<!-- unblock&#45;&gt;parallel -->
+<g id="edge4" class="edge">
+<title>unblock&#45;&gt;parallel</title>
+<path fill="none" stroke="#c8501f" d="M293.36,-262.01C318.93,-248.59 354.18,-230.09 381.4,-215.81"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="382.45,-218.02 387.51,-212.6 380.18,-213.69 382.45,-218.02"/>
+<text xml:space="preserve" text-anchor="middle" x="365.09" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+<!-- unrepeat -->
+<g id="node4" class="node">
+<title>unrepeat</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="168.67,-123.81 44.5,-123.81 44.5,-87.53 168.67,-87.53 168.67,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="57.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Non&#45;repeatable play</text>
+<text xml:space="preserve" text-anchor="start" x="61.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">every playthrough unique</text>
+</g>
+<!-- npc&#45;&gt;unrepeat -->
+<g id="edge3" class="edge">
+<title>npc&#45;&gt;unrepeat</title>
+<path fill="none" stroke="#c8501f" d="M227.88,-174.48C203.98,-161.12 171.08,-142.72 145.57,-128.46"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="146.87,-126.38 139.57,-125.11 144.48,-130.66 146.87,-126.38"/>
+<text xml:space="preserve" text-anchor="middle" x="208.75" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">produces</text>
+</g>
+<!-- insufficient -->
+<g id="node6" class="node">
+<title>insufficient</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="324.92,-123.81 190.25,-123.81 190.25,-87.53 324.92,-87.53 324.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="203.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Tech alone insufficient</text>
+<text xml:space="preserve" text-anchor="start" x="204.34" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">team still early exploring value</text>
+</g>
+<!-- npc&#45;&gt;insufficient -->
+<g id="edge5" class="edge">
+<title>npc&#45;&gt;insufficient</title>
+<path fill="none" stroke="#c8501f" d="M259.17,-174.48C258.89,-162.44 258.51,-146.31 258.2,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="260.65,-132.82 258.03,-125.88 255.75,-132.94 260.65,-132.82"/>
+<text xml:space="preserve" text-anchor="middle" x="264.7" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">yet</text>
+</g>
+<!-- nondeterm -->
+<g id="node7" class="node">
+<title>nondeterm</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="514.42,-123.81 346.75,-123.81 346.75,-87.53 514.42,-87.53 514.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="370.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Nondeterminism at scale</text>
+<text xml:space="preserve" text-anchor="start" x="359.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">models/prompts break stack debugging</text>
+</g>
+<!-- npc&#45;&gt;nondeterm -->
+<g id="edge7" class="edge">
+<title>npc&#45;&gt;nondeterm</title>
+<path fill="none" stroke="#c8501f" d="M295.02,-174.48C321.96,-161 359.14,-142.41 387.75,-128.1"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="388.68,-130.37 393.85,-125.05 386.49,-125.99 388.68,-130.37"/>
+<text xml:space="preserve" text-anchor="middle" x="374.45" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">introduces</text>
+</g>
+<!-- parallel&#45;&gt;nondeterm -->
+<g id="edge6" class="edge">
+<title>parallel&#45;&gt;nondeterm</title>
+<path fill="none" stroke="#c8501f" d="M424.24,-174.48C425.37,-162.44 426.88,-146.31 428.14,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="430.58,-133.07 428.79,-125.88 425.7,-132.62 430.58,-133.07"/>
+<text xml:space="preserve" text-anchor="middle" x="446.19" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">introduces</text>
+</g>
+<!-- tokens -->
+<g id="node8" class="node">
+<title>tokens</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="526.05,-36.28 335.13,-36.28 335.13,0 526.05,0 526.05,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="382.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Token economy risk</text>
+<text xml:space="preserve" text-anchor="start" x="348.09" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">creators/players/platform must stay profitable</text>
+</g>
+<!-- nondeterm&#45;&gt;tokens -->
+<g id="edge8" class="edge">
+<title>nondeterm&#45;&gt;tokens</title>
+<path fill="none" stroke="#c8501f" d="M430.59,-86.95C430.59,-74.91 430.59,-58.78 430.59,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="433.04,-45.35 430.59,-38.35 428.14,-45.35 433.04,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="451.59" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">compounds</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s own argument: AI removes production skill gates but the speakers say taste, nondeterminism, and token economics remain unsolved downstream problems (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>AI removes skill gates but not taste requirements</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="8" class="sl"><img loading="lazy" class="main" src="img/meta-ai-game-building/s08_250.webp" alt="slide at 04:10"></a><div class="slidecap">Slide at 04:10 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s09_270.webp" alt="slide at 04:30"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s10_310.webp" alt="slide at 05:10"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s11_350.webp" alt="slide at 05:50"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s15_430.webp" alt="slide at 07:10"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s16_450.webp" alt="slide at 07:30"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s17_480.webp" alt="slide at 08:00"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s18_500.webp" alt="slide at 08:20"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s19_520.webp" alt="slide at 08:40"></a></div></div>
+<div class="textcol"><h2>AI removes skill gates but not taste requirements</h2><ul class="takeaways"><li>The speakers say tools like Meta&#x27;s image/3D generation models let coders without art skills and artists without coding skills each get unblocked to build games.</li><li>They argue this doesn&#x27;t guarantee a good game -- what separates a good game from a bad one is still aesthetics, UI/story/art cohesion, and playtesting with real feedback, which they summarize as &#x27;taste.&#x27;</li></ul><div class="quote"><p>&ldquo;But now you can just use Meta Banana or Mesh you or whatever else to get yourself unblocked&rdquo;</p><span class="at">said at 04:09</span></div><div class="quote"><p>&ldquo;it&#x27;s not that you delivered a game, but it&#x27;s that you have the feel that this is a game humans would like&rdquo;</p><span class="at">said at 08:19</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Runtime LLM-driven NPCs create non-repeatable games</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="19" class="sl"><img loading="lazy" class="main" src="img/meta-ai-game-building/s19_520.webp" alt="slide at 08:40"></a><div class="slidecap">Slide at 08:40 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s23_660.webp" alt="slide at 11:00"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s24_670.webp" alt="slide at 11:10"></a><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s25_680.webp" alt="slide at 11:20"></a></div></div>
+<div class="textcol"><h2>Runtime LLM-driven NPCs create non-repeatable games</h2><ul class="takeaways"><li>The team built a multiplayer demo where each NPC&#x27;s behavior is driven live by an LLM given a personality, and NPCs make unscripted decisions such as stealing or blocking other players&#x27; cubes to reach a shared goal.</li><li>They say this class of runtime-LLM-driven gameplay was not previously possible in the industry and makes every playthrough unique, though the team says they are still in early exploration of what differentiates a game using it.</li></ul><div class="quote"><p>&ldquo;you will see these runtime LLMs independently making decisions, achieving the goal of this game, which is to get as many cubes as possible&rdquo;</p><span class="at">said at 09:22</span></div><div class="quote"><p>&ldquo;Every game is unique. Every game is not repeatable.&rdquo;</p><span class="at">said at 09:53</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Production speed and nondeterminism at Meta</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="25" class="sl"><img loading="lazy" class="main" src="img/meta-ai-game-building/s25_680.webp" alt="slide at 11:20"></a><div class="slidecap">Slide at 11:20 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="26" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s26_710.webp" alt="slide at 11:50"></a><a href="#" data-slide="27" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s27_730.webp" alt="slide at 12:10"></a><a href="#" data-slide="28" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s28_740.webp" alt="slide at 12:20"></a><a href="#" data-slide="29" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s29_750.webp" alt="slide at 12:30"></a><a href="#" data-slide="30" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s30_760.webp" alt="slide at 12:40"></a><a href="#" data-slide="31" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s31_790.webp" alt="slide at 13:10"></a><a href="#" data-slide="32" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s32_820.webp" alt="slide at 13:40"></a><a href="#" data-slide="33" class="sl"><img loading="lazy" class="thumb" src="img/meta-ai-game-building/s33_830.webp" alt="slide at 13:50"></a></div></div>
+<div class="textcol"><h2>Production speed and nondeterminism at Meta</h2><ul class="takeaways"><li>The speakers say AI moved their internal production from a linear waterfall process (design to art to modeling to animation to code) where upstream changes were costly to revisit, to parallel-team iteration achieved in hours or days instead of months, enabling more playtesting.</li><li>They also flag that changing models and prompts introduces nondeterminism across the whole agentic stack, from front-end prompting through runtime NPC decisions to platform content ranking, which is a new debugging challenge at Meta&#x27;s scale.</li></ul><div class="quote"><p>&ldquo;because of AI we have achieved teams that are working in parallel and updates and iterations on the games are achieved in hours, days as opposed to months&rdquo;</p><span class="at">said at 11:34</span></div><div class="quote"><p>&ldquo;that just means and determinism throughout the whole stack which is something that as engineers, especially at scale, we are struggling a lot with in general&rdquo;</p><span class="at">said at 14:14</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The team&#x27;s own admission that &#x27;the technology itself does not make the product better&#x27; cuts against generic AI-game-dev hype -- worth watching whether Meta ships concrete tooling for the nondeterminism problem they flag, since that&#x27;s the harder unsolved piece compared to asset/code generation (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/meta-ai-game-building/s00_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/meta-ai-game-building/s01_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/meta-ai-game-building/s02_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/meta-ai-game-building/s03_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/meta-ai-game-building/s04_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/meta-ai-game-building/s05_170.webp" alt="slide at 02:50"><div class="ts">02:50</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/meta-ai-game-building/s06_190.webp" alt="slide at 03:10"><div class="ts">03:10</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/meta-ai-game-building/s07_210.webp" alt="slide at 03:30"><div class="ts">03:30</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/meta-ai-game-building/s08_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/meta-ai-game-building/s09_270.webp" alt="slide at 04:30"><div class="ts">04:30</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/meta-ai-game-building/s10_310.webp" alt="slide at 05:10"><div class="ts">05:10</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/meta-ai-game-building/s11_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/meta-ai-game-building/s12_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/meta-ai-game-building/s13_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/meta-ai-game-building/s14_410.webp" alt="slide at 06:50"><div class="ts">06:50</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/meta-ai-game-building/s15_430.webp" alt="slide at 07:10"><div class="ts">07:10</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/meta-ai-game-building/s16_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/meta-ai-game-building/s17_480.webp" alt="slide at 08:00"><div class="ts">08:00</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/meta-ai-game-building/s18_500.webp" alt="slide at 08:20"><div class="ts">08:20</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/meta-ai-game-building/s19_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/meta-ai-game-building/s20_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/meta-ai-game-building/s21_620.webp" alt="slide at 10:20"><div class="ts">10:20</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/meta-ai-game-building/s22_640.webp" alt="slide at 10:40"><div class="ts">10:40</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/meta-ai-game-building/s23_660.webp" alt="slide at 11:00"><div class="ts">11:00</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/meta-ai-game-building/s24_670.webp" alt="slide at 11:10"><div class="ts">11:10</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/meta-ai-game-building/s25_680.webp" alt="slide at 11:20"><div class="ts">11:20</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/meta-ai-game-building/s26_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/meta-ai-game-building/s27_730.webp" alt="slide at 12:10"><div class="ts">12:10</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/meta-ai-game-building/s28_740.webp" alt="slide at 12:20"><div class="ts">12:20</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/meta-ai-game-building/s29_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/meta-ai-game-building/s30_760.webp" alt="slide at 12:40"><div class="ts">12:40</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/meta-ai-game-building/s31_790.webp" alt="slide at 13:10"><div class="ts">13:10</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/meta-ai-game-building/s32_820.webp" alt="slide at 13:40"><div class="ts">13:40</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/meta-ai-game-building/s33_830.webp" alt="slide at 13:50"><div class="ts">13:50</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/meta-ai-game-building/s34_870.webp" alt="slide at 14:30"><div class="ts">14:30</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/meta-ai-game-building/s35_890.webp" alt="slide at 14:50"><div class="ts">14:50</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/meta-ai-game-building/s36_900.webp" alt="slide at 15:00"><div class="ts">15:00</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/meta-ai-game-building/s37_910.webp" alt="slide at 15:10"><div class="ts">15:10</div></a><a href="#" data-slide="38"><img loading="lazy" src="img/meta-ai-game-building/s38_920.webp" alt="slide at 15:20"><div class="ts">15:20</div></a><a href="#" data-slide="39"><img loading="lazy" src="img/meta-ai-game-building/s39_940.webp" alt="slide at 15:40"><div class="ts">15:40</div></a><a href="#" data-slide="40"><img loading="lazy" src="img/meta-ai-game-building/s40_960.webp" alt="slide at 16:00"><div class="ts">16:00</div></a><a href="#" data-slide="41"><img loading="lazy" src="img/meta-ai-game-building/s41_970.webp" alt="slide at 16:10"><div class="ts">16:10</div></a><a href="#" data-slide="42"><img loading="lazy" src="img/meta-ai-game-building/s42_980.webp" alt="slide at 16:20"><div class="ts">16:20</div></a><a href="#" data-slide="43"><img loading="lazy" src="img/meta-ai-game-building/s43_1000.webp" alt="slide at 16:40"><div class="ts">16:40</div></a><a href="#" data-slide="44"><img loading="lazy" src="img/meta-ai-game-building/s44_1010.webp" alt="slide at 16:50"><div class="ts">16:50</div></a><a href="#" data-slide="45"><img loading="lazy" src="img/meta-ai-game-building/s45_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a><a href="#" data-slide="46"><img loading="lazy" src="img/meta-ai-game-building/s46_1040.webp" alt="slide at 17:20"><div class="ts">17:20</div></a><a href="#" data-slide="47"><img loading="lazy" src="img/meta-ai-game-building/s47_1050.webp" alt="slide at 17:30"><div class="ts">17:30</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Generative art and mesh tools let coders without art skills, and artists without coding skills, get unblocked to build games.</td><td class="tt">04:09</td></tr><tr><td class="st">asserts</td><td>What separates a good AI-built game from a merely polished one is whether it has the feel that a specific set of humans would enjoy.</td><td class="tt">08:19</td></tr><tr><td class="st">asserts</td><td>In Meta&#x27;s multiplayer demo, runtime LLMs independently make unscripted decisions like stealing or blocking to achieve the game&#x27;s goal.</td><td class="tt">09:22</td></tr><tr><td class="st">asserts</td><td>Runtime-LLM-driven games are unique and non-repeatable on each playthrough, a form that wasn&#x27;t possible before AI.</td><td class="tt">09:53</td></tr><tr><td class="st">asserts</td><td>AI-enabled parallel team workflows let Meta&#x27;s game teams iterate in hours or days instead of the months a linear waterfall process took.</td><td class="tt">11:34</td></tr><tr><td class="st">warns</td><td>Runtime LLM technology by itself does not make a game better; teams are still early in exploring how to use it well.</td><td class="tt">12:39</td></tr><tr><td class="st">warns</td><td>Changing models and prompts introduces nondeterminism across the whole agentic stack, which is a hard debugging challenge for engineers at scale.</td><td class="tt">14:14</td></tr><tr><td class="st">recommends</td><td>Engineers focused on scalability should plan the token economy so creators, players, and the platform can all remain profitable.</td><td class="tt">16:48</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/meta-ai-game-building/s00_40.webp", "mmss": "00:40", "yt": "https://youtu.be/grdoOC1BT1s?t=40"}, {"src": "img/meta-ai-game-building/s01_60.webp", "mmss": "01:00", "yt": "https://youtu.be/grdoOC1BT1s?t=60"}, {"src": "img/meta-ai-game-building/s02_100.webp", "mmss": "01:40", "yt": "https://youtu.be/grdoOC1BT1s?t=100"}, {"src": "img/meta-ai-game-building/s03_130.webp", "mmss": "02:10", "yt": "https://youtu.be/grdoOC1BT1s?t=130"}, {"src": "img/meta-ai-game-building/s04_150.webp", "mmss": "02:30", "yt": "https://youtu.be/grdoOC1BT1s?t=150"}, {"src": "img/meta-ai-game-building/s05_170.webp", "mmss": "02:50", "yt": "https://youtu.be/grdoOC1BT1s?t=170"}, {"src": "img/meta-ai-game-building/s06_190.webp", "mmss": "03:10", "yt": "https://youtu.be/grdoOC1BT1s?t=190"}, {"src": "img/meta-ai-game-building/s07_210.webp", "mmss": "03:30", "yt": "https://youtu.be/grdoOC1BT1s?t=210"}, {"src": "img/meta-ai-game-building/s08_250.webp", "mmss": "04:10", "yt": "https://youtu.be/grdoOC1BT1s?t=250"}, {"src": "img/meta-ai-game-building/s09_270.webp", "mmss": "04:30", "yt": "https://youtu.be/grdoOC1BT1s?t=270"}, {"src": "img/meta-ai-game-building/s10_310.webp", "mmss": "05:10", "yt": "https://youtu.be/grdoOC1BT1s?t=310"}, {"src": "img/meta-ai-game-building/s11_350.webp", "mmss": "05:50", "yt": "https://youtu.be/grdoOC1BT1s?t=350"}, {"src": "img/meta-ai-game-building/s12_370.webp", "mmss": "06:10", "yt": "https://youtu.be/grdoOC1BT1s?t=370"}, {"src": "img/meta-ai-game-building/s13_390.webp", "mmss": "06:30", "yt": "https://youtu.be/grdoOC1BT1s?t=390"}, {"src": "img/meta-ai-game-building/s14_410.webp", "mmss": "06:50", "yt": "https://youtu.be/grdoOC1BT1s?t=410"}, {"src": "img/meta-ai-game-building/s15_430.webp", "mmss": "07:10", "yt": "https://youtu.be/grdoOC1BT1s?t=430"}, {"src": "img/meta-ai-game-building/s16_450.webp", "mmss": "07:30", "yt": "https://youtu.be/grdoOC1BT1s?t=450"}, {"src": "img/meta-ai-game-building/s17_480.webp", "mmss": "08:00", "yt": "https://youtu.be/grdoOC1BT1s?t=480"}, {"src": "img/meta-ai-game-building/s18_500.webp", "mmss": "08:20", "yt": "https://youtu.be/grdoOC1BT1s?t=500"}, {"src": "img/meta-ai-game-building/s19_520.webp", "mmss": "08:40", "yt": "https://youtu.be/grdoOC1BT1s?t=520"}, {"src": "img/meta-ai-game-building/s20_550.webp", "mmss": "09:10", "yt": "https://youtu.be/grdoOC1BT1s?t=550"}, {"src": "img/meta-ai-game-building/s21_620.webp", "mmss": "10:20", "yt": "https://youtu.be/grdoOC1BT1s?t=620"}, {"src": "img/meta-ai-game-building/s22_640.webp", "mmss": "10:40", "yt": "https://youtu.be/grdoOC1BT1s?t=640"}, {"src": "img/meta-ai-game-building/s23_660.webp", "mmss": "11:00", "yt": "https://youtu.be/grdoOC1BT1s?t=660"}, {"src": "img/meta-ai-game-building/s24_670.webp", "mmss": "11:10", "yt": "https://youtu.be/grdoOC1BT1s?t=670"}, {"src": "img/meta-ai-game-building/s25_680.webp", "mmss": "11:20", "yt": "https://youtu.be/grdoOC1BT1s?t=680"}, {"src": "img/meta-ai-game-building/s26_710.webp", "mmss": "11:50", "yt": "https://youtu.be/grdoOC1BT1s?t=710"}, {"src": "img/meta-ai-game-building/s27_730.webp", "mmss": "12:10", "yt": "https://youtu.be/grdoOC1BT1s?t=730"}, {"src": "img/meta-ai-game-building/s28_740.webp", "mmss": "12:20", "yt": "https://youtu.be/grdoOC1BT1s?t=740"}, {"src": "img/meta-ai-game-building/s29_750.webp", "mmss": "12:30", "yt": "https://youtu.be/grdoOC1BT1s?t=750"}, {"src": "img/meta-ai-game-building/s30_760.webp", "mmss": "12:40", "yt": "https://youtu.be/grdoOC1BT1s?t=760"}, {"src": "img/meta-ai-game-building/s31_790.webp", "mmss": "13:10", "yt": "https://youtu.be/grdoOC1BT1s?t=790"}, {"src": "img/meta-ai-game-building/s32_820.webp", "mmss": "13:40", "yt": "https://youtu.be/grdoOC1BT1s?t=820"}, {"src": "img/meta-ai-game-building/s33_830.webp", "mmss": "13:50", "yt": "https://youtu.be/grdoOC1BT1s?t=830"}, {"src": "img/meta-ai-game-building/s34_870.webp", "mmss": "14:30", "yt": "https://youtu.be/grdoOC1BT1s?t=870"}, {"src": "img/meta-ai-game-building/s35_890.webp", "mmss": "14:50", "yt": "https://youtu.be/grdoOC1BT1s?t=890"}, {"src": "img/meta-ai-game-building/s36_900.webp", "mmss": "15:00", "yt": "https://youtu.be/grdoOC1BT1s?t=900"}, {"src": "img/meta-ai-game-building/s37_910.webp", "mmss": "15:10", "yt": "https://youtu.be/grdoOC1BT1s?t=910"}, {"src": "img/meta-ai-game-building/s38_920.webp", "mmss": "15:20", "yt": "https://youtu.be/grdoOC1BT1s?t=920"}, {"src": "img/meta-ai-game-building/s39_940.webp", "mmss": "15:40", "yt": "https://youtu.be/grdoOC1BT1s?t=940"}, {"src": "img/meta-ai-game-building/s40_960.webp", "mmss": "16:00", "yt": "https://youtu.be/grdoOC1BT1s?t=960"}, {"src": "img/meta-ai-game-building/s41_970.webp", "mmss": "16:10", "yt": "https://youtu.be/grdoOC1BT1s?t=970"}, {"src": "img/meta-ai-game-building/s42_980.webp", "mmss": "16:20", "yt": "https://youtu.be/grdoOC1BT1s?t=980"}, {"src": "img/meta-ai-game-building/s43_1000.webp", "mmss": "16:40", "yt": "https://youtu.be/grdoOC1BT1s?t=1000"}, {"src": "img/meta-ai-game-building/s44_1010.webp", "mmss": "16:50", "yt": "https://youtu.be/grdoOC1BT1s?t=1010"}, {"src": "img/meta-ai-game-building/s45_1030.webp", "mmss": "17:10", "yt": "https://youtu.be/grdoOC1BT1s?t=1030"}, {"src": "img/meta-ai-game-building/s46_1040.webp", "mmss": "17:20", "yt": "https://youtu.be/grdoOC1BT1s?t=1040"}, {"src": "img/meta-ai-game-building/s47_1050.webp", "mmss": "17:30", "yt": "https://youtu.be/grdoOC1BT1s?t=1050"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "grdoOC1BT1s", "slug": "meta-ai-game-building", "title": "Think You Can Build a Game with AI? Think Again!", "speaker": "Danielle An & David Hoe", "company": "Meta", "themes": ["generative-media", "product-ux", "agentic-engineering"], "tier": "slide-brief", "depth": "take", "diagram": {"title": "Skill gates fall, taste and nondeterminism don't (ours)", "lanes": ["Premise", "Mechanism", "Consequence"], "nodes": [{"id": "unblock", "lane": 0, "label": "AI unblocks builders", "sub": "art/mesh/code gen removes skill gates", "kind": "system", "claim": "c1", "t": 249}, {"id": "taste", "lane": 0, "label": "Taste still required", "sub": "cohesion & feel separate good from bad", "kind": "actor", "claim": "c2", "t": 499}, {"id": "npc", "lane": 1, "label": "Runtime LLM NPCs", "sub": "live personality-driven decisions", "kind": "system", "claim": "c3", "t": 562}, {"id": "unrepeat", "lane": 1, "label": "Non-repeatable play", "sub": "every playthrough unique", "kind": "system", "claim": "c4", "t": 593}, {"id": "parallel", "lane": 1, "label": "Parallel iteration", "sub": "hours/days vs months waterfall", "kind": "system", "claim": "c5", "t": 694}, {"id": "insufficient", "lane": 2, "label": "Tech alone insufficient", "sub": "team still early exploring value", "kind": "actor", "claim": "c6", "t": 759}, {"id": "nondeterm", "lane": 2, "label": "Nondeterminism at scale", "sub": "models/prompts break stack debugging", "kind": "external", "claim": "c7", "t": 854}, {"id": "tokens", "lane": 2, "label": "Token economy risk", "sub": "creators/players/platform must stay profitable", "kind": "external", "claim": "c8", "t": 1008}], "edges": [{"from": "unblock", "to": "taste", "label": "still needs", "kind": "flow"}, {"from": "unblock", "to": "npc", "label": "enables", "kind": "flow"}, {"from": "npc", "to": "unrepeat", "label": "produces", "kind": "flow"}, {"from": "unblock", "to": "parallel", "label": "enables", "kind": "flow"}, {"from": "npc", "to": "insufficient", "label": "yet", "kind": "flow"}, {"from": "parallel", "to": "nondeterm", "label": "introduces", "kind": "flow"}, {"from": "npc", "to": "nondeterm", "label": "introduces", "kind": "flow"}, {"from": "nondeterm", "to": "tokens", "label": "compounds", "kind": "flow"}], "caption": "This traces the talk's own argument: AI removes production skill gates but the speakers say taste, nondeterminism, and token economics remain unsolved downstream problems (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "AI removes skill gates", "text": "Generative art and mesh tools let coders without art skills, and artists without coding skills, get unblocked to build games.", "quote": "But now you can just use Meta Banana or Mesh you or whatever else to get yourself unblocked", "t": 249}, {"id": "c2", "stance": "asserts", "topic": "taste as differentiator", "text": "What separates a good AI-built game from a merely polished one is whether it has the feel that a specific set of humans would enjoy.", "quote": "it's not that you delivered a game, but it's that you have the feel that this is a game humans would like", "t": 499}, {"id": "c3", "stance": "asserts", "topic": "runtime LLM NPC decisions", "text": "In Meta's multiplayer demo, runtime LLMs independently make unscripted decisions like stealing or blocking to achieve the game's goal.", "quote": "you will see these runtime LLMs independently making decisions, achieving the goal of this game, which is to get as many cubes as possible", "t": 562}, {"id": "c4", "stance": "asserts", "topic": "non-repeatable gameplay", "text": "Runtime-LLM-driven games are unique and non-repeatable on each playthrough, a form that wasn't possible before AI.", "quote": "Every game is unique. Every game is not repeatable.", "t": 593}, {"id": "c5", "stance": "asserts", "topic": "faster iteration cycles", "text": "AI-enabled parallel team workflows let Meta's game teams iterate in hours or days instead of the months a linear waterfall process took.", "quote": "because of AI we have achieved teams that are working in parallel and updates and iterations on the games are achieved in hours, days as opposed to months", "t": 694}, {"id": "c6", "stance": "warns", "topic": "technology alone insufficient", "text": "Runtime LLM technology by itself does not make a game better; teams are still early in exploring how to use it well.", "quote": "just like any piece of technology the technology itself does not make the product better", "t": 759}, {"id": "c7", "stance": "warns", "topic": "nondeterminism at scale", "text": "Changing models and prompts introduces nondeterminism across the whole agentic stack, which is a hard debugging challenge for engineers at scale.", "quote": "that just means and determinism throughout the whole stack which is something that as engineers, especially at scale, we are struggling a lot with in general", "t": 854}, {"id": "c8", "stance": "recommends", "topic": "token economy planning", "text": "Engineers focused on scalability should plan the token economy so creators, players, and the platform can all remain profitable.", "quote": "if you're engineer that cares about scalability, then think about tokens. How do you make sure creators, players, and platform with token economy are going to be profitable", "t": 1008}]}</script>
+</body></html>

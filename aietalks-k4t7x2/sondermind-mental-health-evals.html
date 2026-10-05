@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Evals-Driven Development for a Mental Health AI Coach &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/O72p-rBb2bA" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 21 min</span><span class="ln"></span></div>
+<h1 class="lede">Evals-Driven Development for a Mental Health AI Coach</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Akele Reed &amp; Dave Revere &middot; SonderMind</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/O72p-rBb2bA" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/O72p-rBb2bA</a> &middot; 21 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Healthcare AI</span><span class="chip hot">Evals & benchmarks</span></div>
+<p class="deck" style="font-size:15px">Lays out a concrete architecture (separate input/output LLM-as-judge guardrails around a core model) and a concrete workflow for turning a clinician&#x27;s annotation of a flagged conversation into a typed eval that gates every future prompt,...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>SonderMind built separate input and output LLM-as-judge guardrails around its Sonder core model specifically because separating them is more robust and harder to jailbreak than folding safety into one pass, even at added latency/cost (c2, c3).</li><li>The design goal is more correct triggers, not more triggers, because over-calibrated guardrails feel like a door slam to a vulnerable user; SonderMind had to disable the underlying frontier models&#x27; built-in guardrails because they filtered too aggressively (c4).</li><li>Every clinician annotation of a flagged conversation is converted into a typed eval (input, expected result, expected observation, category) that every subsequent prompt, model, or guardrail change must be scored against, and SonderMind open-sourced 200 input and 100 output guardrail scenarios as a shared baseline (c7, c8).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">GUARDRAIL SANDWICH AND EVAL FEEDBACK LOOP (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 552.00 657.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 652.99)">
+<title>G</title>
+<!-- msg -->
+<g id="node1" class="node">
+<title>msg</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="497.29,-648.99 387.38,-648.99 387.38,-612.71 497.29,-612.71 497.29,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="407.46" y="-630.9" font-family="Geist Mono" font-size="11.00">User message</text>
+<text xml:space="preserve" text-anchor="start" x="400.33" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">incoming chat message</text>
+</g>
+<!-- inputgr -->
+<g id="node2" class="node">
+<title>inputgr</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="529.92,-561.46 354.75,-561.46 354.75,-525.18 529.92,-525.18 529.92,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="406.71" y="-543.37" font-family="Geist Mono" font-size="11.00">Input guardrail</text>
+<text xml:space="preserve" text-anchor="start" x="367.71" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">LLM&#45;as&#45;judge, screens before core replies</text>
+</g>
+<!-- msg&#45;&gt;inputgr -->
+<g id="edge1" class="edge">
+<title>msg&#45;&gt;inputgr</title>
+<path fill="none" stroke="#c8501f" d="M442.33,-612.13C442.33,-600.09 442.33,-583.96 442.33,-570.45"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="444.79,-570.53 442.34,-563.53 439.89,-570.53 444.79,-570.53"/>
+<text xml:space="preserve" text-anchor="middle" x="456.21" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#c8501f">screens</text>
+</g>
+<!-- core -->
+<g id="node3" class="node">
+<title>core</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="449.04,-473.93 325.62,-473.93 325.62,-437.65 449.04,-437.65 449.04,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="341.58" y="-455.84" font-family="Geist Mono" font-size="11.00">Sonder core model</text>
+<text xml:space="preserve" text-anchor="start" x="338.58" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">clinically grounded AI coach</text>
+</g>
+<!-- inputgr&#45;&gt;core -->
+<g id="edge2" class="edge">
+<title>inputgr&#45;&gt;core</title>
+<path fill="none" stroke="#c8501f" d="M430.94,-524.6C422.9,-512.1 412.03,-495.19 403.15,-481.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="405.38,-480.32 399.54,-475.76 401.26,-482.98 405.38,-480.32"/>
+<text xml:space="preserve" text-anchor="middle" x="429" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">clears</text>
+</g>
+<!-- outputgr -->
+<g id="node4" class="node">
+<title>outputgr</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="420.17,-386.4 240.5,-386.4 240.5,-350.12 420.17,-350.12 420.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="290.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Output guardrail</text>
+<text xml:space="preserve" text-anchor="start" x="253.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">separate LLM&#45;as&#45;judge, monitors response</text>
+</g>
+<!-- core&#45;&gt;outputgr -->
+<g id="edge3" class="edge">
+<title>core&#45;&gt;outputgr</title>
+<path fill="none" stroke="#c8501f" d="M375.52,-437.07C367.19,-424.57 355.93,-407.66 346.73,-393.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="348.89,-392.68 342.97,-388.22 344.81,-395.4 348.89,-392.68"/>
+<text xml:space="preserve" text-anchor="middle" x="378.75" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">response</text>
+</g>
+<!-- disengage -->
+<g id="node5" class="node">
+<title>disengage</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="194.67,-298.87 0,-298.87 0,-262.59 194.67,-262.59 194.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="40.33" y="-280.78" font-family="Geist Mono" font-size="11.00">Disengage + resources</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">present&#45;tense danger: surfaces local resources</text>
+</g>
+<!-- outputgr&#45;&gt;disengage -->
+<g id="edge4" class="edge">
+<title>outputgr&#45;&gt;disengage</title>
+<path fill="none" stroke="#c8501f" d="M281.77,-349.43C244.39,-335.71 192.66,-316.72 153.49,-302.34"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="154.67,-300.17 147.25,-300.05 152.98,-304.77 154.67,-300.17"/>
+<text xml:space="preserve" text-anchor="middle" x="258.16" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">danger detected</text>
+</g>
+<!-- flagged -->
+<g id="node6" class="node">
+<title>flagged</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="369.67,-298.87 217,-298.87 217,-262.59 369.67,-262.59 369.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="241.58" y="-280.78" font-family="Geist Mono" font-size="11.00">Flagged conversation</text>
+<text xml:space="preserve" text-anchor="start" x="229.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">traced conversation sent for review</text>
+</g>
+<!-- outputgr&#45;&gt;flagged -->
+<g id="edge5" class="edge">
+<title>outputgr&#45;&gt;flagged</title>
+<path fill="none" stroke="#c8501f" d="M322.67,-349.54C317.36,-337.27 310.21,-320.75 304.31,-307.09"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="306.62,-306.27 301.59,-300.82 302.12,-308.22 306.62,-306.27"/>
+<text xml:space="preserve" text-anchor="middle" x="323.05" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">flags</text>
+</g>
+<!-- clinician -->
+<g id="node7" class="node">
+<title>clinician</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="355.92,-211.34 216.75,-211.34 216.75,-175.06 355.92,-175.06 355.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="239.08" y="-193.25" font-family="Geist Mono" font-size="11.00">Clinician annotation</text>
+<text xml:space="preserve" text-anchor="start" x="229.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">licensed clinician labels the case</text>
+</g>
+<!-- flagged&#45;&gt;clinician -->
+<g id="edge6" class="edge">
+<title>flagged&#45;&gt;clinician</title>
+<path fill="none" stroke="#c8501f" d="M291.88,-262.01C290.9,-249.97 289.58,-233.84 288.47,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="290.92,-220.18 287.91,-213.41 286.04,-220.58 290.92,-220.18"/>
+<text xml:space="preserve" text-anchor="middle" x="313.13" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reviewed by</text>
+</g>
+<!-- typedeval -->
+<g id="node8" class="node">
+<title>typedeval</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="369.79,-123.81 184.88,-123.81 184.88,-87.53 369.79,-87.53 369.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="251.08" y="-105.72" font-family="Geist Mono" font-size="11.00">Typed eval</text>
+<text xml:space="preserve" text-anchor="start" x="197.83" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">input, expected result, expected observation</text>
+</g>
+<!-- clinician&#45;&gt;typedeval -->
+<g id="edge7" class="edge">
+<title>clinician&#45;&gt;typedeval</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M284.47,-174.48C283.2,-162.44 281.51,-146.31 280.08,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="282.52,-132.58 279.36,-125.87 277.65,-133.09 282.52,-132.58"/>
+<text xml:space="preserve" text-anchor="middle" x="309.75" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">annotated into</text>
+</g>
+<!-- gate -->
+<g id="node9" class="node">
+<title>gate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="496.92,-36.28 309.75,-36.28 309.75,0 496.92,0 496.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="354.58" y="-18.19" font-family="Geist Mono" font-size="11.00">Gates every release</text>
+<text xml:space="preserve" text-anchor="start" x="322.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">scores every prompt/model/guardrail change</text>
+</g>
+<!-- typedeval&#45;&gt;gate -->
+<g id="edge8" class="edge">
+<title>typedeval&#45;&gt;gate</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M295.56,-86.97C306.05,-77.27 319.76,-65.41 333.08,-56.28 341.09,-50.8 349.99,-45.53 358.7,-40.76"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="359.6,-43.06 364.61,-37.6 357.29,-38.74 359.6,-43.06"/>
+<text xml:space="preserve" text-anchor="middle" x="359.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">scores against</text>
+</g>
+<!-- gate&#45;&gt;inputgr -->
+<g id="edge9" class="edge">
+<title>gate&#45;&gt;inputgr</title>
+<path fill="none" stroke="#c8501f" d="M439.48,-36.87C463.38,-51.41 490.33,-74.49 490.33,-104.67 490.33,-456.79 490.33,-456.79 490.33,-456.79 490.33,-479.59 477.21,-501.93 464.68,-518.06"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="462.86,-516.42 460.35,-523.4 466.66,-519.51 462.86,-516.42"/>
+<text xml:space="preserve" text-anchor="middle" x="516.96" y="-278.28" font-family="Geist Mono" font-size="8.50" fill="#c8501f">gates changes</text>
+</g>
+<!-- gate&#45;&gt;outputgr -->
+<g id="edge10" class="edge">
+<title>gate&#45;&gt;outputgr</title>
+<path fill="none" stroke="#c8501f" d="M403.33,-36.83C403.33,-54.13 403.33,-81.21 403.33,-104.67 403.33,-281.73 403.33,-281.73 403.33,-281.73 403.33,-307.51 383.91,-329.46 365.09,-344.66"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="364,-342.41 359.96,-348.63 367,-346.28 364,-342.41"/>
+<text xml:space="preserve" text-anchor="middle" x="429.96" y="-190.75" font-family="Geist Mono" font-size="8.50" fill="#c8501f">gates changes</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the guardrail sandwich SonderMind described, from an incoming message through separate input and output LLM-as-judge guardrails to a clinician-annotated eval that gates every future prompt, model, or guardrail change; the loop is our synthesis of the talk&#x27;s description, not a slide shown verbatim (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The gap general-purpose LLMs leave in mental health</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/sondermind-mental-health-evals/s04_120.webp" alt="slide at 02:00"></a><div class="slidecap">Slide at 02:00 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/sondermind-mental-health-evals/s05_170.webp" alt="slide at 02:50"></a></div></div>
+<div class="textcol"><h2>The gap general-purpose LLMs leave in mental health</h2><ul class="takeaways"><li>SonderMind cites an American Psychological Association survey finding that 77% of psychologists said their patients are using AI for some kind of mental health support, while general-purpose LLMs are not built for mental health care.</li><li>Sonder, SonderMind&#x27;s clinically grounded AI coach, is positioned to support people between therapy sessions or not yet ready for therapy, and to act as a front door into SonderMind&#x27;s human provider network when a human is the right next step.</li></ul><div class="quote"><p>&ldquo;found that 77% of psychologists said that said that their patients are using um are using AI for mental health support of some kind&rdquo;</p><span class="at">said at 02:04</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Input and output guardrails sandwich the core model</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/sondermind-mental-health-evals/s05_170.webp" alt="slide at 02:50"></a><div class="slidecap">Slide at 02:50 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/sondermind-mental-health-evals/s06_300.webp" alt="slide at 05:00"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/sondermind-mental-health-evals/s07_340.webp" alt="slide at 05:40"></a></div></div>
+<div class="textcol"><h2>Input and output guardrails sandwich the core model</h2><ul class="takeaways"><li>Sonder&#x27;s architecture places separate input guardrails, which screen incoming user messages for whether intervention is needed before the core model responds, and output guardrails, which monitor the AI&#x27;s responses and the conversation as a whole for clinical safety risk.</li><li>SonderMind deliberately implemented these guardrails as separate LLM-as-judge calls rather than folding them into the main response generation, judging that separation makes them more robust and harder to circumvent through prompt engineering, despite the added latency and cost.</li></ul><div class="quote"><p>&ldquo;The input guardrails look look at the user message as it comes in to see if it requires any intervention before Sonder core responds&rdquo;</p><span class="at">said at 03:06</span></div><div class="quote"><p>&ldquo;keeping the out keeping the guardrails as separate LM as a judge calls makes them more rob more robust and harder to circumvent&rdquo;</p><span class="at">said at 04:09</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Correct triggers, not more triggers</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="7" class="sl"><img loading="lazy" class="main" src="img/sondermind-mental-health-evals/s07_340.webp" alt="slide at 05:40"></a><div class="slidecap">Slide at 05:40 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/sondermind-mental-health-evals/s08_540.webp" alt="slide at 09:00"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/sondermind-mental-health-evals/s09_610.webp" alt="slide at 10:10"></a></div></div>
+<div class="textcol"><h2>Correct triggers, not more triggers</h2><ul class="takeaways"><li>SonderMind explicitly optimized for correct guardrail triggers rather than more frequent ones, because inappropriately guardrailing someone in a vulnerable moment can feel like a door slam to the face and increase isolation.</li><li>For a message indicating present-tense danger (a user hiding from a drunk, threatening husband), Sonder surfaces local resources and disengages from the conversation rather than continuing to chat.</li></ul><div class="quote"><p>&ldquo;when you inappropriately guardrail on somebody, then that can often feel like a door slam to the face and make that person feel more isolated&rdquo;</p><span class="at">said at 06:10</span></div><div class="quote"><p>&ldquo;surfaces those resources and then actually disengages from the conversation and won&#x27;t continue&rdquo;</p><span class="at">said at 07:12</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Clinician annotations become typed evals that gate releases</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="9" class="sl"><img loading="lazy" class="main" src="img/sondermind-mental-health-evals/s09_610.webp" alt="slide at 10:10"></a><div class="slidecap">Slide at 10:10 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/sondermind-mental-health-evals/s10_730.webp" alt="slide at 12:10"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/sondermind-mental-health-evals/s11_800.webp" alt="slide at 13:20"></a></div></div>
+<div class="textcol"><h2>Clinician annotations become typed evals that gate releases</h2><ul class="takeaways"><li>The talk uses the example of an indirect, coded risk message (&#x27;I packed a box today, just one to feel what it would be like to be gone&#x27;) to argue that pattern-matching, verbose prompt rules, or a generic moderation API would miss the clinical nuance.</li><li>Instead, a flagged conversation is traced and handed to a licensed clinician to annotate; that annotation is converted into a typed eval with an expected result and expected observation, and every subsequent prompt, model, or guardrail change is scored against it.</li></ul><div class="quote"><p>&ldquo;I packed a box today. just one to feel what it would be like to be gone&rdquo;</p><span class="at">said at 10:17</span></div><div class="quote"><p>&ldquo;every prompt change, every model change, every guardrail change has to get scored once against what the clinician taught us&rdquo;</p><span class="at">said at 11:51</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Open-sourcing the guardrail scenario datasets</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="11" class="sl"><img loading="lazy" class="main" src="img/sondermind-mental-health-evals/s11_800.webp" alt="slide at 13:20"></a><div class="slidecap">Slide at 13:20 &middot; click any slide to enlarge &middot; 5 more from this section below</div><div class=strip><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/sondermind-mental-health-evals/s12_920.webp" alt="slide at 15:20"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/sondermind-mental-health-evals/s13_970.webp" alt="slide at 16:10"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/sondermind-mental-health-evals/s14_1000.webp" alt="slide at 16:40"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/sondermind-mental-health-evals/s15_1050.webp" alt="slide at 17:30"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/sondermind-mental-health-evals/s16_1080.webp" alt="slide at 18:00"></a></div></div>
+<div class="textcol"><h2>Open-sourcing the guardrail scenario datasets</h2><ul class="takeaways"><li>SonderMind&#x27;s calibration approach rests on the clinical team owning the definition of &#x27;good&#x27; rather than engineer intuition, with labeled scenarios turned into evals that gate releases based on concrete questions (did the right category fire, at the right point, catching the right issue type).</li><li>The team open-sourced 200 clinically reviewed input guardrail scenarios and 100 output guardrail scenarios as a shared baseline for others building similar systems, while noting this isn&#x27;t a replacement for building one&#x27;s own learning loop.</li></ul><div class="quote"><p>&ldquo;Today you can get 200 input guardrail scenarios and 100 output guardrail scenarios&rdquo;</p><span class="at">said at 16:01</span></div><div class="quote"><p>&ldquo;The first is the clinical theme owns the definition of good&rdquo;</p><span class="at">said at 13:59</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) In Q&amp;A, the speakers noted they had to disable the underlying frontier models&#x27; built-in safety guardrails on day one because those over-filtered their mental-health test scenarios entirely, which is a useful data point for anyone building sensitive-domain products on top of general-purpose model APIs rather than something covered in the main talk content.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/sondermind-mental-health-evals/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/sondermind-mental-health-evals/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/sondermind-mental-health-evals/s02_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/sondermind-mental-health-evals/s03_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/sondermind-mental-health-evals/s04_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/sondermind-mental-health-evals/s05_170.webp" alt="slide at 02:50"><div class="ts">02:50</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/sondermind-mental-health-evals/s06_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/sondermind-mental-health-evals/s07_340.webp" alt="slide at 05:40"><div class="ts">05:40</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/sondermind-mental-health-evals/s08_540.webp" alt="slide at 09:00"><div class="ts">09:00</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/sondermind-mental-health-evals/s09_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/sondermind-mental-health-evals/s10_730.webp" alt="slide at 12:10"><div class="ts">12:10</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/sondermind-mental-health-evals/s11_800.webp" alt="slide at 13:20"><div class="ts">13:20</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/sondermind-mental-health-evals/s12_920.webp" alt="slide at 15:20"><div class="ts">15:20</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/sondermind-mental-health-evals/s13_970.webp" alt="slide at 16:10"><div class="ts">16:10</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/sondermind-mental-health-evals/s14_1000.webp" alt="slide at 16:40"><div class="ts">16:40</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/sondermind-mental-health-evals/s15_1050.webp" alt="slide at 17:30"><div class="ts">17:30</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/sondermind-mental-health-evals/s16_1080.webp" alt="slide at 18:00"><div class="ts">18:00</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/sondermind-mental-health-evals/s17_1090.webp" alt="slide at 18:10"><div class="ts">18:10</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/sondermind-mental-health-evals/s18_1100.webp" alt="slide at 18:20"><div class="ts">18:20</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/sondermind-mental-health-evals/s19_1110.webp" alt="slide at 18:30"><div class="ts">18:30</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/sondermind-mental-health-evals/s20_1120.webp" alt="slide at 18:40"><div class="ts">18:40</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/sondermind-mental-health-evals/s21_1240.webp" alt="slide at 20:40"><div class="ts">20:40</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/sondermind-mental-health-evals/s22_1250.webp" alt="slide at 20:50"><div class="ts">20:50</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>An APA survey found 77% of psychologists reported their patients are using AI for some form of mental health support.</td><td class="tt">02:04</td></tr><tr><td class="st">asserts</td><td>Sonder&#x27;s input guardrails screen incoming user messages to see whether intervention is needed before the core model responds.</td><td class="tt">03:06</td></tr><tr><td class="st">recommends</td><td>Keeping guardrails as separate LLM-as-judge calls, rather than folding them into the core response, makes them more robust and harder to jailbreak.</td><td class="tt">04:09</td></tr><tr><td class="st">warns</td><td>Inappropriately guardrailing a vulnerable user feels like a door slam to the face and makes them feel more isolated.</td><td class="tt">06:10</td></tr><tr><td class="st">asserts</td><td>For a message showing present-tense danger, Sonder surfaces local resources and disengages from the conversation rather than continuing.</td><td class="tt">07:12</td></tr><tr><td class="st">asserts</td><td>The talk uses a coded, indirect message about packing a box to feel gone as an example of clinical nuance that keyword or generic moderation approaches would miss.</td><td class="tt">10:17</td></tr><tr><td class="st">recommends</td><td>Every clinician annotation of a flagged conversation becomes a typed eval that all future prompt, model, and guardrail changes must be scored against.</td><td class="tt">11:51</td></tr><tr><td class="st">asserts</td><td>SonderMind open-sourced 200 clinically reviewed input guardrail scenarios and 100 output guardrail scenarios.</td><td class="tt">16:01</td></tr><tr><td class="st">recommends</td><td>The clinical team, not engineer judgment, owns the definition of a correct guardrail outcome.</td><td class="tt">13:59</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/sondermind-mental-health-evals/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/O72p-rBb2bA?t=10"}, {"src": "img/sondermind-mental-health-evals/s01_20.webp", "mmss": "00:20", "yt": "https://youtu.be/O72p-rBb2bA?t=20"}, {"src": "img/sondermind-mental-health-evals/s02_40.webp", "mmss": "00:40", "yt": "https://youtu.be/O72p-rBb2bA?t=40"}, {"src": "img/sondermind-mental-health-evals/s03_60.webp", "mmss": "01:00", "yt": "https://youtu.be/O72p-rBb2bA?t=60"}, {"src": "img/sondermind-mental-health-evals/s04_120.webp", "mmss": "02:00", "yt": "https://youtu.be/O72p-rBb2bA?t=120"}, {"src": "img/sondermind-mental-health-evals/s05_170.webp", "mmss": "02:50", "yt": "https://youtu.be/O72p-rBb2bA?t=170"}, {"src": "img/sondermind-mental-health-evals/s06_300.webp", "mmss": "05:00", "yt": "https://youtu.be/O72p-rBb2bA?t=300"}, {"src": "img/sondermind-mental-health-evals/s07_340.webp", "mmss": "05:40", "yt": "https://youtu.be/O72p-rBb2bA?t=340"}, {"src": "img/sondermind-mental-health-evals/s08_540.webp", "mmss": "09:00", "yt": "https://youtu.be/O72p-rBb2bA?t=540"}, {"src": "img/sondermind-mental-health-evals/s09_610.webp", "mmss": "10:10", "yt": "https://youtu.be/O72p-rBb2bA?t=610"}, {"src": "img/sondermind-mental-health-evals/s10_730.webp", "mmss": "12:10", "yt": "https://youtu.be/O72p-rBb2bA?t=730"}, {"src": "img/sondermind-mental-health-evals/s11_800.webp", "mmss": "13:20", "yt": "https://youtu.be/O72p-rBb2bA?t=800"}, {"src": "img/sondermind-mental-health-evals/s12_920.webp", "mmss": "15:20", "yt": "https://youtu.be/O72p-rBb2bA?t=920"}, {"src": "img/sondermind-mental-health-evals/s13_970.webp", "mmss": "16:10", "yt": "https://youtu.be/O72p-rBb2bA?t=970"}, {"src": "img/sondermind-mental-health-evals/s14_1000.webp", "mmss": "16:40", "yt": "https://youtu.be/O72p-rBb2bA?t=1000"}, {"src": "img/sondermind-mental-health-evals/s15_1050.webp", "mmss": "17:30", "yt": "https://youtu.be/O72p-rBb2bA?t=1050"}, {"src": "img/sondermind-mental-health-evals/s16_1080.webp", "mmss": "18:00", "yt": "https://youtu.be/O72p-rBb2bA?t=1080"}, {"src": "img/sondermind-mental-health-evals/s17_1090.webp", "mmss": "18:10", "yt": "https://youtu.be/O72p-rBb2bA?t=1090"}, {"src": "img/sondermind-mental-health-evals/s18_1100.webp", "mmss": "18:20", "yt": "https://youtu.be/O72p-rBb2bA?t=1100"}, {"src": "img/sondermind-mental-health-evals/s19_1110.webp", "mmss": "18:30", "yt": "https://youtu.be/O72p-rBb2bA?t=1110"}, {"src": "img/sondermind-mental-health-evals/s20_1120.webp", "mmss": "18:40", "yt": "https://youtu.be/O72p-rBb2bA?t=1120"}, {"src": "img/sondermind-mental-health-evals/s21_1240.webp", "mmss": "20:40", "yt": "https://youtu.be/O72p-rBb2bA?t=1240"}, {"src": "img/sondermind-mental-health-evals/s22_1250.webp", "mmss": "20:50", "yt": "https://youtu.be/O72p-rBb2bA?t=1250"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "O72p-rBb2bA", "slug": "sondermind-mental-health-evals", "title": "Evals-Driven Development for a Mental Health AI Coach", "speaker": "Akele Reed & Dave Revere", "company": "SonderMind", "themes": ["healthcare-ai", "evals-benchmarks"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Guardrail sandwich and eval feedback loop (ours, from the slides)", "lanes": ["User Input", "Core Model", "Output Safety", "Eval Loop"], "nodes": [{"id": "msg", "label": "User message", "sub": "incoming chat message", "lane": 0, "kind": "actor", "claim": "c2", "t": 186}, {"id": "inputgr", "label": "Input guardrail", "sub": "LLM-as-judge, screens before core replies", "lane": 0, "kind": "system", "claim": "c2", "t": 186}, {"id": "core", "label": "Sonder core model", "sub": "clinically grounded AI coach", "lane": 1, "kind": "system", "claim": "c3", "t": 249}, {"id": "outputgr", "label": "Output guardrail", "sub": "separate LLM-as-judge, monitors response", "lane": 2, "kind": "system", "claim": "c3", "t": 249}, {"id": "disengage", "label": "Disengage + resources", "sub": "present-tense danger: surfaces local resources", "lane": 2, "kind": "system", "claim": "c5", "t": 432}, {"id": "flagged", "label": "Flagged conversation", "sub": "traced conversation sent for review", "lane": 3, "kind": "store", "claim": "c6", "t": 617}, {"id": "clinician", "label": "Clinician annotation", "sub": "licensed clinician labels the case", "lane": 3, "kind": "actor", "claim": "c7", "t": 711}, {"id": "typedeval", "label": "Typed eval", "sub": "input, expected result, expected observation", "lane": 3, "kind": "store", "claim": "c7", "t": 711}, {"id": "gate", "label": "Gates every release", "sub": "scores every prompt/model/guardrail change", "lane": 3, "kind": "system", "claim": "c8", "t": 961}], "edges": [{"from": "msg", "to": "inputgr", "label": "screens", "kind": "flow"}, {"from": "inputgr", "to": "core", "label": "clears", "kind": "flow"}, {"from": "core", "to": "outputgr", "label": "response", "kind": "flow"}, {"from": "outputgr", "to": "disengage", "label": "danger detected", "kind": "flow"}, {"from": "outputgr", "to": "flagged", "label": "flags", "kind": "flow"}, {"from": "flagged", "to": "clinician", "label": "reviewed by", "kind": "flow"}, {"from": "clinician", "to": "typedeval", "label": "annotated into", "kind": "data"}, {"from": "typedeval", "to": "gate", "label": "scores against", "kind": "data"}, {"from": "gate", "to": "inputgr", "label": "gates changes", "kind": "flow"}, {"from": "gate", "to": "outputgr", "label": "gates changes", "kind": "flow"}], "caption": "This traces the guardrail sandwich SonderMind described, from an incoming message through separate input and output LLM-as-judge guardrails to a clinician-annotated eval that gates every future prompt, model, or guardrail change; the loop is our synthesis of the talk's description, not a slide shown verbatim (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "APA survey on AI mental health use", "text": "An APA survey found 77% of psychologists reported their patients are using AI for some form of mental health support.", "quote": "found that 77% of psychologists said that said that their patients are using um are using AI for mental health support of some kind", "t": 124}, {"id": "c2", "stance": "asserts", "topic": "input guardrail function", "text": "Sonder's input guardrails screen incoming user messages to see whether intervention is needed before the core model responds.", "quote": "The input guardrails look look at the user message as it comes in to see if it requires any intervention before Sonder core responds", "t": 186}, {"id": "c3", "stance": "recommends", "topic": "separate LLM-as-judge guardrail calls", "text": "Keeping guardrails as separate LLM-as-judge calls, rather than folding them into the core response, makes them more robust and harder to jailbreak.", "quote": "keeping the out keeping the guardrails as separate LM as a judge calls makes them more rob more robust and harder to circumvent", "t": 249}, {"id": "c4", "stance": "warns", "topic": "cost of over-triggering guardrails", "text": "Inappropriately guardrailing a vulnerable user feels like a door slam to the face and makes them feel more isolated.", "quote": "when you inappropriately guardrail on somebody, then that can often feel like a door slam to the face and make that person feel more isolated", "t": 370}, {"id": "c5", "stance": "asserts", "topic": "active crisis handling example", "text": "For a message showing present-tense danger, Sonder surfaces local resources and disengages from the conversation rather than continuing.", "quote": "surfaces those resources and then actually disengages from the conversation and won't continue", "t": 432}, {"id": "c6", "stance": "asserts", "topic": "indirect risk example", "text": "The talk uses a coded, indirect message about packing a box to feel gone as an example of clinical nuance that keyword or generic moderation approaches would miss.", "quote": "I packed a box today. just one to feel what it would be like to be gone", "t": 617}, {"id": "c7", "stance": "recommends", "topic": "clinician annotations as gating evals", "text": "Every clinician annotation of a flagged conversation becomes a typed eval that all future prompt, model, and guardrail changes must be scored against.", "quote": "every prompt change, every model change, every guardrail change has to get scored once against what the clinician taught us", "t": 711}, {"id": "c8", "stance": "asserts", "topic": "open-sourced guardrail datasets", "text": "SonderMind open-sourced 200 clinically reviewed input guardrail scenarios and 100 output guardrail scenarios.", "quote": "Today you can get 200 input guardrail scenarios and 100 output guardrail scenarios", "t": 961}, {"id": "c9", "stance": "recommends", "topic": "clinical ownership of calibration", "text": "The clinical team, not engineer judgment, owns the definition of a correct guardrail outcome.", "quote": "The first is the clinical theme owns the definition of good", "t": 839}]}</script>
+</body></html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Continual Learning for AI Agents: From Failures to Durable Improvements &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/2IxD9OB3XuQ" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 22 min</span><span class="ln"></span></div>
+<h1 class="lede">Continual Learning for AI Agents: From Failures to Durable Improvements</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Soheil Feizi &middot; RELAI</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/2IxD9OB3XuQ" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/2IxD9OB3XuQ</a> &middot; 22 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Continual learning</span><span class="chip hot">Memory</span><span class="chip hot">Evals & benchmarks</span></div>
+<p class="deck" style="font-size:15px">Lays out why raw production logs and feedback aren&#x27;t enough to safely improve an agent, and proposes a four-principle framework (replayability, holisticness, lifelongness, efficiency) plus a benchmark result showing one optimization loop...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Production logs plus feedback are not testable; they must be lifted into replayable learning environments with simulated tools/users and defined evaluators before any fix can be verified (c2, c10).</li><li>Fixes can land in three layers -- model weights, harness/context, or memory -- and a good learning engine should route to the smallest durable change at the right layer rather than defaulting to one layer (c1, c3, c5).</li><li>Verifiable continual learning requires regression-aware optimization built into the loop itself, not a post-hoc check; in a demo this improved a support-agent benchmark score from 87% to 97% in one loop (c8, c9).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">VERIFIABLE CONTINUAL LEARNING LOOP (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 502.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- logs -->
+<g id="node1" class="node">
+<title>logs</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="262.42,-386.4 138.25,-386.4 138.25,-350.12 262.42,-350.12 262.42,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="163.21" y="-368.31" font-family="Geist Mono" font-size="11.00">Production logs</text>
+<text xml:space="preserve" text-anchor="start" x="151.21" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">session logs, no benchmark</text>
+</g>
+<!-- learnenv -->
+<g id="node3" class="node">
+<title>learnenv</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="343.92,-298.87 192.75,-298.87 192.75,-262.59 343.92,-262.59 343.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="215.83" y="-280.78" font-family="Geist Mono" font-size="11.00">Learning environment</text>
+<text xml:space="preserve" text-anchor="start" x="205.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">replayable sim with defined grading</text>
+</g>
+<!-- logs&#45;&gt;learnenv -->
+<g id="edge1" class="edge">
+<title>logs&#45;&gt;learnenv</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M214.42,-349.54C224.45,-336.92 238.05,-319.82 249.08,-305.95"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="250.88,-307.62 253.32,-300.61 247.05,-304.57 250.88,-307.62"/>
+<text xml:space="preserve" text-anchor="middle" x="256.78" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">lifted into</text>
+</g>
+<!-- feedback -->
+<g id="node2" class="node">
+<title>feedback</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="388.29,-386.4 284.38,-386.4 284.38,-350.12 388.29,-350.12 388.29,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="297.71" y="-368.31" font-family="Geist Mono" font-size="11.00">Feedback signal</text>
+<text xml:space="preserve" text-anchor="start" x="297.33" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">human or LLM scoring</text>
+</g>
+<!-- feedback&#45;&gt;learnenv -->
+<g id="edge2" class="edge">
+<title>feedback&#45;&gt;learnenv</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M322.25,-349.54C312.22,-336.92 298.62,-319.82 287.59,-305.95"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="289.62,-304.57 283.35,-300.61 285.79,-307.62 289.62,-304.57"/>
+<text xml:space="preserve" text-anchor="middle" x="327.03" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">scored into</text>
+</g>
+<!-- model -->
+<g id="node4" class="node">
+<title>model</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="170.67,-211.34 0,-211.34 0,-175.06 170.67,-175.06 170.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="57.58" y="-193.25" font-family="Geist Mono" font-size="11.00">Model layer</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">SFT/RL, needs benchmarks + evaluators</text>
+</g>
+<!-- learnenv&#45;&gt;model -->
+<g id="edge3" class="edge">
+<title>learnenv&#45;&gt;model</title>
+<path fill="none" stroke="#c8501f" d="M230.42,-262.01C201.46,-248.48 161.46,-229.78 130.79,-215.44"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="131.95,-213.28 124.58,-212.54 129.88,-217.72 131.95,-213.28"/>
+<text xml:space="preserve" text-anchor="middle" x="202.79" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">route to</text>
+</g>
+<!-- harness -->
+<g id="node5" class="node">
+<title>harness</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="344.29,-211.34 192.38,-211.34 192.38,-175.06 344.29,-175.06 344.29,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="234.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Harness layer</text>
+<text xml:space="preserve" text-anchor="start" x="205.33" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">trace&#45;to&#45;harness, effect untestable</text>
+</g>
+<!-- learnenv&#45;&gt;harness -->
+<g id="edge4" class="edge">
+<title>learnenv&#45;&gt;harness</title>
+<path fill="none" stroke="#c8501f" d="M268.33,-262.01C268.33,-249.97 268.33,-233.84 268.33,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="270.79,-220.41 268.34,-213.41 265.89,-220.41 270.79,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="283.33" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">route to</text>
+</g>
+<!-- memory -->
+<g id="node6" class="node">
+<title>memory</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="493.92,-211.34 366.75,-211.34 366.75,-175.06 493.92,-175.06 493.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="397.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Memory layer</text>
+<text xml:space="preserve" text-anchor="start" x="379.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">cheapest, fastest, unverified</text>
+</g>
+<!-- learnenv&#45;&gt;memory -->
+<g id="edge5" class="edge">
+<title>learnenv&#45;&gt;memory</title>
+<path fill="none" stroke="#c8501f" d="M301.9,-262.01C327.32,-248.59 362.35,-230.09 389.41,-215.81"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="390.43,-218.04 395.47,-212.61 388.14,-213.71 390.43,-218.04"/>
+<text xml:space="preserve" text-anchor="middle" x="374.03" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">route to</text>
+</g>
+<!-- regloop -->
+<g id="node7" class="node">
+<title>regloop</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="336.79,-123.81 199.88,-123.81 199.88,-87.53 336.79,-87.53 336.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="212.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Regression&#45;aware loop</text>
+<text xml:space="preserve" text-anchor="start" x="216.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">checks built into optimization</text>
+</g>
+<!-- model&#45;&gt;regloop -->
+<g id="edge6" class="edge">
+<title>model&#45;&gt;regloop</title>
+<path fill="none" stroke="#c8501f" d="M123.25,-174.48C152.21,-160.95 192.21,-142.25 222.88,-127.91"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="223.79,-130.19 229.09,-125.01 221.72,-125.75 223.79,-130.19"/>
+<text xml:space="preserve" text-anchor="middle" x="212.17" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">candidate fix</text>
+</g>
+<!-- harness&#45;&gt;regloop -->
+<g id="edge7" class="edge">
+<title>harness&#45;&gt;regloop</title>
+<path fill="none" stroke="#c8501f" d="M268.33,-174.48C268.33,-162.44 268.33,-146.31 268.33,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="270.79,-132.88 268.34,-125.88 265.89,-132.88 270.79,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="292.71" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">candidate fix</text>
+</g>
+<!-- memory&#45;&gt;regloop -->
+<g id="edge8" class="edge">
+<title>memory&#45;&gt;regloop</title>
+<path fill="none" stroke="#c8501f" d="M396.77,-174.48C371.35,-161.06 336.32,-142.56 309.26,-128.28"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="310.53,-126.18 303.2,-125.08 308.24,-130.51 310.53,-126.18"/>
+<text xml:space="preserve" text-anchor="middle" x="383.41" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">candidate fix</text>
+</g>
+<!-- verified -->
+<g id="node8" class="node">
+<title>verified</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="324.42,-36.28 212.25,-36.28 212.25,0 324.42,0 324.42,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="243.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Verified fix</text>
+<text xml:space="preserve" text-anchor="start" x="225.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">87% to 97% in one loop</text>
+</g>
+<!-- regloop&#45;&gt;verified -->
+<g id="edge9" class="edge">
+<title>regloop&#45;&gt;verified</title>
+<path fill="none" stroke="#c8501f" d="M268.33,-86.95C268.33,-74.91 268.33,-58.78 268.33,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="270.79,-45.35 268.34,-38.35 265.89,-45.35 270.79,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="287.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">proven fix</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The talk treats raw logs and feedback as unusable until lifted into a replayable environment, then routed to whichever fix layer is cheapest and provable; the regression-aware loop is what the speaker credits for turning one pass into an 87% to 97% jump (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Two fundamental challenges</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="0" class="sl"><img loading="lazy" class="main" src="img/continual-learning-durable-improvements/s00_100.webp" alt="slide at 01:40"></a><div class="slidecap">Slide at 01:40 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="1" class="sl"><img loading="lazy" class="thumb" src="img/continual-learning-durable-improvements/s01_140.webp" alt="slide at 02:20"></a></div></div>
+<div class="textcol"><h2>Two fundamental challenges</h2><ul class="takeaways"><li>The speaker frames continual learning for agents around two problems: how to get feedback on whether the agent did well, and how to act on that feedback to optimize the agent across its model, harness, and memory layers.</li></ul><div class="quote"><p>&ldquo;there are two, I would say, fundamental challenges in continual learning for agents. The first challenge is how to get feedback. How do we know if the agent did well?&rdquo;</p><span class="at">said at 01:35</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Logs and feedback aren&#x27;t enough -- they need to become learning environments</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/continual-learning-durable-improvements/s01_140.webp" alt="slide at 02:20"></a><div class="slidecap">Slide at 02:20 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Logs and feedback aren&#x27;t enough -- they need to become learning environments</h2><ul class="takeaways"><li>In production there&#x27;s no benchmark, only session logs, which can be scored automatically by other models/LLMs or by human experts, but even log-plus-feedback isn&#x27;t testable.</li><li>The speaker argues it must be lifted into a replayable learning environment -- a simulation with defined success criteria, mocked or real tools, and possibly synthetic users -- before any fix can be verified.</li></ul><div class="quote"><p>&ldquo;what we really need is a replayable learning environment, a simulation that we can rerun with defined grading on what success looks like&rdquo;</p><span class="at">said at 04:10</span></div><div class="quote"><p>&ldquo;production logs are not learning environments. We need to transform them into replayable learning environments to simulate and evaluate the agent on the same patterns and scenarios&rdquo;</p><span class="at">said at 21:50</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Three layers to fix, each with tradeoffs</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/continual-learning-durable-improvements/s02_500.webp" alt="slide at 08:20"></a><div class="slidecap">Slide at 08:20 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/continual-learning-durable-improvements/s03_520.webp" alt="slide at 08:40"></a></div></div>
+<div class="textcol"><h2>Three layers to fix, each with tradeoffs</h2><ul class="takeaways"><li>Model-weight updates (SFT, RL methods like DPO/GRPO/RLVR) require benchmarks and explicit evaluators and are expensive to run.</li><li>Harness-layer trace-to-harness approaches can act directly on a single log-plus-feedback case but are not testable, so effectiveness on that case and impact on other cases is unknown.</li><li>Memory-layer updates (writing facts, distilling skills) are the cheapest and fastest but are typically unverified.</li></ul><div class="quote"><p>&ldquo;these methods, they usually need benchmarks and explicit evaluators. They cannot be directly applied on, let&#x27;s say, if you have a log and feedback&rdquo;</p><span class="at">said at 08:20</span></div><div class="quote"><p>&ldquo;We don&#x27;t know if even for that particular uh sample, if the change is effective, because it is not testable. And we don&#x27;t know what is the impact of it on other samples&rdquo;</p><span class="at">said at 08:50</span></div><div class="quote"><p>&ldquo;this layer in terms of the update is cheapest and fastest. It works directly on the cases where you only have log and feedback, but usually it is unverified&rdquo;</p><span class="at">said at 10:40</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Verifiable continual learning: four principles</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/continual-learning-durable-improvements/s03_520.webp" alt="slide at 08:40"></a><div class="slidecap">Slide at 08:40 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Verifiable continual learning: four principles</h2><ul class="takeaways"><li>Verifiable continual learning is defined as improving an agent from its own experience where every fix is proven to help and proven to break nothing that already worked.</li><li>Its holisticness principle holds that one failure can have several possible causes across memory, prompt, tools, workflow, or model, illustrated by an agent that cites a stale policy and skips a required escalation.</li><li>Its lifelongness principle calls for regression-aware optimization built into the loop itself rather than checked after the fact.</li></ul><div class="quote"><p>&ldquo;the goal is to improve an agent from its his own experience where every fix is proven to help and proven to break nothing that already worked&rdquo;</p><span class="at">said at 10:55</span></div><div class="quote"><p>&ldquo;you have an agent that cites a stale policy and skips the required escalation. The issue might come from the memory where you have some stale fact&rdquo;</p><span class="at">said at 12:25</span></div><div class="quote"><p>&ldquo;A better approach is a regression aware learning where the regression is not be treated as a post-hoc approach, but as a mechanism within the optimization itself&rdquo;</p><span class="at">said at 13:58</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Demo result</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/continual-learning-durable-improvements/s03_520.webp" alt="slide at 08:40"></a><div class="slidecap">Slide at 08:40 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Demo result</h2><ul class="takeaways"><li>In a fictional support-agent benchmark with regression traps, applying the vendor&#x27;s optimizer for one loop produced a 10% average improvement, raising the score from 87% to 97%.</li></ul><div class="quote"><p>&ldquo;the average improvement uh, can be um, quite high. Uh, it is 10% improvement on average just with one loop and score increases to 97% from 87%&rdquo;</p><span class="at">said at 20:20</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The framing of memory writes as &#x27;cheapest, fastest, but unverified&#x27; is a useful counterweight to memory-layer hype -- it implies teams should pair any memory-write agent pattern with some form of regression testing rather than trusting it to self-correct (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/continual-learning-durable-improvements/s00_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/continual-learning-durable-improvements/s01_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/continual-learning-durable-improvements/s02_500.webp" alt="slide at 08:20"><div class="ts">08:20</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/continual-learning-durable-improvements/s03_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Continual learning for agents faces two fundamental challenges: getting feedback on agent performance and acting on that feedback to improve the agent.</td><td class="tt">01:35</td></tr><tr><td class="st">warns</td><td>Session logs plus feedback aren&#x27;t sufficient because they aren&#x27;t testable; they need to become a replayable learning environment with defined grading.</td><td class="tt">04:10</td></tr><tr><td class="st">asserts</td><td>Model-weight update methods like SFT and RL require benchmarks and explicit evaluators and can&#x27;t be applied directly to a log-plus-feedback case.</td><td class="tt">08:20</td></tr><tr><td class="st">warns</td><td>Trace-to-harness fixes are not testable, so it&#x27;s unknown whether the change is effective even on the original sample or what impact it has elsewhere.</td><td class="tt">08:50</td></tr><tr><td class="st">warns</td><td>Memory-layer updates are the cheapest and fastest way to act on log-plus-feedback data, but they are usually unverified.</td><td class="tt">10:40</td></tr><tr><td class="st">asserts</td><td>Verifiable continual learning improves an agent from its own experience where every fix is proven to help and proven to break nothing that already worked.</td><td class="tt">10:55</td></tr><tr><td class="st">asserts</td><td>A single failure, like an agent citing a stale policy and skipping escalation, can trace to memory, prompt, tools, workflow, or model, and the fix should route to the right layer.</td><td class="tt">12:25</td></tr><tr><td class="st">recommends</td><td>Regression should be treated as a mechanism built into the optimization loop itself rather than checked as a post-hoc step.</td><td class="tt">13:58</td></tr><tr><td class="st">asserts</td><td>One optimization loop on a support-agent benchmark produced a 10% average improvement, raising the score from 87% to 97%.</td><td class="tt">20:20</td></tr><tr><td class="st">asserts</td><td>Production logs are not learning environments and must be transformed into replayable learning environments to simulate and evaluate the agent.</td><td class="tt">21:50</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/continual-learning-durable-improvements/s00_100.webp", "mmss": "01:40", "yt": "https://youtu.be/2IxD9OB3XuQ?t=100"}, {"src": "img/continual-learning-durable-improvements/s01_140.webp", "mmss": "02:20", "yt": "https://youtu.be/2IxD9OB3XuQ?t=140"}, {"src": "img/continual-learning-durable-improvements/s02_500.webp", "mmss": "08:20", "yt": "https://youtu.be/2IxD9OB3XuQ?t=500"}, {"src": "img/continual-learning-durable-improvements/s03_520.webp", "mmss": "08:40", "yt": "https://youtu.be/2IxD9OB3XuQ?t=520"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "2IxD9OB3XuQ", "slug": "continual-learning-durable-improvements", "title": "Continual Learning for AI Agents: From Failures to Durable Improvements", "speaker": "Soheil Feizi", "company": "RELAI", "themes": ["continual-learning", "memory", "evals-benchmarks"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Verifiable continual learning loop (ours)", "lanes": ["Raw input", "Learning environment", "Fix layers", "Verification"], "nodes": [{"id": "logs", "label": "Production logs", "sub": "session logs, no benchmark", "lane": 0, "kind": "store", "claim": "c10", "t": 1310}, {"id": "feedback", "label": "Feedback signal", "sub": "human or LLM scoring", "lane": 0, "kind": "external", "claim": "c1", "t": 95}, {"id": "learnenv", "label": "Learning environment", "sub": "replayable sim with defined grading", "lane": 1, "kind": "system", "claim": "c2", "t": 250}, {"id": "model", "label": "Model layer", "sub": "SFT/RL, needs benchmarks + evaluators", "lane": 2, "kind": "system", "claim": "c3", "t": 500}, {"id": "harness", "label": "Harness layer", "sub": "trace-to-harness, effect untestable", "lane": 2, "kind": "system", "claim": "c4", "t": 530}, {"id": "memory", "label": "Memory layer", "sub": "cheapest, fastest, unverified", "lane": 2, "kind": "store", "claim": "c5", "t": 640}, {"id": "regloop", "label": "Regression-aware loop", "sub": "checks built into optimization", "lane": 3, "kind": "system", "claim": "c8", "t": 838}, {"id": "verified", "label": "Verified fix", "sub": "87% to 97% in one loop", "lane": 3, "kind": "system", "claim": "c9", "t": 1220}], "edges": [{"from": "logs", "to": "learnenv", "label": "lifted into", "kind": "data"}, {"from": "feedback", "to": "learnenv", "label": "scored into", "kind": "data"}, {"from": "learnenv", "to": "model", "label": "route to", "kind": "flow"}, {"from": "learnenv", "to": "harness", "label": "route to", "kind": "flow"}, {"from": "learnenv", "to": "memory", "label": "route to", "kind": "flow"}, {"from": "model", "to": "regloop", "label": "candidate fix", "kind": "flow"}, {"from": "harness", "to": "regloop", "label": "candidate fix", "kind": "flow"}, {"from": "memory", "to": "regloop", "label": "candidate fix", "kind": "flow"}, {"from": "regloop", "to": "verified", "label": "proven fix", "kind": "flow"}], "caption": "The talk treats raw logs and feedback as unusable until lifted into a replayable environment, then routed to whichever fix layer is cheapest and provable; the regression-aware loop is what the speaker credits for turning one pass into an 87% to 97% jump (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "two fundamental challenges", "text": "Continual learning for agents faces two fundamental challenges: getting feedback on agent performance and acting on that feedback to improve the agent.", "quote": "there are two, I would say, fundamental challenges in continual learning for agents. The first challenge is how to get feedback. How do we know if the agent did well?", "t": 95}, {"id": "c2", "stance": "warns", "topic": "logs need to become learning environments", "text": "Session logs plus feedback aren't sufficient because they aren't testable; they need to become a replayable learning environment with defined grading.", "quote": "what we really need is a replayable learning environment, a simulation that we can rerun with defined grading on what success looks like", "t": 250}, {"id": "c3", "stance": "asserts", "topic": "model-layer methods need benchmarks", "text": "Model-weight update methods like SFT and RL require benchmarks and explicit evaluators and can't be applied directly to a log-plus-feedback case.", "quote": "these methods, they usually need benchmarks and explicit evaluators. They cannot be directly applied on, let's say, if you have a log and feedback", "t": 500}, {"id": "c4", "stance": "warns", "topic": "trace-to-harness is unverified", "text": "Trace-to-harness fixes are not testable, so it's unknown whether the change is effective even on the original sample or what impact it has elsewhere.", "quote": "We don't know if even for that particular uh sample, if the change is effective, because it is not testable. And we don't know what is the impact of it on other samples", "t": 530}, {"id": "c5", "stance": "warns", "topic": "memory layer cheap but unverified", "text": "Memory-layer updates are the cheapest and fastest way to act on log-plus-feedback data, but they are usually unverified.", "quote": "this layer in terms of the update is cheapest and fastest. It works directly on the cases where you only have log and feedback, but usually it is unverified", "t": 640}, {"id": "c6", "stance": "asserts", "topic": "verifiable continual learning defined", "text": "Verifiable continual learning improves an agent from its own experience where every fix is proven to help and proven to break nothing that already worked.", "quote": "the goal is to improve an agent from its his own experience where every fix is proven to help and proven to break nothing that already worked", "t": 655}, {"id": "c7", "stance": "asserts", "topic": "holisticness example", "text": "A single failure, like an agent citing a stale policy and skipping escalation, can trace to memory, prompt, tools, workflow, or model, and the fix should route to the right layer.", "quote": "you have an agent that cites a stale policy and skips the required escalation. The issue might come from the memory where you have some stale fact", "t": 745}, {"id": "c8", "stance": "recommends", "topic": "regression-aware optimization", "text": "Regression should be treated as a mechanism built into the optimization loop itself rather than checked as a post-hoc step.", "quote": "A better approach is a regression aware learning where the regression is not be treated as a post-hoc approach, but as a mechanism within the optimization itself", "t": 838}, {"id": "c9", "stance": "asserts", "topic": "benchmark improvement result", "text": "One optimization loop on a support-agent benchmark produced a 10% average improvement, raising the score from 87% to 97%.", "quote": "the average improvement uh, can be um, quite high. Uh, it is 10% improvement on average just with one loop and score increases to 97% from 87%", "t": 1220}, {"id": "c10", "stance": "asserts", "topic": "production logs are not learning environments", "text": "Production logs are not learning environments and must be transformed into replayable learning environments to simulate and evaluate the agent.", "quote": "production logs are not learning environments. We need to transform them into replayable learning environments to simulate and evaluate the agent on the same patterns and scenarios", "t": 1310}]}</script>
+</body></html>

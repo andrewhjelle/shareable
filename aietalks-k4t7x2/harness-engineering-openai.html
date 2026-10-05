@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Harness Engineering: How to Build Software When Humans Steer, Agents Execute &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/am_oeAoUhew" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 46 min</span><span class="ln"></span></div>
+<h1 class="lede">Harness Engineering: How to Build Software When Humans Steer, Agents Execute</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Ryan Lopopolo &middot; OpenAI</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/am_oeAoUhew" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/am_oeAoUhew</a> &middot; 46 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Coding agents</span><span class="chip hot">Context engineering</span></div>
+<p class="deck" style="font-size:15px">Gives a concrete operating model for teams shifting from hand-written code to agent-driven engineering: which artifacts to invest in (guardrail lints, structural tests, persona-oriented docs) versus which to drop (manual code review, rea...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Code is now treated as free and abundant, so hiring additional engineering capacity is bottlenecked only by GPU capacity and token budget, not headcount (c1, c2).</li><li>Guardrails, lints, and structural tests -- not manual code review -- are how the team keeps agent output from being slop (c4, c5).</li><li>A weekly &#x27;garbage collection day&#x27; converted one-off PR review feedback into durable guardrails after 3-5 PRs per engineer per day caused severe merge conflicts (c7, c8).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW GUARDRAILS REPLACE CODE REVIEW (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 392.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- capability -->
+<g id="node1" class="node">
+<title>capability</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="112.92,-386.4 0,-386.4 0,-350.12 112.92,-350.12 112.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-368.31" font-family="Geist Mono" font-size="11.00">GPT&#45;5.2 capability</text>
+<text xml:space="preserve" text-anchor="start" x="16.34" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">full SWE job, late 2025</text>
+</g>
+<!-- agentcode -->
+<g id="node3" class="node">
+<title>agentcode</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="199.92,-298.87 57,-298.87 57,-262.59 199.92,-262.59 199.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="84.21" y="-280.78" font-family="Geist Mono" font-size="11.00">Agent writes code</text>
+<text xml:space="preserve" text-anchor="start" x="69.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">implementation no longer scarce</text>
+</g>
+<!-- capability&#45;&gt;agentcode -->
+<g id="edge1" class="edge">
+<title>capability&#45;&gt;agentcode</title>
+<path fill="none" stroke="#c8501f" d="M71.38,-349.54C82.09,-336.81 96.66,-319.51 108.39,-305.57"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="109.95,-307.52 112.59,-300.59 106.2,-304.36 109.95,-307.52"/>
+<text xml:space="preserve" text-anchor="middle" x="111.02" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+<!-- delegate -->
+<g id="node2" class="node">
+<title>delegate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="265.92,-386.4 135,-386.4 135,-350.12 265.92,-350.12 265.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="153.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Engineers delegate</text>
+<text xml:space="preserve" text-anchor="start" x="147.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">3&#45;5 PRs per engineer per day</text>
+</g>
+<!-- delegate&#45;&gt;agentcode -->
+<g id="edge2" class="edge">
+<title>delegate&#45;&gt;agentcode</title>
+<path fill="none" stroke="#c8501f" d="M185.54,-349.54C174.83,-336.81 160.26,-319.51 148.53,-305.57"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="150.72,-304.36 144.33,-300.59 146.97,-307.52 150.72,-304.36"/>
+<text xml:space="preserve" text-anchor="middle" x="192.02" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">delegates to</text>
+</g>
+<!-- proutput -->
+<g id="node4" class="node">
+<title>proutput</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="198.42,-211.34 58.5,-211.34 58.5,-175.06 198.42,-175.06 198.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="104.46" y="-193.25" font-family="Geist Mono" font-size="11.00">PR output</text>
+<text xml:space="preserve" text-anchor="start" x="71.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">raw agent output before checks</text>
+</g>
+<!-- agentcode&#45;&gt;proutput -->
+<g id="edge3" class="edge">
+<title>agentcode&#45;&gt;proutput</title>
+<path fill="none" stroke="#c8501f" d="M128.46,-262.01C128.46,-249.97 128.46,-233.84 128.46,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="130.91,-220.41 128.46,-213.41 126.01,-220.41 130.91,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="144.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">produces</text>
+</g>
+<!-- lints -->
+<g id="node5" class="node">
+<title>lints</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="211.17,-123.81 81.75,-123.81 81.75,-87.53 211.17,-87.53 211.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="113.09" y="-105.72" font-family="Geist Mono" font-size="11.00">Guardrail lints</text>
+<text xml:space="preserve" text-anchor="start" x="94.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">instruct: do not produce slop</text>
+</g>
+<!-- proutput&#45;&gt;lints -->
+<g id="edge4" class="edge">
+<title>proutput&#45;&gt;lints</title>
+<path fill="none" stroke="#c8501f" d="M122.85,-174.45C120.76,-165.17 119.54,-153.72 122.46,-143.81 123.74,-139.48 125.69,-135.19 127.94,-131.13"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="129.87,-132.68 131.45,-125.44 125.7,-130.12 129.87,-132.68"/>
+<text xml:space="preserve" text-anchor="middle" x="143.46" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">checked by</text>
+</g>
+<!-- structests -->
+<g id="node6" class="node">
+<title>structests</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="333.55,-123.81 233.38,-123.81 233.38,-87.53 333.55,-87.53 333.55,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="246.34" y="-105.72" font-family="Geist Mono" font-size="11.00">Structural tests</text>
+<text xml:space="preserve" text-anchor="start" x="247.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">cap files at 350 lines</text>
+</g>
+<!-- proutput&#45;&gt;structests -->
+<g id="edge5" class="edge">
+<title>proutput&#45;&gt;structests</title>
+<path fill="none" stroke="#c8501f" d="M148.47,-174.58C160.38,-164.67 176.13,-152.57 191.46,-143.81 202.13,-137.71 214,-132.12 225.58,-127.24"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="226.18,-129.64 231.72,-124.71 224.32,-125.11 226.18,-129.64"/>
+<text xml:space="preserve" text-anchor="middle" x="212.46" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">checked by</text>
+</g>
+<!-- artifact -->
+<g id="node8" class="node">
+<title>artifact</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="292.3,-36.28 136.62,-36.28 136.62,0 292.3,0 292.3,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="176.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Durable artifact</text>
+<text xml:space="preserve" text-anchor="start" x="149.59" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">prompt and guardrails, not the code</text>
+</g>
+<!-- lints&#45;&gt;artifact -->
+<g id="edge8" class="edge">
+<title>lints&#45;&gt;artifact</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M160.55,-86.95C170.58,-74.33 184.18,-57.23 195.21,-43.36"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="197.01,-45.03 199.45,-38.02 193.17,-41.98 197.01,-45.03"/>
+<text xml:space="preserve" text-anchor="middle" x="207.78" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">hardens into</text>
+</g>
+<!-- structests&#45;&gt;artifact -->
+<g id="edge9" class="edge">
+<title>structests&#45;&gt;artifact</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M269.16,-86.95C258.99,-74.33 245.19,-57.23 234,-43.36"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="235.99,-41.93 229.69,-38.02 232.18,-45 235.99,-41.93"/>
+<text xml:space="preserve" text-anchor="middle" x="276.34" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">hardens into</text>
+</g>
+<!-- gcday -->
+<g id="node7" class="node">
+<title>gcday</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="383.92,-211.34 223,-211.34 223,-175.06 383.92,-175.06 383.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="247.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Garbage collection day</text>
+<text xml:space="preserve" text-anchor="start" x="235.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">weekly, turns feedback into guardrails</text>
+</g>
+<!-- gcday&#45;&gt;lints -->
+<g id="edge6" class="edge">
+<title>gcday&#45;&gt;lints</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M280.94,-174.58C267.83,-164.79 250.72,-152.81 234.46,-143.81 223.97,-138 212.38,-132.51 201.16,-127.63"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="202.25,-125.43 194.85,-124.93 200.33,-129.94 202.25,-125.43"/>
+<text xml:space="preserve" text-anchor="middle" x="262.39" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">feeds</text>
+</g>
+<!-- gcday&#45;&gt;structests -->
+<g id="edge7" class="edge">
+<title>gcday&#45;&gt;structests</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M299.32,-174.48C296.47,-162.32 292.66,-146 289.48,-132.41"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="291.92,-132.1 287.94,-125.84 287.15,-133.22 291.92,-132.1"/>
+<text xml:space="preserve" text-anchor="middle" x="304.78" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">feeds</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces how the team&#x27;s weekly garbage-collection ritual turns one-off review feedback into standing lints and structural tests, which we read as the mechanism that let them scale PR volume without a human review bottleneck (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Code becomes free, engineering becomes systems design</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Code becomes free, engineering becomes systems design</h2><ul class="takeaways"><li>The speaker frames GPT-5.2 (late 2025) as the point models became capable of doing the full job of a software engineer, which he says makes implementation no longer the scarce resource.</li><li>In this framing, hiring more effective engineering capacity is constrained only by GPU capacity and token budget, and the human role shifts toward systems design and delegation.</li></ul><div class="quote"><p>&ldquo;Hiring the hands on the keyboards as part of our teams is only constrained by GPU capacity and token budgets&rdquo;</p><span class="at">said at 02:42</span></div><div class="quote"><p>&ldquo;the magic moment was GPT 5.2, which when it came out was able to do the full job of a software engineer&rdquo;</p><span class="at">said at 03:12</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Prompts and guardrails replace the code artifact itself</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Prompts and guardrails replace the code artifact itself</h2><ul class="takeaways"><li>Because implementation is delegated to agents, he argues the durable artifact of engineering work is the prompt and guardrails that produced the code, not the code.</li><li>Teams should explicitly instruct agents not to produce slop and back that instruction with enforced guardrails rather than relying on humans catching bad output after the fact.</li></ul><div class="quote"><p>&ldquo;The important thing is not the code, but the prompt and the guardrails that got you there&rdquo;</p><span class="at">said at 06:52</span></div><div class="quote"><p>&ldquo;You can just simply say do not produce slop. Don&#x27;t accept slop, you won&#x27;t get slop in your code base&rdquo;</p><span class="at">said at 09:26</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Structuring repos to be context-efficient for agents</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Structuring repos to be context-efficient for agents</h2><ul class="takeaways"><li>Alongside lints, the team writes tests that constrain source structure itself -- for example, capping files at 350 lines -- to keep the codebase easier for the model to hold in context and to make agent output more predictable.</li></ul><div class="quote"><p>&ldquo;we can write a test that limits the fact that files are no longer than 350 lines&rdquo;</p><span class="at">said at 13:37</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Depending on labs&#x27; harness-specific post-training</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Depending on labs&#x27; harness-specific post-training</h2><ul class="takeaways"><li>He describes labs as post-training models specifically within the context of the harness they are primarily deployed in (citing the apply-patch tool and bash-invocation semantics as examples), and argues this gives leverage to teams that build on first-party harnesses like Codex rather than reinventing harness mechanics themselves.</li></ul><div class="quote"><p>&ldquo;the labs are not just post-training the models, but post-training the models in the context of the harness in which they are primarily deployed in&rdquo;</p><span class="at">said at 27:08</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Scaling PR throughput past the human review bottleneck</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Scaling PR throughput past the human review bottleneck</h2><ul class="takeaways"><li>At three to five PRs per engineer per day, even a three-person team hit severe merge conflicts from concurrent work on the same code, with long-open PRs waiting on human review as the root cause.</li><li>The team&#x27;s fix was a weekly &#x27;garbage collection day&#x27; dedicated to turning each week&#x27;s recurring review feedback into categorical, automatically enforced guardrails.</li></ul><div class="quote"><p>&ldquo;with each engineer producing three to five PRs per day, even on a team of three, merge conflicts were super miserable&rdquo;</p><span class="at">said at 37:04</span></div><div class="quote"><p>&ldquo;we called it garbage collection day, where our entire job was to take every bit of slop we had observed over the course of the week&rdquo;</p><span class="at">said at 38:07</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The &#x27;garbage collection day&#x27; pattern is essentially converting one-off human code-review feedback into machine-checkable guardrails on a fixed weekly cadence -- worth comparing against how other talks in this corpus handle reducing human review load at scale.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Hiring additional engineering capacity is now constrained only by GPU capacity and token budget, not headcount.</td><td class="tt">02:42</td></tr><tr><td class="st">asserts</td><td>He credits GPT-5.2, released in late 2025, as the point models became able to do the full job of a software engineer.</td><td class="tt">03:12</td></tr><tr><td class="st">asserts</td><td>With implementation delegated to agents, the important artifact is the prompt and guardrails that produced the code, not the code itself.</td><td class="tt">06:52</td></tr><tr><td class="st">recommends</td><td>Teams should explicitly instruct agents not to produce slop and enforce that with guardrails rather than accepting bad output.</td><td class="tt">09:26</td></tr><tr><td class="st">recommends</td><td>Writing tests that constrain source structure, e.g. capping files at 350 lines, keeps the codebase context-efficient for the model.</td><td class="tt">13:37</td></tr><tr><td class="st">asserts</td><td>AI labs post-train their models specifically within the context of the harness they&#x27;re primarily deployed in, e.g. Codex&#x27;s apply-patch tool and bash-invocation semantics.</td><td class="tt">27:08</td></tr><tr><td class="st">asserts</td><td>At three to five PRs per engineer per day, even a three-person team hit severe merge conflicts from working in the same code.</td><td class="tt">37:04</td></tr><tr><td class="st">recommends</td><td>The team dedicated one day a week (&#x27;garbage collection day&#x27;) to eliminating categories of slop observed that week so it wouldn&#x27;t recur.</td><td class="tt">38:07</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div class="frame wide"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "am_oeAoUhew", "slug": "harness-engineering-openai", "title": "Harness Engineering: How to Build Software When Humans Steer, Agents Execute", "speaker": "Ryan Lopopolo", "company": "OpenAI", "themes": ["agentic-engineering", "coding-agents", "context-engineering"], "tier": "transcript-brief", "depth": "pattern", "diagram": {"title": "How guardrails replace code review (ours)", "lanes": ["Inputs", "Agent output", "Guardrail loop"], "nodes": [{"id": "capability", "label": "GPT-5.2 capability", "sub": "full SWE job, late 2025", "lane": 0, "kind": "external", "claim": "c2", "t": 192}, {"id": "delegate", "label": "Engineers delegate", "sub": "3-5 PRs per engineer per day", "lane": 0, "kind": "actor", "claim": "c7", "t": 2224}, {"id": "agentcode", "label": "Agent writes code", "sub": "implementation no longer scarce", "lane": 1, "kind": "system", "claim": "c1", "t": 162}, {"id": "proutput", "label": "PR output", "sub": "raw agent output before checks", "lane": 1, "kind": "store", "claim": "c4", "t": 566}, {"id": "lints", "label": "Guardrail lints", "sub": "instruct: do not produce slop", "lane": 2, "kind": "system", "claim": "c4", "t": 566}, {"id": "structests", "label": "Structural tests", "sub": "cap files at 350 lines", "lane": 2, "kind": "system", "claim": "c5", "t": 817}, {"id": "gcday", "label": "Garbage collection day", "sub": "weekly, turns feedback into guardrails", "lane": 2, "kind": "actor", "claim": "c8", "t": 2287}, {"id": "artifact", "label": "Durable artifact", "sub": "prompt and guardrails, not the code", "lane": 2, "kind": "store", "claim": "c3", "t": 412}], "edges": [{"from": "capability", "to": "agentcode", "label": "enables", "kind": "flow"}, {"from": "delegate", "to": "agentcode", "label": "delegates to", "kind": "flow"}, {"from": "agentcode", "to": "proutput", "label": "produces", "kind": "flow"}, {"from": "proutput", "to": "lints", "label": "checked by", "kind": "flow"}, {"from": "proutput", "to": "structests", "label": "checked by", "kind": "flow"}, {"from": "gcday", "to": "lints", "label": "feeds", "kind": "data"}, {"from": "gcday", "to": "structests", "label": "feeds", "kind": "data"}, {"from": "lints", "to": "artifact", "label": "hardens into", "kind": "data"}, {"from": "structests", "to": "artifact", "label": "hardens into", "kind": "data"}], "caption": "This traces how the team's weekly garbage-collection ritual turns one-off review feedback into standing lints and structural tests, which we read as the mechanism that let them scale PR volume without a human review bottleneck (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "engineering capacity", "text": "Hiring additional engineering capacity is now constrained only by GPU capacity and token budget, not headcount.", "quote": "Hiring the hands on the keyboards as part of our teams is only constrained by GPU capacity and token budgets", "t": 162}, {"id": "c2", "stance": "asserts", "topic": "capability threshold", "text": "He credits GPT-5.2, released in late 2025, as the point models became able to do the full job of a software engineer.", "quote": "the magic moment was GPT 5.2, which when it came out was able to do the full job of a software engineer", "t": 192}, {"id": "c3", "stance": "asserts", "topic": "prompts over code", "text": "With implementation delegated to agents, the important artifact is the prompt and guardrails that produced the code, not the code itself.", "quote": "The important thing is not the code, but the prompt and the guardrails that got you there", "t": 412}, {"id": "c4", "stance": "recommends", "topic": "guardrails against slop", "text": "Teams should explicitly instruct agents not to produce slop and enforce that with guardrails rather than accepting bad output.", "quote": "You can just simply say do not produce slop. Don't accept slop, you won't get slop in your code base", "t": 566}, {"id": "c5", "stance": "recommends", "topic": "context-efficient code structure", "text": "Writing tests that constrain source structure, e.g. capping files at 350 lines, keeps the codebase context-efficient for the model.", "quote": "we can write a test that limits the fact that files are no longer than 350 lines", "t": 817}, {"id": "c6", "stance": "asserts", "topic": "post-training in harness context", "text": "AI labs post-train their models specifically within the context of the harness they're primarily deployed in, e.g. Codex's apply-patch tool and bash-invocation semantics.", "quote": "the labs are not just post-training the models, but post-training the models in the context of the harness in which they are primarily deployed in", "t": 1628}, {"id": "c7", "stance": "asserts", "topic": "PR velocity and merge conflicts", "text": "At three to five PRs per engineer per day, even a three-person team hit severe merge conflicts from working in the same code.", "quote": "with each engineer producing three to five PRs per day, even on a team of three, merge conflicts were super miserable", "t": 2224}, {"id": "c8", "stance": "recommends", "topic": "garbage collection day", "text": "The team dedicated one day a week ('garbage collection day') to eliminating categories of slop observed that week so it wouldn't recur.", "quote": "we called it garbage collection day, where our entire job was to take every bit of slop we had observed over the course of the week", "t": 2287}]}</script>
+</body></html>

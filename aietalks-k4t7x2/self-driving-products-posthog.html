@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Self Driving Products: Product Signals to Pull Requests &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/zMiSRliEzv4" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 15 min</span><span class="ln"></span></div>
+<h1 class="lede">Self Driving Products: Product Signals to Pull Requests</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Joshua Snyder &middot; PostHog</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/zMiSRliEzv4" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/zMiSRliEzv4</a> &middot; 15 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Coding agents</span><span class="chip hot">Product & UX</span></div>
+<p class="deck" style="font-size:15px">Describes PostHog&#x27;s in-progress pipeline that turns observability signals (errors, session replay, Slack reports) directly into ready-to-merge pull requests via research and coding agents, which matters for anyone evaluating whether to b...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>PostHog is building a pipeline that ingests product signals (trillions of events/month across errors, session replay, Slack, experiments), groups them into reports, runs a research agent, and ships a pull request -- aiming to replace dashboard-checking with reviewing ready PRs.</li><li>Off-the-shelf embedding models cluster signals by structural similarity (all errors together, all Slack messages together) rather than by the actual problem they represent; the fix was generating LLM queries about each signal and matching those in embedding space instead.</li><li>Key lessons: eval on real production data (not vibe checks), don&#x27;t let agents attempt fixes on vague/generic reports (it will try anyway and produce noisy PRs), and don&#x27;t over-optimize pipeline cost early -- running an agent against the same problem repeatedly first reveals patterns that can later be distilled into a cheaper one-shot call.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">SIGNAL TO PULL REQUEST PIPELINE (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 422.00 657.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 652.99)">
+<title>G</title>
+<!-- signals -->
+<g id="node1" class="node">
+<title>signals</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="336.92,-648.99 164,-648.99 164,-612.71 336.92,-612.71 336.92,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="213.71" y="-630.9" font-family="Geist Mono" font-size="11.00">Product signals</text>
+<text xml:space="preserve" text-anchor="start" x="176.96" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">Trillions of events/mo, errors/replay/Slack</text>
+</g>
+<!-- safety -->
+<g id="node2" class="node">
+<title>safety</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="320.05,-561.46 180.88,-561.46 180.88,-525.18 320.05,-525.18 320.05,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="212.21" y="-543.37" font-family="Geist Mono" font-size="11.00">Safety classifier</text>
+<text xml:space="preserve" text-anchor="start" x="193.84" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">Drops adversarial/abuse signals</text>
+</g>
+<!-- signals&#45;&gt;safety -->
+<g id="edge1" class="edge">
+<title>signals&#45;&gt;safety</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M250.46,-612.13C250.46,-600.09 250.46,-583.96 250.46,-570.45"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="252.91,-570.53 250.46,-563.53 248.01,-570.53 252.91,-570.53"/>
+<text xml:space="preserve" text-anchor="middle" x="271.09" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">raw events</text>
+</g>
+<!-- raw_embed -->
+<g id="node3" class="node">
+<title>raw_embed</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="341.8,-473.93 159.12,-473.93 159.12,-437.65 341.8,-437.65 341.8,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="211.46" y="-455.84" font-family="Geist Mono" font-size="11.00">Raw embedding</text>
+<text xml:space="preserve" text-anchor="start" x="172.09" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">Clusters by structural similarity, not problem</text>
+</g>
+<!-- safety&#45;&gt;raw_embed -->
+<g id="edge2" class="edge">
+<title>safety&#45;&gt;raw_embed</title>
+<path fill="none" stroke="#c8501f" d="M250.46,-524.6C250.46,-512.56 250.46,-496.43 250.46,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="252.91,-483 250.46,-476 248.01,-483 252.91,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="271.09" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">normalized</text>
+</g>
+<!-- query_match -->
+<g id="node4" class="node">
+<title>query_match</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="338.05,-386.4 162.88,-386.4 162.88,-350.12 338.05,-350.12 338.05,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="195.71" y="-368.31" font-family="Geist Mono" font-size="11.00">Query&#45;based matching</text>
+<text xml:space="preserve" text-anchor="start" x="175.84" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">LLM queries matched in embedding space</text>
+</g>
+<!-- raw_embed&#45;&gt;query_match -->
+<g id="edge3" class="edge">
+<title>raw_embed&#45;&gt;query_match</title>
+<path fill="none" stroke="#c8501f" d="M250.46,-437.07C250.46,-425.03 250.46,-408.9 250.46,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="252.91,-395.47 250.46,-388.47 248.01,-395.47 252.91,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="268.46" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">fixes bias</text>
+</g>
+<!-- research_agent -->
+<g id="node5" class="node">
+<title>research_agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="327.17,-298.87 173.75,-298.87 173.75,-262.59 327.17,-262.59 327.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="212.21" y="-280.78" font-family="Geist Mono" font-size="11.00">Research agent</text>
+<text xml:space="preserve" text-anchor="start" x="186.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Claude Agent SDK in Modal sandbox</text>
+</g>
+<!-- query_match&#45;&gt;research_agent -->
+<g id="edge4" class="edge">
+<title>query_match&#45;&gt;research_agent</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M250.46,-349.54C250.46,-337.5 250.46,-321.37 250.46,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="252.91,-307.94 250.46,-300.94 248.01,-307.94 252.91,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="278.21" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">grouped report</text>
+</g>
+<!-- routing -->
+<g id="node6" class="node">
+<title>routing</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="248.92,-211.34 70,-211.34 70,-175.06 248.92,-175.06 248.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="141.09" y="-193.25" font-family="Geist Mono" font-size="11.00">Routing</text>
+<text xml:space="preserve" text-anchor="start" x="82.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Not&#45;actionable / needs&#45;human / actionable</text>
+</g>
+<!-- research_agent&#45;&gt;routing -->
+<g id="edge5" class="edge">
+<title>research_agent&#45;&gt;routing</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M231.6,-262.01C217.94,-249.16 199.32,-231.67 184.42,-217.66"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="186.17,-215.94 179.39,-212.94 182.82,-219.52 186.17,-215.94"/>
+<text xml:space="preserve" text-anchor="middle" x="244.53" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">summary+priority</text>
+</g>
+<!-- vague_signal -->
+<g id="node9" class="node">
+<title>vague_signal</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="413.92,-211.34 271,-211.34 271,-175.06 413.92,-175.06 413.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="301.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Vague&#45;signal risk</text>
+<text xml:space="preserve" text-anchor="start" x="283.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Agent fixes generic reports badly</text>
+</g>
+<!-- research_agent&#45;&gt;vague_signal -->
+<g id="edge8" class="edge">
+<title>research_agent&#45;&gt;vague_signal</title>
+<path fill="none" stroke="#c8501f" d="M269.52,-262.01C283.34,-249.16 302.16,-231.67 317.22,-217.66"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="318.85,-219.49 322.31,-212.93 315.52,-215.9 318.85,-219.49"/>
+<text xml:space="preserve" text-anchor="middle" x="308.72" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">risk</text>
+</g>
+<!-- pr_agent -->
+<g id="node7" class="node">
+<title>pr_agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="244.42,-123.81 74.5,-123.81 74.5,-87.53 244.42,-87.53 244.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="137.34" y="-105.72" font-family="Geist Mono" font-size="11.00">PR agent</text>
+<text xml:space="preserve" text-anchor="start" x="87.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Writes fix, iterates against CI until green</text>
+</g>
+<!-- routing&#45;&gt;pr_agent -->
+<g id="edge6" class="edge">
+<title>routing&#45;&gt;pr_agent</title>
+<path fill="none" stroke="#c8501f" d="M159.46,-174.48C159.46,-162.44 159.46,-146.31 159.46,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="161.91,-132.88 159.46,-125.88 157.01,-132.88 161.91,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="178.59" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">actionable</text>
+</g>
+<!-- eval_real -->
+<g id="node8" class="node">
+<title>eval_real</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="148.92,-36.28 0,-36.28 0,0 148.92,0 148.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="33.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Eval on real data</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Vibe checks miss prod&#45;only failures</text>
+</g>
+<!-- pr_agent&#45;&gt;eval_real -->
+<g id="edge7" class="edge">
+<title>pr_agent&#45;&gt;eval_real</title>
+<path fill="none" stroke="#c8501f" d="M141.85,-86.95C129.08,-74.1 111.69,-56.61 97.78,-42.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="99.79,-41.15 93.12,-37.91 96.31,-44.6 99.79,-41.15"/>
+<text xml:space="preserve" text-anchor="middle" x="133.67" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">lesson</text>
+</g>
+<!-- cost_lesson -->
+<g id="node10" class="node">
+<title>cost_lesson</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="318.17,-36.28 170.75,-36.28 170.75,0 318.17,0 318.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="216.34" y="-18.19" font-family="Geist Mono" font-size="11.00">Cost lesson</text>
+<text xml:space="preserve" text-anchor="start" x="183.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Delaying agent use was a mistake</text>
+</g>
+<!-- pr_agent&#45;&gt;cost_lesson -->
+<g id="edge9" class="edge">
+<title>pr_agent&#45;&gt;cost_lesson</title>
+<path fill="none" stroke="#c8501f" d="M177.07,-86.95C189.84,-74.1 207.23,-56.61 221.14,-42.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="222.61,-44.6 225.8,-37.91 219.13,-41.15 222.61,-44.6"/>
+<text xml:space="preserve" text-anchor="middle" x="218.67" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">lesson</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces PostHog&#x27;s stated pipeline from raw signal to merged PR, plus the three build lessons they called out; the exact routing logic between stages is our simplification of what was described (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The pipeline&#x27;s goal</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/self-driving-products-posthog/s05_150.webp" alt="slide at 02:30"></a><div class="slidecap">Slide at 02:30 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>The pipeline&#x27;s goal</h2><ul class="takeaways"><li>Instead of a developer noticing a dashboard change hours or days later, filing a ticket, and eventually opening a PR, PostHog wants a background agent to investigate a product signal as soon as it happens and generate a pull request automatically, so the developer&#x27;s main interface becomes reviewing PRs in GitHub rather than dashboards.</li></ul><div class="quote"><p>&ldquo;a product signal happens, and instead of waiting to see that in your dashboard, we want we want to run a background agent to figure out what&#x27;s going wrong&rdquo;</p><span class="at">said at 02:06</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Ingesting and normalizing a high-volume, noisy signal stream</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="6" class="sl"><img loading="lazy" class="main" src="img/self-driving-products-posthog/s06_210.webp" alt="slide at 03:30"></a><div class="slidecap">Slide at 03:30 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Ingesting and normalizing a high-volume, noisy signal stream</h2><ul class="takeaways"><li>The pipeline ingests trillions of events a month across errors, session replay, logs, and experiments, first passing signals through an LLM safety classifier (to drop adversarial/public-abuse signals) then normalizing each into a common structure with source, type, content, and an assigned importance weight.</li></ul><div class="quote"><p>&ldquo;we have a huge amount of events. We&#x27;re ingesting trillions of events a month&rdquo;</p><span class="at">said at 03:08</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Grouping signals into reports without embedding bias</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="7" class="sl"><img loading="lazy" class="main" src="img/self-driving-products-posthog/s07_420.webp" alt="slide at 07:00"></a><div class="slidecap">Slide at 07:00 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Grouping signals into reports without embedding bias</h2><ul class="takeaways"><li>Directly embedding raw signals clustered them by structural similarity (all errors together, all Slack messages together) rather than by shared underlying problem.</li><li>The fix was generating LLM-written queries describing what each signal is about and matching those queries in embedding space, which grouped related cross-source signals correctly.</li></ul><div class="quote"><p>&ldquo;What the embedding model will do is it will notice structural similarity and it will put all of the errors together&rdquo;</p><span class="at">said at 06:13</span></div><div class="quote"><p>&ldquo;instead of matching in embedding space the signals themselves, uh we generate queries based off the signals&rdquo;</p><span class="at">said at 06:46</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Research agent, actionability, and PR execution</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="8" class="sl"><img loading="lazy" class="main" src="img/self-driving-products-posthog/s08_570.webp" alt="slide at 09:30"></a><div class="slidecap">Slide at 09:30 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/self-driving-products-posthog/s09_590.webp" alt="slide at 09:50"></a></div></div>
+<div class="textcol"><h2>Research agent, actionability, and PR execution</h2><ul class="takeaways"><li>Once a report crosses a weight threshold, a research agent (running the Claude Agent SDK in a Modal sandbox, with an internal MCP server, codebase context, and external MCPs like Linear/Notion) produces a summary, priority, and a Git-blame-based reviewer suggestion.</li><li>Reports are then routed to not-actionable (gather more evidence), needs-human-input (product decision, goes to an inbox), or immediately actionable (agent writes a fix, opens a PR, and iterates against CI/comments until green).</li></ul><div class="quote"><p>&ldquo;the output of this research agent then, uh, is a summary of the problem. It gives a priority, how important we think this this problem is to work on&rdquo;</p><span class="at">said at 08:20</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Lessons learned building it</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="10" class="sl"><img loading="lazy" class="main" src="img/self-driving-products-posthog/s10_690.webp" alt="slide at 11:30"></a><div class="slidecap">Slide at 11:30 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/self-driving-products-posthog/s11_750.webp" alt="slide at 12:30"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/self-driving-products-posthog/s12_810.webp" alt="slide at 13:30"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/self-driving-products-posthog/s13_910.webp" alt="slide at 15:10"></a></div></div>
+<div class="textcol"><h2>Lessons learned building it</h2><ul class="takeaways"><li>Testing only on internal vibe checks failed to catch problems that showed up on representative production data.</li><li>Throwing an agent at a vague signal (e.g.</li><li>&#x27;onboarding is broken&#x27;) produces noisy, low-value PRs because the agent will attempt a fix regardless of whether the problem is specific enough.</li><li>Early on the team over-optimized for token cost and delayed agent use as long as possible, which they called a mistake, since running an agent repeatedly against similar problems first reveals patterns that can later be compressed into a cheaper one-shot call or trained model.</li></ul><div class="quote"><p>&ldquo;if you&#x27;re not testing on representative data, it your you&#x27;re basically just fumbling in the dark&rdquo;</p><span class="at">said at 11:26</span></div><div class="quote"><p>&ldquo;if you just throw an agent at a problem, it will try to fix something&rdquo;</p><span class="at">said at 11:57</span></div><div class="quote"><p>&ldquo;we tried to avoid using agents where we could or delay it till as late as possible in the pipeline. And when we were experimenting, this was a big mistake&rdquo;</p><span class="at">said at 12:59</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The &#x27;tokens are free&#x27; lesson only holds because they eventually distill repeated agent runs into cheaper one-shot calls -- teams that skip that distillation step and just keep running full agents at scale will hit the cost wall they describe avoiding (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/self-driving-products-posthog/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/self-driving-products-posthog/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/self-driving-products-posthog/s02_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/self-driving-products-posthog/s03_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/self-driving-products-posthog/s04_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/self-driving-products-posthog/s05_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/self-driving-products-posthog/s06_210.webp" alt="slide at 03:30"><div class="ts">03:30</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/self-driving-products-posthog/s07_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/self-driving-products-posthog/s08_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/self-driving-products-posthog/s09_590.webp" alt="slide at 09:50"><div class="ts">09:50</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/self-driving-products-posthog/s10_690.webp" alt="slide at 11:30"><div class="ts">11:30</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/self-driving-products-posthog/s11_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/self-driving-products-posthog/s12_810.webp" alt="slide at 13:30"><div class="ts">13:30</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/self-driving-products-posthog/s13_910.webp" alt="slide at 15:10"><div class="ts">15:10</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>PostHog wants a background agent to investigate a product signal immediately and produce a PR, rather than waiting for a developer to notice a dashboard change.</td><td class="tt">02:06</td></tr><tr><td class="st">asserts</td><td>PostHog ingests trillions of product events per month across multiple signal sources.</td><td class="tt">03:08</td></tr><tr><td class="st">warns</td><td>Directly embedding raw signals clusters them by structural similarity rather than by the underlying problem they represent.</td><td class="tt">06:13</td></tr><tr><td class="st">recommends</td><td>Generate LLM queries describing what each signal is about and match those in embedding space instead of embedding raw signals.</td><td class="tt">06:46</td></tr><tr><td class="st">asserts</td><td>The research agent produces a problem summary, a priority score, and a reviewer suggestion via Git blame.</td><td class="tt">08:20</td></tr><tr><td class="st">warns</td><td>Testing only on internal vibe checks rather than representative production data leaves teams unable to know what&#x27;s actually going on.</td><td class="tt">11:26</td></tr><tr><td class="st">warns</td><td>An agent will attempt to fix a problem even when the underlying signal report is too generic, producing noisy PRs.</td><td class="tt">11:57</td></tr><tr><td class="st">warns</td><td>Avoiding agent use early to save cost was a mistake, since repeated agent runs first reveal patterns worth distilling into cheaper calls.</td><td class="tt">12:59</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/self-driving-products-posthog/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/zMiSRliEzv4?t=10"}, {"src": "img/self-driving-products-posthog/s01_20.webp", "mmss": "00:20", "yt": "https://youtu.be/zMiSRliEzv4?t=20"}, {"src": "img/self-driving-products-posthog/s02_30.webp", "mmss": "00:30", "yt": "https://youtu.be/zMiSRliEzv4?t=30"}, {"src": "img/self-driving-products-posthog/s03_60.webp", "mmss": "01:00", "yt": "https://youtu.be/zMiSRliEzv4?t=60"}, {"src": "img/self-driving-products-posthog/s04_80.webp", "mmss": "01:20", "yt": "https://youtu.be/zMiSRliEzv4?t=80"}, {"src": "img/self-driving-products-posthog/s05_150.webp", "mmss": "02:30", "yt": "https://youtu.be/zMiSRliEzv4?t=150"}, {"src": "img/self-driving-products-posthog/s06_210.webp", "mmss": "03:30", "yt": "https://youtu.be/zMiSRliEzv4?t=210"}, {"src": "img/self-driving-products-posthog/s07_420.webp", "mmss": "07:00", "yt": "https://youtu.be/zMiSRliEzv4?t=420"}, {"src": "img/self-driving-products-posthog/s08_570.webp", "mmss": "09:30", "yt": "https://youtu.be/zMiSRliEzv4?t=570"}, {"src": "img/self-driving-products-posthog/s09_590.webp", "mmss": "09:50", "yt": "https://youtu.be/zMiSRliEzv4?t=590"}, {"src": "img/self-driving-products-posthog/s10_690.webp", "mmss": "11:30", "yt": "https://youtu.be/zMiSRliEzv4?t=690"}, {"src": "img/self-driving-products-posthog/s11_750.webp", "mmss": "12:30", "yt": "https://youtu.be/zMiSRliEzv4?t=750"}, {"src": "img/self-driving-products-posthog/s12_810.webp", "mmss": "13:30", "yt": "https://youtu.be/zMiSRliEzv4?t=810"}, {"src": "img/self-driving-products-posthog/s13_910.webp", "mmss": "15:10", "yt": "https://youtu.be/zMiSRliEzv4?t=910"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "zMiSRliEzv4", "slug": "self-driving-products-posthog", "title": "Self Driving Products: Product Signals to Pull Requests", "speaker": "Joshua Snyder", "company": "PostHog", "themes": ["agentic-engineering", "coding-agents", "product-ux"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Signal to pull request pipeline (ours, from the slides)", "lanes": ["Ingest", "Group", "Act", "Lessons"], "nodes": [{"id": "signals", "label": "Product signals", "sub": "Trillions of events/mo, errors/replay/Slack", "lane": 0, "kind": "external", "claim": "c2", "t": 188}, {"id": "safety", "label": "Safety classifier", "sub": "Drops adversarial/abuse signals", "lane": 0, "kind": "system", "claim": "c2", "t": 188}, {"id": "raw_embed", "label": "Raw embedding", "sub": "Clusters by structural similarity, not problem", "lane": 1, "kind": "system", "claim": "c3", "t": 373}, {"id": "query_match", "label": "Query-based matching", "sub": "LLM queries matched in embedding space", "lane": 1, "kind": "system", "claim": "c4", "t": 406}, {"id": "research_agent", "label": "Research agent", "sub": "Claude Agent SDK in Modal sandbox", "lane": 2, "kind": "system", "claim": "c5", "t": 500}, {"id": "routing", "label": "Routing", "sub": "Not-actionable / needs-human / actionable", "lane": 2, "kind": "system", "claim": "c5", "t": 500}, {"id": "pr_agent", "label": "PR agent", "sub": "Writes fix, iterates against CI until green", "lane": 2, "kind": "system", "claim": "c5", "t": 500}, {"id": "eval_real", "label": "Eval on real data", "sub": "Vibe checks miss prod-only failures", "lane": 3, "kind": "actor", "claim": "c6", "t": 686}, {"id": "vague_signal", "label": "Vague-signal risk", "sub": "Agent fixes generic reports badly", "lane": 3, "kind": "actor", "claim": "c7", "t": 717}, {"id": "cost_lesson", "label": "Cost lesson", "sub": "Delaying agent use was a mistake", "lane": 3, "kind": "actor", "claim": "c8", "t": 779}], "edges": [{"from": "signals", "to": "safety", "label": "raw events", "kind": "data"}, {"from": "safety", "to": "raw_embed", "label": "normalized", "kind": "flow"}, {"from": "raw_embed", "to": "query_match", "label": "fixes bias", "kind": "flow"}, {"from": "query_match", "to": "research_agent", "label": "grouped report", "kind": "data"}, {"from": "research_agent", "to": "routing", "label": "summary+priority", "kind": "data"}, {"from": "routing", "to": "pr_agent", "label": "actionable", "kind": "flow"}, {"from": "pr_agent", "to": "eval_real", "label": "lesson", "kind": "flow"}, {"from": "research_agent", "to": "vague_signal", "label": "risk", "kind": "flow"}, {"from": "pr_agent", "to": "cost_lesson", "label": "lesson", "kind": "flow"}], "caption": "This traces PostHog's stated pipeline from raw signal to merged PR, plus the three build lessons they called out; the exact routing logic between stages is our simplification of what was described (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "pipeline vision", "text": "PostHog wants a background agent to investigate a product signal immediately and produce a PR, rather than waiting for a developer to notice a dashboard change.", "quote": "a product signal happens, and instead of waiting to see that in your dashboard, we want we want to run a background agent to figure out what's going wrong", "t": 126}, {"id": "c2", "stance": "asserts", "topic": "ingestion scale", "text": "PostHog ingests trillions of product events per month across multiple signal sources.", "quote": "we have a huge amount of events. We're ingesting trillions of events a month", "t": 188}, {"id": "c3", "stance": "warns", "topic": "embedding structural bias", "text": "Directly embedding raw signals clusters them by structural similarity rather than by the underlying problem they represent.", "quote": "What the embedding model will do is it will notice structural similarity and it will put all of the errors together", "t": 373}, {"id": "c4", "stance": "recommends", "topic": "query-based matching fix", "text": "Generate LLM queries describing what each signal is about and match those in embedding space instead of embedding raw signals.", "quote": "instead of matching in embedding space the signals themselves, uh we generate queries based off the signals", "t": 406}, {"id": "c5", "stance": "asserts", "topic": "research agent output", "text": "The research agent produces a problem summary, a priority score, and a reviewer suggestion via Git blame.", "quote": "the output of this research agent then, uh, is a summary of the problem. It gives a priority, how important we think this this problem is to work on", "t": 500}, {"id": "c6", "stance": "warns", "topic": "eval on real data", "text": "Testing only on internal vibe checks rather than representative production data leaves teams unable to know what's actually going on.", "quote": "if you're not testing on representative data, it your you're basically just fumbling in the dark", "t": 686}, {"id": "c7", "stance": "warns", "topic": "agents fixing vague signals", "text": "An agent will attempt to fix a problem even when the underlying signal report is too generic, producing noisy PRs.", "quote": "if you just throw an agent at a problem, it will try to fix something", "t": 717}, {"id": "c8", "stance": "warns", "topic": "premature cost optimization", "text": "Avoiding agent use early to save cost was a mistake, since repeated agent runs first reveal patterns worth distilling into cheaper calls.", "quote": "we tried to avoid using agents where we could or delay it till as late as possible in the pipeline. And when we were experimenting, this was a big mistake", "t": 779}]}</script>
+</body></html>

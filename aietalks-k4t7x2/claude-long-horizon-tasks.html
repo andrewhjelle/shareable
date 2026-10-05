@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Claude for Long-Horizon Tasks &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/9QebvrrY3KY" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 25 min</span><span class="ln"></span></div>
+<h1 class="lede">Claude for Long-Horizon Tasks</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Lance Martin &middot; Anthropic</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/9QebvrrY3KY" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/9QebvrrY3KY</a> &middot; 25 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Memory</span><span class="chip hot">Context engineering</span></div>
+<p class="deck" style="font-size:15px">Lance Martin (Anthropic) walks through the architecture behind Claude&#x27;s Managed Agents API and the design choices that let agents run for hours instead of minutes</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Managed Agents decouples the harness (&quot;brain&quot;) from sandboxed execution (&quot;hands&quot;) via a stateless, append-only session log, so a dying container or harness doesn&#x27;t lose the session and credentials never sit inside the sandbox. (c9, c1, c2)</li><li>Separating verification into its own context window, run in a loop against a measurable outcome, let Opus-class models self-correct on tasks like Parameter Golf rather than confabulating when grading their own work. (c3, c4)</li><li>Claude&#x27;s in-band memory writing has improved across model generations, but an offline &quot;dreaming&quot; step is still needed to catch errors that get stuck in memory, shown by Pokemon-playing replicates falling through the same trapdoor without it. (c5, c6)</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">CLAUDE&#x27;S LONG-HORIZON AGENT ARCHITECTURE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 645.00 219.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 215.34)">
+<title>G</title>
+<!-- harness -->
+<g id="node1" class="node">
+<title>harness</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="408.92,-211.34 306.5,-211.34 306.5,-175.06 408.92,-175.06 408.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="319.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Harness (brain)</text>
+<text xml:space="preserve" text-anchor="start" x="326.58" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">stateless process</text>
+</g>
+<!-- session -->
+<g id="node2" class="node">
+<title>session</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="105.42,-123.81 0,-123.81 0,-87.53 105.42,-87.53 105.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="25.33" y="-105.72" font-family="Geist Mono" font-size="11.00">Session log</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">append&#45;only event log</text>
+</g>
+<!-- harness&#45;&gt;session -->
+<g id="edge1" class="edge">
+<title>harness&#45;&gt;session</title>
+<path fill="none" stroke="#c8501f" d="M305.97,-177.69C252.92,-162.81 170.42,-139.68 114.1,-123.88"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="114.84,-121.55 107.44,-122.02 113.52,-126.27 114.84,-121.55"/>
+<text xml:space="preserve" text-anchor="middle" x="248.6" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">writes events</text>
+</g>
+<!-- verifier -->
+<g id="node5" class="node">
+<title>verifier</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="441.54,-123.81 273.88,-123.81 273.88,-87.53 441.54,-87.53 441.54,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="321.33" y="-105.72" font-family="Geist Mono" font-size="11.00">Verifier context</text>
+<text xml:space="preserve" text-anchor="start" x="286.83" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">separate window, measurable outcome</text>
+</g>
+<!-- harness&#45;&gt;verifier -->
+<g id="edge5" class="edge">
+<title>harness&#45;&gt;verifier</title>
+<path fill="none" stroke="#c8501f" d="M357.71,-174.48C357.71,-162.44 357.71,-146.31 357.71,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="360.16,-132.88 357.71,-125.88 355.26,-132.88 360.16,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="371.21" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">spawns</text>
+</g>
+<!-- memory -->
+<g id="node7" class="node">
+<title>memory</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="602.3,-123.81 463.13,-123.81 463.13,-87.53 602.3,-87.53 602.3,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="476.09" y="-105.72" font-family="Geist Mono" font-size="11.00">In&#45;band memory writes</text>
+<text xml:space="preserve" text-anchor="start" x="492.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">file&#45;system memory dir</text>
+</g>
+<!-- harness&#45;&gt;memory -->
+<g id="edge7" class="edge">
+<title>harness&#45;&gt;memory</title>
+<path fill="none" stroke="#c8501f" d="M393.97,-174.48C421.54,-161 459.59,-142.41 488.87,-128.1"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="489.92,-130.31 495.14,-125.03 487.77,-125.91 489.92,-130.31"/>
+<text xml:space="preserve" text-anchor="middle" x="466.94" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">writes</text>
+</g>
+<!-- sandbox -->
+<g id="node4" class="node">
+<title>sandbox</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="175.79,-36.28 33.62,-36.28 33.62,0 175.79,0 175.79,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="63.08" y="-18.19" font-family="Geist Mono" font-size="11.00">Sandbox (hands)</text>
+<text xml:space="preserve" text-anchor="start" x="46.58" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">execution containers, disposable</text>
+</g>
+<!-- session&#45;&gt;sandbox -->
+<g id="edge2" class="edge">
+<title>session&#45;&gt;sandbox</title>
+<path fill="none" stroke="#c8501f" d="M65.58,-87.2C69.91,-81.08 74.67,-74.1 78.71,-67.53 83.29,-60.1 87.91,-51.8 91.97,-44.2"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="94.02,-45.57 95.11,-38.23 89.68,-43.29 94.02,-45.57"/>
+<text xml:space="preserve" text-anchor="middle" x="104.33" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">dispatches</text>
+</g>
+<!-- vault -->
+<g id="node3" class="node">
+<title>vault</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="251.79,-123.81 127.62,-123.81 127.62,-87.53 251.79,-87.53 251.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="151.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Credential vault</text>
+<text xml:space="preserve" text-anchor="start" x="140.58" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">stored outside the sandbox</text>
+</g>
+<!-- vault&#45;&gt;sandbox -->
+<g id="edge4" class="edge">
+<title>vault&#45;&gt;sandbox</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M172.1,-86.95C159.33,-74.1 141.94,-56.61 128.03,-42.6"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="130.04,-41.15 123.37,-37.91 126.56,-44.6 130.04,-41.15"/>
+<text xml:space="preserve" text-anchor="middle" x="162.05" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">creds</text>
+</g>
+<!-- sandbox&#45;&gt;session -->
+<g id="edge3" class="edge">
+<title>sandbox&#45;&gt;session</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M66.97,-36.85C59.74,-42.05 53.13,-48.49 48.96,-56.28 45.28,-63.15 44.75,-71.38 45.57,-79.08"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="43.1,-79.15 46.67,-85.66 47.94,-78.35 43.1,-79.15"/>
+<text xml:space="preserve" text-anchor="middle" x="61.33" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">results</text>
+</g>
+<!-- pargolf -->
+<g id="node6" class="node">
+<title>pargolf</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="429.54,-36.28 285.88,-36.28 285.88,0 429.54,0 429.54,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="308.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Parameter Golf loop</text>
+<text xml:space="preserve" text-anchor="start" x="298.83" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">frontier model iterates to verified</text>
+</g>
+<!-- verifier&#45;&gt;pargolf -->
+<g id="edge6" class="edge">
+<title>verifier&#45;&gt;pargolf</title>
+<path fill="none" stroke="#c8501f" d="M357.71,-86.95C357.71,-74.91 357.71,-58.78 357.71,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="360.16,-45.35 357.71,-38.35 355.26,-45.35 360.16,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="370.08" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">grades</text>
+</g>
+<!-- dreaming -->
+<g id="node8" class="node">
+<title>dreaming</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="637.3,-36.28 492.13,-36.28 492.13,0 637.3,0 637.3,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="511.46" y="-18.19" font-family="Geist Mono" font-size="11.00">Offline dreaming pass</text>
+<text xml:space="preserve" text-anchor="start" x="505.09" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">fixed trapdoor bug, 5/5 replicates</text>
+</g>
+<!-- memory&#45;&gt;dreaming -->
+<g id="edge8" class="edge">
+<title>memory&#45;&gt;dreaming</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M506.63,-86.97C496.89,-78.09 489.58,-66.97 495.96,-56.28 499.33,-50.63 503.89,-45.78 509.08,-41.64"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="510.41,-43.7 514.69,-37.65 507.57,-39.71 510.41,-43.7"/>
+<text xml:space="preserve" text-anchor="middle" x="518.84" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">reviewed by</text>
+</g>
+<!-- dreaming&#45;&gt;memory -->
+<g id="edge9" class="edge">
+<title>dreaming&#45;&gt;memory</title>
+<path fill="none" stroke="#c8501f" d="M558.09,-36.84C553.5,-49.1 547.32,-65.62 542.21,-79.29"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="540.03,-78.12 539.87,-85.53 544.62,-79.83 540.03,-78.12"/>
+<text xml:space="preserve" text-anchor="middle" x="565.25" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">corrects</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the harness/session/sandbox split, the separate verifier loop, and the memory-dreaming pass Martin described; exact latencies and error rates beyond the Pokemon example are not given (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Decoupling the harness from the sandbox</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/claude-long-horizon-tasks/s01_40.webp" alt="slide at 00:40"></a><div class="slidecap">Slide at 00:40 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/claude-long-horizon-tasks/s02_370.webp" alt="slide at 06:10"></a></div></div>
+<div class="textcol"><h2>Decoupling the harness from the sandbox</h2><ul class="takeaways"><li>Managed Agents architecturally separates the harness (the &quot;brain&quot;) from the execution containers (the &quot;hands&quot;).</li><li>The harness is a stateless process that talks to a session, which is an append-only event log; the session survives even if the harness or a sandbox dies, and credentials are stored in a separate vault rather than inside the container.</li><li>Martin notes this session-as-context-object pattern also gives long-horizon context engineering a benefit: the model can always fetch old, unadulterated context rather than relying on lossy compaction.</li></ul><div class="quote"><p>&ldquo;So theme one is decoupling the brain from the hands.&rdquo;</p><span class="at">said at 03:08</span></div><div class="quote"><p>&ldquo;the harness becomes a stateless process that talks to a session&rdquo;</p><span class="at">said at 04:10</span></div><div class="quote"><p>&ldquo;we released a new API called Managed Agents, which basically packages both the harness as well as all the managed deployment infrastructure for you&rdquo;</p><span class="at">said at 02:37</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Verifier loops as a primitive for long-running work</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/claude-long-horizon-tasks/s03_410.webp" alt="slide at 06:50"></a><div class="slidecap">Slide at 06:50 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/claude-long-horizon-tasks/s04_600.webp" alt="slide at 10:00"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/claude-long-horizon-tasks/s05_650.webp" alt="slide at 10:50"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/claude-long-horizon-tasks/s06_790.webp" alt="slide at 13:10"></a></div></div>
+<div class="textcol"><h2>Verifier loops as a primitive for long-running work</h2><ul class="takeaways"><li>Because a single context window used for both doing work and grading it produces confabulation, Anthropic found it effective to run verification in a separate context window against a measurable outcome or rubric.</li><li>Martin ran this pattern on OpenAI&#x27;s Parameter Golf benchmark using Managed Agents, letting a frontier model iterate until an independent verifier confirmed the outcome was met, and reports strong results from pairing high-capacity models with this loop pattern.</li></ul><div class="quote"><p>&ldquo;what we found is it&#x27;s quite effective to separate verification into a separate context window&rdquo;</p><span class="at">said at 06:44</span></div><div class="quote"><p>&ldquo;the frontier capability models are extremely good with this pattern of kind of loops in software and and kind of verification&rdquo;</p><span class="at">said at 09:17</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>In-band memory writing and offline dreaming</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="6" class="sl"><img loading="lazy" class="main" src="img/claude-long-horizon-tasks/s06_790.webp" alt="slide at 13:10"></a><div class="slidecap">Slide at 13:10 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/claude-long-horizon-tasks/s07_830.webp" alt="slide at 13:50"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/claude-long-horizon-tasks/s08_890.webp" alt="slide at 14:50"></a></div></div>
+<div class="textcol"><h2>In-band memory writing and offline dreaming</h2><ul class="takeaways"><li>Martin draws an analogy to hippocampus (short-term, in-band) and cortex (long-term, offline-consolidated) memory.</li><li>Giving Claude a file-system memory directory to write to in-band shows models getting steadily better at this across generations, but in-band writes can also lock in locally-optimal or outright incorrect memories.</li><li>An offline &quot;dreaming&quot; pass that reviews prior sessions can correct these errors.</li></ul><div class="quote"><p>&ldquo;sometimes you can write incorrect memories. And or you&#x27;re writing things that are locally optimal, but not globally optimal&rdquo;</p><span class="at">said at 13:28</span></div><div class="quote"><p>&ldquo;This is very consistent. So, I saw this in five replicates. Five out of five replicates with raw memory store fell down this trap.&rdquo;</p><span class="at">said at 14:33</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Org-level harnesses and memory substrate choices</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="9" class="sl"><img loading="lazy" class="main" src="img/claude-long-horizon-tasks/s09_970.webp" alt="slide at 16:10"></a><div class="slidecap">Slide at 16:10 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/claude-long-horizon-tasks/s10_1070.webp" alt="slide at 17:50"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/claude-long-horizon-tasks/s11_1490.webp" alt="slide at 24:50"></a></div></div>
+<div class="textcol"><h2>Org-level harnesses and memory substrate choices</h2><ul class="takeaways"><li>Martin frames Claude Tag not as a Slack bot but as an org-level, multiplayer harness with its own identity and access to organizational context rather than a single user&#x27;s local context.</li><li>In Q&amp;A, he argues the memory substrate itself (file system vs. database) matters less than keeping it a general, model-manipulable primitive rather than a prescriptive, pre-defined memory schema.</li></ul><div class="quote"><p>&ldquo;what I think um is kind of this trend that we&#x27;re going to see moving towards org-level harnesses with async agents&rdquo;</p><span class="at">said at 16:08</span></div><div class="quote"><p>&ldquo;very general substrates for memory, be it just your database or file system, are good because the model can manage them freely&rdquo;</p><span class="at">said at 22:36</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The Parameter Golf and Pokemon examples are informal, single-presenter demonstrations rather than published benchmark results with error bars, so the magnitude of the verifier-loop and dreaming gains should be treated as illustrative rather than quantified (ours).</p><p>The architectural claims about session logs and credential separation are more concrete and map directly onto the publicly documented Managed Agents API design.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/claude-long-horizon-tasks/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/claude-long-horizon-tasks/s01_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/claude-long-horizon-tasks/s02_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/claude-long-horizon-tasks/s03_410.webp" alt="slide at 06:50"><div class="ts">06:50</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/claude-long-horizon-tasks/s04_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/claude-long-horizon-tasks/s05_650.webp" alt="slide at 10:50"><div class="ts">10:50</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/claude-long-horizon-tasks/s06_790.webp" alt="slide at 13:10"><div class="ts">13:10</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/claude-long-horizon-tasks/s07_830.webp" alt="slide at 13:50"><div class="ts">13:50</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/claude-long-horizon-tasks/s08_890.webp" alt="slide at 14:50"><div class="ts">14:50</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/claude-long-horizon-tasks/s09_970.webp" alt="slide at 16:10"><div class="ts">16:10</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/claude-long-horizon-tasks/s10_1070.webp" alt="slide at 17:50"><div class="ts">17:50</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/claude-long-horizon-tasks/s11_1490.webp" alt="slide at 24:50"><div class="ts">24:50</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Managed Agents separates the harness (&quot;brain&quot;) from the execution containers (&quot;hands&quot;) so that a dying container doesn&#x27;t destroy the agent&#x27;s session.</td><td class="tt">03:08</td></tr><tr><td class="st">asserts</td><td>The harness is a stateless process that talks to a session, which is an append-only event log that persists even if the harness dies.</td><td class="tt">04:10</td></tr><tr><td class="st">recommends</td><td>Anthropic found it effective to separate verification into its own context window rather than having the same context both do the work and grade it.</td><td class="tt">06:44</td></tr><tr><td class="st">asserts</td><td>Frontier capability models perform very well with the pattern of verifier loops in software, self-correcting when they get feedback from an independent verifier.</td><td class="tt">09:17</td></tr><tr><td class="st">warns</td><td>Writing memory in-band during a task can produce incorrect memories, or memories that are locally optimal for the current task but not globally useful for future sessions.</td><td class="tt">13:28</td></tr><tr><td class="st">warns</td><td>Without offline dreaming, an agent playing Pokemon fell through the same trapdoor in five out of five replicates because of an uncorrected incorrect memory.</td><td class="tt">14:33</td></tr><tr><td class="st">predicts</td><td>Martin predicts a shift toward org-level harnesses for asynchronous agents, exemplified by Claude Tag, that operate on organizational context rather than one user&#x27;s local setup.</td><td class="tt">16:08</td></tr><tr><td class="st">recommends</td><td>General, model-manipulable memory substrates like a database or file system work better than a prescriptive memory schema that pre-defines what types of memories to save.</td><td class="tt">22:36</td></tr><tr><td class="st">asserts</td><td>Anthropic released Managed Agents, an API that packages both the agent harness and the managed deployment infrastructure.</td><td class="tt">02:37</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/claude-long-horizon-tasks/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/9QebvrrY3KY?t=10"}, {"src": "img/claude-long-horizon-tasks/s01_40.webp", "mmss": "00:40", "yt": "https://youtu.be/9QebvrrY3KY?t=40"}, {"src": "img/claude-long-horizon-tasks/s02_370.webp", "mmss": "06:10", "yt": "https://youtu.be/9QebvrrY3KY?t=370"}, {"src": "img/claude-long-horizon-tasks/s03_410.webp", "mmss": "06:50", "yt": "https://youtu.be/9QebvrrY3KY?t=410"}, {"src": "img/claude-long-horizon-tasks/s04_600.webp", "mmss": "10:00", "yt": "https://youtu.be/9QebvrrY3KY?t=600"}, {"src": "img/claude-long-horizon-tasks/s05_650.webp", "mmss": "10:50", "yt": "https://youtu.be/9QebvrrY3KY?t=650"}, {"src": "img/claude-long-horizon-tasks/s06_790.webp", "mmss": "13:10", "yt": "https://youtu.be/9QebvrrY3KY?t=790"}, {"src": "img/claude-long-horizon-tasks/s07_830.webp", "mmss": "13:50", "yt": "https://youtu.be/9QebvrrY3KY?t=830"}, {"src": "img/claude-long-horizon-tasks/s08_890.webp", "mmss": "14:50", "yt": "https://youtu.be/9QebvrrY3KY?t=890"}, {"src": "img/claude-long-horizon-tasks/s09_970.webp", "mmss": "16:10", "yt": "https://youtu.be/9QebvrrY3KY?t=970"}, {"src": "img/claude-long-horizon-tasks/s10_1070.webp", "mmss": "17:50", "yt": "https://youtu.be/9QebvrrY3KY?t=1070"}, {"src": "img/claude-long-horizon-tasks/s11_1490.webp", "mmss": "24:50", "yt": "https://youtu.be/9QebvrrY3KY?t=1490"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "9QebvrrY3KY", "slug": "claude-long-horizon-tasks", "title": "Claude for Long-Horizon Tasks", "speaker": "Lance Martin", "company": "Anthropic", "themes": ["agentic-engineering", "memory", "context-engineering"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Claude's long-horizon agent architecture (ours)", "lanes": ["Harness & Session", "Sandbox Execution", "Verification & Memory"], "nodes": [{"id": "harness", "label": "Harness (brain)", "sub": "stateless process", "lane": 0, "kind": "system", "claim": "c1", "t": 188}, {"id": "session", "label": "Session log", "sub": "append-only event log", "lane": 0, "kind": "store", "claim": "c2", "t": 250}, {"id": "vault", "label": "Credential vault", "sub": "stored outside the sandbox", "lane": 0, "kind": "external", "t": 250}, {"id": "sandbox", "label": "Sandbox (hands)", "sub": "execution containers, disposable", "lane": 1, "kind": "system", "claim": "c1", "t": 188}, {"id": "verifier", "label": "Verifier context", "sub": "separate window, measurable outcome", "lane": 2, "kind": "system", "claim": "c3", "t": 404}, {"id": "pargolf", "label": "Parameter Golf loop", "sub": "frontier model iterates to verified", "lane": 2, "kind": "external", "claim": "c4", "t": 557}, {"id": "memory", "label": "In-band memory writes", "sub": "file-system memory dir", "lane": 2, "kind": "store", "claim": "c5", "t": 808}, {"id": "dreaming", "label": "Offline dreaming pass", "sub": "fixed trapdoor bug, 5/5 replicates", "lane": 2, "kind": "system", "claim": "c6", "t": 873}], "edges": [{"from": "harness", "to": "session", "label": "writes events", "kind": "flow"}, {"from": "session", "to": "sandbox", "label": "dispatches", "kind": "flow"}, {"from": "sandbox", "to": "session", "label": "results", "kind": "data"}, {"from": "vault", "to": "sandbox", "label": "creds", "kind": "data"}, {"from": "harness", "to": "verifier", "label": "spawns", "kind": "flow"}, {"from": "verifier", "to": "pargolf", "label": "grades", "kind": "flow"}, {"from": "harness", "to": "memory", "label": "writes", "kind": "flow"}, {"from": "memory", "to": "dreaming", "label": "reviewed by", "kind": "data"}, {"from": "dreaming", "to": "memory", "label": "corrects", "kind": "flow"}], "caption": "This traces the harness/session/sandbox split, the separate verifier loop, and the memory-dreaming pass Martin described; exact latencies and error rates beyond the Pokemon example are not given (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "decoupling harness from execution environment", "text": "Managed Agents separates the harness (\"brain\") from the execution containers (\"hands\") so that a dying container doesn't destroy the agent's session.", "quote": "So theme one is decoupling the brain from the hands.", "t": 188}, {"id": "c2", "stance": "asserts", "topic": "session as append-only log", "text": "The harness is a stateless process that talks to a session, which is an append-only event log that persists even if the harness dies.", "quote": "the harness becomes a stateless process that talks to a session", "t": 250}, {"id": "c3", "stance": "recommends", "topic": "separate verifier context", "text": "Anthropic found it effective to separate verification into its own context window rather than having the same context both do the work and grade it.", "quote": "what we found is it's quite effective to separate verification into a separate context window", "t": 404}, {"id": "c4", "stance": "asserts", "topic": "verifier loops with frontier models on Parameter Golf", "text": "Frontier capability models perform very well with the pattern of verifier loops in software, self-correcting when they get feedback from an independent verifier.", "quote": "the frontier capability models are extremely good with this pattern of kind of loops in software and and kind of verification", "t": 557}, {"id": "c5", "stance": "warns", "topic": "in-band memory writing risk", "text": "Writing memory in-band during a task can produce incorrect memories, or memories that are locally optimal for the current task but not globally useful for future sessions.", "quote": "sometimes you can write incorrect memories. And or you're writing things that are locally optimal, but not globally optimal", "t": 808}, {"id": "c6", "stance": "warns", "topic": "Pokemon dreaming example", "text": "Without offline dreaming, an agent playing Pokemon fell through the same trapdoor in five out of five replicates because of an uncorrected incorrect memory.", "quote": "This is very consistent. So, I saw this in five replicates. Five out of five replicates with raw memory store fell down this trap.", "t": 873}, {"id": "c7", "stance": "predicts", "topic": "trend toward org-level harnesses", "text": "Martin predicts a shift toward org-level harnesses for asynchronous agents, exemplified by Claude Tag, that operate on organizational context rather than one user's local setup.", "quote": "what I think um is kind of this trend that we're going to see moving towards org-level harnesses with async agents", "t": 968}, {"id": "c8", "stance": "recommends", "topic": "general memory substrate over prescriptive schema", "text": "General, model-manipulable memory substrates like a database or file system work better than a prescriptive memory schema that pre-defines what types of memories to save.", "quote": "very general substrates for memory, be it just your database or file system, are good because the model can manage them freely", "t": 1356}, {"id": "c9", "stance": "asserts", "topic": "Managed Agents API release", "text": "Anthropic released Managed Agents, an API that packages both the agent harness and the managed deployment infrastructure.", "quote": "we released a new API called Managed Agents, which basically packages both the harness as well as all the managed deployment infrastructure for you", "t": 157}]}</script>
+</body></html>

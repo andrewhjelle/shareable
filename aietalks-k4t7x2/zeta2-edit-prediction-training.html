@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>How We Built Zeta2: Training an Edit Prediction Model in Production &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/phchDt63qAA" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 10 min</span><span class="ln"></span></div>
+<h1 class="lede">How We Built Zeta2: Training an Edit Prediction Model in Production</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Ben Kunkle &middot; Zed</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/phchDt63qAA" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/phchDt63qAA</a> &middot; 10 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Post-training</span><span class="chip hot">Data curation</span><span class="chip hot">Coding agents</span></div>
+<p class="deck" style="font-size:15px">Documents a concrete production recipe for training a small, fast, keystroke-latency edit-prediction model via distillation from a frontier model, including a repair step for bad teacher predictions and a way to filter noisy &#x27;what the us...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Zeta2 is distilled from a frontier &#x27;teacher&#x27; model whose predictions get auto-repaired against heuristics before becoming training targets, at up to 100,000 examples per run (c2, c4, c5).</li><li>Filtering &#x27;settled&#x27; training data by generating 10 teacher predictions per example would cost ~1M frontier calls per 100k examples, so Zed now runs 50 cheap predictions from its own student model instead (c7, c8).</li><li>Settled-state data -- what the user actually typed -- is noisy, judged &#x27;settled&#x27; after 10 seconds of no edits, and used to filter rather than train on directly (c6, c9).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">ZETA2 DISTILLATION AND SELF-FILTERING LOOP (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 493.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- ctx -->
+<g id="node1" class="node">
+<title>ctx</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="266.17,-561.46 94.75,-561.46 94.75,-525.18 266.17,-525.18 266.17,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="144.83" y="-543.37" font-family="Geist Mono" font-size="11.00">Cursor context</text>
+<text xml:space="preserve" text-anchor="start" x="107.71" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">region+edits+cursor+types+diagnostics</text>
+</g>
+<!-- teacher -->
+<g id="node2" class="node">
+<title>teacher</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="247.04,-473.93 113.87,-473.93 113.87,-437.65 247.04,-437.65 247.04,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="141.46" y="-455.84" font-family="Geist Mono" font-size="11.00">Frontier teacher</text>
+<text xml:space="preserve" text-anchor="start" x="126.83" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">inconsistent on repeated asks</text>
+</g>
+<!-- ctx&#45;&gt;teacher -->
+<g id="edge1" class="edge">
+<title>ctx&#45;&gt;teacher</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M180.46,-524.6C180.46,-512.56 180.46,-496.43 180.46,-482.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="182.91,-483 180.46,-476 178.01,-483 182.91,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="210.83" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">production input</text>
+</g>
+<!-- heuristics -->
+<g id="node3" class="node">
+<title>heuristics</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="261.67,-386.4 99.25,-386.4 99.25,-350.12 261.67,-350.12 261.67,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="141.08" y="-368.31" font-family="Geist Mono" font-size="11.00">Heuristic checks</text>
+<text xml:space="preserve" text-anchor="start" x="112.21" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">flags undo or boundary&#45;ignoring preds</text>
+</g>
+<!-- teacher&#45;&gt;heuristics -->
+<g id="edge2" class="edge">
+<title>teacher&#45;&gt;heuristics</title>
+<path fill="none" stroke="#c8501f" d="M180.46,-437.07C180.46,-425.03 180.46,-408.9 180.46,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="182.91,-395.47 180.46,-388.47 178.01,-395.47 182.91,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="207.08" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">raw prediction</text>
+</g>
+<!-- repair -->
+<g id="node4" class="node">
+<title>repair</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="197.67,-298.87 41.25,-298.87 41.25,-262.59 197.67,-262.59 197.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="90.96" y="-280.78" font-family="Geist Mono" font-size="11.00">Repair pass</text>
+<text xml:space="preserve" text-anchor="start" x="54.21" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">2nd frontier call fixes bad predictions</text>
+</g>
+<!-- heuristics&#45;&gt;repair -->
+<g id="edge3" class="edge">
+<title>heuristics&#45;&gt;repair</title>
+<path fill="none" stroke="#c8501f" d="M167.82,-349.54C158.91,-337.04 146.85,-320.13 137,-306.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="139.02,-304.94 132.96,-300.66 135.03,-307.78 139.02,-304.94"/>
+<text xml:space="preserve" text-anchor="middle" x="176.86" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">failing preds</text>
+</g>
+<!-- trainset -->
+<g id="node5" class="node">
+<title>trainset</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="257.92,-211.34 103,-211.34 103,-175.06 257.92,-175.06 257.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="152.33" y="-193.25" font-family="Geist Mono" font-size="11.00">Training set</text>
+<text xml:space="preserve" text-anchor="start" x="115.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">~100,000 examples per run at peak</text>
+</g>
+<!-- heuristics&#45;&gt;trainset -->
+<g id="edge5" class="edge">
+<title>heuristics&#45;&gt;trainset</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M194.83,-349.72C198.94,-343.82 202.97,-336.99 205.46,-330.12 220.47,-288.67 230.43,-272.43 214.46,-231.34 212.67,-226.75 210.03,-222.37 206.98,-218.35"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="208.93,-216.86 202.54,-213.08 205.18,-220.02 208.93,-216.86"/>
+<text xml:space="preserve" text-anchor="middle" x="248.1" y="-278.28" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">passing preds</text>
+</g>
+<!-- repair&#45;&gt;trainset -->
+<g id="edge4" class="edge">
+<title>repair&#45;&gt;trainset</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M132.1,-262.01C141.01,-249.51 153.07,-232.6 162.92,-218.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="164.89,-220.25 166.96,-213.13 160.9,-217.41 164.89,-220.25"/>
+<text xml:space="preserve" text-anchor="middle" x="181.74" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">repaired target</text>
+</g>
+<!-- zeta2 -->
+<g id="node6" class="node">
+<title>zeta2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="198.92,-123.81 38,-123.81 38,-87.53 198.92,-87.53 198.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="84.33" y="-105.72" font-family="Geist Mono" font-size="11.00">Zeta2 student</text>
+<text xml:space="preserve" text-anchor="start" x="50.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">small fast model, near&#45;teacher quality</text>
+</g>
+<!-- trainset&#45;&gt;zeta2 -->
+<g id="edge6" class="edge">
+<title>trainset&#45;&gt;zeta2</title>
+<path fill="none" stroke="#c8501f" d="M167.61,-174.48C158.47,-161.86 146.07,-144.76 136.01,-130.89"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="138.27,-129.82 132.18,-125.59 134.3,-132.7 138.27,-129.82"/>
+<text xml:space="preserve" text-anchor="middle" x="163.67" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">trains</text>
+</g>
+<!-- filter -->
+<g id="node8" class="node">
+<title>filter</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="326.29,-36.28 176.62,-36.28 176.62,0 326.29,0 326.29,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="212.83" y="-18.19" font-family="Geist Mono" font-size="11.00">Student filtering</text>
+<text xml:space="preserve" text-anchor="start" x="189.58" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">50 cheap preds vs 1M frontier calls</text>
+</g>
+<!-- zeta2&#45;&gt;filter -->
+<g id="edge8" class="edge">
+<title>zeta2&#45;&gt;filter</title>
+<path fill="none" stroke="#c8501f" d="M135.58,-87.17C145.82,-77.31 159.45,-65.21 172.96,-56.28 181.59,-50.57 191.24,-45.26 200.74,-40.53"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="201.71,-42.79 206.94,-37.53 199.57,-38.37 201.71,-42.79"/>
+<text xml:space="preserve" text-anchor="middle" x="199.21" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">50 predictions</text>
+</g>
+<!-- eval -->
+<g id="node9" class="node">
+<title>eval</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="154.92,-36.28 0,-36.28 0,0 154.92,0 154.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="50.08" y="-18.19" font-family="Geist Mono" font-size="11.00">Offline eval</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Levenshtein n&#45;gram + reversal ratio</text>
+</g>
+<!-- zeta2&#45;&gt;eval -->
+<g id="edge10" class="edge">
+<title>zeta2&#45;&gt;eval</title>
+<path fill="none" stroke="#c8501f" d="M106.81,-86.9C103.1,-80.88 99.14,-74.03 95.96,-67.53 92.42,-60.29 89.09,-52.19 86.26,-44.72"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="88.63,-44.08 83.92,-38.35 84.03,-45.77 88.63,-44.08"/>
+<text xml:space="preserve" text-anchor="middle" x="116.21" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">predictions</text>
+</g>
+<!-- settled -->
+<g id="node7" class="node">
+<title>settled</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="484.92,-123.81 330,-123.81 330,-87.53 484.92,-87.53 484.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="377.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Settled data</text>
+<text xml:space="preserve" text-anchor="start" x="342.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">user edit after 10s untouched, noisy</text>
+</g>
+<!-- settled&#45;&gt;filter -->
+<g id="edge7" class="edge">
+<title>settled&#45;&gt;filter</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M375.14,-86.95C350.66,-73.53 316.93,-55.03 290.87,-40.75"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="292.38,-38.78 285.07,-37.57 290.03,-43.08 292.38,-38.78"/>
+<text xml:space="preserve" text-anchor="middle" x="374.43" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">candidate example</text>
+</g>
+<!-- filter&#45;&gt;trainset -->
+<g id="edge9" class="edge">
+<title>filter&#45;&gt;trainset</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M244.43,-36.96C236.17,-57.83 222.01,-93.4 209.46,-123.81 203.55,-138.13 196.81,-154.06 191.31,-166.94"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="189.16,-165.74 188.66,-173.14 193.67,-167.66 189.16,-165.74"/>
+<text xml:space="preserve" text-anchor="middle" x="256.77" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">filtered examples</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Zeta2 is trained on frontier-model predictions that get heuristically repaired, then Zed reuses the resulting student model to cheaply filter a second, noisier data source instead of paying for more frontier calls; the loop is our read of how the pieces connect, not a claim Zed made explicitly as a diagram (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>What edit prediction needs to see</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="0" class="sl"><img loading="lazy" class="main" src="img/zeta2-edit-prediction-training/s00_10.webp" alt="slide at 00:10"></a><div class="slidecap">Slide at 00:10 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>What edit prediction needs to see</h2><ul class="takeaways"><li>Edit prediction gives a model the code region around the cursor plus recent edits, cursor position, type/variable definitions, and diagnostics, and asks it to predict the user&#x27;s next edit on every keystroke.</li><li>Because it runs on every keystroke, it needs a small, fast, specialized fine-tuned model rather than a general-purpose one.</li></ul><div class="quote"><p>&ldquo;giving the model a region of code around the cursor, asking them to predict the next edit that you&#x27;re going to make&rdquo;</p><span class="at">said at 00:31</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Distillation with a repair step</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/zeta2-edit-prediction-training/s01_130.webp" alt="slide at 02:10"></a><div class="slidecap">Slide at 02:10 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Distillation with a repair step</h2><ul class="takeaways"><li>Training data comes from distillation: a frontier model is given the same production input the student will see and asked what prediction it would make.</li><li>This is harder than it sounds because a frontier model asked the same question many times gives inconsistent answers, so Zed runs offline heuristic checks (e.g. is the prediction just undoing the edit, or ignoring the given boundary) and sends failing predictions to another frontier-model pass to repair before they become training targets.</li></ul><div class="quote"><p>&ldquo;This is a pretty difficult process as it turns out, even though the frontier models are pretty smart&rdquo;</p><span class="at">said at 01:32</span></div><div class="quote"><p>&ldquo;If you ask them 100,000 times, they&#x27;re going to give you 100,001 answers, right&rdquo;</p><span class="at">said at 01:32</span></div><div class="quote"><p>&ldquo;once we&#x27;ve repaired the bad predictions, then we can essentially turn what the teacher made into the expected output of the student model or Zed 2&rdquo;</p><span class="at">said at 02:35</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Training scale and the noisy &#x27;settled data&#x27; signal</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/zeta2-edit-prediction-training/s02_240.webp" alt="slide at 04:00"></a><div class="slidecap">Slide at 04:00 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/zeta2-edit-prediction-training/s03_280.webp" alt="slide at 04:40"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/zeta2-edit-prediction-training/s04_290.webp" alt="slide at 04:50"></a></div></div>
+<div class="textcol"><h2>Training scale and the noisy &#x27;settled data&#x27; signal</h2><ul class="takeaways"><li>Full training runs use around 100,000 examples at peak, smaller experiments 10,000-50,000.</li><li>A newer data source, &#x27;settled data,&#x27; waits for the user to stop editing a region and snapshots what they actually wrote -- but this is noisy, since the user could change their mind or an agent could rewrite the region entirely before it settles.</li></ul><div class="quote"><p>&ldquo;We&#x27;re generally doing 100,000 examples to train a model. Like, that&#x27;s our peak&rdquo;</p><span class="at">said at 03:38</span></div><div class="quote"><p>&ldquo;you could change your mind, you could have an agent come in and rewrite it completely&rdquo;</p><span class="at">said at 04:09</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Filtering settled data cheaply once the student is good</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/zeta2-edit-prediction-training/s05_320.webp" alt="slide at 05:20"></a><div class="slidecap">Slide at 05:20 &middot; click any slide to enlarge &middot; 5 more from this section below</div><div class=strip><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/zeta2-edit-prediction-training/s06_330.webp" alt="slide at 05:30"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/zeta2-edit-prediction-training/s07_360.webp" alt="slide at 06:00"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/zeta2-edit-prediction-training/s08_380.webp" alt="slide at 06:20"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/zeta2-edit-prediction-training/s09_390.webp" alt="slide at 06:30"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/zeta2-edit-prediction-training/s10_410.webp" alt="slide at 06:50"></a></div></div>
+<div class="textcol"><h2>Filtering settled data cheaply once the student is good</h2><ul class="takeaways"><li>Filtering settled examples by generating 10 frontier-model predictions per example and checking closeness via Levenshtein distance would cost about a million frontier-model requests for 100,000 examples, which is prohibitively expensive.</li><li>Because Zed&#x27;s own student model (Zeta2) now approaches the teacher&#x27;s prediction quality, they instead run 50 cheap predictions from the student checkpoint for the same filtering, at near-zero cost.</li><li>The &#x27;settled&#x27; judgment itself is simply that the user stopped editing that region for 10 seconds.</li></ul><div class="quote"><p>&ldquo;For 100,000 examples, you&#x27;re then doing, you know, a million frontier model requests. That is prohibitively expensive&rdquo;</p><span class="at">said at 05:11</span></div><div class="quote"><p>&ldquo;our student models or Zed 2 is approaching the teacher in terms of quality of prediction&rdquo;</p><span class="at">said at 05:44</span></div><div class="quote"><p>&ldquo;right now we just do like you stop editing that area for 10 seconds&rdquo;</p><span class="at">said at 10:18</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>How they measure quality offline</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="10" class="sl"><img loading="lazy" class="main" src="img/zeta2-edit-prediction-training/s10_410.webp" alt="slide at 06:50"></a><div class="slidecap">Slide at 06:50 &middot; click any slide to enlarge &middot; 5 more from this section below</div><div class=strip><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/zeta2-edit-prediction-training/s11_480.webp" alt="slide at 08:00"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/zeta2-edit-prediction-training/s12_520.webp" alt="slide at 08:40"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/zeta2-edit-prediction-training/s13_540.webp" alt="slide at 09:00"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/zeta2-edit-prediction-training/s14_560.webp" alt="slide at 09:20"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/zeta2-edit-prediction-training/s15_620.webp" alt="slide at 10:20"></a></div></div>
+<div class="textcol"><h2>How they measure quality offline</h2><ul class="takeaways"><li>Offline evaluation runs on a held-out test set and tracks a Levenshtein-based n-gram comparison metric plus a reversal ratio, which flags predictions that simply undo what the user just typed, alongside production kept rate.</li></ul><div class="quote"><p>&ldquo;we&#x27;re tracking this reversal ratio, reversals being it&#x27;s undoing exactly what you just typed&rdquo;</p><span class="at">said at 07:16</span></div></div>
+</div>
+</section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/zeta2-edit-prediction-training/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/zeta2-edit-prediction-training/s01_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/zeta2-edit-prediction-training/s02_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/zeta2-edit-prediction-training/s03_280.webp" alt="slide at 04:40"><div class="ts">04:40</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/zeta2-edit-prediction-training/s04_290.webp" alt="slide at 04:50"><div class="ts">04:50</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/zeta2-edit-prediction-training/s05_320.webp" alt="slide at 05:20"><div class="ts">05:20</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/zeta2-edit-prediction-training/s06_330.webp" alt="slide at 05:30"><div class="ts">05:30</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/zeta2-edit-prediction-training/s07_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/zeta2-edit-prediction-training/s08_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/zeta2-edit-prediction-training/s09_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/zeta2-edit-prediction-training/s10_410.webp" alt="slide at 06:50"><div class="ts">06:50</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/zeta2-edit-prediction-training/s11_480.webp" alt="slide at 08:00"><div class="ts">08:00</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/zeta2-edit-prediction-training/s12_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/zeta2-edit-prediction-training/s13_540.webp" alt="slide at 09:00"><div class="ts">09:00</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/zeta2-edit-prediction-training/s14_560.webp" alt="slide at 09:20"><div class="ts">09:20</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/zeta2-edit-prediction-training/s15_620.webp" alt="slide at 10:20"><div class="ts">10:20</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Edit prediction gives the model the code region around the cursor plus recent edits, cursor position, type/variable definitions, and diagnostics to predict the next edit on every keystroke.</td><td class="tt">00:31</td></tr><tr><td class="st">warns</td><td>Generating consistent, high-quality predictions from a frontier teacher model is difficult even though the models are capable.</td><td class="tt">01:32</td></tr><tr><td class="st">warns</td><td>Asking a frontier model the same prediction question repeatedly yields inconsistent answers.</td><td class="tt">01:32</td></tr><tr><td class="st">asserts</td><td>Predictions that fail offline heuristic checks are repaired by another frontier-model pass, and the repaired output becomes the student model&#x27;s training target.</td><td class="tt">02:35</td></tr><tr><td class="st">asserts</td><td>Training runs on roughly 100,000 examples at peak, with smaller experiments using 10,000-50,000.</td><td class="tt">03:38</td></tr><tr><td class="st">warns</td><td>Waiting for a code region to &#x27;settle&#x27; before snapshotting it is noisy because the user could change their mind or an agent could rewrite the region entirely.</td><td class="tt">04:09</td></tr><tr><td class="st">warns</td><td>Filtering settled data with 10 teacher predictions per example would cost about a million frontier-model requests for 100,000 examples, which is too expensive.</td><td class="tt">05:11</td></tr><tr><td class="st">asserts</td><td>Because Zeta2 now approaches teacher-level prediction quality, Zed runs 50 cheap student-model predictions instead of the frontier model to filter training data near the settled state.</td><td class="tt">05:44</td></tr><tr><td class="st">asserts</td><td>The heuristic for a region being &#x27;settled&#x27; is simply that the user stops editing it for 10 seconds.</td><td class="tt">10:18</td></tr><tr><td class="st">asserts</td><td>Offline evaluation tracks a reversal ratio -- predictions that just undo what the user typed -- alongside a Levenshtein-based n-gram metric and production kept rate.</td><td class="tt">07:16</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/zeta2-edit-prediction-training/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/phchDt63qAA?t=10"}, {"src": "img/zeta2-edit-prediction-training/s01_130.webp", "mmss": "02:10", "yt": "https://youtu.be/phchDt63qAA?t=130"}, {"src": "img/zeta2-edit-prediction-training/s02_240.webp", "mmss": "04:00", "yt": "https://youtu.be/phchDt63qAA?t=240"}, {"src": "img/zeta2-edit-prediction-training/s03_280.webp", "mmss": "04:40", "yt": "https://youtu.be/phchDt63qAA?t=280"}, {"src": "img/zeta2-edit-prediction-training/s04_290.webp", "mmss": "04:50", "yt": "https://youtu.be/phchDt63qAA?t=290"}, {"src": "img/zeta2-edit-prediction-training/s05_320.webp", "mmss": "05:20", "yt": "https://youtu.be/phchDt63qAA?t=320"}, {"src": "img/zeta2-edit-prediction-training/s06_330.webp", "mmss": "05:30", "yt": "https://youtu.be/phchDt63qAA?t=330"}, {"src": "img/zeta2-edit-prediction-training/s07_360.webp", "mmss": "06:00", "yt": "https://youtu.be/phchDt63qAA?t=360"}, {"src": "img/zeta2-edit-prediction-training/s08_380.webp", "mmss": "06:20", "yt": "https://youtu.be/phchDt63qAA?t=380"}, {"src": "img/zeta2-edit-prediction-training/s09_390.webp", "mmss": "06:30", "yt": "https://youtu.be/phchDt63qAA?t=390"}, {"src": "img/zeta2-edit-prediction-training/s10_410.webp", "mmss": "06:50", "yt": "https://youtu.be/phchDt63qAA?t=410"}, {"src": "img/zeta2-edit-prediction-training/s11_480.webp", "mmss": "08:00", "yt": "https://youtu.be/phchDt63qAA?t=480"}, {"src": "img/zeta2-edit-prediction-training/s12_520.webp", "mmss": "08:40", "yt": "https://youtu.be/phchDt63qAA?t=520"}, {"src": "img/zeta2-edit-prediction-training/s13_540.webp", "mmss": "09:00", "yt": "https://youtu.be/phchDt63qAA?t=540"}, {"src": "img/zeta2-edit-prediction-training/s14_560.webp", "mmss": "09:20", "yt": "https://youtu.be/phchDt63qAA?t=560"}, {"src": "img/zeta2-edit-prediction-training/s15_620.webp", "mmss": "10:20", "yt": "https://youtu.be/phchDt63qAA?t=620"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "phchDt63qAA", "slug": "zeta2-edit-prediction-training", "title": "How We Built Zeta2: Training an Edit Prediction Model in Production", "speaker": "Ben Kunkle", "company": "Zed", "themes": ["post-training", "data-curation", "coding-agents"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Zeta2 distillation and self-filtering loop (ours)", "lanes": ["Input", "Teacher distillation", "Student training", "Filtering & eval"], "nodes": [{"id": "ctx", "label": "Cursor context", "sub": "region+edits+cursor+types+diagnostics", "lane": 0, "kind": "store", "claim": "c1", "t": 31}, {"id": "teacher", "label": "Frontier teacher", "sub": "inconsistent on repeated asks", "lane": 1, "kind": "external", "claim": "c3", "t": 92}, {"id": "heuristics", "label": "Heuristic checks", "sub": "flags undo or boundary-ignoring preds", "lane": 1, "kind": "system", "claim": "c4", "t": 155}, {"id": "repair", "label": "Repair pass", "sub": "2nd frontier call fixes bad predictions", "lane": 1, "kind": "external", "claim": "c4", "t": 155}, {"id": "trainset", "label": "Training set", "sub": "~100,000 examples per run at peak", "lane": 2, "kind": "store", "claim": "c5", "t": 218}, {"id": "zeta2", "label": "Zeta2 student", "sub": "small fast model, near-teacher quality", "lane": 2, "kind": "system", "claim": "c8", "t": 344}, {"id": "settled", "label": "Settled data", "sub": "user edit after 10s untouched, noisy", "lane": 3, "kind": "store", "claim": "c9", "t": 618}, {"id": "filter", "label": "Student filtering", "sub": "50 cheap preds vs 1M frontier calls", "lane": 3, "kind": "system", "claim": "c7", "t": 311}, {"id": "eval", "label": "Offline eval", "sub": "Levenshtein n-gram + reversal ratio", "lane": 3, "kind": "system", "claim": "c10", "t": 436}], "edges": [{"from": "ctx", "to": "teacher", "label": "production input", "kind": "data"}, {"from": "teacher", "to": "heuristics", "label": "raw prediction", "kind": "flow"}, {"from": "heuristics", "to": "repair", "label": "failing preds", "kind": "flow"}, {"from": "repair", "to": "trainset", "label": "repaired target", "kind": "data"}, {"from": "heuristics", "to": "trainset", "label": "passing preds", "kind": "data"}, {"from": "trainset", "to": "zeta2", "label": "trains", "kind": "flow"}, {"from": "settled", "to": "filter", "label": "candidate example", "kind": "data"}, {"from": "zeta2", "to": "filter", "label": "50 predictions", "kind": "flow"}, {"from": "filter", "to": "trainset", "label": "filtered examples", "kind": "data"}, {"from": "zeta2", "to": "eval", "label": "predictions", "kind": "flow"}], "caption": "Zeta2 is trained on frontier-model predictions that get heuristically repaired, then Zed reuses the resulting student model to cheaply filter a second, noisier data source instead of paying for more frontier calls; the loop is our read of how the pieces connect, not a claim Zed made explicitly as a diagram (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "edit prediction task", "text": "Edit prediction gives the model the code region around the cursor plus recent edits, cursor position, type/variable definitions, and diagnostics to predict the next edit on every keystroke.", "quote": "giving the model a region of code around the cursor, asking them to predict the next edit that you're going to make", "t": 31}, {"id": "c2", "stance": "warns", "topic": "distillation difficulty", "text": "Generating consistent, high-quality predictions from a frontier teacher model is difficult even though the models are capable.", "quote": "This is a pretty difficult process as it turns out, even though the frontier models are pretty smart", "t": 92}, {"id": "c3", "stance": "warns", "topic": "frontier model inconsistency", "text": "Asking a frontier model the same prediction question repeatedly yields inconsistent answers.", "quote": "If you ask them 100,000 times, they're going to give you 100,001 answers, right", "t": 92}, {"id": "c4", "stance": "asserts", "topic": "repair step", "text": "Predictions that fail offline heuristic checks are repaired by another frontier-model pass, and the repaired output becomes the student model's training target.", "quote": "once we've repaired the bad predictions, then we can essentially turn what the teacher made into the expected output of the student model or Zed 2", "t": 155}, {"id": "c5", "stance": "asserts", "topic": "training scale", "text": "Training runs on roughly 100,000 examples at peak, with smaller experiments using 10,000-50,000.", "quote": "We're generally doing 100,000 examples to train a model. Like, that's our peak", "t": 218}, {"id": "c6", "stance": "warns", "topic": "settled-state noise", "text": "Waiting for a code region to 'settle' before snapshotting it is noisy because the user could change their mind or an agent could rewrite the region entirely.", "quote": "you could change your mind, you could have an agent come in and rewrite it completely", "t": 249}, {"id": "c7", "stance": "warns", "topic": "cost of teacher-based filtering", "text": "Filtering settled data with 10 teacher predictions per example would cost about a million frontier-model requests for 100,000 examples, which is too expensive.", "quote": "For 100,000 examples, you're then doing, you know, a million frontier model requests. That is prohibitively expensive", "t": 311}, {"id": "c8", "stance": "asserts", "topic": "student replaces teacher for filtering", "text": "Because Zeta2 now approaches teacher-level prediction quality, Zed runs 50 cheap student-model predictions instead of the frontier model to filter training data near the settled state.", "quote": "our student models or Zed 2 is approaching the teacher in terms of quality of prediction", "t": 344}, {"id": "c9", "stance": "asserts", "topic": "settled-state heuristic", "text": "The heuristic for a region being 'settled' is simply that the user stops editing it for 10 seconds.", "quote": "right now we just do like you stop editing that area for 10 seconds", "t": 618}, {"id": "c10", "stance": "asserts", "topic": "offline eval metrics", "text": "Offline evaluation tracks a reversal ratio -- predictions that just undo what the user typed -- alongside a Levenshtein-based n-gram metric and production kept rate.", "quote": "we're tracking this reversal ratio, reversals being it's undoing exactly what you just typed", "t": 436}]}</script>
+</body></html>

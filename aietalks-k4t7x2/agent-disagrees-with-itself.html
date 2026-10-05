@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Why Your Agent Disagrees With Itself (And What To Do About It) &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/wEc9aG7cRQc" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 25 min</span><span class="ln"></span></div>
+<h1 class="lede">Why Your Agent Disagrees With Itself (And What To Do About It)</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Diane Lin &middot; Datadog</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/wEc9aG7cRQc" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/wEc9aG7cRQc</a> &middot; 25 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Memory</span><span class="chip hot">Continual learning</span><span class="chip hot">Evals & benchmarks</span></div>
+<p class="deck" style="font-size:15px">Diane Lin (ex-Chronosphere, now Datadog) gives a concrete diagnosis for the common problem of an LLM agent giving different verdicts on the same input across runs: inconsistency clusters at genuinely ambiguous decision-boundary cases, no...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Running the same model on the same input repeatedly can produce semantically different verdicts, in both sentiment analysis and security-alert triage, and the flip-flopping concentrates near the decision boundary, not randomly (c1, c3).</li><li>LLM self-reported confidence/uncertainty scores are unreliable signals for finding these cases; disagreement across multiple runs or models is the more reliable signal (c4).</li><li>Rather than fine-tuning, augmenting the agent with semantic memory (domain policy) and episodic memory (past similar labeled cases) is proposed as a lighter-weight fix, tested on 93 real alerts where a quarter flip-flopped and the intervention got 15% to consistent automatically, leaving 10% still inconsistent for human review (c5, c6, c7).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW FLIP-FLOP CASES GET RESOLVED (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 506.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- runs -->
+<g id="node1" class="node">
+<title>runs</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="332.42,-386.4 197.75,-386.4 197.75,-350.12 332.42,-350.12 332.42,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="218.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Same input, 3 runs</text>
+<text xml:space="preserve" text-anchor="start" x="210.71" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">93 alerts run three times each</text>
+</g>
+<!-- disagree -->
+<g id="node2" class="node">
+<title>disagree</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="361.67,-298.87 168.5,-298.87 168.5,-262.59 361.67,-262.59 361.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="208.08" y="-280.78" font-family="Geist Mono" font-size="11.00">Disagreement sampling</text>
+<text xml:space="preserve" text-anchor="start" x="181.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">cross&#45;run/model disagreement, not confidence</text>
+</g>
+<!-- runs&#45;&gt;disagree -->
+<g id="edge1" class="edge">
+<title>runs&#45;&gt;disagree</title>
+<path fill="none" stroke="#c8501f" d="M265.08,-349.54C265.08,-337.5 265.08,-321.37 265.08,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="267.54,-307.94 265.09,-300.94 262.64,-307.94 267.54,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="294.71" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reveals flip&#45;flop</text>
+</g>
+<!-- boundary -->
+<g id="node3" class="node">
+<title>boundary</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="345.17,-211.34 185,-211.34 185,-175.06 345.17,-175.06 345.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="220.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Decision boundary</text>
+<text xml:space="preserve" text-anchor="start" x="197.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">flip&#45;flops concentrate in the gray zone</text>
+</g>
+<!-- disagree&#45;&gt;boundary -->
+<g id="edge2" class="edge">
+<title>disagree&#45;&gt;boundary</title>
+<path fill="none" stroke="#c8501f" d="M265.08,-262.01C265.08,-249.97 265.08,-233.84 265.08,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="267.54,-220.41 265.09,-213.41 262.64,-220.41 267.54,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="300.33" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">surfaces gray zone</text>
+</g>
+<!-- trust -->
+<g id="node4" class="node">
+<title>trust</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="172.17,-123.81 0,-123.81 0,-87.53 172.17,-87.53 172.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="63.58" y="-105.72" font-family="Geist Mono" font-size="11.00">Trust risk</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">inconsistent verdicts vs. a consistent rival</text>
+</g>
+<!-- boundary&#45;&gt;trust -->
+<g id="edge3" class="edge">
+<title>boundary&#45;&gt;trust</title>
+<path fill="none" stroke="#c8501f" d="M228,-174.48C199.68,-160.95 160.54,-142.25 130.54,-127.91"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="131.86,-125.83 124.49,-125.02 129.75,-130.25 131.86,-125.83"/>
+<text xml:space="preserve" text-anchor="middle" x="205.05" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">risks trust</text>
+</g>
+<!-- semantic -->
+<g id="node5" class="node">
+<title>semantic</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="335.79,-123.81 194.38,-123.81 194.38,-87.53 335.79,-87.53 335.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="221.58" y="-105.72" font-family="Geist Mono" font-size="11.00">Semantic memory</text>
+<text xml:space="preserve" text-anchor="start" x="207.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">explicit domain/policy knowledge</text>
+</g>
+<!-- boundary&#45;&gt;semantic -->
+<g id="edge4" class="edge">
+<title>boundary&#45;&gt;semantic</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M265.08,-174.48C265.08,-162.44 265.08,-146.31 265.08,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="267.54,-132.88 265.09,-125.88 262.64,-132.88 267.54,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="289.83" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">policy lookup</text>
+</g>
+<!-- episodic -->
+<g id="node6" class="node">
+<title>episodic</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="474.42,-123.81 357.75,-123.81 357.75,-87.53 474.42,-87.53 474.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="375.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Episodic memory</text>
+<text xml:space="preserve" text-anchor="start" x="370.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">past similar labeled cases</text>
+</g>
+<!-- boundary&#45;&gt;episodic -->
+<g id="edge5" class="edge">
+<title>boundary&#45;&gt;episodic</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M296.37,-174.48C319.96,-161.12 352.44,-142.72 377.61,-128.46"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="378.64,-130.7 383.52,-125.12 376.22,-126.43 378.64,-130.7"/>
+<text xml:space="preserve" text-anchor="middle" x="371.75" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">case lookup</text>
+</g>
+<!-- consistent -->
+<g id="node7" class="node">
+<title>consistent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="330.17,-36.28 200,-36.28 200,0 330.17,0 330.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="227.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Auto&#45;consistent</text>
+<text xml:space="preserve" text-anchor="start" x="212.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">~15% resolved automatically</text>
+</g>
+<!-- semantic&#45;&gt;consistent -->
+<g id="edge6" class="edge">
+<title>semantic&#45;&gt;consistent</title>
+<path fill="none" stroke="#c8501f" d="M265.08,-86.95C265.08,-74.91 265.08,-58.78 265.08,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="267.54,-45.35 265.09,-38.35 262.64,-45.35 267.54,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="280.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">resolves</text>
+</g>
+<!-- episodic&#45;&gt;consistent -->
+<g id="edge7" class="edge">
+<title>episodic&#45;&gt;consistent</title>
+<path fill="none" stroke="#c8501f" d="M384.8,-86.95C361.21,-73.59 328.73,-55.19 303.56,-40.93"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="304.95,-38.9 297.65,-37.59 302.53,-43.17 304.95,-38.9"/>
+<text xml:space="preserve" text-anchor="middle" x="365" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">resolves</text>
+</g>
+<!-- human -->
+<g id="node8" class="node">
+<title>human</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="498.04,-36.28 352.12,-36.28 352.12,0 498.04,0 498.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="390.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Human review</text>
+<text xml:space="preserve" text-anchor="start" x="365.08" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">~10% still inconsistent, escalated</text>
+</g>
+<!-- episodic&#45;&gt;human -->
+<g id="edge8" class="edge">
+<title>episodic&#45;&gt;human</title>
+<path fill="none" stroke="#c8501f" d="M417.95,-86.95C419.22,-74.91 420.91,-58.78 422.34,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="424.77,-45.56 423.06,-38.34 419.9,-45.05 424.77,-45.56"/>
+<text xml:space="preserve" text-anchor="middle" x="449.62" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">still ambiguous</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Diane Lin&#x27;s proposed fix: disagreement sampling finds decision-boundary cases, then semantic and episodic memory resolve most of them automatically, with the rest escalated to a person (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Same model, same input, different verdict</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/agent-disagrees-with-itself/s02_150.webp" alt="slide at 02:30"></a><div class="slidecap">Slide at 02:30 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s04_250.webp" alt="slide at 04:10"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s05_290.webp" alt="slide at 04:50"></a></div></div>
+<div class="textcol"><h2>Same model, same input, different verdict</h2><ul class="takeaways"><li>The talk opens with the observation that running an LLM repeatedly on an identical input can produce semantically different outputs, illustrated with a hotel-review sentiment task and a security-alert triage task where the same alert is sometimes labeled consistently benign, sometimes consistently suspicious, and sometimes flip-flops between runs.</li></ul><div class="quote"><p>&ldquo;Same model, same input. But different output.&rdquo;</p><span class="at">said at 02:37</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Why it matters beyond inconvenience</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/agent-disagrees-with-itself/s05_290.webp" alt="slide at 04:50"></a><div class="slidecap">Slide at 04:50 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s06_360.webp" alt="slide at 06:00"></a></div></div>
+<div class="textcol"><h2>Why it matters beyond inconvenience</h2><ul class="takeaways"><li>In a customer-facing product, flip-flopping verdicts create a trust problem: a customer comparing a vendor with consistent output against one with inconsistent output will favor the consistent vendor, even if average accuracy is similar.</li></ul><div class="quote"><p>&ldquo;the inconsistency is causing a trust issue in your product&rdquo;</p><span class="at">said at 05:15</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Inconsistency clusters at the decision boundary</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="7" class="sl"><img loading="lazy" class="main" src="img/agent-disagrees-with-itself/s07_390.webp" alt="slide at 06:30"></a><div class="slidecap">Slide at 06:30 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s08_480.webp" alt="slide at 08:00"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s09_580.webp" alt="slide at 09:40"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s10_630.webp" alt="slide at 10:30"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s11_710.webp" alt="slide at 11:50"></a></div></div>
+<div class="textcol"><h2>Inconsistency clusters at the decision boundary</h2><ul class="takeaways"><li>Across both example domains, the cases that flip-flop are concentrated near the decision boundary, the ambiguous &#x27;gray zone&#x27; where even human experts disagree and where the correct label often depends on company-specific policy rather than an objective right answer.</li></ul><div class="quote"><p>&ldquo;the data points tend to flip-flop actually concentrate around the decision boundary, the so-called gray zone&rdquo;</p><span class="at">said at 06:25</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Finding the ambiguous cases: disagreement over confidence</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="12" class="sl"><img loading="lazy" class="main" src="img/agent-disagrees-with-itself/s12_950.webp" alt="slide at 15:50"></a><div class="slidecap">Slide at 15:50 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Finding the ambiguous cases: disagreement over confidence</h2><ul class="takeaways"><li>Borrowing from active learning, the talk recommends using query-by-committee style disagreement, sampling the same model multiple times or different models, to surface which cases the system is actually unsure about, rather than trusting the model&#x27;s own uncertainty/confidence score, which the speaker says is not a reliable signal.</li></ul><div class="quote"><p>&ldquo;the uncertainty score from LM is not very reliable. It&#x27;s kind of a LM model doesn&#x27;t know what it doesn&#x27;t know&rdquo;</p><span class="at">said at 14:48</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Fix with memory, not fine-tuning</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="13" class="sl"><img loading="lazy" class="main" src="img/agent-disagrees-with-itself/s13_960.webp" alt="slide at 16:00"></a><div class="slidecap">Slide at 16:00 &middot; click any slide to enlarge &middot; 7 more from this section below</div><div class=strip><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s12_950.webp" alt="slide at 15:50"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s14_990.webp" alt="slide at 16:30"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s15_1010.webp" alt="slide at 16:50"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s16_1070.webp" alt="slide at 17:50"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s17_1190.webp" alt="slide at 19:50"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s18_1230.webp" alt="slide at 20:30"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s19_1330.webp" alt="slide at 22:10"></a></div></div>
+<div class="textcol"><h2>Fix with memory, not fine-tuning</h2><ul class="takeaways"><li>Instead of retraining or fine-tuning, the proposal is to add semantic memory (explicit domain/policy knowledge, such as a company&#x27;s rule for a specific scenario) and episodic memory (referencing past similar labeled cases) so the agent can resolve recurring ambiguous cases automatically, escalating only genuinely novel cases to a human.</li></ul><div class="quote"><p>&ldquo;fine-tuning model is expensive. Here, we are proposing a more lighter weight solution, easier to iterate. It&#x27;s about augment your agent with semantic and episodic memory&rdquo;</p><span class="at">said at 15:47</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">06</span><span>Measured results on real alerts</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="19" class="sl"><img loading="lazy" class="main" src="img/agent-disagrees-with-itself/s19_1330.webp" alt="slide at 22:10"></a><div class="slidecap">Slide at 22:10 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s20_1420.webp" alt="slide at 23:40"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s21_1480.webp" alt="slide at 24:40"></a><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s22_1520.webp" alt="slide at 25:20"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/agent-disagrees-with-itself/s23_1530.webp" alt="slide at 25:30"></a></div></div>
+<div class="textcol"><h2>Measured results on real alerts</h2><ul class="takeaways"><li>On a test set of 93 real cybersecurity alerts run three times each, about a quarter flip-flopped without the intervention.</li><li>After applying the memory-based solution, roughly 15% became consistent automatically via episodic memory, while about 10% remained inconsistent and were routed to human review.</li></ul><div class="quote"><p>&ldquo;here we collect uh 93 alerts, cybersecurity alerts, and then we run them three times&rdquo;</p><span class="at">said at 22:45</span></div><div class="quote"><p>&ldquo;about 15% of them become consistent. However, there&#x27;s still 10% of them remaining inconsistent&rdquo;</p><span class="at">said at 23:15</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The framing that &#x27;it&#x27;s not your AI agent&#x27;s fault, your AI agent simply points out the ambiguity that already exists&#x27; is a useful reframe, but it also shifts responsibility away from evaluating whether the underlying policy/label scheme itself is well specified, which the talk doesn&#x27;t dig into.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/agent-disagrees-with-itself/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/agent-disagrees-with-itself/s01_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/agent-disagrees-with-itself/s02_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/agent-disagrees-with-itself/s03_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/agent-disagrees-with-itself/s04_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/agent-disagrees-with-itself/s05_290.webp" alt="slide at 04:50"><div class="ts">04:50</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/agent-disagrees-with-itself/s06_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/agent-disagrees-with-itself/s07_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/agent-disagrees-with-itself/s08_480.webp" alt="slide at 08:00"><div class="ts">08:00</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/agent-disagrees-with-itself/s09_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/agent-disagrees-with-itself/s10_630.webp" alt="slide at 10:30"><div class="ts">10:30</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/agent-disagrees-with-itself/s11_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/agent-disagrees-with-itself/s12_950.webp" alt="slide at 15:50"><div class="ts">15:50</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/agent-disagrees-with-itself/s13_960.webp" alt="slide at 16:00"><div class="ts">16:00</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/agent-disagrees-with-itself/s14_990.webp" alt="slide at 16:30"><div class="ts">16:30</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/agent-disagrees-with-itself/s15_1010.webp" alt="slide at 16:50"><div class="ts">16:50</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/agent-disagrees-with-itself/s16_1070.webp" alt="slide at 17:50"><div class="ts">17:50</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/agent-disagrees-with-itself/s17_1190.webp" alt="slide at 19:50"><div class="ts">19:50</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/agent-disagrees-with-itself/s18_1230.webp" alt="slide at 20:30"><div class="ts">20:30</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/agent-disagrees-with-itself/s19_1330.webp" alt="slide at 22:10"><div class="ts">22:10</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/agent-disagrees-with-itself/s20_1420.webp" alt="slide at 23:40"><div class="ts">23:40</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/agent-disagrees-with-itself/s21_1480.webp" alt="slide at 24:40"><div class="ts">24:40</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/agent-disagrees-with-itself/s22_1520.webp" alt="slide at 25:20"><div class="ts">25:20</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/agent-disagrees-with-itself/s23_1530.webp" alt="slide at 25:30"><div class="ts">25:30</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (7)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Running the same model on the same input can produce semantically different output across runs, not just wording differences.</td><td class="tt">02:37</td></tr><tr><td class="st">warns</td><td>Flip-flopping verdicts create a trust problem for a product, especially against a consistent competitor.</td><td class="tt">05:15</td></tr><tr><td class="st">asserts</td><td>The cases that flip-flop between runs concentrate around the decision boundary, the ambiguous gray zone, rather than occurring randomly.</td><td class="tt">06:25</td></tr><tr><td class="st">warns</td><td>The model&#x27;s own uncertainty/confidence score is not a reliable signal for finding problematic cases; cross-run or cross-model disagreement is more reliable.</td><td class="tt">14:48</td></tr><tr><td class="st">recommends</td><td>Instead of expensive fine-tuning, augment the agent with semantic memory and episodic memory as a lighter-weight, easier-to-iterate fix.</td><td class="tt">15:47</td></tr><tr><td class="st">asserts</td><td>A test set of 93 real cybersecurity alerts was run three times each to measure flip-flop rate.</td><td class="tt">22:45</td></tr><tr><td class="st">asserts</td><td>After applying the memory-based solution, about 15% of previously inconsistent cases became consistent automatically, while about 10% remained inconsistent.</td><td class="tt">23:15</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/agent-disagrees-with-itself/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/wEc9aG7cRQc?t=10"}, {"src": "img/agent-disagrees-with-itself/s01_120.webp", "mmss": "02:00", "yt": "https://youtu.be/wEc9aG7cRQc?t=120"}, {"src": "img/agent-disagrees-with-itself/s02_150.webp", "mmss": "02:30", "yt": "https://youtu.be/wEc9aG7cRQc?t=150"}, {"src": "img/agent-disagrees-with-itself/s03_180.webp", "mmss": "03:00", "yt": "https://youtu.be/wEc9aG7cRQc?t=180"}, {"src": "img/agent-disagrees-with-itself/s04_250.webp", "mmss": "04:10", "yt": "https://youtu.be/wEc9aG7cRQc?t=250"}, {"src": "img/agent-disagrees-with-itself/s05_290.webp", "mmss": "04:50", "yt": "https://youtu.be/wEc9aG7cRQc?t=290"}, {"src": "img/agent-disagrees-with-itself/s06_360.webp", "mmss": "06:00", "yt": "https://youtu.be/wEc9aG7cRQc?t=360"}, {"src": "img/agent-disagrees-with-itself/s07_390.webp", "mmss": "06:30", "yt": "https://youtu.be/wEc9aG7cRQc?t=390"}, {"src": "img/agent-disagrees-with-itself/s08_480.webp", "mmss": "08:00", "yt": "https://youtu.be/wEc9aG7cRQc?t=480"}, {"src": "img/agent-disagrees-with-itself/s09_580.webp", "mmss": "09:40", "yt": "https://youtu.be/wEc9aG7cRQc?t=580"}, {"src": "img/agent-disagrees-with-itself/s10_630.webp", "mmss": "10:30", "yt": "https://youtu.be/wEc9aG7cRQc?t=630"}, {"src": "img/agent-disagrees-with-itself/s11_710.webp", "mmss": "11:50", "yt": "https://youtu.be/wEc9aG7cRQc?t=710"}, {"src": "img/agent-disagrees-with-itself/s12_950.webp", "mmss": "15:50", "yt": "https://youtu.be/wEc9aG7cRQc?t=950"}, {"src": "img/agent-disagrees-with-itself/s13_960.webp", "mmss": "16:00", "yt": "https://youtu.be/wEc9aG7cRQc?t=960"}, {"src": "img/agent-disagrees-with-itself/s14_990.webp", "mmss": "16:30", "yt": "https://youtu.be/wEc9aG7cRQc?t=990"}, {"src": "img/agent-disagrees-with-itself/s15_1010.webp", "mmss": "16:50", "yt": "https://youtu.be/wEc9aG7cRQc?t=1010"}, {"src": "img/agent-disagrees-with-itself/s16_1070.webp", "mmss": "17:50", "yt": "https://youtu.be/wEc9aG7cRQc?t=1070"}, {"src": "img/agent-disagrees-with-itself/s17_1190.webp", "mmss": "19:50", "yt": "https://youtu.be/wEc9aG7cRQc?t=1190"}, {"src": "img/agent-disagrees-with-itself/s18_1230.webp", "mmss": "20:30", "yt": "https://youtu.be/wEc9aG7cRQc?t=1230"}, {"src": "img/agent-disagrees-with-itself/s19_1330.webp", "mmss": "22:10", "yt": "https://youtu.be/wEc9aG7cRQc?t=1330"}, {"src": "img/agent-disagrees-with-itself/s20_1420.webp", "mmss": "23:40", "yt": "https://youtu.be/wEc9aG7cRQc?t=1420"}, {"src": "img/agent-disagrees-with-itself/s21_1480.webp", "mmss": "24:40", "yt": "https://youtu.be/wEc9aG7cRQc?t=1480"}, {"src": "img/agent-disagrees-with-itself/s22_1520.webp", "mmss": "25:20", "yt": "https://youtu.be/wEc9aG7cRQc?t=1520"}, {"src": "img/agent-disagrees-with-itself/s23_1530.webp", "mmss": "25:30", "yt": "https://youtu.be/wEc9aG7cRQc?t=1530"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "wEc9aG7cRQc", "slug": "agent-disagrees-with-itself", "title": "Why Your Agent Disagrees With Itself (And What To Do About It)", "speaker": "Diane Lin", "company": "Datadog", "themes": ["memory", "continual-learning", "evals-benchmarks"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "How flip-flop cases get resolved (ours, from the slides)", "lanes": ["Detect", "Diagnose", "Fix"], "nodes": [{"id": "runs", "label": "Same input, 3 runs", "sub": "93 alerts run three times each", "lane": 0, "kind": "system", "claim": "c6", "t": 1365}, {"id": "disagree", "label": "Disagreement sampling", "sub": "cross-run/model disagreement, not confidence", "lane": 0, "kind": "system", "claim": "c4", "t": 888}, {"id": "boundary", "label": "Decision boundary", "sub": "flip-flops concentrate in the gray zone", "lane": 1, "kind": "system", "claim": "c3", "t": 385}, {"id": "trust", "label": "Trust risk", "sub": "inconsistent verdicts vs. a consistent rival", "lane": 1, "kind": "external", "claim": "c2", "t": 315}, {"id": "semantic", "label": "Semantic memory", "sub": "explicit domain/policy knowledge", "lane": 2, "kind": "store", "claim": "c5", "t": 947}, {"id": "episodic", "label": "Episodic memory", "sub": "past similar labeled cases", "lane": 2, "kind": "store", "claim": "c5", "t": 947}, {"id": "consistent", "label": "Auto-consistent", "sub": "~15% resolved automatically", "lane": 2, "kind": "system", "claim": "c7", "t": 1395}, {"id": "human", "label": "Human review", "sub": "~10% still inconsistent, escalated", "lane": 2, "kind": "actor", "claim": "c7", "t": 1395}], "edges": [{"from": "runs", "to": "disagree", "label": "reveals flip-flop", "kind": "flow"}, {"from": "disagree", "to": "boundary", "label": "surfaces gray zone", "kind": "flow"}, {"from": "boundary", "to": "trust", "label": "risks trust", "kind": "flow"}, {"from": "boundary", "to": "semantic", "label": "policy lookup", "kind": "data"}, {"from": "boundary", "to": "episodic", "label": "case lookup", "kind": "data"}, {"from": "semantic", "to": "consistent", "label": "resolves", "kind": "flow"}, {"from": "episodic", "to": "consistent", "label": "resolves", "kind": "flow"}, {"from": "episodic", "to": "human", "label": "still ambiguous", "kind": "flow"}], "caption": "This traces Diane Lin's proposed fix: disagreement sampling finds decision-boundary cases, then semantic and episodic memory resolve most of them automatically, with the rest escalated to a person (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "run-to-run inconsistency", "text": "Running the same model on the same input can produce semantically different output across runs, not just wording differences.", "quote": "Same model, same input. But different output.", "t": 157}, {"id": "c2", "stance": "warns", "topic": "trust impact of inconsistency", "text": "Flip-flopping verdicts create a trust problem for a product, especially against a consistent competitor.", "quote": "the inconsistency is causing a trust issue in your product", "t": 315}, {"id": "c3", "stance": "asserts", "topic": "inconsistency clusters at decision boundary", "text": "The cases that flip-flop between runs concentrate around the decision boundary, the ambiguous gray zone, rather than occurring randomly.", "quote": "the data points tend to flip-flop actually concentrate around the decision boundary, the so-called gray zone", "t": 385}, {"id": "c4", "stance": "warns", "topic": "unreliability of LLM confidence scores", "text": "The model's own uncertainty/confidence score is not a reliable signal for finding problematic cases; cross-run or cross-model disagreement is more reliable.", "quote": "the uncertainty score from LM is not very reliable. It's kind of a LM model doesn't know what it doesn't know", "t": 888}, {"id": "c5", "stance": "recommends", "topic": "memory over fine-tuning", "text": "Instead of expensive fine-tuning, augment the agent with semantic memory and episodic memory as a lighter-weight, easier-to-iterate fix.", "quote": "fine-tuning model is expensive. Here, we are proposing a more lighter weight solution, easier to iterate. It's about augment your agent with semantic and episodic memory", "t": 947}, {"id": "c6", "stance": "asserts", "topic": "experiment setup", "text": "A test set of 93 real cybersecurity alerts was run three times each to measure flip-flop rate.", "quote": "here we collect uh 93 alerts, cybersecurity alerts, and then we run them three times", "t": 1365}, {"id": "c7", "stance": "asserts", "topic": "measured improvement", "text": "After applying the memory-based solution, about 15% of previously inconsistent cases became consistent automatically, while about 10% remained inconsistent.", "quote": "about 15% of them become consistent. However, there's still 10% of them remaining inconsistent", "t": 1395}]}</script>
+</body></html>

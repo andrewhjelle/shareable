@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Scaling up Continual Learning &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/zL1kLftVTlo" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 23 min</span><span class="ln"></span></div>
+<h1 class="lede">Scaling up Continual Learning</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Ronak Malde &middot; Trajectory</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/zL1kLftVTlo" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/zL1kLftVTlo</a> &middot; 23 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Continual learning</span><span class="chip hot">Post-training</span><span class="chip hot">Agentic engineering</span></div>
+<p class="deck" style="font-size:15px">Explains on-policy self-distillation (OPSD), an alternative to GRPO/RL post-training that drops parallel rollouts in favor of matching a single on-policy rollout&#x27;s full-vocabulary token distribution to a teacher&#x27;s</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Trajectory&#x27;s on-policy self-distillation (OPSD) replaces GRPO&#x27;s parallel rollouts and sequence-level reward with a single on-policy rollout matched token-by-token to a teacher&#x27;s full vocabulary distribution (c3).</li><li>Scaled to 120B-1T parameter models with 50-100+ tool calls, OPSD surpasses GRPO&#x27;s Sonnet-level ceiling on LiveCodeBench but introduces divergence collapse (hedging into words like &#x27;wait&#x27;/&#x27;maybe&#x27;) and hint leakage (c4, c6, c7).</li><li>The fixes are step-level KL-divergence weighting per token and residual/partial-hint guidance plus LLM-filtered hints to stop the model from shortcutting to a known answer (c8).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">ON-POLICY SELF-DISTILLATION: HINT, MATCH, THEN FIX AT SCALE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 364.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- hint -->
+<g id="node1" class="node">
+<title>hint</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="154.54,-561.46 7.87,-561.46 7.87,-525.18 154.54,-525.18 154.54,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="46.33" y="-543.37" font-family="Geist Mono" font-size="11.00">Hint in prompt</text>
+<text xml:space="preserve" text-anchor="start" x="20.83" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">privileged info e.g. golden solution</text>
+</g>
+<!-- teacher -->
+<g id="node3" class="node">
+<title>teacher</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="152.67,-473.93 9.75,-473.93 9.75,-437.65 152.67,-437.65 152.67,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="22.71" y="-455.84" font-family="Geist Mono" font-size="11.00">Hinted teacher logprobs</text>
+<text xml:space="preserve" text-anchor="start" x="34.71" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">same model, hint included</text>
+</g>
+<!-- hint&#45;&gt;teacher -->
+<g id="edge1" class="edge">
+<title>hint&#45;&gt;teacher</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M81.21,-524.6C81.21,-512.56 81.21,-496.43 81.21,-482.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="83.66,-483 81.21,-476 78.76,-483 83.66,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="105.58" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">provides hint</text>
+</g>
+<!-- rollout -->
+<g id="node2" class="node">
+<title>rollout</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="327.54,-473.93 174.88,-473.93 174.88,-437.65 327.54,-437.65 327.54,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="212.21" y="-455.84" font-family="Geist Mono" font-size="11.00">On&#45;policy rollout</text>
+<text xml:space="preserve" text-anchor="start" x="187.83" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">student&#39;s own single rollout, no hint</text>
+</g>
+<!-- match -->
+<g id="node4" class="node">
+<title>match</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="242.54,-386.4 89.87,-386.4 89.87,-350.12 242.54,-350.12 242.54,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="122.33" y="-368.31" font-family="Geist Mono" font-size="11.00">Token&#45;level match</text>
+<text xml:space="preserve" text-anchor="start" x="102.83" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">match un&#45;hinted logprobs to hinted</text>
+</g>
+<!-- rollout&#45;&gt;match -->
+<g id="edge2" class="edge">
+<title>rollout&#45;&gt;match</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M233.6,-437.07C220.83,-424.22 203.44,-406.73 189.53,-392.72"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="191.54,-391.27 184.87,-388.03 188.06,-394.72 191.54,-391.27"/>
+<text xml:space="preserve" text-anchor="middle" x="248.67" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">un&#45;hinted logprobs</text>
+</g>
+<!-- teacher&#45;&gt;match -->
+<g id="edge3" class="edge">
+<title>teacher&#45;&gt;match</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M98.82,-437.07C111.59,-424.22 128.98,-406.73 142.89,-392.72"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="144.36,-394.72 147.55,-388.03 140.88,-391.27 144.36,-394.72"/>
+<text xml:space="preserve" text-anchor="middle" x="157.67" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">hinted logprobs</text>
+</g>
+<!-- result -->
+<g id="node5" class="node">
+<title>result</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="253.04,-298.87 79.37,-298.87 79.37,-262.59 253.04,-262.59 253.04,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="108.83" y="-280.78" font-family="Geist Mono" font-size="11.00">Surpasses GRPO ceiling</text>
+<text xml:space="preserve" text-anchor="start" x="92.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">beats Sonnet&#45;level cap on LiveCodeBench</text>
+</g>
+<!-- match&#45;&gt;result -->
+<g id="edge4" class="edge">
+<title>match&#45;&gt;result</title>
+<path fill="none" stroke="#c8501f" d="M166.21,-349.54C166.21,-337.5 166.21,-321.37 166.21,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="168.66,-307.94 166.21,-300.94 163.76,-307.94 168.66,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="192.08" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">trains student</text>
+</g>
+<!-- scale -->
+<g id="node6" class="node">
+<title>scale</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="227.17,-211.34 105.25,-211.34 105.25,-175.06 227.17,-175.06 227.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="121.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Scaled to 120B&#45;1T</text>
+<text xml:space="preserve" text-anchor="start" x="118.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">50&#45;100+ tool calls per task</text>
+</g>
+<!-- result&#45;&gt;scale -->
+<g id="edge5" class="edge">
+<title>result&#45;&gt;scale</title>
+<path fill="none" stroke="#c8501f" d="M166.21,-262.01C166.21,-249.97 166.21,-233.84 166.21,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="168.66,-220.41 166.21,-213.41 163.76,-220.41 168.66,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="183.83" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">scaled up</text>
+</g>
+<!-- divergence -->
+<g id="node7" class="node">
+<title>divergence</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="154.42,-123.81 16,-123.81 16,-87.53 154.42,-87.53 154.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="36.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Divergence collapse</text>
+<text xml:space="preserve" text-anchor="start" x="28.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">hedging tokens like wait/maybe</text>
+</g>
+<!-- scale&#45;&gt;divergence -->
+<g id="edge6" class="edge">
+<title>scale&#45;&gt;divergence</title>
+<path fill="none" stroke="#c8501f" d="M149.43,-174.48C137.37,-161.75 120.99,-144.45 107.79,-130.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="109.6,-128.87 103.01,-125.47 106.05,-132.24 109.6,-128.87"/>
+<text xml:space="preserve" text-anchor="middle" x="160.93" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">long trajectories</text>
+</g>
+<!-- leakage -->
+<g id="node8" class="node">
+<title>leakage</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="333.04,-123.81 189.38,-123.81 189.38,-87.53 333.04,-87.53 333.04,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="230.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Hint leakage</text>
+<text xml:space="preserve" text-anchor="start" x="202.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">model exploits privileged hint info</text>
+</g>
+<!-- scale&#45;&gt;leakage -->
+<g id="edge7" class="edge">
+<title>scale&#45;&gt;leakage</title>
+<path fill="none" stroke="#c8501f" d="M185.89,-174.48C200.29,-161.52 219.94,-143.82 235.56,-129.76"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="236.86,-131.89 240.43,-125.38 233.58,-128.24 236.86,-131.89"/>
+<text xml:space="preserve" text-anchor="middle" x="243.4" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">explicit hints</text>
+</g>
+<!-- klweight -->
+<g id="node9" class="node">
+<title>klweight</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="156.42,-36.28 0,-36.28 0,0 156.42,0 156.42,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="21.58" y="-18.19" font-family="Geist Mono" font-size="11.00">Step&#45;level KL weighting</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">per&#45;token weight, not flat KL penalty</text>
+</g>
+<!-- divergence&#45;&gt;klweight -->
+<g id="edge8" class="edge">
+<title>divergence&#45;&gt;klweight</title>
+<path fill="none" stroke="#c8501f" d="M83.76,-86.95C82.77,-74.91 81.45,-58.78 80.35,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="82.79,-45.12 79.78,-38.35 77.91,-45.52 82.79,-45.12"/>
+<text xml:space="preserve" text-anchor="middle" x="97.5" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">fixed by</text>
+</g>
+<!-- residual -->
+<g id="node10" class="node">
+<title>residual</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="355.92,-36.28 178.5,-36.28 178.5,0 355.92,0 355.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="223.33" y="-18.19" font-family="Geist Mono" font-size="11.00">Residual guidance</text>
+<text xml:space="preserve" text-anchor="start" x="191.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">blend partial/full&#45;hint teacher, filtered hints</text>
+</g>
+<!-- leakage&#45;&gt;residual -->
+<g id="edge9" class="edge">
+<title>leakage&#45;&gt;residual</title>
+<path fill="none" stroke="#c8501f" d="M262.45,-86.95C263.3,-74.91 264.43,-58.78 265.38,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="267.82,-45.5 265.86,-38.35 262.93,-45.16 267.82,-45.5"/>
+<text xml:space="preserve" text-anchor="middle" x="279.94" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">fixed by</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces OPSD from the hinted-teacher trick through the two failure modes Trajectory reports hitting at 120B+ scale and the fixes they describe using (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Why current post-training algorithms fall short</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/scaling-continual-learning/s01_130.webp" alt="slide at 02:10"></a><div class="slidecap">Slide at 02:10 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/scaling-continual-learning/s02_140.webp" alt="slide at 02:20"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/scaling-continual-learning/s03_150.webp" alt="slide at 02:30"></a></div></div>
+<div class="textcol"><h2>Why current post-training algorithms fall short</h2><ul class="takeaways"><li>Malde traces the evolution from SFT to DPO/RLHF to GRPO, arguing each stage trades away one of four desired properties: online task distribution, on-policy sampling, single-rollout parallelism, and per-token reward.</li><li>GRPO gets on-policy sampling and strong results but requires heavy parallel-rollout infrastructure and collapses feedback into one scalar per trajectory, which he compares to a teacher grading an entire essay with a single score.</li></ul><div class="quote"><p>&ldquo;we are actually spending hundreds of trillions of tokens every single day on inference&rdquo;</p><span class="at">said at 01:34</span></div><div class="quote"><p>&ldquo;it&#x27;s almost like you&#x27;re drinking through a straw in order to get the reward&rdquo;</p><span class="at">said at 06:40</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>On-policy self-distillation (OPSD)</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/scaling-continual-learning/s04_700.webp" alt="slide at 11:40"></a><div class="slidecap">Slide at 11:40 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/scaling-continual-learning/s05_740.webp" alt="slide at 12:20"></a></div></div>
+<div class="textcol"><h2>On-policy self-distillation (OPSD)</h2><ul class="takeaways"><li>OPSD starts from standard distillation (student fits a teacher&#x27;s log-probs on a fixed dataset), swaps in the student&#x27;s own on-policy rollout as the training data, and, when no larger teacher model is available, gives the same model a &#x27;hint&#x27; (privileged information such as a golden solution) in the prompt so its own hinted log-probs become the teacher target for the un-hinted student.</li></ul><div class="quote"><p>&ldquo;you take what&#x27;s called this hint, put it into the beginning of the prompt, and now you match the log props of the student without that hint to the teacher with that hint&rdquo;</p><span class="at">said at 08:43</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Scaling breaks: divergence collapse and hint leakage</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/scaling-continual-learning/s05_740.webp" alt="slide at 12:20"></a><div class="slidecap">Slide at 12:20 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Scaling breaks: divergence collapse and hint leakage</h2><ul class="takeaways"><li>At 120B+ parameters with 50-100+ tool calls, eval accuracy and run-to-run variance spike and tool-call formatting breaks down.</li><li>On long trajectories the teacher repeatedly tries to course-correct a diverging student, pushing the model toward hedging tokens like &#x27;wait&#x27; and &#x27;maybe.&#x27; Separately, hints leak: if a hint states an answer outright, the model&#x27;s rollout skips reasoning and jumps straight to restating that answer, a shortcut that would never occur in production.</li></ul><div class="quote"><p>&ldquo;we&#x27;ve been scaling up this algorithm to 120bs to 500 bs to one trillion parameter models&rdquo;</p><span class="at">said at 12:26</span></div><div class="quote"><p>&ldquo;there is an equivalent for OPSD as well and that is hint leakage&rdquo;</p><span class="at">said at 16:06</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Fixes: step-level weighting and residual guidance</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/scaling-continual-learning/s05_740.webp" alt="slide at 12:20"></a><div class="slidecap">Slide at 12:20 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Fixes: step-level weighting and residual guidance</h2><ul class="takeaways"><li>For divergence collapse, Trajectory computes step-level KL divergence between student and teacher and uses it as a per-token weighting factor rather than a flat KL penalty, so only the steps that actually diverge get corrected.</li><li>For hint leakage, they use an LLM to filter hints down to what a model should reasonably infer, and a &#x27;residual guidance&#x27; technique that blends a partial-hint teacher with a full-hint teacher so the student isn&#x27;t pushed fully out of its own distribution.</li></ul><div class="quote"><p>&ldquo;not just like normal KL where we use that as a KL penalty, but instead we&#x27;re actually multiplying the token weight uh of every single step based on this divergence property&rdquo;</p><span class="at">said at 14:31</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Results and what&#x27;s next</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="6" class="sl"><img loading="lazy" class="main" src="img/scaling-continual-learning/s06_1100.webp" alt="slide at 18:20"></a><div class="slidecap">Slide at 18:20 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/scaling-continual-learning/s04_700.webp" alt="slide at 11:40"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/scaling-continual-learning/s05_740.webp" alt="slide at 12:20"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/scaling-continual-learning/s07_1130.webp" alt="slide at 18:50"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/scaling-continual-learning/s08_1280.webp" alt="slide at 21:20"></a></div></div>
+<div class="textcol"><h2>Results and what&#x27;s next</h2><ul class="takeaways"><li>With these fixes OPSD scaled to a 12B model on Mercor Apex agents requiring 100+ tool calls and surpassed RL results there, while also collapsing the number of tokens needed to solve hard problems compared to RL&#x27;s tendency to think longer.</li><li>Malde frames continual learning across production traces as the field&#x27;s next major unlock for 2026-2027, while acknowledging in Q&amp;A that the field is still in a &#x27;pseudo continual learning&#x27; phase of batched offline updates.</li></ul><div class="quote"><p>&ldquo;we found that gpo saturates around sonnet level performance and and doesn&#x27;t really push the frontier&rdquo;</p><span class="at">said at 10:16</span></div><div class="quote"><p>&ldquo;that is the most exciting unlock that&#x27;s going to happen in 2026 2027 and as we scale up&rdquo;</p><span class="at">said at 19:40</span></div></div>
+</div>
+</section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/scaling-continual-learning/s00_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/scaling-continual-learning/s01_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/scaling-continual-learning/s02_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/scaling-continual-learning/s03_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/scaling-continual-learning/s04_700.webp" alt="slide at 11:40"><div class="ts">11:40</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/scaling-continual-learning/s05_740.webp" alt="slide at 12:20"><div class="ts">12:20</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/scaling-continual-learning/s06_1100.webp" alt="slide at 18:20"><div class="ts">18:20</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/scaling-continual-learning/s07_1130.webp" alt="slide at 18:50"><div class="ts">18:50</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/scaling-continual-learning/s08_1280.webp" alt="slide at 21:20"><div class="ts">21:20</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Hundreds of trillions of tokens are generated daily through inference and represent real-world signal on model failures that isn&#x27;t being captured for training.</td><td class="tt">01:34</td></tr><tr><td class="st">warns</td><td>GRPO collapses an entire trajectory&#x27;s feedback into one scalar reward, which is inefficient compared to per-token signal.</td><td class="tt">06:40</td></tr><tr><td class="st">asserts</td><td>OPSD gives the same model a hint in the prompt and matches the un-hinted student&#x27;s log-probs to the hinted version&#x27;s log-probs, letting the model teach itself without needing a separate, smarter teacher.</td><td class="tt">08:43</td></tr><tr><td class="st">asserts</td><td>On LiveCodeBench, GRPO saturates around Sonnet-level performance, while OPSD&#x27;s distribution-shifting approach reaches new results on many datasets.</td><td class="tt">10:16</td></tr><tr><td class="st">predicts</td><td>Software that gets smarter every time it&#x27;s used is described as the most exciting unlock coming in 2026-2027 as continual learning scales.</td><td class="tt">19:40</td></tr><tr><td class="st">asserts</td><td>Trajectory scaled OPSD to 120B, 500B, and one trillion parameter models, and the algorithm starts breaking down once tasks require 50-100 tool calls instead of one or two.</td><td class="tt">12:26</td></tr><tr><td class="st">warns</td><td>OPSD has its own equivalent of RL&#x27;s reward hacking problem: hint leakage, where the model detects and exploits information in the hint that it shouldn&#x27;t have access to in production.</td><td class="tt">16:06</td></tr><tr><td class="st">recommends</td><td>Instead of a flat KL penalty, weight each token&#x27;s training signal by the step-level KL divergence between student and teacher, so only genuinely divergent steps in a long trajectory get corrected.</td><td class="tt">14:31</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/scaling-continual-learning/s00_20.webp", "mmss": "00:20", "yt": "https://youtu.be/zL1kLftVTlo?t=20"}, {"src": "img/scaling-continual-learning/s01_130.webp", "mmss": "02:10", "yt": "https://youtu.be/zL1kLftVTlo?t=130"}, {"src": "img/scaling-continual-learning/s02_140.webp", "mmss": "02:20", "yt": "https://youtu.be/zL1kLftVTlo?t=140"}, {"src": "img/scaling-continual-learning/s03_150.webp", "mmss": "02:30", "yt": "https://youtu.be/zL1kLftVTlo?t=150"}, {"src": "img/scaling-continual-learning/s04_700.webp", "mmss": "11:40", "yt": "https://youtu.be/zL1kLftVTlo?t=700"}, {"src": "img/scaling-continual-learning/s05_740.webp", "mmss": "12:20", "yt": "https://youtu.be/zL1kLftVTlo?t=740"}, {"src": "img/scaling-continual-learning/s06_1100.webp", "mmss": "18:20", "yt": "https://youtu.be/zL1kLftVTlo?t=1100"}, {"src": "img/scaling-continual-learning/s07_1130.webp", "mmss": "18:50", "yt": "https://youtu.be/zL1kLftVTlo?t=1130"}, {"src": "img/scaling-continual-learning/s08_1280.webp", "mmss": "21:20", "yt": "https://youtu.be/zL1kLftVTlo?t=1280"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "zL1kLftVTlo", "slug": "scaling-continual-learning", "title": "Scaling up Continual Learning", "speaker": "Ronak Malde", "company": "Trajectory", "themes": ["continual-learning", "post-training", "agentic-engineering"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "On-policy self-distillation: hint, match, then fix at scale (ours)", "lanes": ["Inputs", "OPSD training loop", "Scaling failure modes", "Fixes"], "nodes": [{"id": "hint", "label": "Hint in prompt", "sub": "privileged info e.g. golden solution", "lane": 0, "kind": "store", "claim": "c3", "t": 523}, {"id": "rollout", "label": "On-policy rollout", "sub": "student's own single rollout, no hint", "lane": 0, "kind": "system", "claim": "c3", "t": 523}, {"id": "teacher", "label": "Hinted teacher logprobs", "sub": "same model, hint included", "lane": 1, "kind": "system", "claim": "c3", "t": 523}, {"id": "match", "label": "Token-level match", "sub": "match un-hinted logprobs to hinted", "lane": 1, "kind": "system", "claim": "c3", "t": 523}, {"id": "result", "label": "Surpasses GRPO ceiling", "sub": "beats Sonnet-level cap on LiveCodeBench", "lane": 1, "kind": "system", "claim": "c4", "t": 616}, {"id": "scale", "label": "Scaled to 120B-1T", "sub": "50-100+ tool calls per task", "lane": 2, "kind": "system", "claim": "c6", "t": 746}, {"id": "divergence", "label": "Divergence collapse", "sub": "hedging tokens like wait/maybe", "lane": 2, "kind": "system", "claim": "c6", "t": 746}, {"id": "leakage", "label": "Hint leakage", "sub": "model exploits privileged hint info", "lane": 2, "kind": "system", "claim": "c7", "t": 966}, {"id": "klweight", "label": "Step-level KL weighting", "sub": "per-token weight, not flat KL penalty", "lane": 3, "kind": "system", "claim": "c8", "t": 871}, {"id": "residual", "label": "Residual guidance", "sub": "blend partial/full-hint teacher, filtered hints", "lane": 3, "kind": "system", "claim": "c8", "t": 871}], "edges": [{"from": "hint", "to": "teacher", "label": "provides hint", "kind": "data"}, {"from": "rollout", "to": "match", "label": "un-hinted logprobs", "kind": "data"}, {"from": "teacher", "to": "match", "label": "hinted logprobs", "kind": "data"}, {"from": "match", "to": "result", "label": "trains student", "kind": "flow"}, {"from": "result", "to": "scale", "label": "scaled up", "kind": "flow"}, {"from": "scale", "to": "divergence", "label": "long trajectories", "kind": "flow"}, {"from": "scale", "to": "leakage", "label": "explicit hints", "kind": "flow"}, {"from": "divergence", "to": "klweight", "label": "fixed by", "kind": "flow"}, {"from": "leakage", "to": "residual", "label": "fixed by", "kind": "flow"}], "caption": "This traces OPSD from the hinted-teacher trick through the two failure modes Trajectory reports hitting at 120B+ scale and the fixes they describe using (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "unused inference data", "text": "Hundreds of trillions of tokens are generated daily through inference and represent real-world signal on model failures that isn't being captured for training.", "quote": "we are actually spending hundreds of trillions of tokens every single day on inference", "t": 94}, {"id": "c2", "stance": "warns", "topic": "GRPO's scalar reward", "text": "GRPO collapses an entire trajectory's feedback into one scalar reward, which is inefficient compared to per-token signal.", "quote": "it's almost like you're drinking through a straw in order to get the reward", "t": 400}, {"id": "c3", "stance": "asserts", "topic": "on-policy self-distillation mechanism", "text": "OPSD gives the same model a hint in the prompt and matches the un-hinted student's log-probs to the hinted version's log-probs, letting the model teach itself without needing a separate, smarter teacher.", "quote": "you take what's called this hint, put it into the beginning of the prompt, and now you match the log props of the student without that hint to the teacher with that hint", "t": 523}, {"id": "c4", "stance": "asserts", "topic": "OPSD vs GRPO on LiveCodeBench", "text": "On LiveCodeBench, GRPO saturates around Sonnet-level performance, while OPSD's distribution-shifting approach reaches new results on many datasets.", "quote": "we found that gpo saturates around sonnet level performance and and doesn't really push the frontier", "t": 616}, {"id": "c5", "stance": "predicts", "topic": "continual learning as the next unlock", "text": "Software that gets smarter every time it's used is described as the most exciting unlock coming in 2026-2027 as continual learning scales.", "quote": "that is the most exciting unlock that's going to happen in 2026 2027 and as we scale up", "t": 1180}, {"id": "c6", "stance": "asserts", "topic": "scaling breaks the algorithm", "text": "Trajectory scaled OPSD to 120B, 500B, and one trillion parameter models, and the algorithm starts breaking down once tasks require 50-100 tool calls instead of one or two.", "quote": "we've been scaling up this algorithm to 120bs to 500 bs to one trillion parameter models", "t": 746}, {"id": "c7", "stance": "warns", "topic": "hint leakage", "text": "OPSD has its own equivalent of RL's reward hacking problem: hint leakage, where the model detects and exploits information in the hint that it shouldn't have access to in production.", "quote": "there is an equivalent for OPSD as well and that is hint leakage", "t": 966}, {"id": "c8", "stance": "recommends", "topic": "step-level divergence weighting", "text": "Instead of a flat KL penalty, weight each token's training signal by the step-level KL divergence between student and teacher, so only genuinely divergent steps in a long trajectory get corrected.", "quote": "not just like normal KL where we use that as a KL penalty, but instead we're actually multiplying the token weight uh of every single step based on this divergence property", "t": 871}]}</script>
+</body></html>

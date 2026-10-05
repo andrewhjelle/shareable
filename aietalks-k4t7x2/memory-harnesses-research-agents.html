@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Memory Harnesses for Long-Running Research Agents &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/R3-anFK1YM8" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 13 min</span><span class="ln"></span></div>
+<h1 class="lede">Memory Harnesses for Long-Running Research Agents</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Stefania Druga &middot; Sakana.ai</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/R3-anFK1YM8" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/R3-anFK1YM8</a> &middot; 13 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Memory</span><span class="chip hot">Continual learning</span><span class="chip hot">Local models</span></div>
+<p class="deck" style="font-size:15px">Gives an empirical result on recall-policy design for long-horizon agent tasks, testing memory-off, vector RAG, a ranked decisions ledger, and a ground-truth oracle on an X-Bench-style needle task, run locally on quantized open models</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Long-horizon tasks suffer context rot (contradiction, redone work, drift); Druga ran her experiments locally on an M3 Ultra with 96GB/28-core, using quantized Qwen 27B (4-bit) and DeepSeek V4 Flash (c1, c3).</li><li>When a task&#x27;s relevant information fits inside the context window, adding a memory harness doesn&#x27;t improve performance, only cost (c4).</li><li>On an X-Bench-style task where the needed answer was 376 steps outside the current context, a ranked decisions-ledger recall policy outperformed vector RAG and even beat a ground-truth oracle, because the oracle supplies the right memory but doesn&#x27;t force the model to use it correctly (c5, c6).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">MEMORY HARNESS RECALL LADDER (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 690.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- trace -->
+<g id="node1" class="node">
+<title>trace</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="369.55,-386.4 246.88,-386.4 246.88,-350.12 369.55,-350.12 369.55,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="282.71" y="-368.31" font-family="Geist Mono" font-size="11.00">Core trace</text>
+<text xml:space="preserve" text-anchor="start" x="259.84" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">always shown to the agent</text>
+</g>
+<!-- recall -->
+<g id="node2" class="node">
+<title>recall</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="392.8,-298.87 223.63,-298.87 223.63,-262.59 392.8,-262.59 392.8,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="279.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Recall block</text>
+<text xml:space="preserve" text-anchor="start" x="236.59" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">swaps across 4 modes, model held fixed</text>
+</g>
+<!-- trace&#45;&gt;recall -->
+<g id="edge1" class="edge">
+<title>trace&#45;&gt;recall</title>
+<path fill="none" stroke="#c8501f" d="M308.21,-349.54C308.21,-337.5 308.21,-321.37 308.21,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="310.66,-307.94 308.21,-300.94 305.76,-307.94 310.66,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="318.34" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">feeds</text>
+</g>
+<!-- archive -->
+<g id="node3" class="node">
+<title>archive</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="120.42,-211.34 0,-211.34 0,-175.06 120.42,-175.06 120.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="27.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Archival block</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">tracks info across sessions</text>
+</g>
+<!-- recall&#45;&gt;archive -->
+<g id="edge2" class="edge">
+<title>recall&#45;&gt;archive</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M256.52,-261.9C216.65,-248.15 161.44,-229.11 119.72,-214.72"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="120.68,-212.46 113.26,-212.5 119.08,-217.09 120.68,-212.46"/>
+<text xml:space="preserve" text-anchor="middle" x="210.31" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">writes</text>
+</g>
+<!-- none -->
+<g id="node4" class="node">
+<title>none</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="242.3,-211.34 142.13,-211.34 142.13,-175.06 242.3,-175.06 242.3,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="170.84" y="-193.25" font-family="Geist Mono" font-size="11.00">No recall</text>
+<text xml:space="preserve" text-anchor="start" x="155.09" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">baseline, memory off</text>
+</g>
+<!-- recall&#45;&gt;none -->
+<g id="edge3" class="edge">
+<title>recall&#45;&gt;none</title>
+<path fill="none" stroke="#c8501f" d="M284.17,-262.01C266.44,-248.93 242.17,-231.04 223.02,-216.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="224.52,-214.98 217.43,-212.8 221.61,-218.92 224.52,-214.98"/>
+<text xml:space="preserve" text-anchor="middle" x="267.66" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">mode</text>
+</g>
+<!-- rag -->
+<g id="node5" class="node">
+<title>rag</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="351.92,-211.34 264.5,-211.34 264.5,-175.06 351.92,-175.06 351.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="280.84" y="-193.25" font-family="Geist Mono" font-size="11.00">Vector RAG</text>
+<text xml:space="preserve" text-anchor="start" x="277.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">similarity retrieval</text>
+</g>
+<!-- recall&#45;&gt;rag -->
+<g id="edge4" class="edge">
+<title>recall&#45;&gt;rag</title>
+<path fill="none" stroke="#c8501f" d="M308.21,-262.01C308.21,-249.97 308.21,-233.84 308.21,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="310.66,-220.41 308.21,-213.41 305.76,-220.41 310.66,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="318.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">mode</text>
+</g>
+<!-- ledger -->
+<g id="node6" class="node">
+<title>ledger</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="518.05,-211.34 374.38,-211.34 374.38,-175.06 518.05,-175.06 518.05,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="387.34" y="-193.25" font-family="Geist Mono" font-size="11.00">Ranked decisions ledger</text>
+<text xml:space="preserve" text-anchor="start" x="408.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">rank&#45;only, no vectors</text>
+</g>
+<!-- recall&#45;&gt;ledger -->
+<g id="edge5" class="edge">
+<title>recall&#45;&gt;ledger</title>
+<path fill="none" stroke="#c8501f" d="M336.8,-262.01C358.17,-248.76 387.53,-230.57 410.45,-216.36"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="411.71,-218.47 416.37,-212.7 409.13,-214.3 411.71,-218.47"/>
+<text xml:space="preserve" text-anchor="middle" x="395.97" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">mode</text>
+</g>
+<!-- oracle -->
+<g id="node7" class="node">
+<title>oracle</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="681.92,-211.34 540.5,-211.34 540.5,-175.06 681.92,-175.06 681.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="563.59" y="-193.25" font-family="Geist Mono" font-size="11.00">Ground&#45;truth oracle</text>
+<text xml:space="preserve" text-anchor="start" x="553.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">supplies correct memory directly</text>
+</g>
+<!-- recall&#45;&gt;oracle -->
+<g id="edge6" class="edge">
+<title>recall&#45;&gt;oracle</title>
+<path fill="none" stroke="#c8501f" d="M371.36,-261.9C420.58,-248.01 488.94,-228.71 540.09,-214.28"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="540.61,-216.67 546.68,-212.41 539.28,-211.96 540.61,-216.67"/>
+<text xml:space="preserve" text-anchor="middle" x="488.35" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">mode</text>
+</g>
+<!-- fits -->
+<g id="node8" class="node">
+<title>fits</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="261.8,-123.81 122.63,-123.81 122.63,-87.53 261.8,-87.53 261.8,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="146.09" y="-105.72" font-family="Geist Mono" font-size="11.00">Task fits in context</text>
+<text xml:space="preserve" text-anchor="start" x="135.59" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">memory adds no gain, only cost</text>
+</g>
+<!-- none&#45;&gt;fits -->
+<g id="edge7" class="edge">
+<title>none&#45;&gt;fits</title>
+<path fill="none" stroke="#c8501f" d="M192.21,-174.48C192.21,-162.44 192.21,-146.31 192.21,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="194.66,-132.88 192.21,-125.88 189.76,-132.88 194.66,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="209.84" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">tested on</text>
+</g>
+<!-- xbench -->
+<g id="node9" class="node">
+<title>xbench</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="521.8,-123.81 370.63,-123.81 370.63,-87.53 521.8,-87.53 521.8,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="383.59" y="-105.72" font-family="Geist Mono" font-size="11.00">X&#45;Bench, step 124 vs 500</text>
+<text xml:space="preserve" text-anchor="start" x="385.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">answer 376 steps outside context</text>
+</g>
+<!-- rag&#45;&gt;xbench -->
+<g id="edge8" class="edge">
+<title>rag&#45;&gt;xbench</title>
+<path fill="none" stroke="#c8501f" d="M336.8,-174.48C358.17,-161.23 387.53,-143.04 410.45,-128.83"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="411.71,-130.94 416.37,-125.17 409.13,-126.77 411.71,-130.94"/>
+<text xml:space="preserve" text-anchor="middle" x="403.1" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">tested on</text>
+</g>
+<!-- ledger&#45;&gt;xbench -->
+<g id="edge9" class="edge">
+<title>ledger&#45;&gt;xbench</title>
+<path fill="none" stroke="#c8501f" d="M446.21,-174.48C446.21,-162.44 446.21,-146.31 446.21,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="448.66,-132.88 446.21,-125.88 443.76,-132.88 448.66,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="463.84" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">tested on</text>
+</g>
+<!-- oracle&#45;&gt;xbench -->
+<g id="edge10" class="edge">
+<title>oracle&#45;&gt;xbench</title>
+<path fill="none" stroke="#c8501f" d="M577.02,-174.48C551.14,-161.06 515.46,-142.56 487.9,-128.28"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="489.04,-126.11 481.7,-125.07 486.79,-130.46 489.04,-126.11"/>
+<text xml:space="preserve" text-anchor="middle" x="556.21" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">tested on</text>
+</g>
+<!-- ledgerwin -->
+<g id="node10" class="node">
+<title>ledgerwin</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="521.8,-36.28 370.63,-36.28 370.63,0 521.8,0 521.8,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="383.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Ledger wins, beats oracle</text>
+<text xml:space="preserve" text-anchor="start" x="387.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">oracle gives memory but not use</text>
+</g>
+<!-- xbench&#45;&gt;ledgerwin -->
+<g id="edge11" class="edge">
+<title>xbench&#45;&gt;ledgerwin</title>
+<path fill="none" stroke="#c8501f" d="M446.21,-86.95C446.21,-74.91 446.21,-58.78 446.21,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="448.66,-45.35 446.21,-38.35 443.76,-45.35 448.66,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="456.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">result</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Druga&#x27;s write-manage-read harness and the four recall modes she swapped in while holding the model fixed; the ledger beating both RAG and the oracle on the X-Bench needle task is her headline result (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Context rot on long-horizon tasks, tested locally</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/memory-harnesses-research-agents/s02_30.webp" alt="slide at 00:30"></a><div class="slidecap">Slide at 00:30 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s03_90.webp" alt="slide at 01:30"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s04_130.webp" alt="slide at 02:10"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s05_140.webp" alt="slide at 02:20"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s06_150.webp" alt="slide at 02:30"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s07_200.webp" alt="slide at 03:20"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s08_210.webp" alt="slide at 03:30"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s09_220.webp" alt="slide at 03:40"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s10_240.webp" alt="slide at 04:00"></a></div></div>
+<div class="textcol"><h2>Context rot on long-horizon tasks, tested locally</h2><ul class="takeaways"><li>Druga defines context rot as the model contradicting itself, redoing work it forgot it already did, or drifting from the original question as context grows.</li><li>She ran her experiments on-device using an M3 Ultra Mac with 96GB RAM and 28 CPU cores, running quantized Qwen 27B (4-bit) and DeepSeek V4 Flash, motivated partly by a public example of Coinbase cutting AI spend while increasing usage by shifting to more local models with better routing and caching.</li></ul><div class="quote"><p>&ldquo;the model starts contradicting itself, or it has to redo the work because it forgot it did that task in the first place&rdquo;</p><span class="at">said at 00:31</span></div><div class="quote"><p>&ldquo;on this M3 Ultra with 96 GB and 28 core CPUs, I&#x27;m using two models. I&#x27;m using the Qwen 27B quantized at 4-bit&rdquo;</p><span class="at">said at 03:07</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Harness design: a write-manage-read loop with a ladder of recall modes</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Harness design: a write-manage-read loop with a ladder of recall modes</h2><ul class="takeaways"><li>Druga&#x27;s harness treats memory as a write-manage-read control loop around the model rather than a database, with a core trace block always shown to the agent, a recall block she tests across modes (no recall, vector RAG, a ranked decisions ledger, and a ground-truth oracle), and an archival block tracking information across sessions, with the underlying model held fixed across conditions.</li></ul></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>When memory helps, and when it doesn&#x27;t</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="21" class="sl"><img loading="lazy" class="main" src="img/memory-harnesses-research-agents/s21_380.webp" alt="slide at 06:20"></a><div class="slidecap">Slide at 06:20 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s22_390.webp" alt="slide at 06:30"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s23_400.webp" alt="slide at 06:40"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s24_420.webp" alt="slide at 07:00"></a><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s25_430.webp" alt="slide at 07:10"></a><a href="#" data-slide="26" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s26_440.webp" alt="slide at 07:20"></a><a href="#" data-slide="27" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s27_450.webp" alt="slide at 07:30"></a><a href="#" data-slide="28" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s28_460.webp" alt="slide at 07:40"></a><a href="#" data-slide="29" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s29_470.webp" alt="slide at 07:50"></a></div></div>
+<div class="textcol"><h2>When memory helps, and when it doesn&#x27;t</h2><ul class="takeaways"><li>On a literature-review task where all relevant papers fit inside the context window, adding a memory harness produced the same performance as no memory, only extra cost, meaning memory retrieval added no capability when the task already fit in context.</li></ul><div class="quote"><p>&ldquo;when your task fits in context, the harness doesn&#x27;t add much.&rdquo;</p><span class="at">said at 06:17</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Ranked recall wins on X-Bench</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="30" class="sl"><img loading="lazy" class="main" src="img/memory-harnesses-research-agents/s30_530.webp" alt="slide at 08:50"></a><div class="slidecap">Slide at 08:50 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="31" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s31_550.webp" alt="slide at 09:10"></a><a href="#" data-slide="32" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s32_570.webp" alt="slide at 09:30"></a><a href="#" data-slide="33" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s33_580.webp" alt="slide at 09:40"></a><a href="#" data-slide="34" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s34_590.webp" alt="slide at 09:50"></a><a href="#" data-slide="35" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s35_600.webp" alt="slide at 10:00"></a><a href="#" data-slide="36" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s36_610.webp" alt="slide at 10:10"></a><a href="#" data-slide="37" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s37_620.webp" alt="slide at 10:20"></a><a href="#" data-slide="38" class="sl"><img loading="lazy" class="thumb" src="img/memory-harnesses-research-agents/s38_630.webp" alt="slide at 10:30"></a></div></div>
+<div class="textcol"><h2>Ranked recall wins on X-Bench</h2><ul class="takeaways"><li>On an X-Bench-style task where the correct answer sat at step 124 but the question was asked at step 500, well outside the context window, the ranked decisions-ledger recall policy retrieved the right answer more often than vector RAG or no recall, and even beat the ground-truth oracle.</li><li>Druga explains the oracle underperforms because it supplies the correct memory without forcing the model to actually use it, so the model can still retrieve or ignore it incorrectly.</li><li>The result held across both tested models and across a second benchmark, Spider V2.</li></ul><div class="quote"><p>&ldquo;And what I found was that the rank only ledger performed the best.&rdquo;</p><span class="at">said at 08:21</span></div><div class="quote"><p>&ldquo;the model can get the right memory but still retrieve the wrong information or choose to ignore it or be confused&rdquo;</p><span class="at">said at 08:51</span></div></div>
+</div>
+</section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/memory-harnesses-research-agents/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/memory-harnesses-research-agents/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/memory-harnesses-research-agents/s02_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/memory-harnesses-research-agents/s03_90.webp" alt="slide at 01:30"><div class="ts">01:30</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/memory-harnesses-research-agents/s04_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/memory-harnesses-research-agents/s05_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/memory-harnesses-research-agents/s06_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/memory-harnesses-research-agents/s07_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/memory-harnesses-research-agents/s08_210.webp" alt="slide at 03:30"><div class="ts">03:30</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/memory-harnesses-research-agents/s09_220.webp" alt="slide at 03:40"><div class="ts">03:40</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/memory-harnesses-research-agents/s10_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/memory-harnesses-research-agents/s11_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/memory-harnesses-research-agents/s12_260.webp" alt="slide at 04:20"><div class="ts">04:20</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/memory-harnesses-research-agents/s13_270.webp" alt="slide at 04:30"><div class="ts">04:30</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/memory-harnesses-research-agents/s14_280.webp" alt="slide at 04:40"><div class="ts">04:40</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/memory-harnesses-research-agents/s15_320.webp" alt="slide at 05:20"><div class="ts">05:20</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/memory-harnesses-research-agents/s16_330.webp" alt="slide at 05:30"><div class="ts">05:30</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/memory-harnesses-research-agents/s17_340.webp" alt="slide at 05:40"><div class="ts">05:40</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/memory-harnesses-research-agents/s18_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/memory-harnesses-research-agents/s19_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/memory-harnesses-research-agents/s20_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/memory-harnesses-research-agents/s21_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/memory-harnesses-research-agents/s22_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/memory-harnesses-research-agents/s23_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/memory-harnesses-research-agents/s24_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/memory-harnesses-research-agents/s25_430.webp" alt="slide at 07:10"><div class="ts">07:10</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/memory-harnesses-research-agents/s26_440.webp" alt="slide at 07:20"><div class="ts">07:20</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/memory-harnesses-research-agents/s27_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/memory-harnesses-research-agents/s28_460.webp" alt="slide at 07:40"><div class="ts">07:40</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/memory-harnesses-research-agents/s29_470.webp" alt="slide at 07:50"><div class="ts">07:50</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/memory-harnesses-research-agents/s30_530.webp" alt="slide at 08:50"><div class="ts">08:50</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/memory-harnesses-research-agents/s31_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/memory-harnesses-research-agents/s32_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/memory-harnesses-research-agents/s33_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/memory-harnesses-research-agents/s34_590.webp" alt="slide at 09:50"><div class="ts">09:50</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/memory-harnesses-research-agents/s35_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/memory-harnesses-research-agents/s36_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/memory-harnesses-research-agents/s37_620.webp" alt="slide at 10:20"><div class="ts">10:20</div></a><a href="#" data-slide="38"><img loading="lazy" src="img/memory-harnesses-research-agents/s38_630.webp" alt="slide at 10:30"><div class="ts">10:30</div></a><a href="#" data-slide="39"><img loading="lazy" src="img/memory-harnesses-research-agents/s39_640.webp" alt="slide at 10:40"><div class="ts">10:40</div></a><a href="#" data-slide="40"><img loading="lazy" src="img/memory-harnesses-research-agents/s40_650.webp" alt="slide at 10:50"><div class="ts">10:50</div></a><a href="#" data-slide="41"><img loading="lazy" src="img/memory-harnesses-research-agents/s41_680.webp" alt="slide at 11:20"><div class="ts">11:20</div></a><a href="#" data-slide="42"><img loading="lazy" src="img/memory-harnesses-research-agents/s42_690.webp" alt="slide at 11:30"><div class="ts">11:30</div></a><a href="#" data-slide="43"><img loading="lazy" src="img/memory-harnesses-research-agents/s43_700.webp" alt="slide at 11:40"><div class="ts">11:40</div></a><a href="#" data-slide="44"><img loading="lazy" src="img/memory-harnesses-research-agents/s44_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="#" data-slide="45"><img loading="lazy" src="img/memory-harnesses-research-agents/s45_740.webp" alt="slide at 12:20"><div class="ts">12:20</div></a><a href="#" data-slide="46"><img loading="lazy" src="img/memory-harnesses-research-agents/s46_760.webp" alt="slide at 12:40"><div class="ts">12:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (7)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Context rot shows up as the model contradicting itself, redoing forgotten work, and drifting from the original question on long-horizon tasks.</td><td class="tt">00:31</td></tr><tr><td class="st">asserts</td><td>Coinbase&#x27;s CEO reported reducing AI spend while increasing AI usage by shifting to more local models with better routing and caching.</td><td class="tt">01:36</td></tr><tr><td class="st">asserts</td><td>Experiments ran on an M3 Ultra with 96GB RAM and 28 CPU cores, using quantized Qwen 27B (4-bit) and DeepSeek V4 Flash.</td><td class="tt">03:07</td></tr><tr><td class="st">asserts</td><td>When a task&#x27;s relevant information already fits inside the context window, a memory harness adds no performance benefit, only extra cost.</td><td class="tt">06:17</td></tr><tr><td class="st">asserts</td><td>Among the tested recall policies, the rank-only decisions ledger performed best on the X-Bench long-horizon retrieval task.</td><td class="tt">08:21</td></tr><tr><td class="st">warns</td><td>A ground-truth memory oracle doesn&#x27;t reach maximum performance because it provides the right memory without forcing the model to correctly use it.</td><td class="tt">08:51</td></tr><tr><td class="st">recommends</td><td>A good recall policy should be treated as a first-class metric because bad memory retrieval burns tokens and can send the agent down the wrong path.</td><td class="tt">09:22</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/memory-harnesses-research-agents/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/R3-anFK1YM8?t=10"}, {"src": "img/memory-harnesses-research-agents/s01_20.webp", "mmss": "00:20", "yt": "https://youtu.be/R3-anFK1YM8?t=20"}, {"src": "img/memory-harnesses-research-agents/s02_30.webp", "mmss": "00:30", "yt": "https://youtu.be/R3-anFK1YM8?t=30"}, {"src": "img/memory-harnesses-research-agents/s03_90.webp", "mmss": "01:30", "yt": "https://youtu.be/R3-anFK1YM8?t=90"}, {"src": "img/memory-harnesses-research-agents/s04_130.webp", "mmss": "02:10", "yt": "https://youtu.be/R3-anFK1YM8?t=130"}, {"src": "img/memory-harnesses-research-agents/s05_140.webp", "mmss": "02:20", "yt": "https://youtu.be/R3-anFK1YM8?t=140"}, {"src": "img/memory-harnesses-research-agents/s06_150.webp", "mmss": "02:30", "yt": "https://youtu.be/R3-anFK1YM8?t=150"}, {"src": "img/memory-harnesses-research-agents/s07_200.webp", "mmss": "03:20", "yt": "https://youtu.be/R3-anFK1YM8?t=200"}, {"src": "img/memory-harnesses-research-agents/s08_210.webp", "mmss": "03:30", "yt": "https://youtu.be/R3-anFK1YM8?t=210"}, {"src": "img/memory-harnesses-research-agents/s09_220.webp", "mmss": "03:40", "yt": "https://youtu.be/R3-anFK1YM8?t=220"}, {"src": "img/memory-harnesses-research-agents/s10_240.webp", "mmss": "04:00", "yt": "https://youtu.be/R3-anFK1YM8?t=240"}, {"src": "img/memory-harnesses-research-agents/s11_250.webp", "mmss": "04:10", "yt": "https://youtu.be/R3-anFK1YM8?t=250"}, {"src": "img/memory-harnesses-research-agents/s12_260.webp", "mmss": "04:20", "yt": "https://youtu.be/R3-anFK1YM8?t=260"}, {"src": "img/memory-harnesses-research-agents/s13_270.webp", "mmss": "04:30", "yt": "https://youtu.be/R3-anFK1YM8?t=270"}, {"src": "img/memory-harnesses-research-agents/s14_280.webp", "mmss": "04:40", "yt": "https://youtu.be/R3-anFK1YM8?t=280"}, {"src": "img/memory-harnesses-research-agents/s15_320.webp", "mmss": "05:20", "yt": "https://youtu.be/R3-anFK1YM8?t=320"}, {"src": "img/memory-harnesses-research-agents/s16_330.webp", "mmss": "05:30", "yt": "https://youtu.be/R3-anFK1YM8?t=330"}, {"src": "img/memory-harnesses-research-agents/s17_340.webp", "mmss": "05:40", "yt": "https://youtu.be/R3-anFK1YM8?t=340"}, {"src": "img/memory-harnesses-research-agents/s18_350.webp", "mmss": "05:50", "yt": "https://youtu.be/R3-anFK1YM8?t=350"}, {"src": "img/memory-harnesses-research-agents/s19_360.webp", "mmss": "06:00", "yt": "https://youtu.be/R3-anFK1YM8?t=360"}, {"src": "img/memory-harnesses-research-agents/s20_370.webp", "mmss": "06:10", "yt": "https://youtu.be/R3-anFK1YM8?t=370"}, {"src": "img/memory-harnesses-research-agents/s21_380.webp", "mmss": "06:20", "yt": "https://youtu.be/R3-anFK1YM8?t=380"}, {"src": "img/memory-harnesses-research-agents/s22_390.webp", "mmss": "06:30", "yt": "https://youtu.be/R3-anFK1YM8?t=390"}, {"src": "img/memory-harnesses-research-agents/s23_400.webp", "mmss": "06:40", "yt": "https://youtu.be/R3-anFK1YM8?t=400"}, {"src": "img/memory-harnesses-research-agents/s24_420.webp", "mmss": "07:00", "yt": "https://youtu.be/R3-anFK1YM8?t=420"}, {"src": "img/memory-harnesses-research-agents/s25_430.webp", "mmss": "07:10", "yt": "https://youtu.be/R3-anFK1YM8?t=430"}, {"src": "img/memory-harnesses-research-agents/s26_440.webp", "mmss": "07:20", "yt": "https://youtu.be/R3-anFK1YM8?t=440"}, {"src": "img/memory-harnesses-research-agents/s27_450.webp", "mmss": "07:30", "yt": "https://youtu.be/R3-anFK1YM8?t=450"}, {"src": "img/memory-harnesses-research-agents/s28_460.webp", "mmss": "07:40", "yt": "https://youtu.be/R3-anFK1YM8?t=460"}, {"src": "img/memory-harnesses-research-agents/s29_470.webp", "mmss": "07:50", "yt": "https://youtu.be/R3-anFK1YM8?t=470"}, {"src": "img/memory-harnesses-research-agents/s30_530.webp", "mmss": "08:50", "yt": "https://youtu.be/R3-anFK1YM8?t=530"}, {"src": "img/memory-harnesses-research-agents/s31_550.webp", "mmss": "09:10", "yt": "https://youtu.be/R3-anFK1YM8?t=550"}, {"src": "img/memory-harnesses-research-agents/s32_570.webp", "mmss": "09:30", "yt": "https://youtu.be/R3-anFK1YM8?t=570"}, {"src": "img/memory-harnesses-research-agents/s33_580.webp", "mmss": "09:40", "yt": "https://youtu.be/R3-anFK1YM8?t=580"}, {"src": "img/memory-harnesses-research-agents/s34_590.webp", "mmss": "09:50", "yt": "https://youtu.be/R3-anFK1YM8?t=590"}, {"src": "img/memory-harnesses-research-agents/s35_600.webp", "mmss": "10:00", "yt": "https://youtu.be/R3-anFK1YM8?t=600"}, {"src": "img/memory-harnesses-research-agents/s36_610.webp", "mmss": "10:10", "yt": "https://youtu.be/R3-anFK1YM8?t=610"}, {"src": "img/memory-harnesses-research-agents/s37_620.webp", "mmss": "10:20", "yt": "https://youtu.be/R3-anFK1YM8?t=620"}, {"src": "img/memory-harnesses-research-agents/s38_630.webp", "mmss": "10:30", "yt": "https://youtu.be/R3-anFK1YM8?t=630"}, {"src": "img/memory-harnesses-research-agents/s39_640.webp", "mmss": "10:40", "yt": "https://youtu.be/R3-anFK1YM8?t=640"}, {"src": "img/memory-harnesses-research-agents/s40_650.webp", "mmss": "10:50", "yt": "https://youtu.be/R3-anFK1YM8?t=650"}, {"src": "img/memory-harnesses-research-agents/s41_680.webp", "mmss": "11:20", "yt": "https://youtu.be/R3-anFK1YM8?t=680"}, {"src": "img/memory-harnesses-research-agents/s42_690.webp", "mmss": "11:30", "yt": "https://youtu.be/R3-anFK1YM8?t=690"}, {"src": "img/memory-harnesses-research-agents/s43_700.webp", "mmss": "11:40", "yt": "https://youtu.be/R3-anFK1YM8?t=700"}, {"src": "img/memory-harnesses-research-agents/s44_710.webp", "mmss": "11:50", "yt": "https://youtu.be/R3-anFK1YM8?t=710"}, {"src": "img/memory-harnesses-research-agents/s45_740.webp", "mmss": "12:20", "yt": "https://youtu.be/R3-anFK1YM8?t=740"}, {"src": "img/memory-harnesses-research-agents/s46_760.webp", "mmss": "12:40", "yt": "https://youtu.be/R3-anFK1YM8?t=760"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "R3-anFK1YM8", "slug": "memory-harnesses-research-agents", "title": "Memory Harnesses for Long-Running Research Agents", "speaker": "Stefania Druga", "company": "Sakana.ai", "themes": ["memory", "continual-learning", "local-models"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Memory harness recall ladder (ours)", "lanes": ["Harness loop", "Recall policies tested", "Outcome"], "nodes": [{"id": "trace", "label": "Core trace", "sub": "always shown to the agent", "lane": 0, "kind": "system", "t": 187}, {"id": "recall", "label": "Recall block", "sub": "swaps across 4 modes, model held fixed", "lane": 0, "kind": "system", "t": 187}, {"id": "archive", "label": "Archival block", "sub": "tracks info across sessions", "lane": 0, "kind": "store", "t": 187}, {"id": "none", "label": "No recall", "sub": "baseline, memory off", "lane": 1, "kind": "system", "t": 377}, {"id": "rag", "label": "Vector RAG", "sub": "similarity retrieval", "lane": 1, "kind": "system", "claim": "c5", "t": 501}, {"id": "ledger", "label": "Ranked decisions ledger", "sub": "rank-only, no vectors", "lane": 1, "kind": "system", "claim": "c5", "t": 501}, {"id": "oracle", "label": "Ground-truth oracle", "sub": "supplies correct memory directly", "lane": 1, "kind": "system", "claim": "c6", "t": 531}, {"id": "fits", "label": "Task fits in context", "sub": "memory adds no gain, only cost", "lane": 2, "kind": "system", "claim": "c4", "t": 377}, {"id": "xbench", "label": "X-Bench, step 124 vs 500", "sub": "answer 376 steps outside context", "lane": 2, "kind": "external", "claim": "c5", "t": 501}, {"id": "ledgerwin", "label": "Ledger wins, beats oracle", "sub": "oracle gives memory but not use", "lane": 2, "kind": "system", "claim": "c6", "t": 531}], "edges": [{"from": "trace", "to": "recall", "label": "feeds", "kind": "flow"}, {"from": "recall", "to": "archive", "label": "writes", "kind": "data"}, {"from": "recall", "to": "none", "label": "mode", "kind": "flow"}, {"from": "recall", "to": "rag", "label": "mode", "kind": "flow"}, {"from": "recall", "to": "ledger", "label": "mode", "kind": "flow"}, {"from": "recall", "to": "oracle", "label": "mode", "kind": "flow"}, {"from": "none", "to": "fits", "label": "tested on", "kind": "flow"}, {"from": "rag", "to": "xbench", "label": "tested on", "kind": "flow"}, {"from": "ledger", "to": "xbench", "label": "tested on", "kind": "flow"}, {"from": "oracle", "to": "xbench", "label": "tested on", "kind": "flow"}, {"from": "xbench", "to": "ledgerwin", "label": "result", "kind": "flow"}], "caption": "This traces Druga's write-manage-read harness and the four recall modes she swapped in while holding the model fixed; the ledger beating both RAG and the oracle on the X-Bench needle task is her headline result (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "context rot definition", "text": "Context rot shows up as the model contradicting itself, redoing forgotten work, and drifting from the original question on long-horizon tasks.", "quote": "the model starts contradicting itself, or it has to redo the work because it forgot it did that task in the first place", "t": 31}, {"id": "c2", "stance": "asserts", "topic": "Coinbase local-model cost reduction", "text": "Coinbase's CEO reported reducing AI spend while increasing AI usage by shifting to more local models with better routing and caching.", "quote": "the CEO of Coinbase actually shared how their company managed to reduce their AI spent while actually increasing uh the AI usage", "t": 96}, {"id": "c3", "stance": "asserts", "topic": "local hardware and models used", "text": "Experiments ran on an M3 Ultra with 96GB RAM and 28 CPU cores, using quantized Qwen 27B (4-bit) and DeepSeek V4 Flash.", "quote": "on this M3 Ultra with 96 GB and 28 core CPUs, I'm using two models. I'm using the Qwen 27B quantized at 4-bit", "t": 187}, {"id": "c4", "stance": "asserts", "topic": "memory doesn't help when task fits in context", "text": "When a task's relevant information already fits inside the context window, a memory harness adds no performance benefit, only extra cost.", "quote": "when your task fits in context, the harness doesn't add much.", "t": 377}, {"id": "c5", "stance": "asserts", "topic": "ranked ledger recall wins", "text": "Among the tested recall policies, the rank-only decisions ledger performed best on the X-Bench long-horizon retrieval task.", "quote": "And what I found was that the rank only ledger performed the best.", "t": 501}, {"id": "c6", "stance": "warns", "topic": "oracle doesn't guarantee correct use", "text": "A ground-truth memory oracle doesn't reach maximum performance because it provides the right memory without forcing the model to correctly use it.", "quote": "the model can get the right memory but still retrieve the wrong information or choose to ignore it or be confused", "t": 531}, {"id": "c7", "stance": "recommends", "topic": "recall policy as a cost lever", "text": "A good recall policy should be treated as a first-class metric because bad memory retrieval burns tokens and can send the agent down the wrong path.", "quote": "bad memory is expensive because it spends more token and it can send the agent the wrong way.", "t": 562}]}</script>
+</body></html>

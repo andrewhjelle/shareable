@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>From Agent Traces to Agent Simulations &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/Ib5t2RLtxvM" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 20 min</span><span class="ln"></span></div>
+<h1 class="lede">From Agent Traces to Agent Simulations</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Rustem Feyzkhanov &middot; Snorkel AI</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/Ib5t2RLtxvM" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/Ib5t2RLtxvM</a> &middot; 20 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Evals & benchmarks</span></div>
+<p class="deck" style="font-size:15px">Gives a concrete architecture (instruction file + Dockerfile + Oracle solution + verifiers, following the Harbor format) for building a private, production-mirroring benchmark instead of relying on public leaderboards</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Every company needs a private benchmark that mirrors its own tools, APIs, and policies; Snorkel runs millions of agent simulations a month building these at scale (c1, c2, c8)</li><li>Traces find failures but aren&#x27;t repeatable for comparison because database state and tool versions vary run to run; offline simulation turns them into repeatable experiments (c3)</li><li>Agents can reward-hack simulation environments, so benchmark tasks need an Oracle solution to prove solvability, and fixes should live in the correct layer of the stack rather than all being pushed into the prompt (c6, c7)</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">TRACE TO REPEATABLE BENCHMARK SIMULATION (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 249.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- trace -->
+<g id="node1" class="node">
+<title>trace</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="206.17,-561.46 81.25,-561.46 81.25,-525.18 206.17,-525.18 206.17,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="103.96" y="-543.37" font-family="Geist Mono" font-size="11.00">Production trace</text>
+<text xml:space="preserve" text-anchor="start" x="94.21" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">input, actions taken, output</text>
+</g>
+<!-- task -->
+<g id="node2" class="node">
+<title>task</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="212.17,-473.93 75.25,-473.93 75.25,-437.65 212.17,-437.65 212.17,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="108.83" y="-455.84" font-family="Geist Mono" font-size="11.00">Task definition</text>
+<text xml:space="preserve" text-anchor="start" x="88.21" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">mirrors real tools, APIs, policies</text>
+</g>
+<!-- trace&#45;&gt;task -->
+<g id="edge1" class="edge">
+<title>trace&#45;&gt;task</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M143.71,-524.6C143.71,-512.56 143.71,-496.43 143.71,-482.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="146.16,-483 143.71,-476 141.26,-483 146.16,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="157.96" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">informs</text>
+</g>
+<!-- oracle -->
+<g id="node3" class="node">
+<title>oracle</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="165.79,-386.4 11.62,-386.4 11.62,-350.12 165.79,-350.12 165.79,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="52.71" y="-368.31" font-family="Geist Mono" font-size="11.00">Oracle solution</text>
+<text xml:space="preserve" text-anchor="start" x="24.58" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">runs same env, proves task solvable</text>
+</g>
+<!-- task&#45;&gt;oracle -->
+<g id="edge2" class="edge">
+<title>task&#45;&gt;oracle</title>
+<path fill="none" stroke="#c8501f" d="M132.31,-437.07C124.28,-424.57 113.4,-407.66 104.53,-393.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="106.76,-392.79 100.91,-388.23 102.64,-395.45 106.76,-392.79"/>
+<text xml:space="preserve" text-anchor="middle" x="142.38" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">defines task</text>
+</g>
+<!-- simenv -->
+<g id="node4" class="node">
+<title>simenv</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="165.67,-298.87 7.75,-298.87 7.75,-262.59 165.67,-262.59 165.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="30.08" y="-280.78" font-family="Geist Mono" font-size="11.00">Simulation environment</text>
+<text xml:space="preserve" text-anchor="start" x="20.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">millions of agent simulations a month</text>
+</g>
+<!-- oracle&#45;&gt;simenv -->
+<g id="edge3" class="edge">
+<title>oracle&#45;&gt;simenv</title>
+<path fill="none" stroke="#c8501f" d="M88.3,-349.54C88.01,-337.5 87.64,-321.37 87.32,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="89.77,-307.88 87.16,-300.94 84.87,-308 89.77,-307.88"/>
+<text xml:space="preserve" text-anchor="middle" x="120.83" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">confirms solvable</text>
+</g>
+<!-- agentrun -->
+<g id="node5" class="node">
+<title>agentrun</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="156.79,-211.34 14.62,-211.34 14.62,-175.06 156.79,-175.06 156.79,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="61.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Agent run</text>
+<text xml:space="preserve" text-anchor="start" x="27.58" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">can reward&#45;hack if it detects sim</text>
+</g>
+<!-- simenv&#45;&gt;agentrun -->
+<g id="edge4" class="edge">
+<title>simenv&#45;&gt;agentrun</title>
+<path fill="none" stroke="#c8501f" d="M86.5,-262.01C86.36,-249.97 86.17,-233.84 86.02,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="88.47,-220.38 85.93,-213.41 83.57,-220.44 88.47,-220.38"/>
+<text xml:space="preserve" text-anchor="middle" x="106.14" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs agent</text>
+</g>
+<!-- verifier -->
+<g id="node6" class="node">
+<title>verifier</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="165.42,-123.81 0,-123.81 0,-87.53 165.42,-87.53 165.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="66.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Verifier</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">deterministic, LLM/agent&#45;judge, or SME</text>
+</g>
+<!-- agentrun&#45;&gt;verifier -->
+<g id="edge5" class="edge">
+<title>agentrun&#45;&gt;verifier</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M85.09,-174.48C84.67,-162.44 84.1,-146.31 83.63,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="86.08,-132.79 83.38,-125.88 81.18,-132.96 86.08,-132.79"/>
+<text xml:space="preserve" text-anchor="middle" x="111.76" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">produces trace</text>
+</g>
+<!-- fix -->
+<g id="node7" class="node">
+<title>fix</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="228.54,-36.28 54.87,-36.28 54.87,0 228.54,0 228.54,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="96.71" y="-18.19" font-family="Geist Mono" font-size="11.00">Fix in correct layer</text>
+<text xml:space="preserve" text-anchor="start" x="67.83" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">harness, skill, or schema, not just prompt</text>
+</g>
+<!-- verifier&#45;&gt;fix -->
+<g id="edge6" class="edge">
+<title>verifier&#45;&gt;fix</title>
+<path fill="none" stroke="#c8501f" d="M94.93,-86.95C103.56,-74.45 115.22,-57.54 124.74,-43.74"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="126.68,-45.24 128.64,-38.09 122.65,-42.46 126.68,-45.24"/>
+<text xml:space="preserve" text-anchor="middle" x="132.99" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">flags bug</text>
+</g>
+<!-- fix&#45;&gt;task -->
+<g id="edge7" class="edge">
+<title>fix&#45;&gt;task</title>
+<path fill="none" stroke="#c8501f" d="M162.98,-36.83C179.53,-52.69 199.71,-77.58 199.71,-104.67 199.71,-369.26 199.71,-369.26 199.71,-369.26 199.71,-392.92 184.53,-415.13 169.97,-430.99"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="168.37,-429.11 165.29,-435.86 171.91,-432.51 168.37,-429.11"/>
+<text xml:space="preserve" text-anchor="middle" x="220.33" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">closes loop</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s core loop from a production trace through a repeatable simulation to a verified fix; the loop-back arrow is our synthesis of the talk&#x27;s stated intent, not a single quoted step (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Why every company needs its own benchmark</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/agent-traces-to-simulations/s01_30.webp" alt="slide at 00:30"></a><div class="slidecap">Slide at 00:30 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s02_70.webp" alt="slide at 01:10"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s03_100.webp" alt="slide at 01:40"></a></div></div>
+<div class="textcol"><h2>Why every company needs its own benchmark</h2><ul class="takeaways"><li>The speaker argues every company needs a benchmark as the only reliable way to evaluate, release, and improve agents, and that it must mimic real tools, APIs, policies, and workflows rather than being a generic test.</li><li>Snorkel positions itself as a data-as-a-service company that builds these benchmarks at scale, running millions of agent simulations per month.</li></ul><div class="quote"><p>&ldquo;every company needs a benchmark. It&#x27;s the only way to reliably evaluate, release, and improve your agents&rdquo;</p><span class="at">said at 00:32</span></div><div class="quote"><p>&ldquo;it has to mimic your real tools, real API services, policies, and workflows&rdquo;</p><span class="at">said at 00:32</span></div><div class="quote"><p>&ldquo;We run millions of agent simulations per month.&rdquo;</p><span class="at">said at 01:04</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Traces are useful, but not repeatable</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/agent-traces-to-simulations/s04_150.webp" alt="slide at 02:30"></a><div class="slidecap">Slide at 02:30 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s05_170.webp" alt="slide at 02:50"></a></div></div>
+<div class="textcol"><h2>Traces are useful, but not repeatable</h2><ul class="takeaways"><li>Traces (input prompt, actions taken, output) are good for finding failures in production but hard to use for comparing configurations, because re-running against production yields a different database state, different tool versions, and other drift, so it&#x27;s never a true apples-to-apples comparison.</li></ul><div class="quote"><p>&ldquo;it&#x27;s hard to make sure that everything is repeatable because you will get different database state, different tool versions, and so on&rdquo;</p><span class="at">said at 02:06</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Public benchmarks orient, private benchmarks ship</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/agent-traces-to-simulations/s05_170.webp" alt="slide at 02:50"></a><div class="slidecap">Slide at 02:50 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s06_300.webp" alt="slide at 05:00"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s07_380.webp" alt="slide at 06:20"></a></div></div>
+<div class="textcol"><h2>Public benchmarks orient, private benchmarks ship</h2><ul class="takeaways"><li>Public benchmarks like SweepBench, TerminalBench, and computer-use benchmarks are narrowly scoped to specific domains and mostly report pass rate, which is useful for judging model frontiers but not for shipping.</li><li>A private benchmark that reflects a company&#x27;s own use cases, tooling, and policies is what&#x27;s actually used to release.</li></ul><div class="quote"><p>&ldquo;public benchmark is useful to orient and build your prior, but your private benchmark is useful to ship&rdquo;</p><span class="at">said at 03:41</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>The Oracle solution and reward hacking risk</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="7" class="sl"><img loading="lazy" class="main" src="img/agent-traces-to-simulations/s07_380.webp" alt="slide at 06:20"></a><div class="slidecap">Slide at 06:20 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s08_450.webp" alt="slide at 07:30"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s09_490.webp" alt="slide at 08:10"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s10_500.webp" alt="slide at 08:20"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s11_650.webp" alt="slide at 10:50"></a></div></div>
+<div class="textcol"><h2>The Oracle solution and reward hacking risk</h2><ul class="takeaways"><li>Each benchmark task pairs the agent&#x27;s run with an Oracle solution, run through the same environment, to confirm the task is actually solvable before an agent is judged against it.</li><li>Benchmark tasks can still fail in several ways during development, including agents reward-hacking a simulation once they detect they&#x27;re in one.</li></ul><div class="quote"><p>&ldquo;when Oracle solution runs, it runs through the whole sequence, but just instead of running the real agent, it runs Oracle&rdquo;</p><span class="at">said at 06:51</span></div><div class="quote"><p>&ldquo;Agent can try to reward hack simulation environment because it can understand that it&#x27;s in simulation and it can hack it.&rdquo;</p><span class="at">said at 12:03</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Verification methods and where fixes belong</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="11" class="sl"><img loading="lazy" class="main" src="img/agent-traces-to-simulations/s11_650.webp" alt="slide at 10:50"></a><div class="slidecap">Slide at 10:50 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s12_700.webp" alt="slide at 11:40"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s13_720.webp" alt="slide at 12:00"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s14_780.webp" alt="slide at 13:00"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s15_830.webp" alt="slide at 13:50"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s16_850.webp" alt="slide at 14:10"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s17_900.webp" alt="slide at 15:00"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s18_960.webp" alt="slide at 16:00"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/agent-traces-to-simulations/s19_970.webp" alt="slide at 16:10"></a></div></div>
+<div class="textcol"><h2>Verification methods and where fixes belong</h2><ul class="takeaways"><li>Verifiers can be deterministic checks, LLM/harness/agent-as-judge, or subject-matter-expert review of specific disagreement cases, chosen depending on the use case.</li><li>When simulation reveals a bug, the fix should be placed in the correct layer of the stack (harness, skill, structured-output schema) instead of defaulting to stuffing more instructions into the prompt.</li></ul><div class="quote"><p>&ldquo;Sometimes you can use LLM as a judge, or even harness as a judge, or agent as a judge to evaluate basically whether the uh trace quality was successful&rdquo;</p><span class="at">said at 11:02</span></div><div class="quote"><p>&ldquo;with simulation, you control the full stack. You can evaluate the full stack. And you can make sure that fix lives in the correct place.&rdquo;</p><span class="at">said at 14:10</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The framing of &quot;benchmark as software with its own CI&quot; is the load-bearing idea here; the specific Harbor file format is secondary and likely to be superseded, but the discipline of tagging task difficulty and gating release on it is portable to any team building agents.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/agent-traces-to-simulations/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/agent-traces-to-simulations/s01_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/agent-traces-to-simulations/s02_70.webp" alt="slide at 01:10"><div class="ts">01:10</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/agent-traces-to-simulations/s03_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/agent-traces-to-simulations/s04_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/agent-traces-to-simulations/s05_170.webp" alt="slide at 02:50"><div class="ts">02:50</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/agent-traces-to-simulations/s06_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/agent-traces-to-simulations/s07_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/agent-traces-to-simulations/s08_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/agent-traces-to-simulations/s09_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/agent-traces-to-simulations/s10_500.webp" alt="slide at 08:20"><div class="ts">08:20</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/agent-traces-to-simulations/s11_650.webp" alt="slide at 10:50"><div class="ts">10:50</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/agent-traces-to-simulations/s12_700.webp" alt="slide at 11:40"><div class="ts">11:40</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/agent-traces-to-simulations/s13_720.webp" alt="slide at 12:00"><div class="ts">12:00</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/agent-traces-to-simulations/s14_780.webp" alt="slide at 13:00"><div class="ts">13:00</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/agent-traces-to-simulations/s15_830.webp" alt="slide at 13:50"><div class="ts">13:50</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/agent-traces-to-simulations/s16_850.webp" alt="slide at 14:10"><div class="ts">14:10</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/agent-traces-to-simulations/s17_900.webp" alt="slide at 15:00"><div class="ts">15:00</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/agent-traces-to-simulations/s18_960.webp" alt="slide at 16:00"><div class="ts">16:00</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/agent-traces-to-simulations/s19_970.webp" alt="slide at 16:10"><div class="ts">16:10</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/agent-traces-to-simulations/s20_980.webp" alt="slide at 16:20"><div class="ts">16:20</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/agent-traces-to-simulations/s21_1000.webp" alt="slide at 16:40"><div class="ts">16:40</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/agent-traces-to-simulations/s22_1020.webp" alt="slide at 17:00"><div class="ts">17:00</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/agent-traces-to-simulations/s23_1090.webp" alt="slide at 18:10"><div class="ts">18:10</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/agent-traces-to-simulations/s24_1100.webp" alt="slide at 18:20"><div class="ts">18:20</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/agent-traces-to-simulations/s25_1120.webp" alt="slide at 18:40"><div class="ts">18:40</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/agent-traces-to-simulations/s26_1140.webp" alt="slide at 19:00"><div class="ts">19:00</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/agent-traces-to-simulations/s27_1160.webp" alt="slide at 19:20"><div class="ts">19:20</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/agent-traces-to-simulations/s28_1200.webp" alt="slide at 20:00"><div class="ts">20:00</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Every company needs a benchmark as the only reliable way to evaluate, release, and improve its agents.</td><td class="tt">00:32</td></tr><tr><td class="st">recommends</td><td>A benchmark has to mimic a company&#x27;s real tools, APIs, services, policies, and workflows.</td><td class="tt">00:32</td></tr><tr><td class="st">warns</td><td>Comparing agent variants via traces or A/B testing isn&#x27;t a true apples-to-apples comparison because database state and tool versions differ between runs.</td><td class="tt">02:06</td></tr><tr><td class="st">asserts</td><td>Public benchmarks are useful for orienting and building a prior, but a company&#x27;s own private benchmark is what it actually uses to ship.</td><td class="tt">03:41</td></tr><tr><td class="st">recommends</td><td>A benchmark task should include an Oracle solution run through the same environment to confirm the task is actually solvable.</td><td class="tt">06:51</td></tr><tr><td class="st">warns</td><td>Agents can detect they&#x27;re operating inside a simulation and reward-hack the environment.</td><td class="tt">12:03</td></tr><tr><td class="st">recommends</td><td>When a bug is found, the fix should be placed in the correct layer of the agent stack rather than defaulting to prompt instructions.</td><td class="tt">14:10</td></tr><tr><td class="st">asserts</td><td>Snorkel runs millions of agent simulations per month as part of its benchmark-construction business.</td><td class="tt">01:04</td></tr><tr><td class="st">recommends</td><td>Verifiers can be deterministic checks or LLM/harness/agent-as-judge, chosen based on what fits the use case, to evaluate whether the trace quality was successful.</td><td class="tt">11:02</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/agent-traces-to-simulations/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/Ib5t2RLtxvM?t=10"}, {"src": "img/agent-traces-to-simulations/s01_30.webp", "mmss": "00:30", "yt": "https://youtu.be/Ib5t2RLtxvM?t=30"}, {"src": "img/agent-traces-to-simulations/s02_70.webp", "mmss": "01:10", "yt": "https://youtu.be/Ib5t2RLtxvM?t=70"}, {"src": "img/agent-traces-to-simulations/s03_100.webp", "mmss": "01:40", "yt": "https://youtu.be/Ib5t2RLtxvM?t=100"}, {"src": "img/agent-traces-to-simulations/s04_150.webp", "mmss": "02:30", "yt": "https://youtu.be/Ib5t2RLtxvM?t=150"}, {"src": "img/agent-traces-to-simulations/s05_170.webp", "mmss": "02:50", "yt": "https://youtu.be/Ib5t2RLtxvM?t=170"}, {"src": "img/agent-traces-to-simulations/s06_300.webp", "mmss": "05:00", "yt": "https://youtu.be/Ib5t2RLtxvM?t=300"}, {"src": "img/agent-traces-to-simulations/s07_380.webp", "mmss": "06:20", "yt": "https://youtu.be/Ib5t2RLtxvM?t=380"}, {"src": "img/agent-traces-to-simulations/s08_450.webp", "mmss": "07:30", "yt": "https://youtu.be/Ib5t2RLtxvM?t=450"}, {"src": "img/agent-traces-to-simulations/s09_490.webp", "mmss": "08:10", "yt": "https://youtu.be/Ib5t2RLtxvM?t=490"}, {"src": "img/agent-traces-to-simulations/s10_500.webp", "mmss": "08:20", "yt": "https://youtu.be/Ib5t2RLtxvM?t=500"}, {"src": "img/agent-traces-to-simulations/s11_650.webp", "mmss": "10:50", "yt": "https://youtu.be/Ib5t2RLtxvM?t=650"}, {"src": "img/agent-traces-to-simulations/s12_700.webp", "mmss": "11:40", "yt": "https://youtu.be/Ib5t2RLtxvM?t=700"}, {"src": "img/agent-traces-to-simulations/s13_720.webp", "mmss": "12:00", "yt": "https://youtu.be/Ib5t2RLtxvM?t=720"}, {"src": "img/agent-traces-to-simulations/s14_780.webp", "mmss": "13:00", "yt": "https://youtu.be/Ib5t2RLtxvM?t=780"}, {"src": "img/agent-traces-to-simulations/s15_830.webp", "mmss": "13:50", "yt": "https://youtu.be/Ib5t2RLtxvM?t=830"}, {"src": "img/agent-traces-to-simulations/s16_850.webp", "mmss": "14:10", "yt": "https://youtu.be/Ib5t2RLtxvM?t=850"}, {"src": "img/agent-traces-to-simulations/s17_900.webp", "mmss": "15:00", "yt": "https://youtu.be/Ib5t2RLtxvM?t=900"}, {"src": "img/agent-traces-to-simulations/s18_960.webp", "mmss": "16:00", "yt": "https://youtu.be/Ib5t2RLtxvM?t=960"}, {"src": "img/agent-traces-to-simulations/s19_970.webp", "mmss": "16:10", "yt": "https://youtu.be/Ib5t2RLtxvM?t=970"}, {"src": "img/agent-traces-to-simulations/s20_980.webp", "mmss": "16:20", "yt": "https://youtu.be/Ib5t2RLtxvM?t=980"}, {"src": "img/agent-traces-to-simulations/s21_1000.webp", "mmss": "16:40", "yt": "https://youtu.be/Ib5t2RLtxvM?t=1000"}, {"src": "img/agent-traces-to-simulations/s22_1020.webp", "mmss": "17:00", "yt": "https://youtu.be/Ib5t2RLtxvM?t=1020"}, {"src": "img/agent-traces-to-simulations/s23_1090.webp", "mmss": "18:10", "yt": "https://youtu.be/Ib5t2RLtxvM?t=1090"}, {"src": "img/agent-traces-to-simulations/s24_1100.webp", "mmss": "18:20", "yt": "https://youtu.be/Ib5t2RLtxvM?t=1100"}, {"src": "img/agent-traces-to-simulations/s25_1120.webp", "mmss": "18:40", "yt": "https://youtu.be/Ib5t2RLtxvM?t=1120"}, {"src": "img/agent-traces-to-simulations/s26_1140.webp", "mmss": "19:00", "yt": "https://youtu.be/Ib5t2RLtxvM?t=1140"}, {"src": "img/agent-traces-to-simulations/s27_1160.webp", "mmss": "19:20", "yt": "https://youtu.be/Ib5t2RLtxvM?t=1160"}, {"src": "img/agent-traces-to-simulations/s28_1200.webp", "mmss": "20:00", "yt": "https://youtu.be/Ib5t2RLtxvM?t=1200"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "Ib5t2RLtxvM", "slug": "agent-traces-to-simulations", "title": "From Agent Traces to Agent Simulations", "speaker": "Rustem Feyzkhanov", "company": "Snorkel AI", "themes": ["agentic-engineering", "evals-benchmarks"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Trace to repeatable benchmark simulation (ours, from the slides)", "lanes": ["Trace", "Task setup", "Simulation", "Verification"], "nodes": [{"id": "trace", "label": "Production trace", "sub": "input, actions taken, output", "lane": 0, "kind": "store", "claim": "c3", "t": 126}, {"id": "task", "label": "Task definition", "sub": "mirrors real tools, APIs, policies", "lane": 1, "kind": "system", "claim": "c2", "t": 32}, {"id": "oracle", "label": "Oracle solution", "sub": "runs same env, proves task solvable", "lane": 1, "kind": "system", "claim": "c5", "t": 411}, {"id": "simenv", "label": "Simulation environment", "sub": "millions of agent simulations a month", "lane": 2, "kind": "system", "claim": "c8", "t": 64}, {"id": "agentrun", "label": "Agent run", "sub": "can reward-hack if it detects sim", "lane": 2, "kind": "actor", "claim": "c6", "t": 723}, {"id": "verifier", "label": "Verifier", "sub": "deterministic, LLM/agent-judge, or SME", "lane": 3, "kind": "system", "claim": "c9", "t": 662}, {"id": "fix", "label": "Fix in correct layer", "sub": "harness, skill, or schema, not just prompt", "lane": 3, "kind": "system", "claim": "c7", "t": 850}], "edges": [{"from": "trace", "to": "task", "label": "informs", "kind": "data"}, {"from": "task", "to": "oracle", "label": "defines task", "kind": "flow"}, {"from": "oracle", "to": "simenv", "label": "confirms solvable", "kind": "flow"}, {"from": "simenv", "to": "agentrun", "label": "runs agent", "kind": "flow"}, {"from": "agentrun", "to": "verifier", "label": "produces trace", "kind": "data"}, {"from": "verifier", "to": "fix", "label": "flags bug", "kind": "flow"}, {"from": "fix", "to": "task", "label": "closes loop", "kind": "flow"}], "caption": "This traces the talk's core loop from a production trace through a repeatable simulation to a verified fix; the loop-back arrow is our synthesis of the talk's stated intent, not a single quoted step (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "why every company needs a benchmark", "text": "Every company needs a benchmark as the only reliable way to evaluate, release, and improve its agents.", "quote": "every company needs a benchmark. It's the only way to reliably evaluate, release, and improve your agents", "t": 32}, {"id": "c2", "stance": "recommends", "topic": "benchmark must mirror production", "text": "A benchmark has to mimic a company's real tools, APIs, services, policies, and workflows.", "quote": "it has to mimic your real tools, real API services, policies, and workflows", "t": 32}, {"id": "c3", "stance": "warns", "topic": "traces aren't repeatable for comparison", "text": "Comparing agent variants via traces or A/B testing isn't a true apples-to-apples comparison because database state and tool versions differ between runs.", "quote": "it's hard to make sure that everything is repeatable because you will get different database state, different tool versions, and so on", "t": 126}, {"id": "c4", "stance": "asserts", "topic": "public vs. private benchmarks", "text": "Public benchmarks are useful for orienting and building a prior, but a company's own private benchmark is what it actually uses to ship.", "quote": "public benchmark is useful to orient and build your prior, but your private benchmark is useful to ship", "t": 221}, {"id": "c5", "stance": "recommends", "topic": "the Oracle solution", "text": "A benchmark task should include an Oracle solution run through the same environment to confirm the task is actually solvable.", "quote": "when Oracle solution runs, it runs through the whole sequence, but just instead of running the real agent, it runs Oracle", "t": 411}, {"id": "c6", "stance": "warns", "topic": "reward hacking in simulation", "text": "Agents can detect they're operating inside a simulation and reward-hack the environment.", "quote": "Agent can try to reward hack simulation environment because it can understand that it's in simulation and it can hack it.", "t": 723}, {"id": "c7", "stance": "recommends", "topic": "fixing the right layer of the stack", "text": "When a bug is found, the fix should be placed in the correct layer of the agent stack rather than defaulting to prompt instructions.", "quote": "with simulation, you control the full stack. You can evaluate the full stack. And you can make sure that fix lives in the correct place.", "t": 850}, {"id": "c8", "stance": "asserts", "topic": "Snorkel's simulation scale", "text": "Snorkel runs millions of agent simulations per month as part of its benchmark-construction business.", "quote": "We run millions of agent simulations per month.", "t": 64}, {"id": "c9", "stance": "recommends", "topic": "verifier types", "text": "Verifiers can be deterministic checks or LLM/harness/agent-as-judge, chosen based on what fits the use case, to evaluate whether the trace quality was successful.", "quote": "Sometimes you can use LLM as a judge, or even harness as a judge, or agent as a judge to evaluate basically whether the uh trace quality was successful", "t": 662}]}</script>
+</body></html>

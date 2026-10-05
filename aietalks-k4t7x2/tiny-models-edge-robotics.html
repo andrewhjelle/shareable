@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Why Large? Tiny LMs &amp; Agents on Edge/Robotics &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/hacEQHHhu2Q" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 21 min</span><span class="ln"></span></div>
+<h1 class="lede">Why Large? Tiny LMs &amp; Agents on Edge/Robotics</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Cormac Brick &middot; Google</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/hacEQHHhu2Q" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/hacEQHHhu2Q</a> &middot; 21 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Local models</span><span class="chip hot">Infra & serving</span></div>
+<p class="deck" style="font-size:15px">It goes deep on one technique, deploying and fine-tuning tiny models for edge hardware, rather than a full multi-system architecture.</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>DRAM cost is a hard constraint on edge deployment: the cost of a comparable Raspberry Pi with 36 gigabytes has gone up roughly 2.5x since launch, and some phone makers are shipping less DRAM this year than previously (c1).</li><li>A quantized 2B-parameter Gemma model reasons on par with a much larger Gemma 3 model from about a year earlier, running at 7.6 tokens/sec decode on a Raspberry Pi and up to 31 tokens/sec decode on a Qualcomm IoT NPU (c2, c4, c5).</li><li>Fine-tuning a small model (starting from Gemma 3 270M / Function Gemma) with 10,000 to 10 million synthetically generated samples was enough to reach over 86% reliability calling 10 different mobile functions from arbitrary free text input, and pushed Raspberry Pi decode speed to 45 tokens/sec (c6, c7, c8).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">TINY-MODEL DEPLOYMENT PIPELINE (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 650.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- dram -->
+<g id="node1" class="node">
+<title>dram</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="433.79,-386.4 283.38,-386.4 283.38,-350.12 433.79,-350.12 433.79,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="306.08" y="-368.31" font-family="Geist Mono" font-size="11.00">DRAM cost constraint</text>
+<text xml:space="preserve" text-anchor="start" x="296.33" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Pi 36GB cost up ~2.5x since launch</text>
+</g>
+<!-- e2b -->
+<g id="node2" class="node">
+<title>e2b</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="454.04,-298.87 263.12,-298.87 263.12,-262.59 454.04,-262.59 454.04,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="289.96" y="-280.78" font-family="Geist Mono" font-size="11.00">Quantized 2B Gemma (E2B)</text>
+<text xml:space="preserve" text-anchor="start" x="276.08" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">On par with larger Gemma 3 from ~1yr earlier</text>
+</g>
+<!-- dram&#45;&gt;e2b -->
+<g id="edge1" class="edge">
+<title>dram&#45;&gt;e2b</title>
+<path fill="none" stroke="#c8501f" d="M358.58,-349.54C358.58,-337.5 358.58,-321.37 358.58,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="361.04,-307.94 358.59,-300.94 356.14,-307.94 361.04,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="394.21" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">forces quantization</text>
+</g>
+<!-- quant -->
+<g id="node3" class="node">
+<title>quant</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="349.79,-211.34 199.38,-211.34 199.38,-175.06 349.79,-175.06 349.79,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="221.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Mixed&#45;precision quant</text>
+<text xml:space="preserve" text-anchor="start" x="212.33" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">~2.9 bits/weight effective footprint</text>
+</g>
+<!-- e2b&#45;&gt;quant -->
+<g id="edge2" class="edge">
+<title>e2b&#45;&gt;quant</title>
+<path fill="none" stroke="#c8501f" d="M341.18,-262.01C328.57,-249.16 311.38,-231.67 297.63,-217.66"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="299.68,-216.26 293.03,-212.98 296.19,-219.69 299.68,-216.26"/>
+<text xml:space="preserve" text-anchor="middle" x="344.86" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">quantized to</text>
+</g>
+<!-- synth -->
+<g id="node6" class="node">
+<title>synth</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="517.04,-211.34 374.12,-211.34 374.12,-175.06 517.04,-175.06 517.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="387.08" y="-193.25" font-family="Geist Mono" font-size="11.00">Synthetic fine&#45;tune data</text>
+<text xml:space="preserve" text-anchor="start" x="394.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">10,000 to 10 million samples</text>
+</g>
+<!-- e2b&#45;&gt;synth -->
+<g id="edge5" class="edge">
+<title>e2b&#45;&gt;synth</title>
+<path fill="none" stroke="#c8501f" d="M376.61,-262.01C389.68,-249.16 407.47,-231.67 421.72,-217.66"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="423.23,-219.61 426.5,-212.96 419.79,-216.12 423.23,-219.61"/>
+<text xml:space="preserve" text-anchor="middle" x="441.04" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">base for fine&#45;tune</text>
+</g>
+<!-- pi76 -->
+<g id="node4" class="node">
+<title>pi76</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="175.17,-123.81 0,-123.81 0,-87.53 175.17,-87.53 175.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="37.71" y="-105.72" font-family="Geist Mono" font-size="11.00">Raspberry Pi decode</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">7.6 tok/s decode, no speculative decoding</text>
+</g>
+<!-- quant&#45;&gt;pi76 -->
+<g id="edge3" class="edge">
+<title>quant&#45;&gt;pi76</title>
+<path fill="none" stroke="#c8501f" d="M235.84,-174.48C206.13,-160.89 165.03,-142.09 133.63,-127.73"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="135.04,-125.68 127.66,-125 133,-130.14 135.04,-125.68"/>
+<text xml:space="preserve" text-anchor="middle" x="206.16" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs on</text>
+</g>
+<!-- npu31 -->
+<g id="node5" class="node">
+<title>npu31</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="352.42,-123.81 196.75,-123.81 196.75,-87.53 352.42,-87.53 352.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="217.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Qualcomm NPU decode</text>
+<text xml:space="preserve" text-anchor="start" x="209.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">~4,000 tok/s prefill, 31 tok/s decode</text>
+</g>
+<!-- quant&#45;&gt;npu31 -->
+<g id="edge4" class="edge">
+<title>quant&#45;&gt;npu31</title>
+<path fill="none" stroke="#c8501f" d="M274.58,-174.48C274.58,-162.44 274.58,-146.31 274.58,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="277.04,-132.88 274.59,-125.88 272.14,-132.88 277.04,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="288.46" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs on</text>
+</g>
+<!-- mobile86 -->
+<g id="node7" class="node">
+<title>mobile86</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="523.04,-123.81 374.12,-123.81 374.12,-87.53 523.04,-87.53 523.04,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="387.08" y="-105.72" font-family="Geist Mono" font-size="11.00">Fine&#45;tuned actions model</text>
+<text xml:space="preserve" text-anchor="start" x="390.83" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">10 functions, over 86% reliability</text>
+</g>
+<!-- synth&#45;&gt;mobile86 -->
+<g id="edge6" class="edge">
+<title>synth&#45;&gt;mobile86</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M446.21,-174.48C446.63,-162.44 447.19,-146.31 447.67,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="450.11,-132.96 447.91,-125.88 445.22,-132.79 450.11,-132.96"/>
+<text xml:space="preserve" text-anchor="middle" x="457.76" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">trains</text>
+</g>
+<!-- pi45 -->
+<g id="node8" class="node">
+<title>pi45</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="425.29,-36.28 277.88,-36.28 277.88,0 425.29,0 425.29,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="290.83" y="-18.19" font-family="Geist Mono" font-size="11.00">Pi decode after fine&#45;tune</text>
+<text xml:space="preserve" text-anchor="start" x="305.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Jumps to 45 tok/s decode</text>
+</g>
+<!-- mobile86&#45;&gt;pi45 -->
+<g id="edge7" class="edge">
+<title>mobile86&#45;&gt;pi45</title>
+<path fill="none" stroke="#c8501f" d="M428.49,-86.95C413.79,-73.99 393.72,-56.29 377.77,-42.23"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="379.66,-40.63 372.79,-37.84 376.42,-44.31 379.66,-40.63"/>
+<text xml:space="preserve" text-anchor="middle" x="419.02" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs at</text>
+</g>
+<!-- voiceapp -->
+<g id="node9" class="node">
+<title>voiceapp</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="641.92,-36.28 447.25,-36.28 447.25,0 641.92,0 641.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="481.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Offline voice dictation app</text>
+<text xml:space="preserve" text-anchor="start" x="460.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Two fine&#45;tuned Gemma models: ASR + cleanup</text>
+</g>
+<!-- mobile86&#45;&gt;voiceapp -->
+<g id="edge8" class="edge">
+<title>mobile86&#45;&gt;voiceapp</title>
+<path fill="none" stroke="#c8501f" d="M468.48,-86.95C483.02,-73.99 502.88,-56.29 518.67,-42.23"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="519.99,-44.33 523.59,-37.85 516.73,-40.67 519.99,-44.33"/>
+<text xml:space="preserve" text-anchor="middle" x="515.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">powers</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s arc from the DRAM cost constraint through quantization and device throughput to fine-tuning and a shipped offline app, though the talk does not quantify every hop between these stages (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>DRAM cost is the binding constraint on edge AI</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/tiny-models-edge-robotics/s04_230.webp" alt="slide at 03:50"></a><div class="slidecap">Slide at 03:50 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>DRAM cost is the binding constraint on edge AI</h2><ul class="takeaways"><li>The talk names DRAM cost, not compute, as the significant new constraint on deploying AI to edge devices, noting some mobile phone manufacturers are shipping less DRAM this year than previously.</li><li>As a concrete data point, the cost of a comparable Raspberry Pi with 36 gigabytes has risen by roughly a factor of 2.5x since launch, which forces heavy investment in quantization and picking the smallest model that can do the job.</li></ul><div class="quote"><p>&ldquo;the cost of a Raspberry Pi 36 gigabytes has gone up by a factor of like 2.5x&rdquo;</p><span class="at">said at 03:36</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Small models (1-4B parameters) are already capable with zero-shot prompting</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/tiny-models-edge-robotics/s05_360.webp" alt="slide at 06:00"></a><div class="slidecap">Slide at 06:00 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s06_380.webp" alt="slide at 06:20"></a></div></div>
+<div class="textcol"><h2>Small models (1-4B parameters) are already capable with zero-shot prompting</h2><ul class="takeaways"><li>Google&#x27;s 2B-parameter Gemma model (E2B) reasons on par with a much larger Gemma 3 model from roughly a year earlier, using zero-shot prompting to get good results for a given feature without fine-tuning.</li><li>Aggressive quantization (a mix of 2-bit, 4-bit, and 8-bit, plus per-layer embeddings) gets the effective footprint down to about 2.9 bits per weight, which is the basis for the team&#x27;s roughly 4GB+ RAM rule of thumb for deploying this class of model.</li></ul><div class="quote"><p>&ldquo;It&#x27;s certainly like on par like with a Gemma 3 much larger model from kind of 12 months ago&rdquo;</p><span class="at">said at 05:44</span></div><div class="quote"><p>&ldquo;getting it down to like I know like 2.9 bits per weight if you look at the actual weights we need to hold in memory&rdquo;</p><span class="at">said at 06:48</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Throughput varies enormously by device class</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="7" class="sl"><img loading="lazy" class="main" src="img/tiny-models-edge-robotics/s07_440.webp" alt="slide at 07:20"></a><div class="slidecap">Slide at 07:20 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s08_550.webp" alt="slide at 09:10"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s09_570.webp" alt="slide at 09:30"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s10_580.webp" alt="slide at 09:40"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s11_590.webp" alt="slide at 09:50"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s12_600.webp" alt="slide at 10:00"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s13_610.webp" alt="slide at 10:10"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s14_670.webp" alt="slide at 11:10"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s15_750.webp" alt="slide at 12:30"></a></div></div>
+<div class="textcol"><h2>Throughput varies enormously by device class</h2><ul class="takeaways"><li>Running the same 2B model on a Raspberry Pi produces about 7.6 tokens per second decode without speculative decoding (roughly 2x faster with it turned on), while a Jetson Orin Nano reaches up to about 24 tokens/sec, and a Qualcomm IoT board with an NPU reaches close to 4,000 tokens/sec prefill and about 31 tokens/sec decode, enough for near real-time multi-frame image applications.</li></ul><div class="quote"><p>&ldquo;that is will give about 7.6 tokens per second decode. This is without MTP&rdquo;</p><span class="at">said at 07:19</span></div><div class="quote"><p>&ldquo;you can get about like almost 4,000 tokens per second uh preill uh 31 tokens per second decode&rdquo;</p><span class="at">said at 07:50</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Fine-tuning tiny models pushes both speed and reliability further</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="18" class="sl"><img loading="lazy" class="main" src="img/tiny-models-edge-robotics/s18_870.webp" alt="slide at 14:30"></a><div class="slidecap">Slide at 14:30 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s19_880.webp" alt="slide at 14:40"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s20_890.webp" alt="slide at 14:50"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s21_900.webp" alt="slide at 15:00"></a><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s22_910.webp" alt="slide at 15:10"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s23_920.webp" alt="slide at 15:20"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s24_940.webp" alt="slide at 15:40"></a><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s25_950.webp" alt="slide at 15:50"></a><a href="#" data-slide="26" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s26_1010.webp" alt="slide at 16:50"></a></div></div>
+<div class="textcol"><h2>Fine-tuning tiny models pushes both speed and reliability further</h2><ul class="takeaways"><li>For sub-500M-parameter tiny models, the recommended playbook is to start from a small base (as small as Gemma 3 270M or Function Gemma) and fine-tune on synthetically generated data, which the team found reaches high reliability in the range of 10,000 to 10 million samples.</li><li>A resulting fine-tuned mobile-actions model can call 10 different device functions from arbitrary free-text input at over 86% reliability, and runs the base model at 45 tokens/sec decode on a Raspberry Pi versus mid-single-digit tokens/sec unfine-tuned.</li></ul><div class="quote"><p>&ldquo;This model knows about 10 different output functions and can call them at over 86% uh reliability from a given arbitrary text input&rdquo;</p><span class="at">said at 15:06</span></div><div class="quote"><p>&ldquo;we&#x27;ve generally found that in the range of 10,000 to 10 million samples of synthetically generated um data will be sufficient to fine-tune a smaller model to a really really high degree of reliability&rdquo;</p><span class="at">said at 16:39</span></div><div class="quote"><p>&ldquo;So here that kind of jumps up to 45 tokens per second because we need to read less uh from memory each time&rdquo;</p><span class="at">said at 14:35</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Production example: fully offline voice dictation</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="31" class="sl"><img loading="lazy" class="main" src="img/tiny-models-edge-robotics/s31_1120.webp" alt="slide at 18:40"></a><div class="slidecap">Slide at 18:40 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="32" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s32_1160.webp" alt="slide at 19:20"></a><a href="#" data-slide="33" class="sl"><img loading="lazy" class="thumb" src="img/tiny-models-edge-robotics/s33_1200.webp" alt="slide at 20:00"></a></div></div>
+<div class="textcol"><h2>Production example: fully offline voice dictation</h2><ul class="takeaways"><li>A shipped iOS voice dictation app runs entirely on-device, using two fine-tuned tiny Gemma models, one for ASR and one to clean up filler words and personalize toward the user&#x27;s names and vocabulary, replacing what would otherwise be a subscription-gated server-side feature.</li></ul><div class="quote"><p>&ldquo;there&#x27;s an ASR engine and a text policing engine. And both of these are fine-tuned versions of tiny Gemma models&rdquo;</p><span class="at">said at 18:13</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The consistent pattern across the throughput numbers (Raspberry Pi vs. Jetson vs. Qualcomm NPU) is that hardware acceleration, not model size alone, drives most of the usability gap for real-time interaction, which is worth separating from the fine-tuning reliability gains when deciding where to invest engineering effort for a given device target.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/tiny-models-edge-robotics/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/tiny-models-edge-robotics/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/tiny-models-edge-robotics/s02_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/tiny-models-edge-robotics/s03_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/tiny-models-edge-robotics/s04_230.webp" alt="slide at 03:50"><div class="ts">03:50</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/tiny-models-edge-robotics/s05_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/tiny-models-edge-robotics/s06_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/tiny-models-edge-robotics/s07_440.webp" alt="slide at 07:20"><div class="ts">07:20</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/tiny-models-edge-robotics/s08_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/tiny-models-edge-robotics/s09_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/tiny-models-edge-robotics/s10_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/tiny-models-edge-robotics/s11_590.webp" alt="slide at 09:50"><div class="ts">09:50</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/tiny-models-edge-robotics/s12_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/tiny-models-edge-robotics/s13_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/tiny-models-edge-robotics/s14_670.webp" alt="slide at 11:10"><div class="ts">11:10</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/tiny-models-edge-robotics/s15_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/tiny-models-edge-robotics/s16_790.webp" alt="slide at 13:10"><div class="ts">13:10</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/tiny-models-edge-robotics/s17_860.webp" alt="slide at 14:20"><div class="ts">14:20</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/tiny-models-edge-robotics/s18_870.webp" alt="slide at 14:30"><div class="ts">14:30</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/tiny-models-edge-robotics/s19_880.webp" alt="slide at 14:40"><div class="ts">14:40</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/tiny-models-edge-robotics/s20_890.webp" alt="slide at 14:50"><div class="ts">14:50</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/tiny-models-edge-robotics/s21_900.webp" alt="slide at 15:00"><div class="ts">15:00</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/tiny-models-edge-robotics/s22_910.webp" alt="slide at 15:10"><div class="ts">15:10</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/tiny-models-edge-robotics/s23_920.webp" alt="slide at 15:20"><div class="ts">15:20</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/tiny-models-edge-robotics/s24_940.webp" alt="slide at 15:40"><div class="ts">15:40</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/tiny-models-edge-robotics/s25_950.webp" alt="slide at 15:50"><div class="ts">15:50</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/tiny-models-edge-robotics/s26_1010.webp" alt="slide at 16:50"><div class="ts">16:50</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/tiny-models-edge-robotics/s27_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/tiny-models-edge-robotics/s28_1040.webp" alt="slide at 17:20"><div class="ts">17:20</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/tiny-models-edge-robotics/s29_1050.webp" alt="slide at 17:30"><div class="ts">17:30</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/tiny-models-edge-robotics/s30_1060.webp" alt="slide at 17:40"><div class="ts">17:40</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/tiny-models-edge-robotics/s31_1120.webp" alt="slide at 18:40"><div class="ts">18:40</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/tiny-models-edge-robotics/s32_1160.webp" alt="slide at 19:20"><div class="ts">19:20</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/tiny-models-edge-robotics/s33_1200.webp" alt="slide at 20:00"><div class="ts">20:00</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/tiny-models-edge-robotics/s34_1210.webp" alt="slide at 20:10"><div class="ts">20:10</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/tiny-models-edge-robotics/s35_1220.webp" alt="slide at 20:20"><div class="ts">20:20</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/tiny-models-edge-robotics/s36_1230.webp" alt="slide at 20:30"><div class="ts">20:30</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/tiny-models-edge-robotics/s37_1240.webp" alt="slide at 20:40"><div class="ts">20:40</div></a><a href="#" data-slide="38"><img loading="lazy" src="img/tiny-models-edge-robotics/s38_1260.webp" alt="slide at 21:00"><div class="ts">21:00</div></a><a href="#" data-slide="39"><img loading="lazy" src="img/tiny-models-edge-robotics/s39_1270.webp" alt="slide at 21:10"><div class="ts">21:10</div></a><a href="#" data-slide="40"><img loading="lazy" src="img/tiny-models-edge-robotics/s40_1280.webp" alt="slide at 21:20"><div class="ts">21:20</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The cost of a comparable Raspberry Pi with 36 gigabytes of RAM has risen by roughly a factor of 2.5x since launch.</td><td class="tt">03:36</td></tr><tr><td class="st">asserts</td><td>Google&#x27;s 2B-parameter Gemma model reasons on par with a much larger Gemma 3 model from about a year earlier.</td><td class="tt">05:44</td></tr><tr><td class="st">asserts</td><td>Mixed-precision quantization gets the 2B model&#x27;s effective footprint down to about 2.9 bits per weight.</td><td class="tt">06:48</td></tr><tr><td class="st">asserts</td><td>The 2B model runs at about 7.6 tokens per second decode on a Raspberry Pi without speculative decoding.</td><td class="tt">07:19</td></tr><tr><td class="st">asserts</td><td>On a Qualcomm IoT board&#x27;s NPU, the same model reaches close to 4,000 tokens per second prefill and about 31 tokens per second decode.</td><td class="tt">07:50</td></tr><tr><td class="st">asserts</td><td>A fine-tuned mobile-actions model knows 10 different output functions and calls them at over 86% reliability from arbitrary free text input.</td><td class="tt">15:06</td></tr><tr><td class="st">recommends</td><td>In the range of 10,000 to 10 million synthetically generated samples is generally enough to fine-tune a small model to high reliability.</td><td class="tt">16:39</td></tr><tr><td class="st">asserts</td><td>Fine-tuning down to a smaller base model (Gemma 3 270M / Function Gemma) jumps Raspberry Pi decode speed to 45 tokens per second.</td><td class="tt">14:35</td></tr><tr><td class="st">asserts</td><td>A shipped voice dictation app runs entirely offline using two fine-tuned tiny Gemma models, one for ASR and one for text cleanup/personalization.</td><td class="tt">18:13</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/tiny-models-edge-robotics/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/hacEQHHhu2Q?t=10"}, {"src": "img/tiny-models-edge-robotics/s01_20.webp", "mmss": "00:20", "yt": "https://youtu.be/hacEQHHhu2Q?t=20"}, {"src": "img/tiny-models-edge-robotics/s02_60.webp", "mmss": "01:00", "yt": "https://youtu.be/hacEQHHhu2Q?t=60"}, {"src": "img/tiny-models-edge-robotics/s03_140.webp", "mmss": "02:20", "yt": "https://youtu.be/hacEQHHhu2Q?t=140"}, {"src": "img/tiny-models-edge-robotics/s04_230.webp", "mmss": "03:50", "yt": "https://youtu.be/hacEQHHhu2Q?t=230"}, {"src": "img/tiny-models-edge-robotics/s05_360.webp", "mmss": "06:00", "yt": "https://youtu.be/hacEQHHhu2Q?t=360"}, {"src": "img/tiny-models-edge-robotics/s06_380.webp", "mmss": "06:20", "yt": "https://youtu.be/hacEQHHhu2Q?t=380"}, {"src": "img/tiny-models-edge-robotics/s07_440.webp", "mmss": "07:20", "yt": "https://youtu.be/hacEQHHhu2Q?t=440"}, {"src": "img/tiny-models-edge-robotics/s08_550.webp", "mmss": "09:10", "yt": "https://youtu.be/hacEQHHhu2Q?t=550"}, {"src": "img/tiny-models-edge-robotics/s09_570.webp", "mmss": "09:30", "yt": "https://youtu.be/hacEQHHhu2Q?t=570"}, {"src": "img/tiny-models-edge-robotics/s10_580.webp", "mmss": "09:40", "yt": "https://youtu.be/hacEQHHhu2Q?t=580"}, {"src": "img/tiny-models-edge-robotics/s11_590.webp", "mmss": "09:50", "yt": "https://youtu.be/hacEQHHhu2Q?t=590"}, {"src": "img/tiny-models-edge-robotics/s12_600.webp", "mmss": "10:00", "yt": "https://youtu.be/hacEQHHhu2Q?t=600"}, {"src": "img/tiny-models-edge-robotics/s13_610.webp", "mmss": "10:10", "yt": "https://youtu.be/hacEQHHhu2Q?t=610"}, {"src": "img/tiny-models-edge-robotics/s14_670.webp", "mmss": "11:10", "yt": "https://youtu.be/hacEQHHhu2Q?t=670"}, {"src": "img/tiny-models-edge-robotics/s15_750.webp", "mmss": "12:30", "yt": "https://youtu.be/hacEQHHhu2Q?t=750"}, {"src": "img/tiny-models-edge-robotics/s16_790.webp", "mmss": "13:10", "yt": "https://youtu.be/hacEQHHhu2Q?t=790"}, {"src": "img/tiny-models-edge-robotics/s17_860.webp", "mmss": "14:20", "yt": "https://youtu.be/hacEQHHhu2Q?t=860"}, {"src": "img/tiny-models-edge-robotics/s18_870.webp", "mmss": "14:30", "yt": "https://youtu.be/hacEQHHhu2Q?t=870"}, {"src": "img/tiny-models-edge-robotics/s19_880.webp", "mmss": "14:40", "yt": "https://youtu.be/hacEQHHhu2Q?t=880"}, {"src": "img/tiny-models-edge-robotics/s20_890.webp", "mmss": "14:50", "yt": "https://youtu.be/hacEQHHhu2Q?t=890"}, {"src": "img/tiny-models-edge-robotics/s21_900.webp", "mmss": "15:00", "yt": "https://youtu.be/hacEQHHhu2Q?t=900"}, {"src": "img/tiny-models-edge-robotics/s22_910.webp", "mmss": "15:10", "yt": "https://youtu.be/hacEQHHhu2Q?t=910"}, {"src": "img/tiny-models-edge-robotics/s23_920.webp", "mmss": "15:20", "yt": "https://youtu.be/hacEQHHhu2Q?t=920"}, {"src": "img/tiny-models-edge-robotics/s24_940.webp", "mmss": "15:40", "yt": "https://youtu.be/hacEQHHhu2Q?t=940"}, {"src": "img/tiny-models-edge-robotics/s25_950.webp", "mmss": "15:50", "yt": "https://youtu.be/hacEQHHhu2Q?t=950"}, {"src": "img/tiny-models-edge-robotics/s26_1010.webp", "mmss": "16:50", "yt": "https://youtu.be/hacEQHHhu2Q?t=1010"}, {"src": "img/tiny-models-edge-robotics/s27_1030.webp", "mmss": "17:10", "yt": "https://youtu.be/hacEQHHhu2Q?t=1030"}, {"src": "img/tiny-models-edge-robotics/s28_1040.webp", "mmss": "17:20", "yt": "https://youtu.be/hacEQHHhu2Q?t=1040"}, {"src": "img/tiny-models-edge-robotics/s29_1050.webp", "mmss": "17:30", "yt": "https://youtu.be/hacEQHHhu2Q?t=1050"}, {"src": "img/tiny-models-edge-robotics/s30_1060.webp", "mmss": "17:40", "yt": "https://youtu.be/hacEQHHhu2Q?t=1060"}, {"src": "img/tiny-models-edge-robotics/s31_1120.webp", "mmss": "18:40", "yt": "https://youtu.be/hacEQHHhu2Q?t=1120"}, {"src": "img/tiny-models-edge-robotics/s32_1160.webp", "mmss": "19:20", "yt": "https://youtu.be/hacEQHHhu2Q?t=1160"}, {"src": "img/tiny-models-edge-robotics/s33_1200.webp", "mmss": "20:00", "yt": "https://youtu.be/hacEQHHhu2Q?t=1200"}, {"src": "img/tiny-models-edge-robotics/s34_1210.webp", "mmss": "20:10", "yt": "https://youtu.be/hacEQHHhu2Q?t=1210"}, {"src": "img/tiny-models-edge-robotics/s35_1220.webp", "mmss": "20:20", "yt": "https://youtu.be/hacEQHHhu2Q?t=1220"}, {"src": "img/tiny-models-edge-robotics/s36_1230.webp", "mmss": "20:30", "yt": "https://youtu.be/hacEQHHhu2Q?t=1230"}, {"src": "img/tiny-models-edge-robotics/s37_1240.webp", "mmss": "20:40", "yt": "https://youtu.be/hacEQHHhu2Q?t=1240"}, {"src": "img/tiny-models-edge-robotics/s38_1260.webp", "mmss": "21:00", "yt": "https://youtu.be/hacEQHHhu2Q?t=1260"}, {"src": "img/tiny-models-edge-robotics/s39_1270.webp", "mmss": "21:10", "yt": "https://youtu.be/hacEQHHhu2Q?t=1270"}, {"src": "img/tiny-models-edge-robotics/s40_1280.webp", "mmss": "21:20", "yt": "https://youtu.be/hacEQHHhu2Q?t=1280"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "hacEQHHhu2Q", "slug": "tiny-models-edge-robotics", "title": "Why Large? Tiny LMs & Agents on Edge/Robotics", "speaker": "Cormac Brick", "company": "Google", "themes": ["local-models", "infra-serving"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Tiny-model deployment pipeline (ours, from the slides)", "lanes": ["Constraint", "Base model & hardware", "Fine-tuning & product"], "nodes": [{"id": "dram", "label": "DRAM cost constraint", "sub": "Pi 36GB cost up ~2.5x since launch", "lane": 0, "kind": "store", "claim": "c1", "t": 216}, {"id": "e2b", "label": "Quantized 2B Gemma (E2B)", "sub": "On par with larger Gemma 3 from ~1yr earlier", "lane": 1, "kind": "system", "claim": "c2", "t": 344}, {"id": "quant", "label": "Mixed-precision quant", "sub": "~2.9 bits/weight effective footprint", "lane": 1, "kind": "system", "claim": "c3", "t": 408}, {"id": "pi76", "label": "Raspberry Pi decode", "sub": "7.6 tok/s decode, no speculative decoding", "lane": 1, "kind": "external", "claim": "c4", "t": 439}, {"id": "npu31", "label": "Qualcomm NPU decode", "sub": "~4,000 tok/s prefill, 31 tok/s decode", "lane": 1, "kind": "external", "claim": "c5", "t": 470}, {"id": "synth", "label": "Synthetic fine-tune data", "sub": "10,000 to 10 million samples", "lane": 2, "kind": "store", "claim": "c7", "t": 999}, {"id": "mobile86", "label": "Fine-tuned actions model", "sub": "10 functions, over 86% reliability", "lane": 2, "kind": "system", "claim": "c6", "t": 906}, {"id": "pi45", "label": "Pi decode after fine-tune", "sub": "Jumps to 45 tok/s decode", "lane": 2, "kind": "external", "claim": "c8", "t": 875}, {"id": "voiceapp", "label": "Offline voice dictation app", "sub": "Two fine-tuned Gemma models: ASR + cleanup", "lane": 2, "kind": "system", "claim": "c9", "t": 1093}], "edges": [{"from": "dram", "to": "e2b", "label": "forces quantization", "kind": "flow"}, {"from": "e2b", "to": "quant", "label": "quantized to", "kind": "flow"}, {"from": "quant", "to": "pi76", "label": "runs on", "kind": "flow"}, {"from": "quant", "to": "npu31", "label": "runs on", "kind": "flow"}, {"from": "e2b", "to": "synth", "label": "base for fine-tune", "kind": "flow"}, {"from": "synth", "to": "mobile86", "label": "trains", "kind": "data"}, {"from": "mobile86", "to": "pi45", "label": "runs at", "kind": "flow"}, {"from": "mobile86", "to": "voiceapp", "label": "powers", "kind": "flow"}], "caption": "This traces the talk's arc from the DRAM cost constraint through quantization and device throughput to fine-tuning and a shipped offline app, though the talk does not quantify every hop between these stages (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "rising DRAM cost", "text": "The cost of a comparable Raspberry Pi with 36 gigabytes of RAM has risen by roughly a factor of 2.5x since launch.", "quote": "the cost of a Raspberry Pi 36 gigabytes has gone up by a factor of like 2.5x", "t": 216}, {"id": "c2", "stance": "asserts", "topic": "small model reasoning capability", "text": "Google's 2B-parameter Gemma model reasons on par with a much larger Gemma 3 model from about a year earlier.", "quote": "It's certainly like on par like with a Gemma 3 much larger model from kind of 12 months ago", "t": 344}, {"id": "c3", "stance": "asserts", "topic": "quantization footprint", "text": "Mixed-precision quantization gets the 2B model's effective footprint down to about 2.9 bits per weight.", "quote": "getting it down to like I know like 2.9 bits per weight if you look at the actual weights we need to hold in memory", "t": 408}, {"id": "c4", "stance": "asserts", "topic": "Raspberry Pi decode speed", "text": "The 2B model runs at about 7.6 tokens per second decode on a Raspberry Pi without speculative decoding.", "quote": "that is will give about 7.6 tokens per second decode. This is without MTP", "t": 439}, {"id": "c5", "stance": "asserts", "topic": "Qualcomm NPU throughput", "text": "On a Qualcomm IoT board's NPU, the same model reaches close to 4,000 tokens per second prefill and about 31 tokens per second decode.", "quote": "you can get about like almost 4,000 tokens per second uh preill uh 31 tokens per second decode", "t": 470}, {"id": "c6", "stance": "asserts", "topic": "fine-tuned function-calling reliability", "text": "A fine-tuned mobile-actions model knows 10 different output functions and calls them at over 86% reliability from arbitrary free text input.", "quote": "This model knows about 10 different output functions and can call them at over 86% uh reliability from a given arbitrary text input", "t": 906}, {"id": "c7", "stance": "recommends", "topic": "synthetic data volume for fine-tuning", "text": "In the range of 10,000 to 10 million synthetically generated samples is generally enough to fine-tune a small model to high reliability.", "quote": "we've generally found that in the range of 10,000 to 10 million samples of synthetically generated um data will be sufficient to fine-tune a smaller model to a really really high degree of reliability", "t": 999}, {"id": "c8", "stance": "asserts", "topic": "fine-tuned model speed gain", "text": "Fine-tuning down to a smaller base model (Gemma 3 270M / Function Gemma) jumps Raspberry Pi decode speed to 45 tokens per second.", "quote": "So here that kind of jumps up to 45 tokens per second because we need to read less uh from memory each time", "t": 875}, {"id": "c9", "stance": "asserts", "topic": "offline voice dictation architecture", "text": "A shipped voice dictation app runs entirely offline using two fine-tuned tiny Gemma models, one for ASR and one for text cleanup/personalization.", "quote": "there's an ASR engine and a text policing engine. And both of these are fine-tuned versions of tiny Gemma models", "t": 1093}]}</script>
+</body></html>

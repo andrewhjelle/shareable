@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Why your agents need decision traces, not just documents &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/B9h9ovW5H9U" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 20 min</span><span class="ln"></span></div>
+<h1 class="lede">Why your agents need decision traces, not just documents</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Zach Blumenfeld &middot; Neo4j</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/B9h9ovW5H9U" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/B9h9ovW5H9U</a> &middot; 20 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Memory</span><span class="chip hot">Context engineering</span><span class="chip hot">Agentic engineering</span></div>
+<p class="deck" style="font-size:15px">Describes Neo4j&#x27;s context-graph pattern -- storing decision traces, precedents, and causal chains alongside entities so an agent can explain why a decision was made, not just answer a factual question -- plus a new open-source CLI (creat...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>A context graph adds decision traces and precedents on top of a standard knowledge base so an agent can justify an accept/reject decision, not just answer questions (c1, c2).</li><li>Graph embeddings let similar past decision traces be found by vector similarity, combined with semantic and structural hybrid search over precedents (c4, c5).</li><li>A new open-source CLI (create context graph) scaffolds a full-stack app with seeded data across six-plus agent frameworks and 22 built-in domains, with GitHub/Notion/Jira/Slack connectors (c6, c7, c8).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW A CONTEXT GRAPH TURNS A KNOWLEDGE BASE INTO A DECISION-MAKER (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 505.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- kb -->
+<g id="node1" class="node">
+<title>kb</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="153.42,-211.34 0,-211.34 0,-175.06 153.42,-175.06 153.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="36.59" y="-193.25" font-family="Geist Mono" font-size="11.00">Knowledge base</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">customer info, transactions, policies</text>
+</g>
+<!-- agent -->
+<g id="node6" class="node">
+<title>agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="322.67,-123.81 182.75,-123.81 182.75,-87.53 322.67,-87.53 322.67,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="196.84" y="-105.72" font-family="Geist Mono" font-size="11.00">Financial&#45;analyst agent</text>
+<text xml:space="preserve" text-anchor="start" x="195.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">risk score, then accept or reject</text>
+</g>
+<!-- kb&#45;&gt;agent -->
+<g id="edge1" class="edge">
+<title>kb&#45;&gt;agent</title>
+<path fill="none" stroke="#c8501f" d="M113.18,-174.48C141.02,-160.95 179.5,-142.25 209,-127.91"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="209.7,-130.29 214.93,-125.03 207.56,-125.89 209.7,-130.29"/>
+<text xml:space="preserve" text-anchor="middle" x="193.25" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">risk score</text>
+</g>
+<!-- events -->
+<g id="node2" class="node">
+<title>events</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="410.3,-386.4 265.13,-386.4 265.13,-350.12 410.3,-350.12 410.3,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="321.59" y="-368.31" font-family="Geist Mono" font-size="11.00">Events</text>
+<text xml:space="preserve" text-anchor="start" x="278.09" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">decisions, transactions, approvals</text>
+</g>
+<!-- traces -->
+<g id="node3" class="node">
+<title>traces</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="406.92,-298.87 268.5,-298.87 268.5,-262.59 406.92,-262.59 406.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="300.59" y="-280.78" font-family="Geist Mono" font-size="11.00">Decision traces</text>
+<text xml:space="preserve" text-anchor="start" x="281.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">past precedents plus reasoning</text>
+</g>
+<!-- events&#45;&gt;traces -->
+<g id="edge2" class="edge">
+<title>events&#45;&gt;traces</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M337.71,-349.54C337.71,-337.5 337.71,-321.37 337.71,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="340.16,-307.94 337.71,-300.94 335.26,-307.94 340.16,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="351.21" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">records</text>
+</g>
+<!-- gembed -->
+<g id="node4" class="node">
+<title>gembed</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="330.17,-211.34 175.25,-211.34 175.25,-175.06 330.17,-175.06 330.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="206.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Graph embeddings</text>
+<text xml:space="preserve" text-anchor="start" x="188.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">vector similarity over decision traces</text>
+</g>
+<!-- traces&#45;&gt;gembed -->
+<g id="edge3" class="edge">
+<title>traces&#45;&gt;gembed</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M320.1,-262.01C307.33,-249.16 289.94,-231.67 276.03,-217.66"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="278.04,-216.21 271.37,-212.97 274.56,-219.66 278.04,-216.21"/>
+<text xml:space="preserve" text-anchor="middle" x="313.05" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">embed</text>
+</g>
+<!-- hybrid -->
+<g id="node5" class="node">
+<title>hybrid</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="496.92,-211.34 352.5,-211.34 352.5,-175.06 496.92,-175.06 496.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="391.34" y="-193.25" font-family="Geist Mono" font-size="11.00">Hybrid search</text>
+<text xml:space="preserve" text-anchor="start" x="365.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">semantic plus structural similarity</text>
+</g>
+<!-- traces&#45;&gt;hybrid -->
+<g id="edge4" class="edge">
+<title>traces&#45;&gt;hybrid</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M355.74,-262.01C368.8,-249.16 386.6,-231.67 400.84,-217.66"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="402.35,-219.61 405.63,-212.96 398.92,-216.12 402.35,-219.61"/>
+<text xml:space="preserve" text-anchor="middle" x="396.54" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">index</text>
+</g>
+<!-- gembed&#45;&gt;agent -->
+<g id="edge5" class="edge">
+<title>gembed&#45;&gt;agent</title>
+<path fill="none" stroke="#c8501f" d="M252.71,-174.48C252.71,-162.44 252.71,-146.31 252.71,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="255.16,-132.88 252.71,-125.88 250.26,-132.88 255.16,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="272.96" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">precedents</text>
+</g>
+<!-- hybrid&#45;&gt;agent -->
+<g id="edge6" class="edge">
+<title>hybrid&#45;&gt;agent</title>
+<path fill="none" stroke="#c8501f" d="M389.07,-174.48C361.97,-161 324.58,-142.41 295.8,-128.1"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="297.02,-125.97 289.66,-125.04 294.84,-130.35 297.02,-125.97"/>
+<text xml:space="preserve" text-anchor="middle" x="369.26" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">precedents</text>
+</g>
+<!-- explain -->
+<g id="node7" class="node">
+<title>explain</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="314.8,-36.28 190.62,-36.28 190.62,0 314.8,0 314.8,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="224.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Explanation</text>
+<text xml:space="preserve" text-anchor="start" x="203.59" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">why the decision was made</text>
+</g>
+<!-- agent&#45;&gt;explain -->
+<g id="edge7" class="edge">
+<title>agent&#45;&gt;explain</title>
+<path fill="none" stroke="#c8501f" d="M252.71,-86.95C252.71,-74.91 252.71,-58.78 252.71,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="255.16,-45.35 252.71,-38.35 250.26,-45.35 255.16,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="264.34" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">justify</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the accept/reject financial-analyst demo: a plain knowledge base gets risk scoring, but only the added decision traces and precedent search let the agent explain its call (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>What a context graph adds beyond a knowledge base</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/decision-traces-not-documents/s01_90.webp" alt="slide at 01:30"></a><div class="slidecap">Slide at 01:30 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s02_120.webp" alt="slide at 02:00"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s03_140.webp" alt="slide at 02:20"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s04_180.webp" alt="slide at 03:00"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s05_200.webp" alt="slide at 03:20"></a></div></div>
+<div class="textcol"><h2>What a context graph adds beyond a knowledge base</h2><ul class="takeaways"><li>A knowledge base helps an agent answer questions correctly, but a context graph adds the information needed to make and justify better decisions.</li><li>In the financial-analyst demo, an agent with only customer info, transactions, and policies could assign a risk score and recommend review; adding past decision traces and precedents let it answer accept-or-reject and explain why.</li></ul><div class="quote"><p>&ldquo;the information required to not only answer questions correctly, but make better decisions&rdquo;</p><span class="at">said at 01:33</span></div><div class="quote"><p>&ldquo;past decision traces and precedents, and dynamic information about why decisions are made&rdquo;</p><span class="at">said at 02:34</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Entities, events, and context in the graph schema</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="6" class="sl"><img loading="lazy" class="main" src="img/decision-traces-not-documents/s06_230.webp" alt="slide at 03:50"></a><div class="slidecap">Slide at 03:50 &middot; click any slide to enlarge &middot; 7 more from this section below</div><div class=strip><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s07_270.webp" alt="slide at 04:30"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s08_280.webp" alt="slide at 04:40"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s09_290.webp" alt="slide at 04:50"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s10_300.webp" alt="slide at 05:00"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s11_310.webp" alt="slide at 05:10"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s12_390.webp" alt="slide at 06:30"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s13_400.webp" alt="slide at 06:40"></a></div></div>
+<div class="textcol"><h2>Entities, events, and context in the graph schema</h2><ul class="takeaways"><li>The context-graph data model organizes information into entities (things that exist), events such as decisions, transactions, and approvals, and context such as policies and reasoning recorded from past human decisions.</li></ul><div class="quote"><p>&ldquo;there&#x27;ll be uh events, so decisions, transactions, approvals, things like that&rdquo;</p><span class="at">said at 03:36</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Finding precedents with graph embeddings and hybrid search</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="13" class="sl"><img loading="lazy" class="main" src="img/decision-traces-not-documents/s13_400.webp" alt="slide at 06:40"></a><div class="slidecap">Slide at 06:40 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s14_430.webp" alt="slide at 07:10"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s15_480.webp" alt="slide at 08:00"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s16_500.webp" alt="slide at 08:20"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s17_530.webp" alt="slide at 08:50"></a></div></div>
+<div class="textcol"><h2>Finding precedents with graph embeddings and hybrid search</h2><ul class="takeaways"><li>Where text embeddings encode words, a graph embedding encodes connected graph nodes -- including past decision traces -- into vectors, so similar decision traces can be surfaced by vector similarity, something hard to extract from plain documents.</li><li>The demo layers this with hybrid search over precedents that considers both semantic and structural similarity.</li></ul><div class="quote"><p>&ldquo;similar decision traces are now going to be able to be looked up by vector similarity&rdquo;</p><span class="at">said at 07:55</span></div><div class="quote"><p>&ldquo;we did a special of hybrid search, especially around those precedents, both on semantic similarity and structural similarity inside of the graph&rdquo;</p><span class="at">said at 06:53</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>A scaffolding CLI for context-graph apps</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="17" class="sl"><img loading="lazy" class="main" src="img/decision-traces-not-documents/s17_530.webp" alt="slide at 08:50"></a><div class="slidecap">Slide at 08:50 &middot; click any slide to enlarge &middot; 7 more from this section below</div><div class=strip><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s18_550.webp" alt="slide at 09:10"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s19_560.webp" alt="slide at 09:20"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s20_600.webp" alt="slide at 10:00"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s21_610.webp" alt="slide at 10:10"></a><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s22_710.webp" alt="slide at 11:50"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s23_720.webp" alt="slide at 12:00"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s24_780.webp" alt="slide at 13:00"></a></div></div>
+<div class="textcol"><h2>A scaffolding CLI for context-graph apps</h2><ul class="takeaways"><li>A new open-source command-line tool, comparable in spirit to create-react-app, scaffolds a full-stack context-graph application -- back end, front end, and seeded demo data -- for a chosen domain and agent framework.</li><li>It supports Pydantic AI, OpenAI, LangGraph, Crew, Strands, and Google ADK, ships 22 built-in domains plus custom domain/ontology generation, and includes connectors to import data from tools like GitHub, Notion, Jira, and Slack.</li></ul><div class="quote"><p>&ldquo;you can think about this like um create React app or create Next app&rdquo;</p><span class="at">said at 08:58</span></div><div class="quote"><p>&ldquo;you can also do it with OpenAI and LangGraph and Crew and Strands and Google ADK and all these others. There&#x27;s a 22 built-in domain&rdquo;</p><span class="at">said at 12:04</span></div><div class="quote"><p>&ldquo;there&#x27;s also some very interesting neural tools if you want to import from um software as a service. So, if you want to import from GitHub or Notion or Jira or Slack&rdquo;</p><span class="at">said at 11:33</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>The memory package underneath it</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="25" class="sl"><img loading="lazy" class="main" src="img/decision-traces-not-documents/s25_820.webp" alt="slide at 13:40"></a><div class="slidecap">Slide at 13:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="26" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s26_870.webp" alt="slide at 14:30"></a><a href="#" data-slide="27" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s27_890.webp" alt="slide at 14:50"></a><a href="#" data-slide="28" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s28_910.webp" alt="slide at 15:10"></a><a href="#" data-slide="29" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s29_990.webp" alt="slide at 16:30"></a><a href="#" data-slide="30" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s30_1010.webp" alt="slide at 16:50"></a><a href="#" data-slide="31" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s31_1020.webp" alt="slide at 17:00"></a><a href="#" data-slide="32" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s32_1040.webp" alt="slide at 17:20"></a><a href="#" data-slide="33" class="sl"><img loading="lazy" class="thumb" src="img/decision-traces-not-documents/s33_1050.webp" alt="slide at 17:30"></a></div></div>
+<div class="textcol"><h2>The memory package underneath it</h2><ul class="takeaways"><li>The stack is built on Neo4j&#x27;s agent memory package, which provides the three memory types a context graph needs: short-term (conversation/session context), long-term (extracted, resolved entities), and reasoning (the decision traces themselves).</li><li>Turning raw text into the graph runs through staged extraction -- spaCy, then GLiNER, then an LLM fallback -- followed by a separate merging, deduplication, and enrichment step.</li></ul><div class="quote"><p>&ldquo;a short-term memory, a long-term memory and reasoning&rdquo;</p><span class="at">said at 13:30</span></div><div class="quote"><p>&ldquo;you go from spaCy to gliner and and more advanced to an LLM fallback&rdquo;</p><span class="at">said at 14:15</span></div></div>
+</div>
+</section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/decision-traces-not-documents/s00_70.webp" alt="slide at 01:10"><div class="ts">01:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/decision-traces-not-documents/s01_90.webp" alt="slide at 01:30"><div class="ts">01:30</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/decision-traces-not-documents/s02_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/decision-traces-not-documents/s03_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/decision-traces-not-documents/s04_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/decision-traces-not-documents/s05_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/decision-traces-not-documents/s06_230.webp" alt="slide at 03:50"><div class="ts">03:50</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/decision-traces-not-documents/s07_270.webp" alt="slide at 04:30"><div class="ts">04:30</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/decision-traces-not-documents/s08_280.webp" alt="slide at 04:40"><div class="ts">04:40</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/decision-traces-not-documents/s09_290.webp" alt="slide at 04:50"><div class="ts">04:50</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/decision-traces-not-documents/s10_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/decision-traces-not-documents/s11_310.webp" alt="slide at 05:10"><div class="ts">05:10</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/decision-traces-not-documents/s12_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/decision-traces-not-documents/s13_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/decision-traces-not-documents/s14_430.webp" alt="slide at 07:10"><div class="ts">07:10</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/decision-traces-not-documents/s15_480.webp" alt="slide at 08:00"><div class="ts">08:00</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/decision-traces-not-documents/s16_500.webp" alt="slide at 08:20"><div class="ts">08:20</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/decision-traces-not-documents/s17_530.webp" alt="slide at 08:50"><div class="ts">08:50</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/decision-traces-not-documents/s18_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/decision-traces-not-documents/s19_560.webp" alt="slide at 09:20"><div class="ts">09:20</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/decision-traces-not-documents/s20_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/decision-traces-not-documents/s21_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/decision-traces-not-documents/s22_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/decision-traces-not-documents/s23_720.webp" alt="slide at 12:00"><div class="ts">12:00</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/decision-traces-not-documents/s24_780.webp" alt="slide at 13:00"><div class="ts">13:00</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/decision-traces-not-documents/s25_820.webp" alt="slide at 13:40"><div class="ts">13:40</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/decision-traces-not-documents/s26_870.webp" alt="slide at 14:30"><div class="ts">14:30</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/decision-traces-not-documents/s27_890.webp" alt="slide at 14:50"><div class="ts">14:50</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/decision-traces-not-documents/s28_910.webp" alt="slide at 15:10"><div class="ts">15:10</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/decision-traces-not-documents/s29_990.webp" alt="slide at 16:30"><div class="ts">16:30</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/decision-traces-not-documents/s30_1010.webp" alt="slide at 16:50"><div class="ts">16:50</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/decision-traces-not-documents/s31_1020.webp" alt="slide at 17:00"><div class="ts">17:00</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/decision-traces-not-documents/s32_1040.webp" alt="slide at 17:20"><div class="ts">17:20</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/decision-traces-not-documents/s33_1050.webp" alt="slide at 17:30"><div class="ts">17:30</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/decision-traces-not-documents/s34_1060.webp" alt="slide at 17:40"><div class="ts">17:40</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/decision-traces-not-documents/s35_1080.webp" alt="slide at 18:00"><div class="ts">18:00</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/decision-traces-not-documents/s36_1140.webp" alt="slide at 19:00"><div class="ts">19:00</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/decision-traces-not-documents/s37_1190.webp" alt="slide at 19:50"><div class="ts">19:50</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>A context graph adds the information needed not just to answer questions correctly but to make better decisions, beyond what a knowledge base provides.</td><td class="tt">01:33</td></tr><tr><td class="st">asserts</td><td>Adding decision traces and precedents let the demo agent answer whether to accept or reject a request and explain why, beyond assigning a risk score.</td><td class="tt">02:34</td></tr><tr><td class="st">asserts</td><td>The context-graph schema models events such as decisions, transactions, and approvals as one of its core node types.</td><td class="tt">03:36</td></tr><tr><td class="st">asserts</td><td>Graph embeddings encode connected decision-trace nodes into vectors so similar past decisions can be found by vector similarity.</td><td class="tt">07:55</td></tr><tr><td class="st">asserts</td><td>The demo used hybrid search over precedents combining semantic similarity with structural similarity inside the graph.</td><td class="tt">06:53</td></tr><tr><td class="st">asserts</td><td>A one-line CLI tool scaffolds a full context-graph application, comparable to create-react-app or create-next-app.</td><td class="tt">08:58</td></tr><tr><td class="st">asserts</td><td>The scaffolding tool supports OpenAI, LangGraph, Crew, Strands, and Google ADK in addition to Pydantic AI, with 22 built-in domains.</td><td class="tt">12:04</td></tr><tr><td class="st">asserts</td><td>The tool includes connectors to import data from software-as-a-service tools like GitHub, Notion, Jira, and Slack instead of only demo data.</td><td class="tt">11:33</td></tr><tr><td class="st">asserts</td><td>The underlying Neo4j agent memory package provides short-term memory, long-term memory, and reasoning as the three components a context graph needs.</td><td class="tt">13:30</td></tr><tr><td class="st">asserts</td><td>Raw text is converted into the knowledge graph through staged extraction moving from spaCy to GLiNER to an LLM fallback.</td><td class="tt">14:15</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/decision-traces-not-documents/s00_70.webp", "mmss": "01:10", "yt": "https://youtu.be/B9h9ovW5H9U?t=70"}, {"src": "img/decision-traces-not-documents/s01_90.webp", "mmss": "01:30", "yt": "https://youtu.be/B9h9ovW5H9U?t=90"}, {"src": "img/decision-traces-not-documents/s02_120.webp", "mmss": "02:00", "yt": "https://youtu.be/B9h9ovW5H9U?t=120"}, {"src": "img/decision-traces-not-documents/s03_140.webp", "mmss": "02:20", "yt": "https://youtu.be/B9h9ovW5H9U?t=140"}, {"src": "img/decision-traces-not-documents/s04_180.webp", "mmss": "03:00", "yt": "https://youtu.be/B9h9ovW5H9U?t=180"}, {"src": "img/decision-traces-not-documents/s05_200.webp", "mmss": "03:20", "yt": "https://youtu.be/B9h9ovW5H9U?t=200"}, {"src": "img/decision-traces-not-documents/s06_230.webp", "mmss": "03:50", "yt": "https://youtu.be/B9h9ovW5H9U?t=230"}, {"src": "img/decision-traces-not-documents/s07_270.webp", "mmss": "04:30", "yt": "https://youtu.be/B9h9ovW5H9U?t=270"}, {"src": "img/decision-traces-not-documents/s08_280.webp", "mmss": "04:40", "yt": "https://youtu.be/B9h9ovW5H9U?t=280"}, {"src": "img/decision-traces-not-documents/s09_290.webp", "mmss": "04:50", "yt": "https://youtu.be/B9h9ovW5H9U?t=290"}, {"src": "img/decision-traces-not-documents/s10_300.webp", "mmss": "05:00", "yt": "https://youtu.be/B9h9ovW5H9U?t=300"}, {"src": "img/decision-traces-not-documents/s11_310.webp", "mmss": "05:10", "yt": "https://youtu.be/B9h9ovW5H9U?t=310"}, {"src": "img/decision-traces-not-documents/s12_390.webp", "mmss": "06:30", "yt": "https://youtu.be/B9h9ovW5H9U?t=390"}, {"src": "img/decision-traces-not-documents/s13_400.webp", "mmss": "06:40", "yt": "https://youtu.be/B9h9ovW5H9U?t=400"}, {"src": "img/decision-traces-not-documents/s14_430.webp", "mmss": "07:10", "yt": "https://youtu.be/B9h9ovW5H9U?t=430"}, {"src": "img/decision-traces-not-documents/s15_480.webp", "mmss": "08:00", "yt": "https://youtu.be/B9h9ovW5H9U?t=480"}, {"src": "img/decision-traces-not-documents/s16_500.webp", "mmss": "08:20", "yt": "https://youtu.be/B9h9ovW5H9U?t=500"}, {"src": "img/decision-traces-not-documents/s17_530.webp", "mmss": "08:50", "yt": "https://youtu.be/B9h9ovW5H9U?t=530"}, {"src": "img/decision-traces-not-documents/s18_550.webp", "mmss": "09:10", "yt": "https://youtu.be/B9h9ovW5H9U?t=550"}, {"src": "img/decision-traces-not-documents/s19_560.webp", "mmss": "09:20", "yt": "https://youtu.be/B9h9ovW5H9U?t=560"}, {"src": "img/decision-traces-not-documents/s20_600.webp", "mmss": "10:00", "yt": "https://youtu.be/B9h9ovW5H9U?t=600"}, {"src": "img/decision-traces-not-documents/s21_610.webp", "mmss": "10:10", "yt": "https://youtu.be/B9h9ovW5H9U?t=610"}, {"src": "img/decision-traces-not-documents/s22_710.webp", "mmss": "11:50", "yt": "https://youtu.be/B9h9ovW5H9U?t=710"}, {"src": "img/decision-traces-not-documents/s23_720.webp", "mmss": "12:00", "yt": "https://youtu.be/B9h9ovW5H9U?t=720"}, {"src": "img/decision-traces-not-documents/s24_780.webp", "mmss": "13:00", "yt": "https://youtu.be/B9h9ovW5H9U?t=780"}, {"src": "img/decision-traces-not-documents/s25_820.webp", "mmss": "13:40", "yt": "https://youtu.be/B9h9ovW5H9U?t=820"}, {"src": "img/decision-traces-not-documents/s26_870.webp", "mmss": "14:30", "yt": "https://youtu.be/B9h9ovW5H9U?t=870"}, {"src": "img/decision-traces-not-documents/s27_890.webp", "mmss": "14:50", "yt": "https://youtu.be/B9h9ovW5H9U?t=890"}, {"src": "img/decision-traces-not-documents/s28_910.webp", "mmss": "15:10", "yt": "https://youtu.be/B9h9ovW5H9U?t=910"}, {"src": "img/decision-traces-not-documents/s29_990.webp", "mmss": "16:30", "yt": "https://youtu.be/B9h9ovW5H9U?t=990"}, {"src": "img/decision-traces-not-documents/s30_1010.webp", "mmss": "16:50", "yt": "https://youtu.be/B9h9ovW5H9U?t=1010"}, {"src": "img/decision-traces-not-documents/s31_1020.webp", "mmss": "17:00", "yt": "https://youtu.be/B9h9ovW5H9U?t=1020"}, {"src": "img/decision-traces-not-documents/s32_1040.webp", "mmss": "17:20", "yt": "https://youtu.be/B9h9ovW5H9U?t=1040"}, {"src": "img/decision-traces-not-documents/s33_1050.webp", "mmss": "17:30", "yt": "https://youtu.be/B9h9ovW5H9U?t=1050"}, {"src": "img/decision-traces-not-documents/s34_1060.webp", "mmss": "17:40", "yt": "https://youtu.be/B9h9ovW5H9U?t=1060"}, {"src": "img/decision-traces-not-documents/s35_1080.webp", "mmss": "18:00", "yt": "https://youtu.be/B9h9ovW5H9U?t=1080"}, {"src": "img/decision-traces-not-documents/s36_1140.webp", "mmss": "19:00", "yt": "https://youtu.be/B9h9ovW5H9U?t=1140"}, {"src": "img/decision-traces-not-documents/s37_1190.webp", "mmss": "19:50", "yt": "https://youtu.be/B9h9ovW5H9U?t=1190"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "B9h9ovW5H9U", "slug": "decision-traces-not-documents", "title": "Why your agents need decision traces, not just documents", "speaker": "Zach Blumenfeld", "company": "Neo4j", "themes": ["memory", "context-engineering", "agentic-engineering"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "How a context graph turns a knowledge base into a decision-maker (ours)", "lanes": ["Knowledge base", "Context graph additions", "Retrieval", "Decision output"], "nodes": [{"id": "kb", "label": "Knowledge base", "sub": "customer info, transactions, policies", "lane": 0, "kind": "store", "claim": "c2", "t": 154}, {"id": "events", "label": "Events", "sub": "decisions, transactions, approvals", "lane": 1, "kind": "store", "claim": "c3", "t": 216}, {"id": "traces", "label": "Decision traces", "sub": "past precedents plus reasoning", "lane": 1, "kind": "store", "claim": "c2", "t": 154}, {"id": "gembed", "label": "Graph embeddings", "sub": "vector similarity over decision traces", "lane": 2, "kind": "system", "claim": "c4", "t": 475}, {"id": "hybrid", "label": "Hybrid search", "sub": "semantic plus structural similarity", "lane": 2, "kind": "system", "claim": "c5", "t": 413}, {"id": "agent", "label": "Financial-analyst agent", "sub": "risk score, then accept or reject", "lane": 3, "kind": "actor", "claim": "c2", "t": 154}, {"id": "explain", "label": "Explanation", "sub": "why the decision was made", "lane": 3, "kind": "system", "claim": "c1", "t": 93}], "edges": [{"from": "kb", "to": "agent", "label": "risk score", "kind": "flow"}, {"from": "events", "to": "traces", "label": "records", "kind": "data"}, {"from": "traces", "to": "gembed", "label": "embed", "kind": "data"}, {"from": "traces", "to": "hybrid", "label": "index", "kind": "data"}, {"from": "gembed", "to": "agent", "label": "precedents", "kind": "flow"}, {"from": "hybrid", "to": "agent", "label": "precedents", "kind": "flow"}, {"from": "agent", "to": "explain", "label": "justify", "kind": "flow"}], "caption": "This traces the accept/reject financial-analyst demo: a plain knowledge base gets risk scoring, but only the added decision traces and precedent search let the agent explain its call (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "context graph definition", "text": "A context graph adds the information needed not just to answer questions correctly but to make better decisions, beyond what a knowledge base provides.", "quote": "the information required to not only answer questions correctly, but make better decisions", "t": 93}, {"id": "c2", "stance": "asserts", "topic": "financial analyst example", "text": "Adding decision traces and precedents let the demo agent answer whether to accept or reject a request and explain why, beyond assigning a risk score.", "quote": "past decision traces and precedents, and dynamic information about why decisions are made", "t": 154}, {"id": "c3", "stance": "asserts", "topic": "context graph schema", "text": "The context-graph schema models events such as decisions, transactions, and approvals as one of its core node types.", "quote": "there'll be uh events, so decisions, transactions, approvals, things like that", "t": 216}, {"id": "c4", "stance": "asserts", "topic": "graph embeddings for precedent search", "text": "Graph embeddings encode connected decision-trace nodes into vectors so similar past decisions can be found by vector similarity.", "quote": "similar decision traces are now going to be able to be looked up by vector similarity", "t": 475}, {"id": "c5", "stance": "asserts", "topic": "hybrid search on precedents", "text": "The demo used hybrid search over precedents combining semantic similarity with structural similarity inside the graph.", "quote": "we did a special of hybrid search, especially around those precedents, both on semantic similarity and structural similarity inside of the graph", "t": 413}, {"id": "c6", "stance": "asserts", "topic": "create-context-graph tool", "text": "A one-line CLI tool scaffolds a full context-graph application, comparable to create-react-app or create-next-app.", "quote": "you can think about this like um create React app or create Next app", "t": 538}, {"id": "c7", "stance": "asserts", "topic": "framework and domain support", "text": "The scaffolding tool supports OpenAI, LangGraph, Crew, Strands, and Google ADK in addition to Pydantic AI, with 22 built-in domains.", "quote": "you can also do it with OpenAI and LangGraph and Crew and Strands and Google ADK and all these others. There's a 22 built-in domain", "t": 724}, {"id": "c8", "stance": "asserts", "topic": "data connectors", "text": "The tool includes connectors to import data from software-as-a-service tools like GitHub, Notion, Jira, and Slack instead of only demo data.", "quote": "there's also some very interesting neural tools if you want to import from um software as a service. So, if you want to import from GitHub or Notion or Jira or Slack", "t": 693}, {"id": "c9", "stance": "asserts", "topic": "agent memory package", "text": "The underlying Neo4j agent memory package provides short-term memory, long-term memory, and reasoning as the three components a context graph needs.", "quote": "a short-term memory, a long-term memory and reasoning", "t": 810}, {"id": "c10", "stance": "asserts", "topic": "text-to-graph extraction pipeline", "text": "Raw text is converted into the knowledge graph through staged extraction moving from spaCy to GLiNER to an LLM fallback.", "quote": "you go from spaCy to gliner and and more advanced to an LLM fallback", "t": 855}]}</script>
+</body></html>

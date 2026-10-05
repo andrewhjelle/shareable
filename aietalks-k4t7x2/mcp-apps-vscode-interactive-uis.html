@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Building Interactive UIs in VS Code with MCP Apps &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/_xIwFcnHqp4" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 16 min</span><span class="ln"></span></div>
+<h1 class="lede">Building Interactive UIs in VS Code with MCP Apps</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Marlene Mhangami &amp; Liam Hampton &middot; GitHub / Microsoft</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/_xIwFcnHqp4" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/_xIwFcnHqp4</a> &middot; 16 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">MCP & protocols</span><span class="chip hot">Product & UX</span><span class="chip hot">Coding agents</span></div>
+<p class="deck" style="font-size:15px">Explains the MCP apps mechanism -- a server tool returns a resource reference to bundled HTML that the host renders in a sandboxed iframe -- as the fix for MCP being text-only</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>MCP apps let a server tool return a resource reference to bundled HTML that the host (e.g., VS Code) fetches and renders as an interactive component inside a sandboxed iframe in chat, instead of returning only text.</li><li>Companies already building MCP apps include Shopify (in-chat checkout matching brand UI), Excalidraw (interactive diagrams), and Figma.</li><li>The live demo used a custom MCP server exposing one tool that profiles a Go program and renders its flame graph as an interactive React app inside GitHub Copilot Chat; the iframe sandbox exists specifically so the rendered app can&#x27;t touch VS Code settings or call external APIs.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">SERVER TOOL TO SANDBOXED UI (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 506.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- server_tool -->
+<g id="node1" class="node">
+<title>server_tool</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="471.67,-473.93 318.25,-473.93 318.25,-437.65 471.67,-437.65 471.67,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="369.09" y="-455.84" font-family="Geist Mono" font-size="11.00">Profile tool</text>
+<text xml:space="preserve" text-anchor="start" x="331.21" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">one tool: profile the running Go app</text>
+</g>
+<!-- ui_resource -->
+<g id="node2" class="node">
+<title>ui_resource</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="421.3,-386.4 244.63,-386.4 244.63,-350.12 421.3,-350.12 421.3,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="295.84" y="-368.31" font-family="Geist Mono" font-size="11.00">UI resource ref</text>
+<text xml:space="preserve" text-anchor="start" x="257.59" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">tool returns a resource ref to server HTML</text>
+</g>
+<!-- server_tool&#45;&gt;ui_resource -->
+<g id="edge1" class="edge">
+<title>server_tool&#45;&gt;ui_resource</title>
+<path fill="none" stroke="#c8501f" d="M382.11,-437.07C372.97,-424.45 360.57,-407.35 350.51,-393.48"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="352.77,-392.41 346.68,-388.18 348.8,-395.29 352.77,-392.41"/>
+<text xml:space="preserve" text-anchor="middle" x="380.8" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">returns</text>
+</g>
+<!-- host_fetch -->
+<g id="node3" class="node">
+<title>host_fetch</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="412.8,-298.87 245.13,-298.87 245.13,-262.59 412.8,-262.59 412.8,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="282.09" y="-280.78" font-family="Geist Mono" font-size="11.00">Host fetches HTML</text>
+<text xml:space="preserve" text-anchor="start" x="258.09" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">VS Code fetches the HTML from that ref</text>
+</g>
+<!-- ui_resource&#45;&gt;host_fetch -->
+<g id="edge2" class="edge">
+<title>ui_resource&#45;&gt;host_fetch</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M332.13,-349.54C331.57,-337.5 330.81,-321.37 330.18,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="332.63,-307.82 329.86,-300.94 327.74,-308.05 332.63,-307.82"/>
+<text xml:space="preserve" text-anchor="middle" x="351.07" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">referenced</text>
+</g>
+<!-- iframe -->
+<g id="node5" class="node">
+<title>iframe</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="420.42,-211.34 223.5,-211.34 223.5,-175.06 420.42,-175.06 420.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="278.09" y="-193.25" font-family="Geist Mono" font-size="11.00">Sandboxed iframe</text>
+<text xml:space="preserve" text-anchor="start" x="236.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">host renders the app inside a sandboxed iframe</text>
+</g>
+<!-- host_fetch&#45;&gt;iframe -->
+<g id="edge3" class="edge">
+<title>host_fetch&#45;&gt;iframe</title>
+<path fill="none" stroke="#c8501f" d="M327.51,-262.01C326.52,-249.97 325.2,-233.84 324.1,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="326.54,-220.18 323.53,-213.41 321.66,-220.58 326.54,-220.18"/>
+<text xml:space="preserve" text-anchor="middle" x="339.75" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">renders</text>
+</g>
+<!-- callback -->
+<g id="node4" class="node">
+<title>callback</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="355.42,-36.28 200.5,-36.28 200.5,0 355.42,0 355.42,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="234.46" y="-18.19" font-family="Geist Mono" font-size="11.00">Callback to server</text>
+<text xml:space="preserve" text-anchor="start" x="213.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">app calls back for live, two&#45;way data</text>
+</g>
+<!-- callback&#45;&gt;server_tool -->
+<g id="edge6" class="edge">
+<title>callback&#45;&gt;server_tool</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M356.03,-26.64C403.86,-36.05 455.96,-57.19 455.96,-104.67 455.96,-369.26 455.96,-369.26 455.96,-369.26 455.96,-393.63 439.35,-415.85 423.46,-431.54"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="422.18,-429.38 418.77,-435.97 425.54,-432.94 422.18,-429.38"/>
+<text xml:space="preserve" text-anchor="middle" x="476.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">live update</text>
+</g>
+<!-- flamegraph -->
+<g id="node6" class="node">
+<title>flamegraph</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="199.92,-123.81 0,-123.81 0,-87.53 199.92,-87.53 199.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="58.71" y="-105.72" font-family="Geist Mono" font-size="11.00">Flame graph app</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">React app shows Go pprof profile as flame graph</text>
+</g>
+<!-- iframe&#45;&gt;flamegraph -->
+<g id="edge4" class="edge">
+<title>iframe&#45;&gt;flamegraph</title>
+<path fill="none" stroke="#c8501f" d="M275.69,-174.37C240.22,-160.71 191.19,-141.82 153.93,-127.46"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="154.99,-125.25 147.58,-125.02 153.23,-129.82 154.99,-125.25"/>
+<text xml:space="preserve" text-anchor="middle" x="239.25" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">displays</text>
+</g>
+<!-- sandbox_block -->
+<g id="node7" class="node">
+<title>sandbox_block</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="421.55,-123.81 222.38,-123.81 222.38,-87.53 421.55,-87.53 421.55,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="265.34" y="-105.72" font-family="Geist Mono" font-size="11.00">No settings/API access</text>
+<text xml:space="preserve" text-anchor="start" x="235.34" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">blocked from VS Code settings and external APIs</text>
+</g>
+<!-- iframe&#45;&gt;sandbox_block -->
+<g id="edge7" class="edge">
+<title>iframe&#45;&gt;sandbox_block</title>
+<path fill="none" stroke="#c8501f" d="M321.96,-174.48C321.96,-162.44 321.96,-146.31 321.96,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="324.41,-132.88 321.96,-125.88 319.51,-132.88 324.41,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="345.59" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">restricted by</text>
+</g>
+<!-- flamegraph&#45;&gt;callback -->
+<g id="edge5" class="edge">
+<title>flamegraph&#45;&gt;callback</title>
+<path fill="none" stroke="#c8501f" d="M136.84,-86.95C165,-73.42 203.92,-54.72 233.75,-40.38"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="234.51,-42.73 239.76,-37.49 232.39,-38.32 234.51,-42.73"/>
+<text xml:space="preserve" text-anchor="middle" x="225.12" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">requests data</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The demo&#x27;s flame-graph app follows this same resource-ref-then-iframe path; the callback loop is our inference from the speakers&#x27; description of live, two-way interaction (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>MCP basics: hosts, clients, servers</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/mcp-apps-vscode-interactive-uis/s01_90.webp" alt="slide at 01:30"></a><div class="slidecap">Slide at 01:30 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s02_160.webp" alt="slide at 02:40"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s03_230.webp" alt="slide at 03:50"></a></div></div>
+<div class="textcol"><h2>MCP basics: hosts, clients, servers</h2><ul class="takeaways"><li>MCP is described as an open protocol, created by Anthropic, that standardizes how applications provide context (tools, prompts, resources) to LLMs.</li><li>Hosts like VS Code want data from MCP servers, clients (in VS Code&#x27;s case, GitHub Copilot) maintain the one-to-one connection to a server, and servers are lightweight programs exposing specific capabilities.</li><li>The speakers warn that installing a random internet-sourced MCP server can carry security risk and recommend using vetted server lists inside VS Code or GitHub.</li></ul><div class="quote"><p>&ldquo;MCP, of course, is an open protocol that standardizes how applications provide context to LLMs&rdquo;</p><span class="at">said at 01:03</span></div><div class="quote"><p>&ldquo;these are going to actually lightweight programs that expose specific capabilities through MCP to provide that context&rdquo;</p><span class="at">said at 02:38</span></div><div class="quote"><p>&ldquo;sometimes you can have some security issues if you just go on the internet and pick a random server, it can have malicious stuff in it&rdquo;</p><span class="at">said at 03:08</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>MCP apps: rich UI instead of text-only output</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/mcp-apps-vscode-interactive-uis/s04_270.webp" alt="slide at 04:30"></a><div class="slidecap">Slide at 04:30 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s05_300.webp" alt="slide at 05:00"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s06_360.webp" alt="slide at 06:00"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s07_380.webp" alt="slide at 06:20"></a></div></div>
+<div class="textcol"><h2>MCP apps: rich UI instead of text-only output</h2><ul class="takeaways"><li>Early MCP could only return text, which the speakers say pushed READMEs toward ASCII art and heavy emoji use as a substitute for real diagrams.</li><li>MCP apps solve this: a server tool returns a UI resource reference pointing to server-generated HTML, the host fetches that HTML and renders it inside a sandboxed iframe, and the app can call back to the server for live, two-way interaction and fresh data.</li></ul><div class="quote"><p>&ldquo;MCP apps let server tools return rich interactive components that render directly in the chat&rdquo;</p><span class="at">said at 04:12</span></div><div class="quote"><p>&ldquo;the host, which is VS Code, is going to fetch the HTML from that UI reference that was referenced from the server, and then the host is going to render the app inside a sandboxed iframe&rdquo;</p><span class="at">said at 05:45</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Use cases and current adopters</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="8" class="sl"><img loading="lazy" class="main" src="img/mcp-apps-vscode-interactive-uis/s08_470.webp" alt="slide at 07:50"></a><div class="slidecap">Slide at 07:50 &middot; click any slide to enlarge &middot; 7 more from this section below</div><div class=strip><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s09_480.webp" alt="slide at 08:00"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s10_560.webp" alt="slide at 09:20"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s11_570.webp" alt="slide at 09:30"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s12_580.webp" alt="slide at 09:40"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s13_600.webp" alt="slide at 10:00"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s14_660.webp" alt="slide at 11:00"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s15_720.webp" alt="slide at 12:00"></a></div></div>
+<div class="textcol"><h2>Use cases and current adopters</h2><ul class="takeaways"><li>Cited use cases include data exploration (clicking through charts instead of re-typing questions) and e-commerce, where a user could complete an entire checkout inside the chat instead of being handed a link out to a browser.</li><li>Shopify is named as a company building MCP apps specifically to preserve brand-matching UI during in-chat checkout, alongside Excalidraw (diagram generation) and Figma.</li></ul><div class="quote"><p>&ldquo;I think this is a really great example where a user maybe in one case would want to be able to actually buy something in the chat UI&rdquo;</p><span class="at">said at 07:18</span></div><div class="quote"><p>&ldquo;they&#x27;re also focusing on keeping the brand experience of a company the same as if you were on the company&#x27;s website&rdquo;</p><span class="at">said at 07:48</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Live demo: a flame-graph MCP app in VS Code</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="16" class="sl"><img loading="lazy" class="main" src="img/mcp-apps-vscode-interactive-uis/s16_780.webp" alt="slide at 13:00"></a><div class="slidecap">Slide at 13:00 &middot; click any slide to enlarge &middot; 5 more from this section below</div><div class=strip><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s17_810.webp" alt="slide at 13:30"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s18_830.webp" alt="slide at 13:50"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s19_850.webp" alt="slide at 14:10"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s20_860.webp" alt="slide at 14:20"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/mcp-apps-vscode-interactive-uis/s21_940.webp" alt="slide at 15:40"></a></div></div>
+<div class="textcol"><h2>Live demo: a flame-graph MCP app in VS Code</h2><ul class="takeaways"><li>The demo used a custom MCP server, adapted from an Anthropic skill, exposing one tool that profiles a Go program (bubble sort and Fibonacci) with Go&#x27;s pprof over five seconds and returns results rendered as an interactive React flame-graph app inside GitHub Copilot Chat.</li><li>The presenter explains the iframe sandbox using a &#x27;hamster in a cage&#x27; analogy: the rendered app is deliberately prevented from interacting with VS Code settings, APIs, or anything external.</li></ul><div class="quote"><p>&ldquo;I have it installed here, and there is one tool for it. So, profile the app&rdquo;</p><span class="at">said at 12:55</span></div><div class="quote"><p>&ldquo;The reason we&#x27;re doing this in an iframe or the why the iframe is the same reason that you put a hamster in a cage, right? If you don&#x27;t let it loose in a room, it&#x27;s just going to chew things up&rdquo;</p><span class="at">said at 14:27</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The &#x27;return HTML instead of JSON-that-gets-rendered&#x27; pattern here echoes the Cloudflare talk&#x27;s argument against generative-JSON UIs -- two independent teams converging on generate-the-actual-markup-and-sandbox-it as the fix for untrusted, LLM-produced UI (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s00_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s01_90.webp" alt="slide at 01:30"><div class="ts">01:30</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s02_160.webp" alt="slide at 02:40"><div class="ts">02:40</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s03_230.webp" alt="slide at 03:50"><div class="ts">03:50</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s04_270.webp" alt="slide at 04:30"><div class="ts">04:30</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s05_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s06_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s07_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s08_470.webp" alt="slide at 07:50"><div class="ts">07:50</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s09_480.webp" alt="slide at 08:00"><div class="ts">08:00</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s10_560.webp" alt="slide at 09:20"><div class="ts">09:20</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s11_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s12_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s13_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s14_660.webp" alt="slide at 11:00"><div class="ts">11:00</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s15_720.webp" alt="slide at 12:00"><div class="ts">12:00</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s16_780.webp" alt="slide at 13:00"><div class="ts">13:00</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s17_810.webp" alt="slide at 13:30"><div class="ts">13:30</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s18_830.webp" alt="slide at 13:50"><div class="ts">13:50</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s19_850.webp" alt="slide at 14:10"><div class="ts">14:10</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s20_860.webp" alt="slide at 14:20"><div class="ts">14:20</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/mcp-apps-vscode-interactive-uis/s21_940.webp" alt="slide at 15:40"><div class="ts">15:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>MCP is an open protocol, created by Anthropic, that standardizes how applications provide context to LLMs.</td><td class="tt">01:03</td></tr><tr><td class="st">asserts</td><td>MCP servers are lightweight programs that expose specific capabilities through MCP to provide context.</td><td class="tt">02:38</td></tr><tr><td class="st">warns</td><td>Installing a random MCP server found online can introduce security issues from malicious code.</td><td class="tt">03:08</td></tr><tr><td class="st">asserts</td><td>MCP apps let server tools return rich interactive components that render directly inside the chat.</td><td class="tt">04:12</td></tr><tr><td class="st">asserts</td><td>The host fetches HTML from a server-referenced UI resource and renders the app inside a sandboxed iframe.</td><td class="tt">05:45</td></tr><tr><td class="st">asserts</td><td>MCP apps could let a user complete a full checkout inside the chat interface instead of being sent to a browser.</td><td class="tt">07:18</td></tr><tr><td class="st">asserts</td><td>Shopify is building MCP apps that keep the in-chat checkout UI consistent with its own brand experience.</td><td class="tt">07:48</td></tr><tr><td class="st">recommends</td><td>MCP apps render in an iframe specifically to prevent the app from touching host settings or external APIs.</td><td class="tt">14:27</td></tr><tr><td class="st">asserts</td><td>The demo&#x27;s MCP server exposes a single tool that profiles the running application.</td><td class="tt">12:55</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/mcp-apps-vscode-interactive-uis/s00_30.webp", "mmss": "00:30", "yt": "https://youtu.be/_xIwFcnHqp4?t=30"}, {"src": "img/mcp-apps-vscode-interactive-uis/s01_90.webp", "mmss": "01:30", "yt": "https://youtu.be/_xIwFcnHqp4?t=90"}, {"src": "img/mcp-apps-vscode-interactive-uis/s02_160.webp", "mmss": "02:40", "yt": "https://youtu.be/_xIwFcnHqp4?t=160"}, {"src": "img/mcp-apps-vscode-interactive-uis/s03_230.webp", "mmss": "03:50", "yt": "https://youtu.be/_xIwFcnHqp4?t=230"}, {"src": "img/mcp-apps-vscode-interactive-uis/s04_270.webp", "mmss": "04:30", "yt": "https://youtu.be/_xIwFcnHqp4?t=270"}, {"src": "img/mcp-apps-vscode-interactive-uis/s05_300.webp", "mmss": "05:00", "yt": "https://youtu.be/_xIwFcnHqp4?t=300"}, {"src": "img/mcp-apps-vscode-interactive-uis/s06_360.webp", "mmss": "06:00", "yt": "https://youtu.be/_xIwFcnHqp4?t=360"}, {"src": "img/mcp-apps-vscode-interactive-uis/s07_380.webp", "mmss": "06:20", "yt": "https://youtu.be/_xIwFcnHqp4?t=380"}, {"src": "img/mcp-apps-vscode-interactive-uis/s08_470.webp", "mmss": "07:50", "yt": "https://youtu.be/_xIwFcnHqp4?t=470"}, {"src": "img/mcp-apps-vscode-interactive-uis/s09_480.webp", "mmss": "08:00", "yt": "https://youtu.be/_xIwFcnHqp4?t=480"}, {"src": "img/mcp-apps-vscode-interactive-uis/s10_560.webp", "mmss": "09:20", "yt": "https://youtu.be/_xIwFcnHqp4?t=560"}, {"src": "img/mcp-apps-vscode-interactive-uis/s11_570.webp", "mmss": "09:30", "yt": "https://youtu.be/_xIwFcnHqp4?t=570"}, {"src": "img/mcp-apps-vscode-interactive-uis/s12_580.webp", "mmss": "09:40", "yt": "https://youtu.be/_xIwFcnHqp4?t=580"}, {"src": "img/mcp-apps-vscode-interactive-uis/s13_600.webp", "mmss": "10:00", "yt": "https://youtu.be/_xIwFcnHqp4?t=600"}, {"src": "img/mcp-apps-vscode-interactive-uis/s14_660.webp", "mmss": "11:00", "yt": "https://youtu.be/_xIwFcnHqp4?t=660"}, {"src": "img/mcp-apps-vscode-interactive-uis/s15_720.webp", "mmss": "12:00", "yt": "https://youtu.be/_xIwFcnHqp4?t=720"}, {"src": "img/mcp-apps-vscode-interactive-uis/s16_780.webp", "mmss": "13:00", "yt": "https://youtu.be/_xIwFcnHqp4?t=780"}, {"src": "img/mcp-apps-vscode-interactive-uis/s17_810.webp", "mmss": "13:30", "yt": "https://youtu.be/_xIwFcnHqp4?t=810"}, {"src": "img/mcp-apps-vscode-interactive-uis/s18_830.webp", "mmss": "13:50", "yt": "https://youtu.be/_xIwFcnHqp4?t=830"}, {"src": "img/mcp-apps-vscode-interactive-uis/s19_850.webp", "mmss": "14:10", "yt": "https://youtu.be/_xIwFcnHqp4?t=850"}, {"src": "img/mcp-apps-vscode-interactive-uis/s20_860.webp", "mmss": "14:20", "yt": "https://youtu.be/_xIwFcnHqp4?t=860"}, {"src": "img/mcp-apps-vscode-interactive-uis/s21_940.webp", "mmss": "15:40", "yt": "https://youtu.be/_xIwFcnHqp4?t=940"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "_xIwFcnHqp4", "slug": "mcp-apps-vscode-interactive-uis", "title": "Building Interactive UIs in VS Code with MCP Apps", "speaker": "Marlene Mhangami & Liam Hampton", "company": "GitHub / Microsoft", "themes": ["mcp-protocols", "product-ux", "coding-agents"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Server tool to sandboxed UI (ours)", "lanes": ["MCP Server", "Host (VS Code)", "Sandboxed iframe"], "nodes": [{"id": "server_tool", "label": "Profile tool", "sub": "one tool: profile the running Go app", "lane": 0, "kind": "system", "claim": "c9", "t": 775}, {"id": "ui_resource", "label": "UI resource ref", "sub": "tool returns a resource ref to server HTML", "lane": 0, "kind": "store", "claim": "c4", "t": 252}, {"id": "host_fetch", "label": "Host fetches HTML", "sub": "VS Code fetches the HTML from that ref", "lane": 1, "kind": "system", "claim": "c5", "t": 345}, {"id": "callback", "label": "Callback to server", "sub": "app calls back for live, two-way data", "lane": 1, "kind": "system", "claim": "c5", "t": 345}, {"id": "iframe", "label": "Sandboxed iframe", "sub": "host renders the app inside a sandboxed iframe", "lane": 2, "kind": "system", "claim": "c5", "t": 345}, {"id": "flamegraph", "label": "Flame graph app", "sub": "React app shows Go pprof profile as flame graph", "lane": 2, "kind": "system", "claim": "c9", "t": 775}, {"id": "sandbox_block", "label": "No settings/API access", "sub": "blocked from VS Code settings and external APIs", "lane": 2, "kind": "external", "claim": "c8", "t": 867}], "edges": [{"from": "server_tool", "to": "ui_resource", "label": "returns", "kind": "flow"}, {"from": "ui_resource", "to": "host_fetch", "label": "referenced", "kind": "data"}, {"from": "host_fetch", "to": "iframe", "label": "renders", "kind": "flow"}, {"from": "iframe", "to": "flamegraph", "label": "displays", "kind": "flow"}, {"from": "flamegraph", "to": "callback", "label": "requests data", "kind": "flow"}, {"from": "callback", "to": "server_tool", "label": "live update", "kind": "data"}, {"from": "iframe", "to": "sandbox_block", "label": "restricted by", "kind": "flow"}], "caption": "The demo's flame-graph app follows this same resource-ref-then-iframe path; the callback loop is our inference from the speakers' description of live, two-way interaction (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "MCP definition", "text": "MCP is an open protocol, created by Anthropic, that standardizes how applications provide context to LLMs.", "quote": "MCP, of course, is an open protocol that standardizes how applications provide context to LLMs", "t": 63}, {"id": "c2", "stance": "asserts", "topic": "servers expose capabilities", "text": "MCP servers are lightweight programs that expose specific capabilities through MCP to provide context.", "quote": "these are going to actually lightweight programs that expose specific capabilities through MCP to provide that context", "t": 158}, {"id": "c3", "stance": "warns", "topic": "risk of random MCP servers", "text": "Installing a random MCP server found online can introduce security issues from malicious code.", "quote": "sometimes you can have some security issues if you just go on the internet and pick a random server, it can have malicious stuff in it", "t": 188}, {"id": "c4", "stance": "asserts", "topic": "MCP apps definition", "text": "MCP apps let server tools return rich interactive components that render directly inside the chat.", "quote": "MCP apps let server tools return rich interactive components that render directly in the chat", "t": 252}, {"id": "c5", "stance": "asserts", "topic": "how MCP apps render", "text": "The host fetches HTML from a server-referenced UI resource and renders the app inside a sandboxed iframe.", "quote": "the host, which is VS Code, is going to fetch the HTML from that UI reference that was referenced from the server, and then the host is going to render the app inside a sandboxed iframe", "t": 345}, {"id": "c6", "stance": "asserts", "topic": "e-commerce use case", "text": "MCP apps could let a user complete a full checkout inside the chat interface instead of being sent to a browser.", "quote": "I think this is a really great example where a user maybe in one case would want to be able to actually buy something in the chat UI", "t": 438}, {"id": "c7", "stance": "asserts", "topic": "Shopify brand consistency", "text": "Shopify is building MCP apps that keep the in-chat checkout UI consistent with its own brand experience.", "quote": "they're also focusing on keeping the brand experience of a company the same as if you were on the company's website", "t": 468}, {"id": "c8", "stance": "recommends", "topic": "iframe sandboxing rationale", "text": "MCP apps render in an iframe specifically to prevent the app from touching host settings or external APIs.", "quote": "The reason we're doing this in an iframe or the why the iframe is the same reason that you put a hamster in a cage, right? If you don't let it loose in a room, it's just going to chew things up", "t": 867}, {"id": "c9", "stance": "asserts", "topic": "demo tool setup", "text": "The demo's MCP server exposes a single tool that profiles the running application.", "quote": "I have it installed here, and there is one tool for it. So, profile the app", "t": 775}]}</script>
+</body></html>

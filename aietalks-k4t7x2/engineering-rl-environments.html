@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Let LLMs Wander: Engineering RL Environments &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/71V3fTaUp2Q" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 40 min</span><span class="ln"></span></div>
+<h1 class="lede">Let LLMs Wander: Engineering RL Environments</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Stefano Fiorucci</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/71V3fTaUp2Q" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/71V3fTaUp2Q</a> &middot; 40 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Post-training</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Open source</span></div>
+<p class="deck" style="font-size:15px">Gives a concrete, reproducible recipe (Verifiers library + SFT warm-up + GRPO/CISPO RL) and named failure modes (batch size instability, opponent-implementation bias) for building a task-specific RL environment to specialize a small open...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>DeepSeek and MiniMax technical reports describe using thousands of RL environments to scale model performance; RLVR differs from SFT by letting the model explore trajectories from its own pre-training rather than imitate curated examples (c1, c2, c3).</li><li>Using the open-source Verifiers library, a small open model (LFM-2) was SFT-warmed-up on synthetic data then RL-trained into a tic-tac-toe player that draws 85% of games against an optimal opponent, with invalid moves dropped to near zero (c6, c7).</li><li>Two named failure modes: batch sizes below ~256 caused unstable training and model collapse, and an unnoticed tie-breaking bias in the minimax opponent implementation let the model memorize one opponent&#x27;s pattern instead of learning general play (c4, c5).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">SFT WARM-UP INTO GRPO/CISPO RL LOOP (OURS, FROM THE TALK)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 893.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- lfm2 -->
+<g id="node1" class="node">
+<title>lfm2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="193.17,-298.87 0,-298.87 0,-262.59 193.17,-262.59 193.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="51.96" y="-280.78" font-family="Geist Mono" font-size="11.00">LFM&#45;2 base model</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">small open instruct model, weak at valid moves</text>
+</g>
+<!-- sft -->
+<g id="node3" class="node">
+<title>sft</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="317.04,-211.34 90.12,-211.34 90.12,-175.06 317.04,-175.06 317.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="170.96" y="-193.25" font-family="Geist Mono" font-size="11.00">SFT warm&#45;up</text>
+<text xml:space="preserve" text-anchor="start" x="103.08" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">teaches move format and syntax, few minutes on 1 GPU</text>
+</g>
+<!-- lfm2&#45;&gt;sft -->
+<g id="edge2" class="edge">
+<title>lfm2&#45;&gt;sft</title>
+<path fill="none" stroke="#c8501f" d="M118.76,-262.01C135.11,-248.93 157.5,-231.04 175.17,-216.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="176.32,-219.13 180.26,-212.84 173.26,-215.3 176.32,-219.13"/>
+<text xml:space="preserve" text-anchor="middle" x="181.62" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">warm&#45;started</text>
+</g>
+<!-- gpt5 -->
+<g id="node2" class="node">
+<title>gpt5</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="407.79,-298.87 215.38,-298.87 215.38,-262.59 407.79,-262.59 407.79,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="285.33" y="-280.78" font-family="Geist Mono" font-size="11.00">GPT&#45;5 mini</text>
+<text xml:space="preserve" text-anchor="start" x="228.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">generates 200 synthetic games, losses filtered</text>
+</g>
+<!-- gpt5&#45;&gt;sft -->
+<g id="edge1" class="edge">
+<title>gpt5&#45;&gt;sft</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M289.21,-262.01C272.7,-248.93 250.1,-231.04 232.27,-216.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="234.13,-215.26 227.12,-212.84 231.09,-219.11 234.13,-215.26"/>
+<text xml:space="preserve" text-anchor="middle" x="290.68" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">synthetic data</text>
+</g>
+<!-- grpo -->
+<g id="node5" class="node">
+<title>grpo</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="697.05,-123.81 506.13,-123.81 506.13,-87.53 697.05,-87.53 697.05,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="562.59" y="-105.72" font-family="Geist Mono" font-size="11.00">GRPO/CISPO RL</text>
+<text xml:space="preserve" text-anchor="start" x="519.09" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">compares grouped rollouts vs average reward</text>
+</g>
+<!-- sft&#45;&gt;grpo -->
+<g id="edge3" class="edge">
+<title>sft&#45;&gt;grpo</title>
+<path fill="none" stroke="#c8501f" d="M285.76,-174.4C328.12,-165.23 380.61,-153.9 427.58,-143.81 454.27,-138.08 483.26,-131.88 509.79,-126.22"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="510.13,-128.65 516.46,-124.8 509.1,-123.86 510.13,-128.65"/>
+<text xml:space="preserve" text-anchor="middle" x="468.08" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">format&#45;trained model</text>
+</g>
+<!-- verifenv -->
+<g id="node4" class="node">
+<title>verifenv</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="548.04,-211.34 339.12,-211.34 339.12,-175.06 548.04,-175.06 548.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="385.08" y="-193.25" font-family="Geist Mono" font-size="11.00">Verifiers Tic&#45;Tac&#45;Toe env</text>
+<text xml:space="preserve" text-anchor="start" x="352.08" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">minimax opponent, controllable random&#45;move prob</text>
+</g>
+<!-- verifenv&#45;&gt;grpo -->
+<g id="edge4" class="edge">
+<title>verifenv&#45;&gt;grpo</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M476.32,-174.48C501.11,-161.06 535.28,-142.56 561.67,-128.28"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="562.57,-130.58 567.56,-125.09 560.24,-126.27 562.57,-130.58"/>
+<text xml:space="preserve" text-anchor="middle" x="564.67" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">rollouts + reward</text>
+</g>
+<!-- result -->
+<g id="node8" class="node">
+<title>result</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="859.05,-36.28 650.12,-36.28 650.12,0 859.05,0 859.05,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="702.84" y="-18.19" font-family="Geist Mono" font-size="11.00">85% draw vs optimal</text>
+<text xml:space="preserve" text-anchor="start" x="663.09" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">dominates random players, invalid moves near zero</text>
+</g>
+<!-- grpo&#45;&gt;result -->
+<g id="edge5" class="edge">
+<title>grpo&#45;&gt;result</title>
+<path fill="none" stroke="#c8501f" d="M633.29,-86.95C657.19,-73.59 690.09,-55.19 715.6,-40.93"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="716.69,-43.13 721.6,-37.58 714.3,-38.85 716.69,-43.13"/>
+<text xml:space="preserve" text-anchor="middle" x="713.5" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">trained model</text>
+</g>
+<!-- batch -->
+<g id="node6" class="node">
+<title>batch</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="792.8,-211.34 570.38,-211.34 570.38,-175.06 792.8,-175.06 792.8,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="641.84" y="-193.25" font-family="Geist Mono" font-size="11.00">Batch size &lt;256</text>
+<text xml:space="preserve" text-anchor="start" x="583.34" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">too few games/opponents per update, causes collapse</text>
+</g>
+<!-- batch&#45;&gt;grpo -->
+<g id="edge6" class="edge">
+<title>batch&#45;&gt;grpo</title>
+<path fill="none" stroke="#c8501f" d="M665.01,-174.48C653.1,-161.75 636.92,-144.45 623.88,-130.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="625.74,-128.91 619.17,-125.47 622.17,-132.26 625.74,-128.91"/>
+<text xml:space="preserve" text-anchor="middle" x="668.12" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">destabilizes</text>
+</g>
+<!-- bias -->
+<g id="node7" class="node">
+<title>bias</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="824.42,-298.87 602.75,-298.87 602.75,-262.59 824.42,-262.59 824.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="655.09" y="-280.78" font-family="Geist Mono" font-size="11.00">Opponent tie&#45;break bias</text>
+<text xml:space="preserve" text-anchor="start" x="615.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">minimax always picks first free cell, model memorized it</text>
+</g>
+<!-- bias&#45;&gt;verifenv -->
+<g id="edge7" class="edge">
+<title>bias&#45;&gt;verifenv</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M657.31,-261.9C613.72,-248.09 553.29,-228.95 507.81,-214.54"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="508.64,-212.24 501.23,-212.46 507.16,-216.91 508.64,-212.24"/>
+<text xml:space="preserve" text-anchor="middle" x="622.13" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">hidden pattern</text>
+</g>
+<!-- bias&#45;&gt;result -->
+<g id="edge8" class="edge">
+<title>bias&#45;&gt;result</title>
+<path fill="none" stroke="#c8501f" d="M750.68,-262.14C770.27,-250.67 792.51,-233.67 803.59,-211.34 831.42,-155.23 794.97,-81.84 771.53,-44.04"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="773.67,-42.84 767.85,-38.25 769.54,-45.47 773.67,-42.84"/>
+<text xml:space="preserve" text-anchor="middle" x="849.18" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">inflates benchmark</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Our read of the recipe: a small open model is SFT-warmed on GPT-5-mini-generated games, then RL-trained inside a custom Verifiers environment, with two named pitfalls (batch size, opponent bias) sitting on the loop that produced the 85% result (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>RL environments are scaling frontier-lab training</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/engineering-rl-environments/s01_60.webp" alt="slide at 01:00"></a><div class="slidecap">Slide at 01:00 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s02_80.webp" alt="slide at 01:20"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s03_120.webp" alt="slide at 02:00"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s04_200.webp" alt="slide at 03:20"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s05_260.webp" alt="slide at 04:20"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s06_280.webp" alt="slide at 04:40"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s07_310.webp" alt="slide at 05:10"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s08_340.webp" alt="slide at 05:40"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s09_390.webp" alt="slide at 06:30"></a></div></div>
+<div class="textcol"><h2>RL environments are scaling frontier-lab training</h2><ul class="takeaways"><li>The talk opens by noting that RL environments have become a funded area with startups working directly with major AI labs, citing DeepSeek and MiniMax technical reports that describe using thousands of reinforcement learning environments to improve model performance on hard tasks.</li></ul><div class="quote"><p>&ldquo;Recent technical reports by DeepSeek and MiniMax showed that they are effectively using thousands of reinforcement learning environments&rdquo;</p><span class="at">said at 01:02</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>RLVR vs. supervised fine-tuning: exploring instead of imitating</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="9" class="sl"><img loading="lazy" class="main" src="img/engineering-rl-environments/s09_390.webp" alt="slide at 06:30"></a><div class="slidecap">Slide at 06:30 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s10_470.webp" alt="slide at 07:50"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s11_580.webp" alt="slide at 09:40"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s12_600.webp" alt="slide at 10:00"></a></div></div>
+<div class="textcol"><h2>RLVR vs. supervised fine-tuning: exploring instead of imitating</h2><ul class="takeaways"><li>In reinforcement learning with verifiable rewards (RLVR), a model generates a reasoning trace and answer that gets checked against a known-correct answer, with the outcome as the training signal.</li><li>This is presented as fundamentally different from SFT: SFT completions stay close to the distribution of curated examples, while RLVR lets the model explore trajectories from its own pre-training and learns to favor whichever ones maximize reward.</li></ul><div class="quote"><p>&ldquo;The answer is then checked against the known correct answer. The reward is used for reinforcement learning training.&rdquo;</p><span class="at">said at 06:49</span></div><div class="quote"><p>&ldquo;the model explores different trajectories from its pre-training and learns to favor the ones that maximize rewards&rdquo;</p><span class="at">said at 07:22</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Verifiers: environments as installable Python packages</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="12" class="sl"><img loading="lazy" class="main" src="img/engineering-rl-environments/s12_600.webp" alt="slide at 10:00"></a><div class="slidecap">Slide at 10:00 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s14_700.webp" alt="slide at 11:40"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s15_780.webp" alt="slide at 13:00"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s17_840.webp" alt="slide at 14:00"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s18_860.webp" alt="slide at 14:20"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s19_960.webp" alt="slide at 16:00"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s20_1010.webp" alt="slide at 16:50"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s21_1070.webp" alt="slide at 17:50"></a><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s22_1120.webp" alt="slide at 18:40"></a></div></div>
+<div class="textcol"><h2>Verifiers: environments as installable Python packages</h2><ul class="takeaways"><li>Verifiers, an open-source library from Prime Intellect, provides base classes (single-turn, multi-turn, tool, MCP, stateful-tool environments) so that RL environments can be built, evaluated, and trained as distributable Python packages rather than one-off scripts tied to a specific training stack.</li></ul><div class="quote"><p>&ldquo;Environments are Python packages that can be easily installed and distributed.&rdquo;</p><span class="at">said at 10:28</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Case study: turning a small model into a tic-tac-toe master</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="37" class="sl"><img loading="lazy" class="main" src="img/engineering-rl-environments/s37_1900.webp" alt="slide at 31:40"></a><div class="slidecap">Slide at 31:40 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Case study: turning a small model into a tic-tac-toe master</h2><ul class="takeaways"><li>Starting from LFM-2 (a small open instruct model from Liquid AI that initially struggled to follow move format), the speaker generated synthetic SFT data with GPT-5 mini, ran a warm-up SFT pass, then trained with GRPO/CISPO reinforcement learning using a custom tic-tac-toe environment with a controllable-skill opponent.</li><li>The resulting model draws 85% of games against an optimal minimax opponent and rarely makes invalid moves.</li></ul><div class="quote"><p>&ldquo;It dominates random players and draws 85% of the time against an optimal opponent.&rdquo;</p><span class="at">said at 31:30</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Failure modes and practical lessons</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="35" class="sl"><img loading="lazy" class="main" src="img/engineering-rl-environments/s35_1840.webp" alt="slide at 30:40"></a><div class="slidecap">Slide at 30:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="36" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s36_1870.webp" alt="slide at 31:10"></a><a href="#" data-slide="37" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s37_1900.webp" alt="slide at 31:40"></a><a href="#" data-slide="38" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s38_1940.webp" alt="slide at 32:20"></a><a href="#" data-slide="39" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s39_2010.webp" alt="slide at 33:30"></a><a href="#" data-slide="41" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s41_2060.webp" alt="slide at 34:20"></a><a href="#" data-slide="42" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s42_2080.webp" alt="slide at 34:40"></a><a href="#" data-slide="43" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s43_2100.webp" alt="slide at 35:00"></a><a href="#" data-slide="44" class="sl"><img loading="lazy" class="thumb" src="img/engineering-rl-environments/s44_2120.webp" alt="slide at 35:20"></a></div></div>
+<div class="textcol"><h2>Failure modes and practical lessons</h2><ul class="takeaways"><li>Two specific failures are named: training with a batch size below roughly 256 caused reward instability and model collapse because the model was learning from too few games and opponent types per update; and using a minimax implementation with a hidden tie-breaking bias (always picking the first free cell among equally-scored moves) led the model to memorize that one opponent&#x27;s pattern rather than learn general tic-tac-toe strategy, producing misleadingly good benchmark numbers.</li></ul><div class="quote"><p>&ldquo;If this number is low, this means learning to play from a very small number of matches and opponent types at once.&rdquo;</p><span class="at">said at 30:25</span></div><div class="quote"><p>&ldquo;I got great benchmark results, but then playing against the model, I realized that it was clueless.&rdquo;</p><span class="at">said at 36:16</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The talk is explicit that this is a from-scratch, single-engineer build (not a lab-scale RL pipeline), which is the actual pitch: the recipe and named pitfalls are meant to be reproducible on a single or dual-GPU setup, not just describe what large labs are doing.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/engineering-rl-environments/s00_0.webp" alt="slide at 00:00"><div class="ts">00:00</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/engineering-rl-environments/s01_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/engineering-rl-environments/s02_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/engineering-rl-environments/s03_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/engineering-rl-environments/s04_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/engineering-rl-environments/s05_260.webp" alt="slide at 04:20"><div class="ts">04:20</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/engineering-rl-environments/s06_280.webp" alt="slide at 04:40"><div class="ts">04:40</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/engineering-rl-environments/s07_310.webp" alt="slide at 05:10"><div class="ts">05:10</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/engineering-rl-environments/s08_340.webp" alt="slide at 05:40"><div class="ts">05:40</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/engineering-rl-environments/s09_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/engineering-rl-environments/s10_470.webp" alt="slide at 07:50"><div class="ts">07:50</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/engineering-rl-environments/s11_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/engineering-rl-environments/s12_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/engineering-rl-environments/s13_620.webp" alt="slide at 10:20"><div class="ts">10:20</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/engineering-rl-environments/s14_700.webp" alt="slide at 11:40"><div class="ts">11:40</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/engineering-rl-environments/s15_780.webp" alt="slide at 13:00"><div class="ts">13:00</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/engineering-rl-environments/s16_810.webp" alt="slide at 13:30"><div class="ts">13:30</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/engineering-rl-environments/s17_840.webp" alt="slide at 14:00"><div class="ts">14:00</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/engineering-rl-environments/s18_860.webp" alt="slide at 14:20"><div class="ts">14:20</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/engineering-rl-environments/s19_960.webp" alt="slide at 16:00"><div class="ts">16:00</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/engineering-rl-environments/s20_1010.webp" alt="slide at 16:50"><div class="ts">16:50</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/engineering-rl-environments/s21_1070.webp" alt="slide at 17:50"><div class="ts">17:50</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/engineering-rl-environments/s22_1120.webp" alt="slide at 18:40"><div class="ts">18:40</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/engineering-rl-environments/s23_1140.webp" alt="slide at 19:00"><div class="ts">19:00</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/engineering-rl-environments/s24_1160.webp" alt="slide at 19:20"><div class="ts">19:20</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/engineering-rl-environments/s25_1190.webp" alt="slide at 19:50"><div class="ts">19:50</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/engineering-rl-environments/s26_1220.webp" alt="slide at 20:20"><div class="ts">20:20</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/engineering-rl-environments/s27_1250.webp" alt="slide at 20:50"><div class="ts">20:50</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/engineering-rl-environments/s28_1530.webp" alt="slide at 25:30"><div class="ts">25:30</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/engineering-rl-environments/s29_1580.webp" alt="slide at 26:20"><div class="ts">26:20</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/engineering-rl-environments/s30_1620.webp" alt="slide at 27:00"><div class="ts">27:00</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/engineering-rl-environments/s31_1650.webp" alt="slide at 27:30"><div class="ts">27:30</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/engineering-rl-environments/s32_1670.webp" alt="slide at 27:50"><div class="ts">27:50</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/engineering-rl-environments/s33_1690.webp" alt="slide at 28:10"><div class="ts">28:10</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/engineering-rl-environments/s34_1750.webp" alt="slide at 29:10"><div class="ts">29:10</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/engineering-rl-environments/s35_1840.webp" alt="slide at 30:40"><div class="ts">30:40</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/engineering-rl-environments/s36_1870.webp" alt="slide at 31:10"><div class="ts">31:10</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/engineering-rl-environments/s37_1900.webp" alt="slide at 31:40"><div class="ts">31:40</div></a><a href="#" data-slide="38"><img loading="lazy" src="img/engineering-rl-environments/s38_1940.webp" alt="slide at 32:20"><div class="ts">32:20</div></a><a href="#" data-slide="39"><img loading="lazy" src="img/engineering-rl-environments/s39_2010.webp" alt="slide at 33:30"><div class="ts">33:30</div></a><a href="#" data-slide="40"><img loading="lazy" src="img/engineering-rl-environments/s40_2040.webp" alt="slide at 34:00"><div class="ts">34:00</div></a><a href="#" data-slide="41"><img loading="lazy" src="img/engineering-rl-environments/s41_2060.webp" alt="slide at 34:20"><div class="ts">34:20</div></a><a href="#" data-slide="42"><img loading="lazy" src="img/engineering-rl-environments/s42_2080.webp" alt="slide at 34:40"><div class="ts">34:40</div></a><a href="#" data-slide="43"><img loading="lazy" src="img/engineering-rl-environments/s43_2100.webp" alt="slide at 35:00"><div class="ts">35:00</div></a><a href="#" data-slide="44"><img loading="lazy" src="img/engineering-rl-environments/s44_2120.webp" alt="slide at 35:20"><div class="ts">35:20</div></a><a href="#" data-slide="45"><img loading="lazy" src="img/engineering-rl-environments/s45_2310.webp" alt="slide at 38:30"><div class="ts">38:30</div></a><a href="#" data-slide="46"><img loading="lazy" src="img/engineering-rl-environments/s46_2370.webp" alt="slide at 39:30"><div class="ts">39:30</div></a><a href="#" data-slide="47"><img loading="lazy" src="img/engineering-rl-environments/s47_2410.webp" alt="slide at 40:10"><div class="ts">40:10</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Technical reports from DeepSeek and MiniMax describe using thousands of reinforcement learning environments to improve model performance on challenging tasks.</td><td class="tt">01:02</td></tr><tr><td class="st">asserts</td><td>In reinforcement learning with verifiable rewards, a model&#x27;s answer is checked against a known correct answer and that check produces the training reward.</td><td class="tt">06:49</td></tr><tr><td class="st">asserts</td><td>Unlike SFT, which keeps model outputs close to curated examples, RLVR lets the model explore trajectories from its own pre-training and learn to favor whichever maximize reward.</td><td class="tt">07:22</td></tr><tr><td class="st">warns</td><td>A batch size that is too low means the model learns from too few games and opponent types per update, which likely leads to suboptimal strategies and unstable training.</td><td class="tt">30:25</td></tr><tr><td class="st">warns</td><td>A minimax opponent implementation with a hidden tie-breaking bias produced great benchmark scores but a model that was actually clueless when played against directly, because it had memorized one specific opponent pattern.</td><td class="tt">36:16</td></tr><tr><td class="st">asserts</td><td>The RL-trained small model dominates random opponents and draws 85% of games against an optimal opponent, with invalid moves dropped to near zero.</td><td class="tt">31:30</td></tr><tr><td class="st">asserts</td><td>Verifiers environments are built as Python packages that can be easily installed and distributed rather than tied to one training stack.</td><td class="tt">10:28</td></tr><tr><td class="st">recommends</td><td>Because reinforcement learning progress can look flat before it improves, the recommendation is to avoid over-monitoring training runs and risk stopping them prematurely.</td><td class="tt">38:21</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/engineering-rl-environments/s00_0.webp", "mmss": "00:00", "yt": "https://youtu.be/71V3fTaUp2Q?t=0"}, {"src": "img/engineering-rl-environments/s01_60.webp", "mmss": "01:00", "yt": "https://youtu.be/71V3fTaUp2Q?t=60"}, {"src": "img/engineering-rl-environments/s02_80.webp", "mmss": "01:20", "yt": "https://youtu.be/71V3fTaUp2Q?t=80"}, {"src": "img/engineering-rl-environments/s03_120.webp", "mmss": "02:00", "yt": "https://youtu.be/71V3fTaUp2Q?t=120"}, {"src": "img/engineering-rl-environments/s04_200.webp", "mmss": "03:20", "yt": "https://youtu.be/71V3fTaUp2Q?t=200"}, {"src": "img/engineering-rl-environments/s05_260.webp", "mmss": "04:20", "yt": "https://youtu.be/71V3fTaUp2Q?t=260"}, {"src": "img/engineering-rl-environments/s06_280.webp", "mmss": "04:40", "yt": "https://youtu.be/71V3fTaUp2Q?t=280"}, {"src": "img/engineering-rl-environments/s07_310.webp", "mmss": "05:10", "yt": "https://youtu.be/71V3fTaUp2Q?t=310"}, {"src": "img/engineering-rl-environments/s08_340.webp", "mmss": "05:40", "yt": "https://youtu.be/71V3fTaUp2Q?t=340"}, {"src": "img/engineering-rl-environments/s09_390.webp", "mmss": "06:30", "yt": "https://youtu.be/71V3fTaUp2Q?t=390"}, {"src": "img/engineering-rl-environments/s10_470.webp", "mmss": "07:50", "yt": "https://youtu.be/71V3fTaUp2Q?t=470"}, {"src": "img/engineering-rl-environments/s11_580.webp", "mmss": "09:40", "yt": "https://youtu.be/71V3fTaUp2Q?t=580"}, {"src": "img/engineering-rl-environments/s12_600.webp", "mmss": "10:00", "yt": "https://youtu.be/71V3fTaUp2Q?t=600"}, {"src": "img/engineering-rl-environments/s13_620.webp", "mmss": "10:20", "yt": "https://youtu.be/71V3fTaUp2Q?t=620"}, {"src": "img/engineering-rl-environments/s14_700.webp", "mmss": "11:40", "yt": "https://youtu.be/71V3fTaUp2Q?t=700"}, {"src": "img/engineering-rl-environments/s15_780.webp", "mmss": "13:00", "yt": "https://youtu.be/71V3fTaUp2Q?t=780"}, {"src": "img/engineering-rl-environments/s16_810.webp", "mmss": "13:30", "yt": "https://youtu.be/71V3fTaUp2Q?t=810"}, {"src": "img/engineering-rl-environments/s17_840.webp", "mmss": "14:00", "yt": "https://youtu.be/71V3fTaUp2Q?t=840"}, {"src": "img/engineering-rl-environments/s18_860.webp", "mmss": "14:20", "yt": "https://youtu.be/71V3fTaUp2Q?t=860"}, {"src": "img/engineering-rl-environments/s19_960.webp", "mmss": "16:00", "yt": "https://youtu.be/71V3fTaUp2Q?t=960"}, {"src": "img/engineering-rl-environments/s20_1010.webp", "mmss": "16:50", "yt": "https://youtu.be/71V3fTaUp2Q?t=1010"}, {"src": "img/engineering-rl-environments/s21_1070.webp", "mmss": "17:50", "yt": "https://youtu.be/71V3fTaUp2Q?t=1070"}, {"src": "img/engineering-rl-environments/s22_1120.webp", "mmss": "18:40", "yt": "https://youtu.be/71V3fTaUp2Q?t=1120"}, {"src": "img/engineering-rl-environments/s23_1140.webp", "mmss": "19:00", "yt": "https://youtu.be/71V3fTaUp2Q?t=1140"}, {"src": "img/engineering-rl-environments/s24_1160.webp", "mmss": "19:20", "yt": "https://youtu.be/71V3fTaUp2Q?t=1160"}, {"src": "img/engineering-rl-environments/s25_1190.webp", "mmss": "19:50", "yt": "https://youtu.be/71V3fTaUp2Q?t=1190"}, {"src": "img/engineering-rl-environments/s26_1220.webp", "mmss": "20:20", "yt": "https://youtu.be/71V3fTaUp2Q?t=1220"}, {"src": "img/engineering-rl-environments/s27_1250.webp", "mmss": "20:50", "yt": "https://youtu.be/71V3fTaUp2Q?t=1250"}, {"src": "img/engineering-rl-environments/s28_1530.webp", "mmss": "25:30", "yt": "https://youtu.be/71V3fTaUp2Q?t=1530"}, {"src": "img/engineering-rl-environments/s29_1580.webp", "mmss": "26:20", "yt": "https://youtu.be/71V3fTaUp2Q?t=1580"}, {"src": "img/engineering-rl-environments/s30_1620.webp", "mmss": "27:00", "yt": "https://youtu.be/71V3fTaUp2Q?t=1620"}, {"src": "img/engineering-rl-environments/s31_1650.webp", "mmss": "27:30", "yt": "https://youtu.be/71V3fTaUp2Q?t=1650"}, {"src": "img/engineering-rl-environments/s32_1670.webp", "mmss": "27:50", "yt": "https://youtu.be/71V3fTaUp2Q?t=1670"}, {"src": "img/engineering-rl-environments/s33_1690.webp", "mmss": "28:10", "yt": "https://youtu.be/71V3fTaUp2Q?t=1690"}, {"src": "img/engineering-rl-environments/s34_1750.webp", "mmss": "29:10", "yt": "https://youtu.be/71V3fTaUp2Q?t=1750"}, {"src": "img/engineering-rl-environments/s35_1840.webp", "mmss": "30:40", "yt": "https://youtu.be/71V3fTaUp2Q?t=1840"}, {"src": "img/engineering-rl-environments/s36_1870.webp", "mmss": "31:10", "yt": "https://youtu.be/71V3fTaUp2Q?t=1870"}, {"src": "img/engineering-rl-environments/s37_1900.webp", "mmss": "31:40", "yt": "https://youtu.be/71V3fTaUp2Q?t=1900"}, {"src": "img/engineering-rl-environments/s38_1940.webp", "mmss": "32:20", "yt": "https://youtu.be/71V3fTaUp2Q?t=1940"}, {"src": "img/engineering-rl-environments/s39_2010.webp", "mmss": "33:30", "yt": "https://youtu.be/71V3fTaUp2Q?t=2010"}, {"src": "img/engineering-rl-environments/s40_2040.webp", "mmss": "34:00", "yt": "https://youtu.be/71V3fTaUp2Q?t=2040"}, {"src": "img/engineering-rl-environments/s41_2060.webp", "mmss": "34:20", "yt": "https://youtu.be/71V3fTaUp2Q?t=2060"}, {"src": "img/engineering-rl-environments/s42_2080.webp", "mmss": "34:40", "yt": "https://youtu.be/71V3fTaUp2Q?t=2080"}, {"src": "img/engineering-rl-environments/s43_2100.webp", "mmss": "35:00", "yt": "https://youtu.be/71V3fTaUp2Q?t=2100"}, {"src": "img/engineering-rl-environments/s44_2120.webp", "mmss": "35:20", "yt": "https://youtu.be/71V3fTaUp2Q?t=2120"}, {"src": "img/engineering-rl-environments/s45_2310.webp", "mmss": "38:30", "yt": "https://youtu.be/71V3fTaUp2Q?t=2310"}, {"src": "img/engineering-rl-environments/s46_2370.webp", "mmss": "39:30", "yt": "https://youtu.be/71V3fTaUp2Q?t=2370"}, {"src": "img/engineering-rl-environments/s47_2410.webp", "mmss": "40:10", "yt": "https://youtu.be/71V3fTaUp2Q?t=2410"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "71V3fTaUp2Q", "slug": "engineering-rl-environments", "title": "Let LLMs Wander: Engineering RL Environments", "speaker": "Stefano Fiorucci", "company": "", "themes": ["post-training", "evals-benchmarks", "open-source"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "SFT warm-up into GRPO/CISPO RL loop (ours, from the talk)", "lanes": ["Warm-up", "RL training loop", "Failure modes & result"], "nodes": [{"id": "lfm2", "label": "LFM-2 base model", "sub": "small open instruct model, weak at valid moves", "lane": 0, "kind": "system", "t": 1573}, {"id": "gpt5", "label": "GPT-5 mini", "sub": "generates 200 synthetic games, losses filtered", "lane": 0, "kind": "external", "t": 1636}, {"id": "sft", "label": "SFT warm-up", "sub": "teaches move format and syntax, few minutes on 1 GPU", "lane": 0, "kind": "system", "t": 1667}, {"id": "verifenv", "label": "Verifiers Tic-Tac-Toe env", "sub": "minimax opponent, controllable random-move prob", "lane": 1, "kind": "system", "claim": "c7", "t": 1288}, {"id": "grpo", "label": "GRPO/CISPO RL", "sub": "compares grouped rollouts vs average reward", "lane": 1, "kind": "system", "t": 1730}, {"id": "batch", "label": "Batch size <256", "sub": "too few games/opponents per update, causes collapse", "lane": 1, "kind": "external", "claim": "c4", "t": 1825}, {"id": "bias", "label": "Opponent tie-break bias", "sub": "minimax always picks first free cell, model memorized it", "lane": 2, "kind": "external", "claim": "c5", "t": 2176}, {"id": "result", "label": "85% draw vs optimal", "sub": "dominates random players, invalid moves near zero", "lane": 2, "kind": "system", "claim": "c6", "t": 1890}], "edges": [{"from": "gpt5", "to": "sft", "label": "synthetic data", "kind": "data"}, {"from": "lfm2", "to": "sft", "label": "warm-started", "kind": "flow"}, {"from": "sft", "to": "grpo", "label": "format-trained model", "kind": "flow"}, {"from": "verifenv", "to": "grpo", "label": "rollouts + reward", "kind": "data"}, {"from": "grpo", "to": "result", "label": "trained model", "kind": "flow"}, {"from": "batch", "to": "grpo", "label": "destabilizes", "kind": "flow"}, {"from": "bias", "to": "verifenv", "label": "hidden pattern", "kind": "data"}, {"from": "bias", "to": "result", "label": "inflates benchmark", "kind": "flow"}], "caption": "Our read of the recipe: a small open model is SFT-warmed on GPT-5-mini-generated games, then RL-trained inside a custom Verifiers environment, with two named pitfalls (batch size, opponent bias) sitting on the loop that produced the 85% result (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "RL environments at frontier labs", "text": "Technical reports from DeepSeek and MiniMax describe using thousands of reinforcement learning environments to improve model performance on challenging tasks.", "quote": "Recent technical reports by DeepSeek and MiniMax showed that they are effectively using thousands of reinforcement learning environments", "t": 62}, {"id": "c2", "stance": "asserts", "topic": "RLVR mechanism", "text": "In reinforcement learning with verifiable rewards, a model's answer is checked against a known correct answer and that check produces the training reward.", "quote": "The answer is then checked against the known correct answer. The reward is used for reinforcement learning training.", "t": 409}, {"id": "c3", "stance": "asserts", "topic": "RLVR vs SFT distribution", "text": "Unlike SFT, which keeps model outputs close to curated examples, RLVR lets the model explore trajectories from its own pre-training and learn to favor whichever maximize reward.", "quote": "the model explores different trajectories from its pre-training and learns to favor the ones that maximize rewards", "t": 442}, {"id": "c4", "stance": "warns", "topic": "batch size and training instability", "text": "A batch size that is too low means the model learns from too few games and opponent types per update, which likely leads to suboptimal strategies and unstable training.", "quote": "If this number is low, this means learning to play from a very small number of matches and opponent types at once.", "t": 1825}, {"id": "c5", "stance": "warns", "topic": "hidden bias in opponent implementation", "text": "A minimax opponent implementation with a hidden tie-breaking bias produced great benchmark scores but a model that was actually clueless when played against directly, because it had memorized one specific opponent pattern.", "quote": "I got great benchmark results, but then playing against the model, I realized that it was clueless.", "t": 2176}, {"id": "c6", "stance": "asserts", "topic": "tic-tac-toe result", "text": "The RL-trained small model dominates random opponents and draws 85% of games against an optimal opponent, with invalid moves dropped to near zero.", "quote": "It dominates random players and draws 85% of the time against an optimal opponent.", "t": 1890}, {"id": "c7", "stance": "asserts", "topic": "Verifiers as distributable packages", "text": "Verifiers environments are built as Python packages that can be easily installed and distributed rather than tied to one training stack.", "quote": "Environments are Python packages that can be easily installed and distributed.", "t": 628}, {"id": "c8", "stance": "recommends", "topic": "patience during RL training", "text": "Because reinforcement learning progress can look flat before it improves, the recommendation is to avoid over-monitoring training runs and risk stopping them prematurely.", "quote": "While a slowly progressing run can be a surprisingly good well given enough time. So, start training and go for a walk.", "t": 2301}]}</script>
+</body></html>

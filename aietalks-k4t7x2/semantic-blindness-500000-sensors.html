@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Semantic Blindness: 500,000 Sensors Confused an LLM &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/EUsPvBeIx70" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 16 min</span><span class="ln"></span></div>
+<h1 class="lede">Semantic Blindness: 500,000 Sensors Confused an LLM</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Raahul Singh &amp; Vanč Levstik &middot; Phaidra</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/EUsPvBeIx70" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/EUsPvBeIx70</a> &middot; 16 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Vertical AI</span><span class="chip hot">Context engineering</span><span class="chip hot">Evals & benchmarks</span></div>
+<p class="deck" style="font-size:15px">Documents a concrete production failure mode -- naive LLM and RAG approaches both collapse when asked to resolve queries against hundreds of thousands of near-identical equipment names in a data center -- and the hierarchical, determinis...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Naive sharded LLM search over equipment names produced horrible recall and hallucinated phantom equipment; the old approach&#x27;s correctness dropped from 80% at 64 GPUs to about 30% at 460,000 GPUs.</li><li>The fix uses an LLM only to plan (produce a structured scope + filter) while a deterministic tree-indexed resolver does exact set operations, restoring 100% correctness across scales and real production systems with zero failures in 66 test cases.</li><li>This cut token cost from 116 million tokens for a single validation pass down to 390,000, and made per-query cost flat (about 9,000 tokens) whether the system has 64 GPUs or 460,000.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">PLAN WITH THE LLM, RESOLVE WITH CODE (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 630.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- query -->
+<g id="node1" class="node">
+<title>query</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="310.29,-386.4 157.62,-386.4 157.62,-350.12 310.29,-350.12 310.29,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="188.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Operator NL query</text>
+<text xml:space="preserve" text-anchor="start" x="170.58" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">e.g. &quot;CH3 something something six&quot;</text>
+</g>
+<!-- vector -->
+<g id="node2" class="node">
+<title>vector</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="139.92,-298.87 0,-298.87 0,-262.59 139.92,-262.59 139.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-280.78" font-family="Geist Mono" font-size="11.00">Vector/semantic search</text>
+<text xml:space="preserve" text-anchor="start" x="18.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">fails on near&#45;identical names</text>
+</g>
+<!-- query&#45;&gt;vector -->
+<g id="edge1" class="edge">
+<title>query&#45;&gt;vector</title>
+<path fill="none" stroke="#c8501f" d="M199.98,-349.54C174.25,-336.12 138.79,-317.62 111.39,-303.34"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="112.58,-301.19 105.24,-300.13 110.31,-305.54 112.58,-301.19"/>
+<text xml:space="preserve" text-anchor="middle" x="178.65" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">naive try</text>
+</g>
+<!-- sharded -->
+<g id="node3" class="node">
+<title>sharded</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="306.17,-298.87 161.75,-298.87 161.75,-262.59 306.17,-262.59 306.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="187.08" y="-280.78" font-family="Geist Mono" font-size="11.00">Sharded LLM listing</text>
+<text xml:space="preserve" text-anchor="start" x="174.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">frequency penalty cuts off output</text>
+</g>
+<!-- query&#45;&gt;sharded -->
+<g id="edge2" class="edge">
+<title>query&#45;&gt;sharded</title>
+<path fill="none" stroke="#c8501f" d="M233.96,-349.54C233.96,-337.5 233.96,-321.37 233.96,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="236.41,-307.94 233.96,-300.94 231.51,-307.94 236.41,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="250.83" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">naive try</text>
+</g>
+<!-- planner -->
+<g id="node5" class="node">
+<title>planner</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="486.17,-298.87 347.75,-298.87 347.75,-262.59 486.17,-262.59 486.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="387.71" y="-280.78" font-family="Geist Mono" font-size="11.00">LLM planner</text>
+<text xml:space="preserve" text-anchor="start" x="360.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">converts query to scope + filter</text>
+</g>
+<!-- query&#45;&gt;planner -->
+<g id="edge4" class="edge">
+<title>query&#45;&gt;planner</title>
+<path fill="none" stroke="#c8501f" d="M271.88,-349.54C300.83,-336.01 340.84,-317.31 371.51,-302.97"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="372.42,-305.25 377.72,-300.07 370.34,-300.81 372.42,-305.25"/>
+<text xml:space="preserve" text-anchor="middle" x="355.54" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">fixed path</text>
+</g>
+<!-- phantom -->
+<g id="node4" class="node">
+<title>phantom</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="311.67,-211.34 146.25,-211.34 146.25,-175.06 311.67,-175.06 311.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="180.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Phantom equipment</text>
+<text xml:space="preserve" text-anchor="start" x="159.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">hallucinated + real equipment dropped</text>
+</g>
+<!-- sharded&#45;&gt;phantom -->
+<g id="edge3" class="edge">
+<title>sharded&#45;&gt;phantom</title>
+<path fill="none" stroke="#c8501f" d="M232.92,-262.01C232.22,-249.97 231.28,-233.84 230.49,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="232.94,-220.26 230.08,-213.41 228.05,-220.54 232.94,-220.26"/>
+<text xml:space="preserve" text-anchor="middle" x="246.38" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">at scale</text>
+</g>
+<!-- tree -->
+<g id="node6" class="node">
+<title>tree</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="532.54,-211.34 333.38,-211.34 333.38,-175.06 532.54,-175.06 532.54,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="377.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Tree&#45;indexed hierarchy</text>
+<text xml:space="preserve" text-anchor="start" x="346.33" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">data center &gt; hall &gt; aisle &gt; row &gt; rack &gt; device</text>
+</g>
+<!-- planner&#45;&gt;tree -->
+<g id="edge5" class="edge">
+<title>planner&#45;&gt;tree</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M420.28,-262.01C422.55,-249.85 425.6,-233.53 428.14,-219.94"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="430.49,-220.72 429.37,-213.39 425.68,-219.82 430.49,-220.72"/>
+<text xml:space="preserve" text-anchor="middle" x="448.42" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">scope+filter</text>
+</g>
+<!-- resolver -->
+<g id="node7" class="node">
+<title>resolver</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="518.29,-123.81 347.62,-123.81 347.62,-87.53 518.29,-87.53 518.29,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="380.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Deterministic resolver</text>
+<text xml:space="preserve" text-anchor="start" x="360.58" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">exact set ops over pre&#45;indexed subtrees</text>
+</g>
+<!-- tree&#45;&gt;resolver -->
+<g id="edge6" class="edge">
+<title>tree&#45;&gt;resolver</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M432.96,-174.48C432.96,-162.44 432.96,-146.31 432.96,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="435.41,-132.88 432.96,-125.88 430.51,-132.88 435.41,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="446.83" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">subtree</text>
+</g>
+<!-- accuracy -->
+<g id="node8" class="node">
+<title>accuracy</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="422.29,-36.28 245.62,-36.28 245.62,0 422.29,0 422.29,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="289.71" y="-18.19" font-family="Geist Mono" font-size="11.00">100% correctness</text>
+<text xml:space="preserve" text-anchor="start" x="258.58" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">held across all scales, 66 cases, 6 systems</text>
+</g>
+<!-- resolver&#45;&gt;accuracy -->
+<g id="edge7" class="edge">
+<title>resolver&#45;&gt;accuracy</title>
+<path fill="none" stroke="#c8501f" d="M412.45,-86.95C397.45,-73.99 376.96,-56.29 360.68,-42.23"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="362.49,-40.55 355.59,-37.83 359.29,-44.26 362.49,-40.55"/>
+<text xml:space="preserve" text-anchor="middle" x="407.01" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">result set</text>
+</g>
+<!-- cost -->
+<g id="node9" class="node">
+<title>cost</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="621.67,-36.28 444.25,-36.28 444.25,0 621.67,0 621.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="496.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Flat query cost</text>
+<text xml:space="preserve" text-anchor="start" x="457.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">~9,000 tokens/query, 64 to 460,000 GPUs</text>
+</g>
+<!-- resolver&#45;&gt;cost -->
+<g id="edge8" class="edge">
+<title>resolver&#45;&gt;cost</title>
+<path fill="none" stroke="#c8501f" d="M453.68,-86.95C468.83,-73.99 489.52,-56.29 505.97,-42.23"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="507.39,-44.23 511.12,-37.82 504.2,-40.51 507.39,-44.23"/>
+<text xml:space="preserve" text-anchor="middle" x="506.57" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">result set</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The naive path throws every query at an LLM or vector index and degrades as equipment count grows; the fixed path only asks the LLM to plan, then lets deterministic tree lookups do the actual resolving (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The problem: near-identical names at massive scale</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/semantic-blindness-500000-sensors/s01_90.webp" alt="slide at 01:30"></a><div class="slidecap">Slide at 01:30 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s02_120.webp" alt="slide at 02:00"></a></div></div>
+<div class="textcol"><h2>The problem: near-identical names at massive scale</h2><ul class="takeaways"><li>Phaidra builds agents that let data center operators query their infrastructure in natural language.</li><li>At gigawatt scale, a facility can have 400,000+ GPUs plus power meters, chillers, and other equipment, and naming conventions vary by customer from simple to cryptic (e.g., &quot;CH3 something something six&quot;).</li><li>This exceeds LLM context windows and defeats naive approaches once systems move past demo scale.</li></ul><div class="quote"><p>&ldquo;at 1 gigawatt scale factories you will see 400,000 plus GPUs and to support those GPUs you have power meters, you have chillers, you have other equipments&rdquo;</p><span class="at">said at 01:33</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Both naive LLM search and vector RAG fail at scale</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/semantic-blindness-500000-sensors/s02_120.webp" alt="slide at 02:00"></a><div class="slidecap">Slide at 02:00 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s03_200.webp" alt="slide at 03:20"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s04_260.webp" alt="slide at 04:20"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s05_310.webp" alt="slide at 05:10"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s06_390.webp" alt="slide at 06:30"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s07_460.webp" alt="slide at 07:40"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s08_520.webp" alt="slide at 08:40"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s09_580.webp" alt="slide at 09:40"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s10_630.webp" alt="slide at 10:30"></a></div></div>
+<div class="textcol"><h2>Both naive LLM search and vector RAG fail at scale</h2><ul class="takeaways"><li>Semantic/vector search fails because equipment names are often nearly identical strings differing by one character, giving poor recall.</li><li>Pure LLM approaches also hit an internal frequency penalty that causes the model to cut off output when asked to list many similar names in a row (e.g., listing 100 GPUs).</li><li>Sharding equipment across parallel LLM calls doesn&#x27;t fix this either -- it produces horrible recall and hallucinated phantom equipment that doesn&#x27;t exist while silently dropping equipment that does.</li></ul><div class="quote"><p>&ldquo;the problem is often times the names are so similar that semantic search just fails.&rdquo;</p><span class="at">said at 02:05</span></div><div class="quote"><p>&ldquo;If you keep on outputting very similar names over and over again, or very similar tokens, uh more accurately, over and over again, there are internal penalties in the LLM which just shut off their output.&rdquo;</p><span class="at">said at 02:36</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>The fix: LLM plans, deterministic code resolves</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="13" class="sl"><img loading="lazy" class="main" src="img/semantic-blindness-500000-sensors/s13_810.webp" alt="slide at 13:30"></a><div class="slidecap">Slide at 13:30 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>The fix: LLM plans, deterministic code resolves</h2><ul class="takeaways"><li>Because data center equipment forms a shallow, wide hierarchy (data center to hall to aisle to row to rack to device), Phaidra&#x27;s system uses the LLM only to convert a vague query into a structured plan (scope + filter), then a deterministic resolver runs exact set operations over pre-indexed subtrees to produce the final result set -- a two-to-three step process instead of an open-ended agentic loop.</li></ul><div class="quote"><p>&ldquo;the lesson for new built AI native systems runs a little bit the other way&rdquo;</p><span class="at">said at 13:28</span></div><div class="quote"><p>&ldquo;The simple heuristic that usually works, if you can write down the structure or the rules, it&#x27;s a 1.0 job&rdquo;</p><span class="at">said at 14:31</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Measured results: accuracy restored, cost collapses</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="10" class="sl"><img loading="lazy" class="main" src="img/semantic-blindness-500000-sensors/s10_630.webp" alt="slide at 10:30"></a><div class="slidecap">Slide at 10:30 &middot; click any slide to enlarge &middot; 6 more from this section below</div><div class=strip><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s11_700.webp" alt="slide at 11:40"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s12_750.webp" alt="slide at 12:30"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s13_810.webp" alt="slide at 13:30"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s14_880.webp" alt="slide at 14:40"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s15_940.webp" alt="slide at 15:40"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/semantic-blindness-500000-sensors/s16_970.webp" alt="slide at 16:10"></a></div></div>
+<div class="textcol"><h2>Measured results: accuracy restored, cost collapses</h2><ul class="takeaways"><li>Head-to-head testing (same model, same data, three runs per case) showed the old sharded approach degraded from 80% correctness at 64 GPUs to about 30% at 460,000 GPUs, while the new approach held 100% correctness across all scales and across 66 real-world cases on six production systems with zero failures.</li><li>Token cost for a full validation pass at 1GW scale dropped from 116 million tokens to 390,000, and per-query cost stayed flat at roughly 9,000 tokens regardless of system size.</li></ul><div class="quote"><p>&ldquo;we got 80% correctness at 64 GPUs, and that dropped to about 30% when the GPU grew to 400 460,000&rdquo;</p><span class="at">said at 10:52</span></div><div class="quote"><p>&ldquo;On the other hand, the our new approach has maintained correctness with 100% accuracy across all of those um tests that we give it.&rdquo;</p><span class="at">said at 11:24</span></div><div class="quote"><p>&ldquo;the old approach burned 116 million tokens for just a single validation pass while still having a lot of errors&rdquo;</p><span class="at">said at 11:56</span></div><div class="quote"><p>&ldquo;the cost of the query was 9,000 tokens a query where the system was 64 GPUs or 460,000&rdquo;</p><span class="at">said at 12:26</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The team&#x27;s framing of an inversion on Karpathy&#x27;s software 1.0/3.0 trend -- new AI-native systems starting almost pure 3.0 (everything in the prompt) and maturing back toward 1.0 for whatever proves reproducible -- is a useful heuristic for other teams building agents over structured data: use the LLM&#x27;s context-window flexibility to find what&#x27;s worth hardening into code, then harden it (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s00_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s01_90.webp" alt="slide at 01:30"><div class="ts">01:30</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s02_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s03_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s04_260.webp" alt="slide at 04:20"><div class="ts">04:20</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s05_310.webp" alt="slide at 05:10"><div class="ts">05:10</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s06_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s07_460.webp" alt="slide at 07:40"><div class="ts">07:40</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s08_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s09_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s10_630.webp" alt="slide at 10:30"><div class="ts">10:30</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s11_700.webp" alt="slide at 11:40"><div class="ts">11:40</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s12_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s13_810.webp" alt="slide at 13:30"><div class="ts">13:30</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s14_880.webp" alt="slide at 14:40"><div class="ts">14:40</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s15_940.webp" alt="slide at 15:40"><div class="ts">15:40</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/semantic-blindness-500000-sensors/s16_970.webp" alt="slide at 16:10"><div class="ts">16:10</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>At 1 gigawatt scale data center facilities there are 400,000+ GPUs plus power meters, chillers, and other equipment to track.</td><td class="tt">01:33</td></tr><tr><td class="st">warns</td><td>Semantic/vector search fails because equipment names are often nearly identical strings, giving poor recall.</td><td class="tt">02:05</td></tr><tr><td class="st">warns</td><td>LLMs have an internal frequency penalty that shuts off output when asked to repeat many similar names or tokens in a row.</td><td class="tt">02:36</td></tr><tr><td class="st">asserts</td><td>The old sharded LLM approach&#x27;s correctness dropped from 80% at 64 GPUs to about 30% at 460,000 GPUs.</td><td class="tt">10:52</td></tr><tr><td class="st">asserts</td><td>The new hierarchical planner-plus-resolver approach maintained 100% correctness across all tested scales.</td><td class="tt">11:24</td></tr><tr><td class="st">asserts</td><td>The old approach burned 116 million tokens for a single validation pass at 1GW scale despite errors; the new approach uses about 390,000 tokens.</td><td class="tt">11:56</td></tr><tr><td class="st">asserts</td><td>Per-query token cost stayed flat at about 9,000 tokens whether the system had 64 GPUs or 460,000.</td><td class="tt">12:26</td></tr><tr><td class="st">asserts</td><td>Unlike legacy software drifting from deterministic code (1.0) toward prompts (3.0), new AI-native systems tend to start almost pure prompt-based and mature toward deterministic code for what earns it.</td><td class="tt">13:28</td></tr><tr><td class="st">recommends</td><td>The recommended heuristic is that anything with a definable structure or rule set should be implemented as deterministic code rather than left to LLM judgment.</td><td class="tt">14:31</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/semantic-blindness-500000-sensors/s00_40.webp", "mmss": "00:40", "yt": "https://youtu.be/EUsPvBeIx70?t=40"}, {"src": "img/semantic-blindness-500000-sensors/s01_90.webp", "mmss": "01:30", "yt": "https://youtu.be/EUsPvBeIx70?t=90"}, {"src": "img/semantic-blindness-500000-sensors/s02_120.webp", "mmss": "02:00", "yt": "https://youtu.be/EUsPvBeIx70?t=120"}, {"src": "img/semantic-blindness-500000-sensors/s03_200.webp", "mmss": "03:20", "yt": "https://youtu.be/EUsPvBeIx70?t=200"}, {"src": "img/semantic-blindness-500000-sensors/s04_260.webp", "mmss": "04:20", "yt": "https://youtu.be/EUsPvBeIx70?t=260"}, {"src": "img/semantic-blindness-500000-sensors/s05_310.webp", "mmss": "05:10", "yt": "https://youtu.be/EUsPvBeIx70?t=310"}, {"src": "img/semantic-blindness-500000-sensors/s06_390.webp", "mmss": "06:30", "yt": "https://youtu.be/EUsPvBeIx70?t=390"}, {"src": "img/semantic-blindness-500000-sensors/s07_460.webp", "mmss": "07:40", "yt": "https://youtu.be/EUsPvBeIx70?t=460"}, {"src": "img/semantic-blindness-500000-sensors/s08_520.webp", "mmss": "08:40", "yt": "https://youtu.be/EUsPvBeIx70?t=520"}, {"src": "img/semantic-blindness-500000-sensors/s09_580.webp", "mmss": "09:40", "yt": "https://youtu.be/EUsPvBeIx70?t=580"}, {"src": "img/semantic-blindness-500000-sensors/s10_630.webp", "mmss": "10:30", "yt": "https://youtu.be/EUsPvBeIx70?t=630"}, {"src": "img/semantic-blindness-500000-sensors/s11_700.webp", "mmss": "11:40", "yt": "https://youtu.be/EUsPvBeIx70?t=700"}, {"src": "img/semantic-blindness-500000-sensors/s12_750.webp", "mmss": "12:30", "yt": "https://youtu.be/EUsPvBeIx70?t=750"}, {"src": "img/semantic-blindness-500000-sensors/s13_810.webp", "mmss": "13:30", "yt": "https://youtu.be/EUsPvBeIx70?t=810"}, {"src": "img/semantic-blindness-500000-sensors/s14_880.webp", "mmss": "14:40", "yt": "https://youtu.be/EUsPvBeIx70?t=880"}, {"src": "img/semantic-blindness-500000-sensors/s15_940.webp", "mmss": "15:40", "yt": "https://youtu.be/EUsPvBeIx70?t=940"}, {"src": "img/semantic-blindness-500000-sensors/s16_970.webp", "mmss": "16:10", "yt": "https://youtu.be/EUsPvBeIx70?t=970"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "EUsPvBeIx70", "slug": "semantic-blindness-500000-sensors", "title": "Semantic Blindness: 500,000 Sensors Confused an LLM", "speaker": "Raahul Singh & Vanč Levstik", "company": "Phaidra", "themes": ["vertical-ai", "context-engineering", "evals-benchmarks"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Plan with the LLM, resolve with code (ours, from the slides)", "lanes": ["Naive approach (fails)", "Fixed approach", "Result"], "nodes": [{"id": "query", "label": "Operator NL query", "sub": "e.g. \"CH3 something something six\"", "lane": 0, "kind": "actor", "claim": "c1", "t": 93}, {"id": "vector", "label": "Vector/semantic search", "sub": "fails on near-identical names", "lane": 0, "kind": "system", "claim": "c2", "t": 125}, {"id": "sharded", "label": "Sharded LLM listing", "sub": "frequency penalty cuts off output", "lane": 0, "kind": "system", "claim": "c3", "t": 156}, {"id": "phantom", "label": "Phantom equipment", "sub": "hallucinated + real equipment dropped", "lane": 0, "kind": "external", "claim": "c4", "t": 652}, {"id": "planner", "label": "LLM planner", "sub": "converts query to scope + filter", "lane": 1, "kind": "system", "claim": "c8", "t": 808}, {"id": "tree", "label": "Tree-indexed hierarchy", "sub": "data center > hall > aisle > row > rack > device", "lane": 1, "kind": "store", "claim": "c9", "t": 871}, {"id": "resolver", "label": "Deterministic resolver", "sub": "exact set ops over pre-indexed subtrees", "lane": 1, "kind": "system", "claim": "c9", "t": 871}, {"id": "accuracy", "label": "100% correctness", "sub": "held across all scales, 66 cases, 6 systems", "lane": 2, "kind": "external", "claim": "c5", "t": 684}, {"id": "cost", "label": "Flat query cost", "sub": "~9,000 tokens/query, 64 to 460,000 GPUs", "lane": 2, "kind": "external", "claim": "c7", "t": 746}], "edges": [{"from": "query", "to": "vector", "label": "naive try", "kind": "flow"}, {"from": "query", "to": "sharded", "label": "naive try", "kind": "flow"}, {"from": "sharded", "to": "phantom", "label": "at scale", "kind": "flow"}, {"from": "query", "to": "planner", "label": "fixed path", "kind": "flow"}, {"from": "planner", "to": "tree", "label": "scope+filter", "kind": "data"}, {"from": "tree", "to": "resolver", "label": "subtree", "kind": "data"}, {"from": "resolver", "to": "accuracy", "label": "result set", "kind": "flow"}, {"from": "resolver", "to": "cost", "label": "result set", "kind": "flow"}], "caption": "The naive path throws every query at an LLM or vector index and degrades as equipment count grows; the fixed path only asks the LLM to plan, then lets deterministic tree lookups do the actual resolving (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "scale of equipment at gigawatt facilities", "text": "At 1 gigawatt scale data center facilities there are 400,000+ GPUs plus power meters, chillers, and other equipment to track.", "quote": "at 1 gigawatt scale factories you will see 400,000 plus GPUs and to support those GPUs you have power meters, you have chillers, you have other equipments", "t": 93}, {"id": "c2", "stance": "warns", "topic": "vector search fails on near-identical names", "text": "Semantic/vector search fails because equipment names are often nearly identical strings, giving poor recall.", "quote": "the problem is often times the names are so similar that semantic search just fails.", "t": 125}, {"id": "c3", "stance": "warns", "topic": "LLM frequency penalty cuts off output", "text": "LLMs have an internal frequency penalty that shuts off output when asked to repeat many similar names or tokens in a row.", "quote": "If you keep on outputting very similar names over and over again, or very similar tokens, uh more accurately, over and over again, there are internal penalties in the LLM which just shut off their output.", "t": 156}, {"id": "c4", "stance": "asserts", "topic": "old approach accuracy degradation", "text": "The old sharded LLM approach's correctness dropped from 80% at 64 GPUs to about 30% at 460,000 GPUs.", "quote": "we got 80% correctness at 64 GPUs, and that dropped to about 30% when the GPU grew to 400 460,000", "t": 652}, {"id": "c5", "stance": "asserts", "topic": "new approach accuracy", "text": "The new hierarchical planner-plus-resolver approach maintained 100% correctness across all tested scales.", "quote": "On the other hand, the our new approach has maintained correctness with 100% accuracy across all of those um tests that we give it.", "t": 684}, {"id": "c6", "stance": "asserts", "topic": "token cost reduction", "text": "The old approach burned 116 million tokens for a single validation pass at 1GW scale despite errors; the new approach uses about 390,000 tokens.", "quote": "the old approach burned 116 million tokens for just a single validation pass while still having a lot of errors", "t": 716}, {"id": "c7", "stance": "asserts", "topic": "flat per-query cost", "text": "Per-query token cost stayed flat at about 9,000 tokens whether the system had 64 GPUs or 460,000.", "quote": "the cost of the query was 9,000 tokens a query where the system was 64 GPUs or 460,000", "t": 746}, {"id": "c8", "stance": "asserts", "topic": "AI-native systems mature from 3.0 toward 1.0", "text": "Unlike legacy software drifting from deterministic code (1.0) toward prompts (3.0), new AI-native systems tend to start almost pure prompt-based and mature toward deterministic code for what earns it.", "quote": "the lesson for new built AI native systems runs a little bit the other way", "t": 808}, {"id": "c9", "stance": "recommends", "topic": "heuristic for what to harden into code", "text": "The recommended heuristic is that anything with a definable structure or rule set should be implemented as deterministic code rather than left to LLM judgment.", "quote": "The simple heuristic that usually works, if you can write down the structure or the rules, it's a 1.0 job", "t": 871}]}</script>
+</body></html>

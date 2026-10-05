@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Citation Needed: Provenance for LLM-Built Knowledge Graphs &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/H7puB0RwJMM" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 20 min</span><span class="ln"></span></div>
+<h1 class="lede">Citation Needed: Provenance for LLM-Built Knowledge Graphs</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Daniel Chalef &middot; Zep AI</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/H7puB0RwJMM" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/H7puB0RwJMM</a> &middot; 20 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Memory</span><span class="chip hot">Context engineering</span><span class="chip hot">Data curation</span></div>
+<p class="deck" style="font-size:15px">Argues that a simple source-ID pointer on a fact breaks once an LLM is synthesizing, merging, and mutating facts across sources, and proposes modeling provenance as part of the graph itself (Zep&#x27;s Graffiti framework)</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>LLM synthesis of context from multiple sources is non-deterministic and often destroys the paper trail back to the original inputs, unlike a deterministic ETL pipeline where a source ID pointer suffices (c1, c2).</li><li>Zep&#x27;s approach is to model provenance as graph relationships between facts and their source episodes, so tracing a fact is a graph walk, and merged entities/mutated facts keep all their source links so lineage survives changes (c3, c4).</li><li>Tagging sources at ingestion (e.g., an EHR tag) propagates to every derived fact, letting an agent filter for verified sources, and the same link structure gives a simple deletion rule: a fact is deleted only when no remaining episode supports it (c5, c6, c7).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW A FACT KEEPS ITS SOURCE LINEAGE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 515.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- src -->
+<g id="node1" class="node">
+<title>src</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="314.17,-561.46 166.75,-561.46 166.75,-525.18 314.17,-525.18 314.17,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="210.84" y="-543.37" font-family="Geist Mono" font-size="11.00">Source docs</text>
+<text xml:space="preserve" text-anchor="start" x="179.71" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">chat, EHR, forms feed the pipeline</text>
+</g>
+<!-- episode -->
+<g id="node3" class="node">
+<title>episode</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="312.67,-473.93 168.25,-473.93 168.25,-437.65 312.67,-437.65 312.67,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="221.71" y="-455.84" font-family="Geist Mono" font-size="11.00">Episode</text>
+<text xml:space="preserve" text-anchor="start" x="181.21" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">stored unit of an ingested source</text>
+</g>
+<!-- src&#45;&gt;episode -->
+<g id="edge1" class="edge">
+<title>src&#45;&gt;episode</title>
+<path fill="none" stroke="#c8501f" d="M240.46,-524.6C240.46,-512.56 240.46,-496.43 240.46,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="242.91,-483 240.46,-476 238.01,-483 242.91,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="251.71" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">ingest</text>
+</g>
+<!-- tag -->
+<g id="node2" class="node">
+<title>tag</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="507.3,-561.46 357.63,-561.46 357.63,-525.18 507.3,-525.18 507.3,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="400.21" y="-543.37" font-family="Geist Mono" font-size="11.00">Ingestion tag</text>
+<text xml:space="preserve" text-anchor="start" x="370.59" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">e.g. EHR tag applied to an episode</text>
+</g>
+<!-- tag&#45;&gt;episode -->
+<g id="edge2" class="edge">
+<title>tag&#45;&gt;episode</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M392.68,-524.6C362.17,-511.01 319.97,-492.21 287.74,-477.85"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="288.97,-475.72 281.57,-475.11 286.97,-480.19 288.97,-475.72"/>
+<text xml:space="preserve" text-anchor="middle" x="355.83" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">tags</text>
+</g>
+<!-- filter -->
+<g id="node7" class="node">
+<title>filter</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="396.05,-123.81 256.88,-123.81 256.88,-87.53 396.05,-87.53 396.05,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="296.09" y="-105.72" font-family="Geist Mono" font-size="11.00">Verified filter</text>
+<text xml:space="preserve" text-anchor="start" x="269.84" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">agent filters facts by source tag</text>
+</g>
+<!-- tag&#45;&gt;filter -->
+<g id="edge8" class="edge">
+<title>tag&#45;&gt;filter</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M439.12,-524.58C444.94,-507.48 452.46,-480.73 452.46,-456.79 452.46,-456.79 452.46,-456.79 452.46,-192.2 452.46,-161.38 426.33,-140.89 397.87,-127.72"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="398.98,-125.53 391.58,-124.97 397.01,-130.02 398.98,-125.53"/>
+<text xml:space="preserve" text-anchor="middle" x="473.09" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">propagates</text>
+</g>
+<!-- fact -->
+<g id="node4" class="node">
+<title>fact</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="166.92,-386.4 0,-386.4 0,-350.12 166.92,-350.12 166.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="59.84" y="-368.31" font-family="Geist Mono" font-size="11.00">Fact node</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">synthesized from one or more episodes</text>
+</g>
+<!-- episode&#45;&gt;fact -->
+<g id="edge3" class="edge">
+<title>episode&#45;&gt;fact</title>
+<path fill="none" stroke="#c8501f" d="M186.08,-437.02C172.13,-431.59 157.41,-425.06 144.46,-417.65 132.02,-410.53 119.43,-401.01 108.94,-392.3"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="110.78,-390.65 103.85,-387.99 107.61,-394.38 110.78,-390.65"/>
+<text xml:space="preserve" text-anchor="middle" x="163.96" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">synthesize</text>
+</g>
+<!-- graphwalk -->
+<g id="node6" class="node">
+<title>graphwalk</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="270.42,-211.34 130.5,-211.34 130.5,-175.06 270.42,-175.06 270.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="173.09" y="-193.25" font-family="Geist Mono" font-size="11.00">Graph walk</text>
+<text xml:space="preserve" text-anchor="start" x="143.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">traces a fact back to its sources</text>
+</g>
+<!-- episode&#45;&gt;graphwalk -->
+<g id="edge6" class="edge">
+<title>episode&#45;&gt;graphwalk</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M237.77,-437.29C230.89,-392.43 212.58,-273.15 204.45,-220.18"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="206.9,-220.01 203.42,-213.47 202.06,-220.76 206.9,-220.01"/>
+<text xml:space="preserve" text-anchor="middle" x="241.17" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">source link</text>
+</g>
+<!-- delete -->
+<g id="node9" class="node">
+<title>delete</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="399.8,-386.4 241.13,-386.4 241.13,-350.12 399.8,-350.12 399.8,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="289.71" y="-368.31" font-family="Geist Mono" font-size="11.00">Deletion rule</text>
+<text xml:space="preserve" text-anchor="start" x="254.09" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">fact deleted only if 0 episodes remain</text>
+</g>
+<!-- episode&#45;&gt;delete -->
+<g id="edge10" class="edge">
+<title>episode&#45;&gt;delete</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M257.04,-437.07C268.94,-424.34 285.12,-407.04 298.16,-393.1"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="299.88,-394.85 302.87,-388.06 296.3,-391.5 299.88,-394.85"/>
+<text xml:space="preserve" text-anchor="middle" x="309.62" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">supports fact</text>
+</g>
+<!-- merge -->
+<g id="node5" class="node">
+<title>merge</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="165.55,-298.87 11.38,-298.87 11.38,-262.59 165.55,-262.59 165.55,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="57.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Entity merge</text>
+<text xml:space="preserve" text-anchor="start" x="24.34" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">merged entity keeps links from both</text>
+</g>
+<!-- fact&#45;&gt;merge -->
+<g id="edge4" class="edge">
+<title>fact&#45;&gt;merge</title>
+<path fill="none" stroke="#c8501f" d="M84.5,-349.54C85.2,-337.5 86.14,-321.37 86.93,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="89.37,-308.07 87.34,-300.94 84.48,-307.79 89.37,-308.07"/>
+<text xml:space="preserve" text-anchor="middle" x="113.63" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">entities merge</text>
+</g>
+<!-- merge&#45;&gt;graphwalk -->
+<g id="edge5" class="edge">
+<title>merge&#45;&gt;graphwalk</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M105.92,-262.33C115.94,-252.72 128.97,-240.85 141.46,-231.34 148.18,-226.22 155.61,-221.14 162.88,-216.45"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="164.17,-218.53 168.77,-212.71 161.55,-214.39 164.17,-218.53"/>
+<text xml:space="preserve" text-anchor="middle" x="162.46" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">keeps links</text>
+</g>
+<!-- graphwalk&#45;&gt;filter -->
+<g id="edge7" class="edge">
+<title>graphwalk&#45;&gt;filter</title>
+<path fill="none" stroke="#c8501f" d="M226.57,-174.48C246,-161.29 272.65,-143.2 293.54,-129.02"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="294.72,-131.18 299.13,-125.22 291.97,-127.12 294.72,-131.18"/>
+<text xml:space="preserve" text-anchor="middle" x="280.38" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">trace</text>
+</g>
+<!-- block -->
+<g id="node8" class="node">
+<title>block</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="402.8,-36.28 250.13,-36.28 250.13,0 402.8,0 402.8,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="291.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Policy decision</text>
+<text xml:space="preserve" text-anchor="start" x="263.09" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">e.g. any unverified source blocks Rx</text>
+</g>
+<!-- filter&#45;&gt;block -->
+<g id="edge9" class="edge">
+<title>filter&#45;&gt;block</title>
+<path fill="none" stroke="#c8501f" d="M326.46,-86.95C326.46,-74.91 326.46,-58.78 326.46,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="328.91,-45.35 326.46,-38.35 324.01,-45.35 328.91,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="351.96" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">applies policy</text>
+</g>
+<!-- cost -->
+<g id="node10" class="node">
+<title>cost</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="418.17,-298.87 234.75,-298.87 234.75,-262.59 418.17,-262.59 418.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="294.96" y="-280.78" font-family="Geist Mono" font-size="11.00">Cost, latency</text>
+<text xml:space="preserve" text-anchor="start" x="247.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">lineage&#45;preserving construction is expensive</text>
+</g>
+<!-- delete&#45;&gt;cost -->
+<g id="edge11" class="edge">
+<title>delete&#45;&gt;cost</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M321.7,-349.54C322.55,-337.5 323.68,-321.37 324.63,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="327.07,-308.09 325.11,-300.94 322.18,-307.75 327.07,-308.09"/>
+<text xml:space="preserve" text-anchor="middle" x="347.07" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">is expensive</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This lays out Graffiti provenance as links from facts to source episodes, so merges keep lineage and ingestion tags gate what a policy trusts or deletes (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Synthesis destroys the paper trail</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/citation-needed-provenance/s01_40.webp" alt="slide at 00:40"></a><div class="slidecap">Slide at 00:40 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/citation-needed-provenance/s02_60.webp" alt="slide at 01:00"></a></div></div>
+<div class="textcol"><h2>Synthesis destroys the paper trail</h2><ul class="takeaways"><li>LLMs pull together data from multiple sources non-deterministically, interpreting and synthesizing into summaries, extracted facts, or structured records that often don&#x27;t appear verbatim in any single source input.</li><li>In a stylized healthcare example, an agent presenting a synthesized &quot;patient has a penicillin allergy&quot; fact without indicating it originated from a patient&#x27;s own unverified chat input risks misleading a doctor.</li></ul><div class="quote"><p>&ldquo;Synthesis often destroys the paper trail of how these outputs were originated.&rdquo;</p><span class="at">said at 00:00</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Why a source-ID pointer isn&#x27;t enough</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/citation-needed-provenance/s02_60.webp" alt="slide at 01:00"></a><div class="slidecap">Slide at 01:00 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Why a source-ID pointer isn&#x27;t enough</h2><ul class="takeaways"><li>A single source-ID field works in deterministic data-warehouse pipelines where one value is copied or mutated predictably.</li><li>With LLM-run context pipelines this breaks down: many facts synthesize from multiple sources at once, entities like &quot;J.</li><li>Smith&quot; and &quot;John Smith&quot; get merged into one identity, and new data can invalidate old facts, so lineage has to be an evolving set of links rather than a static pointer or append-only log.</li></ul><div class="quote"><p>&ldquo;with context pipelines run by LLMs, this breaks in several ways. You prompt an LLM with several sources. Many facts are each synthesized from one or more of the sources.&rdquo;</p><span class="at">said at 03:07</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Modeling provenance as a graph</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/citation-needed-provenance/s02_60.webp" alt="slide at 01:00"></a><div class="slidecap">Slide at 01:00 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Modeling provenance as a graph</h2><ul class="takeaways"><li>Zep&#x27;s answer, implemented in its open-source Graffiti framework, is to model the links between facts and their source &quot;episodes&quot; as graph relationships, so tracing a fact back to its sources is a graph walk.</li><li>When two entities merge, the merged entity must retain all source links from both, or a source silently gets dropped and lineage is lost; when new data invalidates an existing fact, Graffiti marks the edge invalid and records which source episodes caused the mutation.</li></ul><div class="quote"><p>&ldquo;sets of links between facts and their sources can be modeled on a graph as relationships. So provenence in a context store containing facts is a knowledge graph.&rdquo;</p><span class="at">said at 04:08</span></div><div class="quote"><p>&ldquo;when two entities merge the merged entity needs to keep all source links from both otherwise we silently drop a source and we lose lineage.&rdquo;</p><span class="at">said at 05:09</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Tagging at ingestion for veracity</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/citation-needed-provenance/s03_710.webp" alt="slide at 11:50"></a><div class="slidecap">Slide at 11:50 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Tagging at ingestion for veracity</h2><ul class="takeaways"><li>Episodes can be tagged at ingestion (for example, an EHR tag on electronic health record data), and every entity and fact derived from that episode inherits the tag, so an agent can filter for facts from verified sources as it walks the graph.</li><li>For a multi-source fact, whether all sources need to be verified or just one is a business-rule decision the graph exposes but doesn&#x27;t itself enforce; the talk gives an allergy flag (any unverified source should block the fact) versus a consent-on-file flag (every source must be verified) as opposite-policy examples with the same three-source shape.</li></ul><div class="quote"><p>&ldquo;the episodes with the EHR tag. All subsequent entities and facts derived from the episode inherit the tag.&rdquo;</p><span class="at">said at 06:46</span></div><div class="quote"><p>&ldquo;the agent missing it, missing that particular flag could be a deadly mistake. So not retrieving the fact and any source of the three should block that prescription being issued.&rdquo;</p><span class="at">said at 07:49</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Deletion and cost</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/citation-needed-provenance/s04_880.webp" alt="slide at 14:40"></a><div class="slidecap">Slide at 14:40 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/citation-needed-provenance/s03_710.webp" alt="slide at 11:50"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/citation-needed-provenance/s05_1230.webp" alt="slide at 20:30"></a></div></div>
+<div class="textcol"><h2>Deletion and cost</h2><ul class="takeaways"><li>The same link structure supports privacy/retention deletion requests: because lineage is explicit, a fact is only deleted once none of its remaining source episodes still support it, so deleting one of several sources for a fact doesn&#x27;t necessarily delete the fact.</li><li>The speaker notes that this lineage-preserving graph construction is expensive to run, and that the team has put significant engineering effort into reducing its cost and latency.</li></ul><div class="quote"><p>&ldquo;A fact is only deleted if no remaining episodes support it.&rdquo;</p><span class="at">said at 09:58</span></div><div class="quote"><p>&ldquo;lineage and provenence is expensive. Graph construction is really expensive uh in the way that graffiti does it. And so we&#x27;ve put significant effort into reducing cost and latency of generating graph artifacts.&rdquo;</p><span class="at">said at 11:37</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The talk is a vendor architecture walkthrough for Graffiti/Zep specifically, but the underlying argument, that provenance has to be engineered into the data structure rather than logged after the fact, applies to any agent memory or RAG pipeline doing LLM-driven synthesis or entity resolution, not just this implementation.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/citation-needed-provenance/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/citation-needed-provenance/s01_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/citation-needed-provenance/s02_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/citation-needed-provenance/s03_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/citation-needed-provenance/s04_880.webp" alt="slide at 14:40"><div class="ts">14:40</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/citation-needed-provenance/s05_1230.webp" alt="slide at 20:30"><div class="ts">20:30</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>LLM synthesis of context from multiple sources is non-deterministic and often destroys the traceable link back to the original source data.</td><td class="tt">00:00</td></tr><tr><td class="st">warns</td><td>A simple source-ID pointer works for deterministic pipelines but breaks under LLM-run context pipelines where facts merge, synthesize from many sources, and mutate.</td><td class="tt">03:07</td></tr><tr><td class="st">asserts</td><td>Provenance can be modeled as graph relationships linking facts to their sources, making tracing a fact a simple graph walk.</td><td class="tt">04:08</td></tr><tr><td class="st">warns</td><td>When two entities merge, the merged entity must retain all source links from both, or a source is silently dropped and lineage is lost.</td><td class="tt">05:09</td></tr><tr><td class="st">recommends</td><td>Tagging a source episode at ingestion (e.g., an EHR tag) propagates that tag to every entity and fact derived from it, enabling filtering by source veracity.</td><td class="tt">06:46</td></tr><tr><td class="st">warns</td><td>For a safety-critical fact like an allergy flag, if even one of its sources is unverified, failing to surface that could be a deadly mistake.</td><td class="tt">07:49</td></tr><tr><td class="st">asserts</td><td>A fact is deleted only when none of its remaining source episodes still support it, allowing partial source deletion without losing facts that other sources still back.</td><td class="tt">09:58</td></tr><tr><td class="st">asserts</td><td>Building lineage into graph construction is expensive, and the team has invested significant effort into reducing the cost and latency of generating graph artifacts.</td><td class="tt">11:37</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/citation-needed-provenance/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/H7puB0RwJMM?t=10"}, {"src": "img/citation-needed-provenance/s01_40.webp", "mmss": "00:40", "yt": "https://youtu.be/H7puB0RwJMM?t=40"}, {"src": "img/citation-needed-provenance/s02_60.webp", "mmss": "01:00", "yt": "https://youtu.be/H7puB0RwJMM?t=60"}, {"src": "img/citation-needed-provenance/s03_710.webp", "mmss": "11:50", "yt": "https://youtu.be/H7puB0RwJMM?t=710"}, {"src": "img/citation-needed-provenance/s04_880.webp", "mmss": "14:40", "yt": "https://youtu.be/H7puB0RwJMM?t=880"}, {"src": "img/citation-needed-provenance/s05_1230.webp", "mmss": "20:30", "yt": "https://youtu.be/H7puB0RwJMM?t=1230"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "H7puB0RwJMM", "slug": "citation-needed-provenance", "title": "Citation Needed: Provenance for LLM-Built Knowledge Graphs", "speaker": "Daniel Chalef", "company": "Zep AI", "themes": ["memory", "context-engineering", "data-curation"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "How a fact keeps its source lineage (ours)", "lanes": ["Ingestion", "Graph", "Policy", "Lifecycle"], "nodes": [{"id": "src", "label": "Source docs", "sub": "chat, EHR, forms feed the pipeline", "lane": 0, "kind": "external", "claim": "c1", "t": 0}, {"id": "tag", "label": "Ingestion tag", "sub": "e.g. EHR tag applied to an episode", "lane": 0, "kind": "system", "claim": "c5", "t": 406}, {"id": "episode", "label": "Episode", "sub": "stored unit of an ingested source", "lane": 1, "kind": "store", "claim": "c3", "t": 248}, {"id": "fact", "label": "Fact node", "sub": "synthesized from one or more episodes", "lane": 1, "kind": "store", "claim": "c2", "t": 187}, {"id": "merge", "label": "Entity merge", "sub": "merged entity keeps links from both", "lane": 1, "kind": "system", "claim": "c4", "t": 309}, {"id": "graphwalk", "label": "Graph walk", "sub": "traces a fact back to its sources", "lane": 1, "kind": "system", "claim": "c3", "t": 248}, {"id": "filter", "label": "Verified filter", "sub": "agent filters facts by source tag", "lane": 2, "kind": "actor", "claim": "c6", "t": 469}, {"id": "block", "label": "Policy decision", "sub": "e.g. any unverified source blocks Rx", "lane": 2, "kind": "system", "claim": "c6", "t": 469}, {"id": "delete", "label": "Deletion rule", "sub": "fact deleted only if 0 episodes remain", "lane": 3, "kind": "system", "claim": "c7", "t": 598}, {"id": "cost", "label": "Cost, latency", "sub": "lineage-preserving construction is expensive", "lane": 3, "kind": "system", "claim": "c8", "t": 697}], "edges": [{"from": "src", "to": "episode", "label": "ingest", "kind": "flow"}, {"from": "tag", "to": "episode", "label": "tags", "kind": "data"}, {"from": "episode", "to": "fact", "label": "synthesize", "kind": "flow"}, {"from": "fact", "to": "merge", "label": "entities merge", "kind": "flow"}, {"from": "merge", "to": "graphwalk", "label": "keeps links", "kind": "data"}, {"from": "episode", "to": "graphwalk", "label": "source link", "kind": "data"}, {"from": "graphwalk", "to": "filter", "label": "trace", "kind": "flow"}, {"from": "tag", "to": "filter", "label": "propagates", "kind": "data"}, {"from": "filter", "to": "block", "label": "applies policy", "kind": "flow"}, {"from": "episode", "to": "delete", "label": "supports fact", "kind": "data"}, {"from": "delete", "to": "cost", "label": "is expensive", "kind": "data"}], "caption": "This lays out Graffiti provenance as links from facts to source episodes, so merges keep lineage and ingestion tags gate what a policy trusts or deletes (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "synthesis destroys the paper trail", "text": "LLM synthesis of context from multiple sources is non-deterministic and often destroys the traceable link back to the original source data.", "quote": "Synthesis often destroys the paper trail of how these outputs were originated.", "t": 0}, {"id": "c2", "stance": "warns", "topic": "source-ID pointer breaks under LLM synthesis", "text": "A simple source-ID pointer works for deterministic pipelines but breaks under LLM-run context pipelines where facts merge, synthesize from many sources, and mutate.", "quote": "with context pipelines run by LLMs, this breaks in several ways. You prompt an LLM with several sources. Many facts are each synthesized from one or more of the sources.", "t": 187}, {"id": "c3", "stance": "asserts", "topic": "provenance modeled as a graph", "text": "Provenance can be modeled as graph relationships linking facts to their sources, making tracing a fact a simple graph walk.", "quote": "sets of links between facts and their sources can be modeled on a graph as relationships. So provenence in a context store containing facts is a knowledge graph.", "t": 248}, {"id": "c4", "stance": "warns", "topic": "entity merges must preserve source links", "text": "When two entities merge, the merged entity must retain all source links from both, or a source is silently dropped and lineage is lost.", "quote": "when two entities merge the merged entity needs to keep all source links from both otherwise we silently drop a source and we lose lineage.", "t": 309}, {"id": "c5", "stance": "recommends", "topic": "tag propagation at ingestion", "text": "Tagging a source episode at ingestion (e.g., an EHR tag) propagates that tag to every entity and fact derived from it, enabling filtering by source veracity.", "quote": "the episodes with the EHR tag. All subsequent entities and facts derived from the episode inherit the tag.", "t": 406}, {"id": "c6", "stance": "warns", "topic": "unverified sources on safety-critical facts", "text": "For a safety-critical fact like an allergy flag, if even one of its sources is unverified, failing to surface that could be a deadly mistake.", "quote": "the agent missing it, missing that particular flag could be a deadly mistake. So not retrieving the fact and any source of the three should block that prescription being issued.", "t": 469}, {"id": "c7", "stance": "asserts", "topic": "deletion rule", "text": "A fact is deleted only when none of its remaining source episodes still support it, allowing partial source deletion without losing facts that other sources still back.", "quote": "A fact is only deleted if no remaining episodes support it.", "t": 598}, {"id": "c8", "stance": "asserts", "topic": "cost of provenance", "text": "Building lineage into graph construction is expensive, and the team has invested significant effort into reducing the cost and latency of generating graph artifacts.", "quote": "lineage and provenence is expensive. Graph construction is really expensive uh in the way that graffiti does it. And so we've put significant effort into reducing cost and latency of generating graph artifacts.", "t": 697}]}</script>
+</body></html>

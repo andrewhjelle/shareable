@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Agent Optimization with Pydantic AI: GEPA, Evals, Feedback Loops &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/A48uhxfxbsM" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 80 min</span><span class="ln"></span></div>
+<h1 class="lede">Agent Optimization with Pydantic AI: GEPA, Evals, Feedback Loops</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Samuel Colvin &middot; Pydantic</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/A48uhxfxbsM" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/A48uhxfxbsM</a> &middot; 80 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Context engineering</span></div>
+<p class="deck" style="font-size:15px">Informs whether prompt/agent optimization tooling like GEPA and managed-variable (feature-flag-style) prompt deployment is worth adopting for a given task</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>GEPA is a genetic/Pareto optimization library that evolves a prompt (or JSON) string by breeding from the best-performing candidates; Pydantic AI&#x27;s managed variables let any Pydantic-model-typed value, not just text, be swapped in production via feature-flag-style targeting (built on the OpenFeature standard) without redeploying.</li><li>On a live political-relations extraction demo, eval accuracy moved from 87% (one-line prompt) to 92% (hand-written detailed prompt) to 96.7% after a GEPA run -- but the optimized prompt started explicitly excluding aunts/uncles even though they appear in the golden data set, which the speaker attributes to overfitting on a training subset that lacked those cases.</li><li>Cited Shopify example: switching a site-classification task from GPT-5-on-raw-HTML to a Qwen agent optimized with GEPA cut cost from $5 million/year to $73,000/year. The speaker frames optimization as most valuable with large private data volumes, and notes Claude Code&#x27;s own team reportedly tunes &#x27;mostly vibes&#x27; rather than running formal evals.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">GEPA PROMPT OPTIMIZATION LOOP (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 399.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- n1 -->
+<g id="node1" class="node">
+<title>n1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="291.17,-386.4 183.5,-386.4 183.5,-350.12 291.17,-350.12 291.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="198.33" y="-368.31" font-family="Geist Mono" font-size="11.00">One&#45;line prompt</text>
+<text xml:space="preserve" text-anchor="start" x="196.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">87% accuracy baseline</text>
+</g>
+<!-- n2 -->
+<g id="node2" class="node">
+<title>n2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="300.92,-298.87 173.75,-298.87 173.75,-262.59 300.92,-262.59 300.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="198.33" y="-280.78" font-family="Geist Mono" font-size="11.00">Detailed prompt</text>
+<text xml:space="preserve" text-anchor="start" x="186.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">92% accuracy, hand&#45;written</text>
+</g>
+<!-- n1&#45;&gt;n2 -->
+<g id="edge1" class="edge">
+<title>n1&#45;&gt;n2</title>
+<path fill="none" stroke="#c8501f" d="M237.33,-349.54C237.33,-337.5 237.33,-321.37 237.33,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="239.79,-307.94 237.34,-300.94 234.89,-307.94 239.79,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="256.08" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">hand&#45;tune</text>
+</g>
+<!-- n3 -->
+<g id="node3" class="node">
+<title>n3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="305.04,-211.34 169.62,-211.34 169.62,-175.06 305.04,-175.06 305.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="186.71" y="-193.25" font-family="Geist Mono" font-size="11.00">GEPA genetic search</text>
+<text xml:space="preserve" text-anchor="start" x="182.58" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">breeds best Pareto candidates</text>
+</g>
+<!-- n2&#45;&gt;n3 -->
+<g id="edge2" class="edge">
+<title>n2&#45;&gt;n3</title>
+<path fill="none" stroke="#c8501f" d="M237.33,-262.01C237.33,-249.97 237.33,-233.84 237.33,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="239.79,-220.41 237.34,-213.41 234.89,-220.41 239.79,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="260.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">seed prompt</text>
+</g>
+<!-- n4 -->
+<g id="node4" class="node">
+<title>n4</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="220.79,-123.81 95.87,-123.81 95.87,-87.53 220.79,-87.53 220.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="115.58" y="-105.72" font-family="Geist Mono" font-size="11.00">Optimized prompt</text>
+<text xml:space="preserve" text-anchor="start" x="108.83" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">96.7% score, more verbose</text>
+</g>
+<!-- n3&#45;&gt;n4 -->
+<g id="edge3" class="edge">
+<title>n3&#45;&gt;n4</title>
+<path fill="none" stroke="#c8501f" d="M220.97,-174.48C209.21,-161.75 193.23,-144.45 180.35,-130.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="182.26,-128.96 175.71,-125.48 178.66,-132.29 182.26,-128.96"/>
+<text xml:space="preserve" text-anchor="middle" x="234.44" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">breed candidates</text>
+</g>
+<!-- n7 -->
+<g id="node7" class="node">
+<title>n7</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="391.42,-123.81 243.25,-123.81 243.25,-87.53 391.42,-87.53 391.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="278.33" y="-105.72" font-family="Geist Mono" font-size="11.00">Shopify cost cut</text>
+<text xml:space="preserve" text-anchor="start" x="256.21" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">$5M/yr to $73K/yr on Qwen agent</text>
+</g>
+<!-- n3&#45;&gt;n7 -->
+<g id="edge6" class="edge">
+<title>n3&#45;&gt;n7</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M253.91,-174.48C265.82,-161.75 282,-144.45 295.04,-130.51"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="296.75,-132.26 299.75,-125.47 293.18,-128.91 296.75,-132.26"/>
+<text xml:space="preserve" text-anchor="middle" x="311.75" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">same technique</text>
+</g>
+<!-- n5 -->
+<g id="node5" class="node">
+<title>n5</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="152.67,-36.28 0,-36.28 0,0 152.67,0 152.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="43.33" y="-18.19" font-family="Geist Mono" font-size="11.00">Overfit failure</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">excludes aunts/uncles in golden set</text>
+</g>
+<!-- n4&#45;&gt;n5 -->
+<g id="edge4" class="edge">
+<title>n4&#45;&gt;n5</title>
+<path fill="none" stroke="#c8501f" d="M141.34,-86.95C129.14,-74.22 112.55,-56.92 99.19,-42.98"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="100.96,-41.29 94.35,-37.93 97.43,-44.68 100.96,-41.29"/>
+<text xml:space="preserve" text-anchor="middle" x="149.99" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">audience reran</text>
+</g>
+<!-- n6 -->
+<g id="node6" class="node">
+<title>n6</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="306.17,-36.28 174.5,-36.28 174.5,0 306.17,0 306.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="194.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Managed variables</text>
+<text xml:space="preserve" text-anchor="start" x="187.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">OpenFeature&#45;based % rollout</text>
+</g>
+<!-- n4&#45;&gt;n6 -->
+<g id="edge5" class="edge">
+<title>n4&#45;&gt;n6</title>
+<path fill="none" stroke="#c8501f" d="M175.33,-86.95C187.53,-74.22 204.12,-56.92 217.48,-42.98"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="219.24,-44.68 222.32,-37.93 215.71,-41.29 219.24,-44.68"/>
+<text xml:space="preserve" text-anchor="middle" x="223.74" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">deploy via</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The optimization loop moves a prompt from hand-written baselines through GEPA&#x27;s genetic search to a higher-scoring but riskier candidate, which the speaker&#x27;s Shopify example suggests pays off most at large data volumes (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>What GEPA and managed variables are</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/gepa-agent-optimization-pydantic-ai/s01_150.webp" alt="slide at 02:30"></a><div class="slidecap">Slide at 02:30 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s02_260.webp" alt="slide at 04:20"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s03_350.webp" alt="slide at 05:50"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s04_460.webp" alt="slide at 07:40"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s05_530.webp" alt="slide at 08:50"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s06_610.webp" alt="slide at 10:10"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s07_740.webp" alt="slide at 12:20"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s08_900.webp" alt="slide at 15:00"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s09_1030.webp" alt="slide at 17:10"></a></div></div>
+<div class="textcol"><h2>What GEPA and managed variables are</h2><ul class="takeaways"><li>GEPA is described as a genetic algorithm that optimizes a string (a text prompt or JSON object) by taking the best candidates from a Pareto frontier and recombining them, similar to breeding the fastest racehorses rather than mixing in slow ones.</li><li>Pydantic AI&#x27;s managed variables extend simple prompt management to any Pydantic-model-typed object, and support targeting -- rolling out a new value to a percentage of calls, similar to A/B testing, built on the OpenFeature standard.</li></ul><div class="quote"><p>&ldquo;it&#x27;s a genetic algorithm in the sense that it looks for the best um value of some kind&rdquo;</p><span class="at">said at 02:06</span></div><div class="quote"><p>&ldquo;we can basically define what percentage of calls are using which of our different values. So this is very much like uh AB testing&rdquo;</p><span class="at">said at 61:19</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Baseline evals favor deterministic checks over LLM-as-judge</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="10" class="sl"><img loading="lazy" class="main" src="img/gepa-agent-optimization-pydantic-ai/s10_1120.webp" alt="slide at 18:40"></a><div class="slidecap">Slide at 18:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s11_1200.webp" alt="slide at 20:00"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s12_1280.webp" alt="slide at 21:20"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s13_1380.webp" alt="slide at 23:00"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s14_1550.webp" alt="slide at 25:50"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s15_1710.webp" alt="slide at 28:30"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s16_1790.webp" alt="slide at 29:50"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s17_1860.webp" alt="slide at 31:00"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s18_1940.webp" alt="slide at 32:20"></a></div></div>
+<div class="textcol"><h2>Baseline evals favor deterministic checks over LLM-as-judge</h2><ul class="takeaways"><li>Using a live demo (extracting political ancestry relations from Wikipedia pages for UK MPs, checked against a hand-built golden data set), a one-line prompt scored 87% accuracy while a more detailed hand-written prompt scored 92%.</li><li>The speaker recommends defining custom deterministic evaluators over LLM-as-judge where possible, arguing LLM-as-judge evaluation can itself introduce unreliable judgment.</li></ul><div class="quote"><p>&ldquo;accuracy being kind of the most important one here, slightly higher, 92% versus 87% for the like expert prompt versus the initial prompt&rdquo;</p><span class="at">said at 26:49</span></div><div class="quote"><p>&ldquo;cuz the LLM as a judge is effectively the kind of you know I don&#x27;t know if it&#x27;s politically acceptable, but the kind of lunatics running the asylum&rdquo;</p><span class="at">said at 18:23</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Running GEPA improved the score but showed signs of overfitting</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="24" class="sl"><img loading="lazy" class="main" src="img/gepa-agent-optimization-pydantic-ai/s24_2760.webp" alt="slide at 46:00"></a><div class="slidecap">Slide at 46:00 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Running GEPA improved the score but showed signs of overfitting</h2><ul class="takeaways"><li>After running the GEPA optimization loop (a Pydantic AI agent proposing new prompt candidates, evaluated and iterated toward a better Pareto frontier), the resulting prompt scored 96.7% -- at the cost of becoming notably more verbose.</li><li>In audience Q&amp;A, an attendee running the same optimization found the optimized prompt explicitly excluded aunts and uncles despite them appearing in the golden relations, which the speaker attributes to the optimizer&#x27;s training subset not containing enough aunt/uncle cases -- a likely instance of overfitting.</li></ul><div class="quote"><p>&ldquo;It has achieved a performance score of 96 uh {point} 7% so, significantly above the 92 we got from our like best case before&rdquo;</p><span class="at">said at 45:08</span></div><div class="quote"><p>&ldquo;it got wrong ons and uncles. So the final prompt excludes explicitly ons and uncles even though they are in the golden relation&rdquo;</p><span class="at">said at 50:52</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Optimization pays off most with large private data volumes</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="17" class="sl"><img loading="lazy" class="main" src="img/gepa-agent-optimization-pydantic-ai/s17_1860.webp" alt="slide at 31:00"></a><div class="slidecap">Slide at 31:00 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s18_1940.webp" alt="slide at 32:20"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s19_2050.webp" alt="slide at 34:10"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s20_2180.webp" alt="slide at 36:20"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s21_2260.webp" alt="slide at 37:40"></a><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s22_2470.webp" alt="slide at 41:10"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s23_2620.webp" alt="slide at 43:40"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s24_2760.webp" alt="slide at 46:00"></a><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s25_2910.webp" alt="slide at 48:30"></a></div></div>
+<div class="textcol"><h2>Optimization pays off most with large private data volumes</h2><ul class="takeaways"><li>The speaker cites an (unverified) statistic that 98% of data is private, arguing that optimization matters more when a system must encode large amounts of proprietary domain context (e.g. an internal bank spec) into a prompt, versus tasks a frontier model can already answer from public knowledge.</li><li>He also notes that big model labs generally advise against fine-tuning because a next-generation model release often supersedes the gains, except in cases like finance with very high query volumes where fine-tuning still pays off.</li><li>A cited Shopify example used GEPA to optimize a Qwen-based agent for site classification, cutting the yearly cost from GPT-5-on-raw-HTML pricing to a fraction of it.</li></ul><div class="quote"><p>&ldquo;the statistic is that 98% of data is private. I don&#x27;t know if that number is is correct or not&rdquo;</p><span class="at">said at 42:00</span></div><div class="quote"><p>&ldquo;tens of thousands of dollars to go and fine-tune a model and actually for the most part improve the harness, wait for the next model, like show a nicer loading icon to your users is probably better than fine-tuning&rdquo;</p><span class="at">said at 56:38</span></div><div class="quote"><p>&ldquo;they got the price down from $5 million a year to 60 60 $73,000 a year&rdquo;</p><span class="at">said at 30:31</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Limits: broad, high-variance tasks like coding agents skip formal evals</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="29" class="sl"><img loading="lazy" class="main" src="img/gepa-agent-optimization-pydantic-ai/s29_3220.webp" alt="slide at 53:40"></a><div class="slidecap">Slide at 53:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="30" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s30_3280.webp" alt="slide at 54:40"></a><a href="#" data-slide="31" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s31_3390.webp" alt="slide at 56:30"></a><a href="#" data-slide="32" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s32_3470.webp" alt="slide at 57:50"></a><a href="#" data-slide="33" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s33_3550.webp" alt="slide at 59:10"></a><a href="#" data-slide="34" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s34_3660.webp" alt="slide at 61:00"></a><a href="#" data-slide="35" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s35_3740.webp" alt="slide at 62:20"></a><a href="#" data-slide="36" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s36_3850.webp" alt="slide at 64:10"></a><a href="#" data-slide="37" class="sl"><img loading="lazy" class="thumb" src="img/gepa-agent-optimization-pydantic-ai/s37_3920.webp" alt="slide at 65:20"></a></div></div>
+<div class="textcol"><h2>Limits: broad, high-variance tasks like coding agents skip formal evals</h2><ul class="takeaways"><li>The speaker suggests optimization techniques like GEPA work less well for open-ended, high-breadth tasks, citing coding agents as an example where the trajectory space is too wide to usefully optimize against a fixed eval set without overfitting.</li><li>He states that Claude Code&#x27;s own team reportedly does not run extensive formal evals, tuning behavior mostly by feel instead.</li></ul><div class="quote"><p>&ldquo;If you go and ask Boris Chen how does he work on uh Claude code, he says mostly vibes&rdquo;</p><span class="at">said at 53:28</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The aunt/uncle overfitting anecdote is the most transferable finding here: it&#x27;s a concrete, reproducible failure mode (optimizer narrows behavior to fit an under-sampled training subset) rather than a hypothetical caveat, and argues for holding out a genuinely separate, full-coverage evaluation set before trusting an optimized prompt (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s00_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s01_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s02_260.webp" alt="slide at 04:20"><div class="ts">04:20</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s03_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s04_460.webp" alt="slide at 07:40"><div class="ts">07:40</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s05_530.webp" alt="slide at 08:50"><div class="ts">08:50</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s06_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s07_740.webp" alt="slide at 12:20"><div class="ts">12:20</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s08_900.webp" alt="slide at 15:00"><div class="ts">15:00</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s09_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s10_1120.webp" alt="slide at 18:40"><div class="ts">18:40</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s11_1200.webp" alt="slide at 20:00"><div class="ts">20:00</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s12_1280.webp" alt="slide at 21:20"><div class="ts">21:20</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s13_1380.webp" alt="slide at 23:00"><div class="ts">23:00</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s14_1550.webp" alt="slide at 25:50"><div class="ts">25:50</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s15_1710.webp" alt="slide at 28:30"><div class="ts">28:30</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s16_1790.webp" alt="slide at 29:50"><div class="ts">29:50</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s17_1860.webp" alt="slide at 31:00"><div class="ts">31:00</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s18_1940.webp" alt="slide at 32:20"><div class="ts">32:20</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s19_2050.webp" alt="slide at 34:10"><div class="ts">34:10</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s20_2180.webp" alt="slide at 36:20"><div class="ts">36:20</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s21_2260.webp" alt="slide at 37:40"><div class="ts">37:40</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s22_2470.webp" alt="slide at 41:10"><div class="ts">41:10</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s23_2620.webp" alt="slide at 43:40"><div class="ts">43:40</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s24_2760.webp" alt="slide at 46:00"><div class="ts">46:00</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s25_2910.webp" alt="slide at 48:30"><div class="ts">48:30</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s26_2990.webp" alt="slide at 49:50"><div class="ts">49:50</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s27_3060.webp" alt="slide at 51:00"><div class="ts">51:00</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s28_3140.webp" alt="slide at 52:20"><div class="ts">52:20</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s29_3220.webp" alt="slide at 53:40"><div class="ts">53:40</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s30_3280.webp" alt="slide at 54:40"><div class="ts">54:40</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s31_3390.webp" alt="slide at 56:30"><div class="ts">56:30</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s32_3470.webp" alt="slide at 57:50"><div class="ts">57:50</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s33_3550.webp" alt="slide at 59:10"><div class="ts">59:10</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s34_3660.webp" alt="slide at 61:00"><div class="ts">61:00</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s35_3740.webp" alt="slide at 62:20"><div class="ts">62:20</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s36_3850.webp" alt="slide at 64:10"><div class="ts">64:10</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s37_3920.webp" alt="slide at 65:20"><div class="ts">65:20</div></a><a href="#" data-slide="38"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s38_4050.webp" alt="slide at 67:30"><div class="ts">67:30</div></a><a href="#" data-slide="39"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s39_4150.webp" alt="slide at 69:10"><div class="ts">69:10</div></a><a href="#" data-slide="40"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s40_4230.webp" alt="slide at 70:30"><div class="ts">70:30</div></a><a href="#" data-slide="41"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s41_4310.webp" alt="slide at 71:50"><div class="ts">71:50</div></a><a href="#" data-slide="42"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s42_4380.webp" alt="slide at 73:00"><div class="ts">73:00</div></a><a href="#" data-slide="43"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s43_4460.webp" alt="slide at 74:20"><div class="ts">74:20</div></a><a href="#" data-slide="44"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s44_4560.webp" alt="slide at 76:00"><div class="ts">76:00</div></a><a href="#" data-slide="45"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s45_4650.webp" alt="slide at 77:30"><div class="ts">77:30</div></a><a href="#" data-slide="46"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s46_4720.webp" alt="slide at 78:40"><div class="ts">78:40</div></a><a href="#" data-slide="47"><img loading="lazy" src="img/gepa-agent-optimization-pydantic-ai/s47_4780.webp" alt="slide at 79:40"><div class="ts">79:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>GEPA is a genetic algorithm that searches for the best value (a prompt or JSON string) and recombines good candidates to produce new ones.</td><td class="tt">02:06</td></tr><tr><td class="st">asserts</td><td>A cited Shopify example switching to a Qwen agent optimized with GEPA cut cost from $5 million a year to $73,000 a year.</td><td class="tt">30:31</td></tr><tr><td class="st">asserts</td><td>A hand-written detailed prompt scored 92% accuracy versus 87% for a simple one-line prompt on the same eval set.</td><td class="tt">26:49</td></tr><tr><td class="st">asserts</td><td>The GEPA-optimized prompt achieved a 96.7% performance score, significantly above the 92% best prior case, at the cost of a more verbose prompt.</td><td class="tt">45:08</td></tr><tr><td class="st">recommends</td><td>Defining custom deterministic evaluators is generally better than relying on LLM-as-judge, which can itself behave unreliably.</td><td class="tt">18:23</td></tr><tr><td class="st">asserts</td><td>A cited (uncertain) statistic holds that 98% of data is private, which the speaker uses to argue optimization matters more for large proprietary data sets.</td><td class="tt">42:00</td></tr><tr><td class="st">asserts</td><td>Big model labs generally advise against fine-tuning because it costs tens of thousands of dollars and the gains are often superseded by waiting for the next model release.</td><td class="tt">56:38</td></tr><tr><td class="st">warns</td><td>An audience member found their GEPA-optimized prompt explicitly excluded aunts and uncles despite them being in the golden relations data, which the speaker attributes to overfitting on an under-sampled training subset.</td><td class="tt">50:52</td></tr><tr><td class="st">asserts</td><td>Coding agent companies reportedly run few or no formal evals; Claude Code&#x27;s own team is said to tune behavior mostly by feel.</td><td class="tt">53:28</td></tr><tr><td class="st">asserts</td><td>Managed variables support targeting a percentage of calls to a new value, functioning like A/B testing, built on the OpenFeature standard.</td><td class="tt">61:19</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/gepa-agent-optimization-pydantic-ai/s00_40.webp", "mmss": "00:40", "yt": "https://youtu.be/A48uhxfxbsM?t=40"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s01_150.webp", "mmss": "02:30", "yt": "https://youtu.be/A48uhxfxbsM?t=150"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s02_260.webp", "mmss": "04:20", "yt": "https://youtu.be/A48uhxfxbsM?t=260"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s03_350.webp", "mmss": "05:50", "yt": "https://youtu.be/A48uhxfxbsM?t=350"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s04_460.webp", "mmss": "07:40", "yt": "https://youtu.be/A48uhxfxbsM?t=460"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s05_530.webp", "mmss": "08:50", "yt": "https://youtu.be/A48uhxfxbsM?t=530"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s06_610.webp", "mmss": "10:10", "yt": "https://youtu.be/A48uhxfxbsM?t=610"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s07_740.webp", "mmss": "12:20", "yt": "https://youtu.be/A48uhxfxbsM?t=740"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s08_900.webp", "mmss": "15:00", "yt": "https://youtu.be/A48uhxfxbsM?t=900"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s09_1030.webp", "mmss": "17:10", "yt": "https://youtu.be/A48uhxfxbsM?t=1030"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s10_1120.webp", "mmss": "18:40", "yt": "https://youtu.be/A48uhxfxbsM?t=1120"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s11_1200.webp", "mmss": "20:00", "yt": "https://youtu.be/A48uhxfxbsM?t=1200"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s12_1280.webp", "mmss": "21:20", "yt": "https://youtu.be/A48uhxfxbsM?t=1280"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s13_1380.webp", "mmss": "23:00", "yt": "https://youtu.be/A48uhxfxbsM?t=1380"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s14_1550.webp", "mmss": "25:50", "yt": "https://youtu.be/A48uhxfxbsM?t=1550"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s15_1710.webp", "mmss": "28:30", "yt": "https://youtu.be/A48uhxfxbsM?t=1710"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s16_1790.webp", "mmss": "29:50", "yt": "https://youtu.be/A48uhxfxbsM?t=1790"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s17_1860.webp", "mmss": "31:00", "yt": "https://youtu.be/A48uhxfxbsM?t=1860"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s18_1940.webp", "mmss": "32:20", "yt": "https://youtu.be/A48uhxfxbsM?t=1940"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s19_2050.webp", "mmss": "34:10", "yt": "https://youtu.be/A48uhxfxbsM?t=2050"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s20_2180.webp", "mmss": "36:20", "yt": "https://youtu.be/A48uhxfxbsM?t=2180"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s21_2260.webp", "mmss": "37:40", "yt": "https://youtu.be/A48uhxfxbsM?t=2260"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s22_2470.webp", "mmss": "41:10", "yt": "https://youtu.be/A48uhxfxbsM?t=2470"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s23_2620.webp", "mmss": "43:40", "yt": "https://youtu.be/A48uhxfxbsM?t=2620"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s24_2760.webp", "mmss": "46:00", "yt": "https://youtu.be/A48uhxfxbsM?t=2760"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s25_2910.webp", "mmss": "48:30", "yt": "https://youtu.be/A48uhxfxbsM?t=2910"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s26_2990.webp", "mmss": "49:50", "yt": "https://youtu.be/A48uhxfxbsM?t=2990"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s27_3060.webp", "mmss": "51:00", "yt": "https://youtu.be/A48uhxfxbsM?t=3060"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s28_3140.webp", "mmss": "52:20", "yt": "https://youtu.be/A48uhxfxbsM?t=3140"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s29_3220.webp", "mmss": "53:40", "yt": "https://youtu.be/A48uhxfxbsM?t=3220"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s30_3280.webp", "mmss": "54:40", "yt": "https://youtu.be/A48uhxfxbsM?t=3280"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s31_3390.webp", "mmss": "56:30", "yt": "https://youtu.be/A48uhxfxbsM?t=3390"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s32_3470.webp", "mmss": "57:50", "yt": "https://youtu.be/A48uhxfxbsM?t=3470"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s33_3550.webp", "mmss": "59:10", "yt": "https://youtu.be/A48uhxfxbsM?t=3550"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s34_3660.webp", "mmss": "61:00", "yt": "https://youtu.be/A48uhxfxbsM?t=3660"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s35_3740.webp", "mmss": "62:20", "yt": "https://youtu.be/A48uhxfxbsM?t=3740"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s36_3850.webp", "mmss": "64:10", "yt": "https://youtu.be/A48uhxfxbsM?t=3850"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s37_3920.webp", "mmss": "65:20", "yt": "https://youtu.be/A48uhxfxbsM?t=3920"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s38_4050.webp", "mmss": "67:30", "yt": "https://youtu.be/A48uhxfxbsM?t=4050"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s39_4150.webp", "mmss": "69:10", "yt": "https://youtu.be/A48uhxfxbsM?t=4150"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s40_4230.webp", "mmss": "70:30", "yt": "https://youtu.be/A48uhxfxbsM?t=4230"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s41_4310.webp", "mmss": "71:50", "yt": "https://youtu.be/A48uhxfxbsM?t=4310"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s42_4380.webp", "mmss": "73:00", "yt": "https://youtu.be/A48uhxfxbsM?t=4380"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s43_4460.webp", "mmss": "74:20", "yt": "https://youtu.be/A48uhxfxbsM?t=4460"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s44_4560.webp", "mmss": "76:00", "yt": "https://youtu.be/A48uhxfxbsM?t=4560"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s45_4650.webp", "mmss": "77:30", "yt": "https://youtu.be/A48uhxfxbsM?t=4650"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s46_4720.webp", "mmss": "78:40", "yt": "https://youtu.be/A48uhxfxbsM?t=4720"}, {"src": "img/gepa-agent-optimization-pydantic-ai/s47_4780.webp", "mmss": "79:40", "yt": "https://youtu.be/A48uhxfxbsM?t=4780"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "A48uhxfxbsM", "slug": "gepa-agent-optimization-pydantic-ai", "title": "Agent Optimization with Pydantic AI: GEPA, Evals, Feedback Loops", "speaker": "Samuel Colvin", "company": "Pydantic", "themes": ["evals-benchmarks", "agentic-engineering", "context-engineering"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "GEPA prompt optimization loop (ours, from the slides)", "lanes": ["Baseline prompts", "GEPA optimization loop", "Deployment and outcomes"], "nodes": [{"id": "n1", "label": "One-line prompt", "sub": "87% accuracy baseline", "lane": 0, "kind": "system", "claim": "c3", "t": 1609}, {"id": "n2", "label": "Detailed prompt", "sub": "92% accuracy, hand-written", "lane": 0, "kind": "system", "claim": "c3", "t": 1609}, {"id": "n3", "label": "GEPA genetic search", "sub": "breeds best Pareto candidates", "lane": 1, "kind": "system", "claim": "c1", "t": 126}, {"id": "n4", "label": "Optimized prompt", "sub": "96.7% score, more verbose", "lane": 1, "kind": "system", "claim": "c4", "t": 2708}, {"id": "n5", "label": "Overfit failure", "sub": "excludes aunts/uncles in golden set", "lane": 1, "kind": "system", "claim": "c8", "t": 3052}, {"id": "n6", "label": "Managed variables", "sub": "OpenFeature-based % rollout", "lane": 2, "kind": "system", "claim": "c10", "t": 3679}, {"id": "n7", "label": "Shopify cost cut", "sub": "$5M/yr to $73K/yr on Qwen agent", "lane": 2, "kind": "external", "claim": "c2", "t": 1831}], "edges": [{"from": "n1", "to": "n2", "label": "hand-tune", "kind": "flow"}, {"from": "n2", "to": "n3", "label": "seed prompt", "kind": "flow"}, {"from": "n3", "to": "n4", "label": "breed candidates", "kind": "flow"}, {"from": "n4", "to": "n5", "label": "audience reran", "kind": "flow"}, {"from": "n4", "to": "n6", "label": "deploy via", "kind": "flow"}, {"from": "n3", "to": "n7", "label": "same technique", "kind": "data"}], "caption": "The optimization loop moves a prompt from hand-written baselines through GEPA's genetic search to a higher-scoring but riskier candidate, which the speaker's Shopify example suggests pays off most at large data volumes (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "GEPA definition", "text": "GEPA is a genetic algorithm that searches for the best value (a prompt or JSON string) and recombines good candidates to produce new ones.", "quote": "it's a genetic algorithm in the sense that it looks for the best um value of some kind", "t": 126}, {"id": "c2", "stance": "asserts", "topic": "Shopify GEPA cost reduction", "text": "A cited Shopify example switching to a Qwen agent optimized with GEPA cut cost from $5 million a year to $73,000 a year.", "quote": "they got the price down from $5 million a year to 60 60 $73,000 a year", "t": 1831}, {"id": "c3", "stance": "asserts", "topic": "baseline prompt accuracy comparison", "text": "A hand-written detailed prompt scored 92% accuracy versus 87% for a simple one-line prompt on the same eval set.", "quote": "accuracy being kind of the most important one here, slightly higher, 92% versus 87% for the like expert prompt versus the initial prompt", "t": 1609}, {"id": "c4", "stance": "asserts", "topic": "GEPA optimized score", "text": "The GEPA-optimized prompt achieved a 96.7% performance score, significantly above the 92% best prior case, at the cost of a more verbose prompt.", "quote": "It has achieved a performance score of 96 uh {point} 7% so, significantly above the 92 we got from our like best case before", "t": 2708}, {"id": "c5", "stance": "recommends", "topic": "deterministic evals over LLM-as-judge", "text": "Defining custom deterministic evaluators is generally better than relying on LLM-as-judge, which can itself behave unreliably.", "quote": "cuz the LLM as a judge is effectively the kind of you know I don't know if it's politically acceptable, but the kind of lunatics running the asylum", "t": 1103}, {"id": "c6", "stance": "asserts", "topic": "private data statistic", "text": "A cited (uncertain) statistic holds that 98% of data is private, which the speaker uses to argue optimization matters more for large proprietary data sets.", "quote": "the statistic is that 98% of data is private. I don't know if that number is is correct or not", "t": 2520}, {"id": "c7", "stance": "asserts", "topic": "why labs discourage fine-tuning", "text": "Big model labs generally advise against fine-tuning because it costs tens of thousands of dollars and the gains are often superseded by waiting for the next model release.", "quote": "tens of thousands of dollars to go and fine-tune a model and actually for the most part improve the harness, wait for the next model, like show a nicer loading icon to your users is probably better than fine-tuning", "t": 3398}, {"id": "c8", "stance": "warns", "topic": "overfitting in GEPA optimization", "text": "An audience member found their GEPA-optimized prompt explicitly excluded aunts and uncles despite them being in the golden relations data, which the speaker attributes to overfitting on an under-sampled training subset.", "quote": "it got wrong ons and uncles. So the final prompt excludes explicitly ons and uncles even though they are in the golden relation", "t": 3052}, {"id": "c9", "stance": "asserts", "topic": "Claude Code tuned by vibes", "text": "Coding agent companies reportedly run few or no formal evals; Claude Code's own team is said to tune behavior mostly by feel.", "quote": "If you go and ask Boris Chen how does he work on uh Claude code, he says mostly vibes", "t": 3208}, {"id": "c10", "stance": "asserts", "topic": "managed variable targeting", "text": "Managed variables support targeting a percentage of calls to a new value, functioning like A/B testing, built on the OpenFeature standard.", "quote": "we can basically define what percentage of calls are using which of our different values. So this is very much like uh AB testing", "t": 3679}]}</script>
+</body></html>

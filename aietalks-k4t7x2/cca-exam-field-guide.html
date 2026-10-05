@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Anthropic&#x27;s CCA Exam as a Field-Guide for Agentic Engineering &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/Z-c11pV_uvU" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 20 min</span><span class="ln"></span></div>
+<h1 class="lede">Anthropic&#x27;s CCA Exam as a Field-Guide for Agentic Engineering</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Frank Coyle &middot; UC Berkeley</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/Z-c11pV_uvU" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/Z-c11pV_uvU</a> &middot; 20 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Context engineering</span></div>
+<p class="deck" style="font-size:15px">For anyone deciding whether to study for or skip Anthropic&#x27;s Claude Certified Architect exam, this talk maps its five scored domains and walks through the anti-patterns (unbounded context, overloaded single agents, missing stop-reason ch...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>The CCA exam ($99, every 6 months for individuals) weights agentic architecture at 27% and Claude Code configuration at 20%, tested via six production scenarios (c1, c2)</li><li>Core anti-patterns: skipping the stop-reason check on tool-use loops, loading one agent with every tool instead of specializing sub-agents, and letting sub-agent context spill into the main thread (c3, c4, c5, c6)</li><li>Mitigations taught: context forking with a token-count-triggered compact around 150k tokens, and batch mode for 50% lower token cost on non-urgent runs (c7, c8, c9)</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">CCA EXAM ANTI-PATTERN TO MITIGATION MAP (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 372.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- loop_call -->
+<g id="node1" class="node">
+<title>loop_call</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="156.04,-386.4 12.37,-386.4 12.37,-350.12 156.04,-350.12 156.04,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="25.33" y="-368.31" font-family="Geist Mono" font-size="11.00">Model proposes tool call</text>
+<text xml:space="preserve" text-anchor="start" x="29.46" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">LLM cannot execute tools itself</text>
+</g>
+<!-- loop_check -->
+<g id="node2" class="node">
+<title>loop_check</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="168.42,-298.87 0,-298.87 0,-262.59 168.42,-262.59 168.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="27.58" y="-280.78" font-family="Geist Mono" font-size="11.00">Branch on stop_reason</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">tool_use vs end_of_turn vs max_tokens</text>
+</g>
+<!-- loop_call&#45;&gt;loop_check -->
+<g id="edge1" class="edge">
+<title>loop_call&#45;&gt;loop_check</title>
+<path fill="none" stroke="#c8501f" d="M84.21,-349.54C84.21,-337.5 84.21,-321.37 84.21,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="86.66,-307.94 84.21,-300.94 81.76,-307.94 86.66,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="106.71" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">on response</text>
+</g>
+<!-- single_agent -->
+<g id="node3" class="node">
+<title>single_agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="361.04,-386.4 187.38,-386.4 187.38,-350.12 361.04,-350.12 361.04,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="221.33" y="-368.31" font-family="Geist Mono" font-size="11.00">One agent, every tool</text>
+<text xml:space="preserve" text-anchor="start" x="200.33" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">anti&#45;pattern: pooled context, group&#45;think</text>
+</g>
+<!-- sub_agents -->
+<g id="node4" class="node">
+<title>sub_agents</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="357.67,-298.87 190.75,-298.87 190.75,-262.59 357.67,-262.59 357.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="203.71" y="-280.78" font-family="Geist Mono" font-size="11.00">Narrow specialist sub&#45;agents</text>
+<text xml:space="preserve" text-anchor="start" x="207.08" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">each gets only its claim/evidence slice</text>
+</g>
+<!-- single_agent&#45;&gt;sub_agents -->
+<g id="edge2" class="edge">
+<title>single_agent&#45;&gt;sub_agents</title>
+<path fill="none" stroke="#c8501f" d="M274.21,-349.54C274.21,-337.5 274.21,-321.37 274.21,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="276.66,-307.94 274.21,-300.94 271.76,-307.94 276.66,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="297.08" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replace with</text>
+</g>
+<!-- fork -->
+<g id="node5" class="node">
+<title>fork</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="356.54,-211.34 191.88,-211.34 191.88,-175.06 356.54,-175.06 356.54,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="221.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Fork sub&#45;task context</text>
+<text xml:space="preserve" text-anchor="start" x="204.83" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">sub&#45;agent tokens skip the main thread</text>
+</g>
+<!-- sub_agents&#45;&gt;fork -->
+<g id="edge3" class="edge">
+<title>sub_agents&#45;&gt;fork</title>
+<path fill="none" stroke="#c8501f" d="M274.21,-262.01C274.21,-249.97 274.21,-233.84 274.21,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="276.66,-220.41 274.21,-213.41 271.76,-220.41 276.66,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="286.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs in</text>
+</g>
+<!-- compact -->
+<g id="node6" class="node">
+<title>compact</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="364.04,-123.81 184.38,-123.81 184.38,-87.53 364.04,-87.53 364.04,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="210.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Compact at ~150k tokens</text>
+<text xml:space="preserve" text-anchor="start" x="197.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">auto&#45;triggered once main thread crosses it</text>
+</g>
+<!-- fork&#45;&gt;compact -->
+<g id="edge4" class="edge">
+<title>fork&#45;&gt;compact</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M274.21,-174.48C274.21,-162.44 274.21,-146.31 274.21,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="276.66,-132.88 274.21,-125.88 271.76,-132.88 276.66,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="296.33" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">token count</text>
+</g>
+<!-- batch -->
+<g id="node7" class="node">
+<title>batch</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="351.67,-36.28 196.75,-36.28 196.75,0 351.67,0 351.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="244.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Batch mode</text>
+<text xml:space="preserve" text-anchor="start" x="209.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">50% cheaper, up to 24h turnaround</text>
+</g>
+<!-- compact&#45;&gt;batch -->
+<g id="edge5" class="edge">
+<title>compact&#45;&gt;batch</title>
+<path fill="none" stroke="#c8501f" d="M274.21,-86.95C274.21,-74.91 274.21,-58.78 274.21,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="276.66,-45.35 274.21,-38.35 271.76,-45.35 276.66,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="311.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">for non&#45;urgent work</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">A rough map of the CCA exam anti-patterns to their fixes: check the stop reason instead of trusting raw output, split an overloaded agent into specialists, and fork/compact/batch to keep context and cost bounded (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>What the exam covers</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/cca-exam-field-guide/s03_150.webp" alt="slide at 02:30"></a><div class="slidecap">Slide at 02:30 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s04_190.webp" alt="slide at 03:10"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s05_360.webp" alt="slide at 06:00"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s06_460.webp" alt="slide at 07:40"></a></div></div>
+<div class="textcol"><h2>What the exam covers</h2><ul class="takeaways"><li>The Claude Certified Architect exam, released in March, is scenario-based, timed, and proctored; individuals can pay $99 to take it once every six months.</li><li>It scores five weighted domains -- agentic architecture (27%), Claude Code configuration (20%), prompt engineering/structured output, tool design and MCP integration, and context management/reliability -- drawn from six production scenarios, four of which are randomly selected per sitting.</li></ul><div class="quote"><p>&ldquo;It is available to companies in the Claude ecosystem, the Anthropic ecosystem, but individuals can pay $99 and take the exam&rdquo;</p><span class="at">said at 02:37</span></div><div class="quote"><p>&ldquo;So, agentic architecture, 27%. Claude code, how to configure the Claude code system and workflow, 20%.&rdquo;</p><span class="at">said at 03:09</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Anti-pattern: skipping the stop-reason check</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="6" class="sl"><img loading="lazy" class="main" src="img/cca-exam-field-guide/s06_460.webp" alt="slide at 07:40"></a><div class="slidecap">Slide at 07:40 &middot; click any slide to enlarge &middot; 5 more from this section below</div><div class=strip><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s07_490.webp" alt="slide at 08:10"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s08_660.webp" alt="slide at 11:00"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s09_680.webp" alt="slide at 11:20"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s10_710.webp" alt="slide at 11:50"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s11_810.webp" alt="slide at 13:30"></a></div></div>
+<div class="textcol"><h2>Anti-pattern: skipping the stop-reason check</h2><ul class="takeaways"><li>In the customer-support-agent scenario, the anti-pattern is letting an agent&#x27;s tool-use loop run and using its output without checking why the model stopped.</li><li>Because the model itself cannot execute tools -- it only proposes parameters for your code to run -- the loop must branch on the stop reason (tool-use vs. end-of-turn vs. out-of-tokens) to know what to do next.</li></ul><div class="quote"><p>&ldquo;What you want to do is you want to loop with something called the stop reason&rdquo;</p><span class="at">said at 07:48</span></div><div class="quote"><p>&ldquo;The problem is the LLM can&#x27;t do anything. It is just a probabilistic next word predictor. It can&#x27;t execute tools.&rdquo;</p><span class="at">said at 08:50</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Anti-pattern: one overloaded agent instead of specialists</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="11" class="sl"><img loading="lazy" class="main" src="img/cca-exam-field-guide/s11_810.webp" alt="slide at 13:30"></a><div class="slidecap">Slide at 13:30 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s12_900.webp" alt="slide at 15:00"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s13_940.webp" alt="slide at 15:40"></a></div></div>
+<div class="textcol"><h2>Anti-pattern: one overloaded agent instead of specialists</h2><ul class="takeaways"><li>In the multi-agent research scenario, the anti-pattern is a single agent loaded with every available tool.</li><li>Coyle recommends narrow, single-purpose sub-agents instead, each given only the slice of claim/evidence it needs -- both to keep context (and cost) down and because agents pooling full context and reasoning traces tend toward group-think, converging on one idea rather than critiquing independently.</li></ul><div class="quote"><p>&ldquo;No, no, don&#x27;t put everything in there. Limit what&#x27;s going to go in there because then you&#x27;re going to get a much more accurate system.&rdquo;</p><span class="at">said at 14:02</span></div><div class="quote"><p>&ldquo;there&#x27;s a tendency to have group think. And all the agents seem to kind of devolve into one idea.&rdquo;</p><span class="at">said at 15:02</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Managing context and cost at scale</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="13" class="sl"><img loading="lazy" class="main" src="img/cca-exam-field-guide/s13_940.webp" alt="slide at 15:40"></a><div class="slidecap">Slide at 15:40 &middot; click any slide to enlarge &middot; 5 more from this section below</div><div class=strip><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s14_1080.webp" alt="slide at 18:00"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s15_1110.webp" alt="slide at 18:30"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s16_1140.webp" alt="slide at 19:00"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s17_1150.webp" alt="slide at 19:10"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/cca-exam-field-guide/s18_1180.webp" alt="slide at 19:40"></a></div></div>
+<div class="textcol"><h2>Managing context and cost at scale</h2><ul class="takeaways"><li>For developer-productivity and CI scenarios, the fix for unbounded context growth is to fork sub-tasks into separate threads and return only a summary to the main context, with an automatic compact triggered once token count crosses roughly 150,000.</li><li>For non-interactive CI pipelines, batch mode trades a guaranteed same-day turnaround (up to 24 hours) for roughly half the token cost.</li></ul><div class="quote"><p>&ldquo;Context fork. So, you&#x27;re forking the agent into a like a separate thread where whatever the agent does and thinks and adds tokens to does not come back and pollute the main uh the main context.&rdquo;</p><span class="at">said at 16:06</span></div><div class="quote"><p>&ldquo;if you have more than 150,000 tokens, then what you want to do is you can run a compact&rdquo;</p><span class="at">said at 16:38</span></div><div class="quote"><p>&ldquo;you can take your prompts, you can take your work, and you can put them in a batch and for 50% fewer token cost you will get the result they promise in at at least 24 hours&rdquo;</p><span class="at">said at 18:43</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>Coyle frames these as exam-prep anti-patterns, but they read as a reasonable general-purpose agent-architecture checklist independent of the certification -- worth revisiting even for people who have no interest in sitting the exam itself.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/cca-exam-field-guide/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/cca-exam-field-guide/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/cca-exam-field-guide/s02_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/cca-exam-field-guide/s03_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/cca-exam-field-guide/s04_190.webp" alt="slide at 03:10"><div class="ts">03:10</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/cca-exam-field-guide/s05_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/cca-exam-field-guide/s06_460.webp" alt="slide at 07:40"><div class="ts">07:40</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/cca-exam-field-guide/s07_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/cca-exam-field-guide/s08_660.webp" alt="slide at 11:00"><div class="ts">11:00</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/cca-exam-field-guide/s09_680.webp" alt="slide at 11:20"><div class="ts">11:20</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/cca-exam-field-guide/s10_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/cca-exam-field-guide/s11_810.webp" alt="slide at 13:30"><div class="ts">13:30</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/cca-exam-field-guide/s12_900.webp" alt="slide at 15:00"><div class="ts">15:00</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/cca-exam-field-guide/s13_940.webp" alt="slide at 15:40"><div class="ts">15:40</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/cca-exam-field-guide/s14_1080.webp" alt="slide at 18:00"><div class="ts">18:00</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/cca-exam-field-guide/s15_1110.webp" alt="slide at 18:30"><div class="ts">18:30</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/cca-exam-field-guide/s16_1140.webp" alt="slide at 19:00"><div class="ts">19:00</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/cca-exam-field-guide/s17_1150.webp" alt="slide at 19:10"><div class="ts">19:10</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/cca-exam-field-guide/s18_1180.webp" alt="slide at 19:40"><div class="ts">19:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The exam is available to companies in the Anthropic ecosystem, and individuals can pay $99 to take it once every six months.</td><td class="tt">02:37</td></tr><tr><td class="st">asserts</td><td>The exam covers five domains with agentic architecture weighted 27% and Claude Code configuration weighted 20%.</td><td class="tt">03:09</td></tr><tr><td class="st">recommends</td><td>Instead of using an agent&#x27;s response directly, the loop should branch on the model&#x27;s stop reason.</td><td class="tt">07:48</td></tr><tr><td class="st">asserts</td><td>The LLM is a next-word predictor that can only propose tool parameters; it cannot execute anything itself.</td><td class="tt">08:50</td></tr><tr><td class="st">recommends</td><td>Even with a million-token context window available, deliberately limiting what goes into it produces a more accurate system.</td><td class="tt">14:02</td></tr><tr><td class="st">warns</td><td>Sub-agents given full shared context and each other&#x27;s reasoning tend to converge on one idea rather than reasoning independently.</td><td class="tt">15:02</td></tr><tr><td class="st">recommends</td><td>Sub-task work should run in a forked context so its intermediate tokens don&#x27;t pollute the main thread.</td><td class="tt">16:06</td></tr><tr><td class="st">recommends</td><td>Once a session&#x27;s token count crosses roughly 150,000, run a compact rather than letting context keep growing.</td><td class="tt">16:38</td></tr><tr><td class="st">asserts</td><td>Batching prompts for non-urgent work costs about half as many tokens in exchange for up to a 24-hour turnaround.</td><td class="tt">18:43</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/cca-exam-field-guide/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/Z-c11pV_uvU?t=10"}, {"src": "img/cca-exam-field-guide/s01_20.webp", "mmss": "00:20", "yt": "https://youtu.be/Z-c11pV_uvU?t=20"}, {"src": "img/cca-exam-field-guide/s02_80.webp", "mmss": "01:20", "yt": "https://youtu.be/Z-c11pV_uvU?t=80"}, {"src": "img/cca-exam-field-guide/s03_150.webp", "mmss": "02:30", "yt": "https://youtu.be/Z-c11pV_uvU?t=150"}, {"src": "img/cca-exam-field-guide/s04_190.webp", "mmss": "03:10", "yt": "https://youtu.be/Z-c11pV_uvU?t=190"}, {"src": "img/cca-exam-field-guide/s05_360.webp", "mmss": "06:00", "yt": "https://youtu.be/Z-c11pV_uvU?t=360"}, {"src": "img/cca-exam-field-guide/s06_460.webp", "mmss": "07:40", "yt": "https://youtu.be/Z-c11pV_uvU?t=460"}, {"src": "img/cca-exam-field-guide/s07_490.webp", "mmss": "08:10", "yt": "https://youtu.be/Z-c11pV_uvU?t=490"}, {"src": "img/cca-exam-field-guide/s08_660.webp", "mmss": "11:00", "yt": "https://youtu.be/Z-c11pV_uvU?t=660"}, {"src": "img/cca-exam-field-guide/s09_680.webp", "mmss": "11:20", "yt": "https://youtu.be/Z-c11pV_uvU?t=680"}, {"src": "img/cca-exam-field-guide/s10_710.webp", "mmss": "11:50", "yt": "https://youtu.be/Z-c11pV_uvU?t=710"}, {"src": "img/cca-exam-field-guide/s11_810.webp", "mmss": "13:30", "yt": "https://youtu.be/Z-c11pV_uvU?t=810"}, {"src": "img/cca-exam-field-guide/s12_900.webp", "mmss": "15:00", "yt": "https://youtu.be/Z-c11pV_uvU?t=900"}, {"src": "img/cca-exam-field-guide/s13_940.webp", "mmss": "15:40", "yt": "https://youtu.be/Z-c11pV_uvU?t=940"}, {"src": "img/cca-exam-field-guide/s14_1080.webp", "mmss": "18:00", "yt": "https://youtu.be/Z-c11pV_uvU?t=1080"}, {"src": "img/cca-exam-field-guide/s15_1110.webp", "mmss": "18:30", "yt": "https://youtu.be/Z-c11pV_uvU?t=1110"}, {"src": "img/cca-exam-field-guide/s16_1140.webp", "mmss": "19:00", "yt": "https://youtu.be/Z-c11pV_uvU?t=1140"}, {"src": "img/cca-exam-field-guide/s17_1150.webp", "mmss": "19:10", "yt": "https://youtu.be/Z-c11pV_uvU?t=1150"}, {"src": "img/cca-exam-field-guide/s18_1180.webp", "mmss": "19:40", "yt": "https://youtu.be/Z-c11pV_uvU?t=1180"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "Z-c11pV_uvU", "slug": "cca-exam-field-guide", "title": "Anthropic's CCA Exam as a Field-Guide for Agentic Engineering", "speaker": "Frank Coyle", "company": "UC Berkeley", "themes": ["agentic-engineering", "evals-benchmarks", "context-engineering"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "CCA exam anti-pattern to mitigation map (ours)", "lanes": ["Tool-Use Loop", "Agent Topology", "Context & Cost Controls"], "nodes": [{"id": "loop_call", "label": "Model proposes tool call", "sub": "LLM cannot execute tools itself", "lane": 0, "kind": "system", "claim": "c4", "t": 530}, {"id": "loop_check", "label": "Branch on stop_reason", "sub": "tool_use vs end_of_turn vs max_tokens", "lane": 0, "kind": "system", "claim": "c3", "t": 468}, {"id": "single_agent", "label": "One agent, every tool", "sub": "anti-pattern: pooled context, group-think", "lane": 1, "kind": "actor", "claim": "c6", "t": 902}, {"id": "sub_agents", "label": "Narrow specialist sub-agents", "sub": "each gets only its claim/evidence slice", "lane": 1, "kind": "actor", "claim": "c5", "t": 842}, {"id": "fork", "label": "Fork sub-task context", "sub": "sub-agent tokens skip the main thread", "lane": 2, "kind": "system", "claim": "c7", "t": 966}, {"id": "compact", "label": "Compact at ~150k tokens", "sub": "auto-triggered once main thread crosses it", "lane": 2, "kind": "system", "claim": "c8", "t": 998}, {"id": "batch", "label": "Batch mode", "sub": "50% cheaper, up to 24h turnaround", "lane": 2, "kind": "external", "claim": "c9", "t": 1123}], "edges": [{"from": "loop_call", "to": "loop_check", "label": "on response", "kind": "flow"}, {"from": "single_agent", "to": "sub_agents", "label": "replace with", "kind": "flow"}, {"from": "sub_agents", "to": "fork", "label": "runs in", "kind": "flow"}, {"from": "fork", "to": "compact", "label": "token count", "kind": "data"}, {"from": "compact", "to": "batch", "label": "for non-urgent work", "kind": "flow"}], "caption": "A rough map of the CCA exam anti-patterns to their fixes: check the stop reason instead of trusting raw output, split an overloaded agent into specialists, and fork/compact/batch to keep context and cost bounded (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "CCA exam access and cost", "text": "The exam is available to companies in the Anthropic ecosystem, and individuals can pay $99 to take it once every six months.", "quote": "It is available to companies in the Claude ecosystem, the Anthropic ecosystem, but individuals can pay $99 and take the exam", "t": 157}, {"id": "c2", "stance": "asserts", "topic": "five scored domains and weights", "text": "The exam covers five domains with agentic architecture weighted 27% and Claude Code configuration weighted 20%.", "quote": "So, agentic architecture, 27%. Claude code, how to configure the Claude code system and workflow, 20%.", "t": 189}, {"id": "c3", "stance": "recommends", "topic": "loop on stop reason, not raw output", "text": "Instead of using an agent's response directly, the loop should branch on the model's stop reason.", "quote": "What you want to do is you want to loop with something called the stop reason", "t": 468}, {"id": "c4", "stance": "asserts", "topic": "the model cannot execute tools itself", "text": "The LLM is a next-word predictor that can only propose tool parameters; it cannot execute anything itself.", "quote": "The problem is the LLM can't do anything. It is just a probabilistic next word predictor. It can't execute tools.", "t": 530}, {"id": "c5", "stance": "recommends", "topic": "limit context even with a million-token window", "text": "Even with a million-token context window available, deliberately limiting what goes into it produces a more accurate system.", "quote": "No, no, don't put everything in there. Limit what's going to go in there because then you're going to get a much more accurate system.", "t": 842}, {"id": "c6", "stance": "warns", "topic": "group-think among collaborating sub-agents", "text": "Sub-agents given full shared context and each other's reasoning tend to converge on one idea rather than reasoning independently.", "quote": "there's a tendency to have group think. And all the agents seem to kind of devolve into one idea.", "t": 902}, {"id": "c7", "stance": "recommends", "topic": "context forking for sub-tasks", "text": "Sub-task work should run in a forked context so its intermediate tokens don't pollute the main thread.", "quote": "Context fork. So, you're forking the agent into a like a separate thread where whatever the agent does and thinks and adds tokens to does not come back and pollute the main uh the main context.", "t": 966}, {"id": "c8", "stance": "recommends", "topic": "token-count-triggered compaction", "text": "Once a session's token count crosses roughly 150,000, run a compact rather than letting context keep growing.", "quote": "if you have more than 150,000 tokens, then what you want to do is you can run a compact", "t": 998}, {"id": "c9", "stance": "asserts", "topic": "batch mode cost savings", "text": "Batching prompts for non-urgent work costs about half as many tokens in exchange for up to a 24-hour turnaround.", "quote": "you can take your prompts, you can take your work, and you can put them in a batch and for 50% fewer token cost you will get the result they promise in at at least 24 hours", "t": 1123}]}</script>
+</body></html>

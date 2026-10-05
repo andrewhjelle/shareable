@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Lessons from Studying Every Memory System &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/5ZGyKWjQDr0" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 19 min</span><span class="ln"></span></div>
+<h1 class="lede">Lessons from Studying Every Memory System</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Shlok Khemani &middot; Independent</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/5ZGyKWjQDr0" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/5ZGyKWjQDr0</a> &middot; 19 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">take</span><span class="chip hot">Memory</span><span class="chip hot">Product & UX</span><span class="chip hot">Context engineering</span></div>
+<p class="deck" style="font-size:15px">This is a survey of how competing products&#x27; memory architectures diverged and converged, building toward an opinion about what remains unsolved, not one system explained end to end.</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>ChatGPT memory v1 (Feb 2024) put the burden of memory management on the user and suffered from staleness; the general lesson is that memory cannot be outsourced — every top consumer AI product builds it in-house (c1, c4).</li><li>Claude&#x27;s profile is about 1,000 tokens updated every 24 hours versus ChatGPT&#x27;s roughly 4,000 tokens updated every few days — a direct tradeoff between update cost and serving cost that the speaker frames as &#x27;memory is a function of compute&#x27; (c2, c3, c5).</li><li>Even a well-resourced running-profile system has a &#x27;massive context problem&#x27;: it can&#x27;t reason over rich existing context like email or in-person conversations, so it can hold factually wrong beliefs (e.g. a still-listed trip to a place the user never went) and isn&#x27;t even curious about the contradiction (c6).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">WHY MEMORY SYSTEMS STILL FEEL UNFINISHED (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 348.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- v1_flaw -->
+<g id="node1" class="node">
+<title>v1_flaw</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="245.29,-473.93 84.37,-473.93 84.37,-437.65 245.29,-437.65 245.29,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="108.96" y="-455.84" font-family="Geist Mono" font-size="11.00">ChatGPT v1: visible list</text>
+<text xml:space="preserve" text-anchor="start" x="97.33" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">user manages memory, facts go stale</text>
+</g>
+<!-- no_outsource -->
+<g id="node2" class="node">
+<title>no_outsource</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="252.04,-386.4 77.62,-386.4 77.62,-350.12 252.04,-350.12 252.04,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="90.58" y="-368.31" font-family="Geist Mono" font-size="11.00">Memory cannot be outsourced</text>
+<text xml:space="preserve" text-anchor="start" x="101.83" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">every top product builds it in&#45;house</text>
+</g>
+<!-- v1_flaw&#45;&gt;no_outsource -->
+<g id="edge1" class="edge">
+<title>v1_flaw&#45;&gt;no_outsource</title>
+<path fill="none" stroke="#c8501f" d="M164.83,-437.07C164.83,-425.03 164.83,-408.9 164.83,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="167.29,-395.47 164.84,-388.47 162.39,-395.47 167.29,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="190.71" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">forced rebuild</text>
+</g>
+<!-- claude_profile -->
+<g id="node3" class="node">
+<title>claude_profile</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="149.67,-298.87 0,-298.87 0,-262.59 149.67,-262.59 149.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="41.46" y="-280.78" font-family="Geist Mono" font-size="11.00">Claude profile</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">~1,000 tokens, updates every 24h</text>
+</g>
+<!-- no_outsource&#45;&gt;claude_profile -->
+<g id="edge2" class="edge">
+<title>no_outsource&#45;&gt;claude_profile</title>
+<path fill="none" stroke="#c8501f" d="M146.19,-349.54C132.67,-336.69 114.26,-319.2 99.52,-305.19"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="101.32,-303.52 94.56,-300.47 97.94,-307.07 101.32,-303.52"/>
+<text xml:space="preserve" text-anchor="middle" x="154.47" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">in&#45;house design</text>
+</g>
+<!-- chatgpt_profile -->
+<g id="node4" class="node">
+<title>chatgpt_profile</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="339.67,-298.87 172,-298.87 172,-262.59 339.67,-262.59 339.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="217.58" y="-280.78" font-family="Geist Mono" font-size="11.00">ChatGPT profile</text>
+<text xml:space="preserve" text-anchor="start" x="184.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">~4,000 tokens, updates every few days</text>
+</g>
+<!-- no_outsource&#45;&gt;chatgpt_profile -->
+<g id="edge3" class="edge">
+<title>no_outsource&#45;&gt;chatgpt_profile</title>
+<path fill="none" stroke="#c8501f" d="M183.69,-349.54C197.36,-336.69 215.97,-319.2 230.87,-305.19"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="232.48,-307.05 235.9,-300.47 229.12,-303.47 232.48,-307.05"/>
+<text xml:space="preserve" text-anchor="middle" x="245.03" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">in&#45;house design</text>
+</g>
+<!-- compute_tradeoff -->
+<g id="node5" class="node">
+<title>compute_tradeoff</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="253.92,-211.34 75.75,-211.34 75.75,-175.06 253.92,-175.06 253.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="88.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Memory = function of compute</text>
+<text xml:space="preserve" text-anchor="start" x="99.58" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">update cost vs. serving cost tradeoff</text>
+</g>
+<!-- claude_profile&#45;&gt;compute_tradeoff -->
+<g id="edge4" class="edge">
+<title>claude_profile&#45;&gt;compute_tradeoff</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M93.48,-262.01C107,-249.16 125.41,-231.67 140.15,-217.66"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="141.73,-219.54 145.11,-212.94 138.35,-215.99 141.73,-219.54"/>
+<text xml:space="preserve" text-anchor="middle" x="162.35" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">smaller, more often</text>
+</g>
+<!-- chatgpt_profile&#45;&gt;compute_tradeoff -->
+<g id="edge5" class="edge">
+<title>chatgpt_profile&#45;&gt;compute_tradeoff</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M237.47,-262.21C227.78,-253 215.69,-241.53 204.83,-231.34 200.07,-226.87 194.98,-222.12 190.07,-217.56"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="191.91,-215.91 185.11,-212.95 188.57,-219.5 191.91,-215.91"/>
+<text xml:space="preserve" text-anchor="middle" x="247.55" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">larger, less often</text>
+</g>
+<!-- context_gap -->
+<g id="node6" class="node">
+<title>context_gap</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="250.17,-123.81 79.5,-123.81 79.5,-87.53 250.17,-87.53 250.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="104.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Massive context problem</text>
+<text xml:space="preserve" text-anchor="start" x="92.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">can&#39;t reason over email or conversations</text>
+</g>
+<!-- compute_tradeoff&#45;&gt;context_gap -->
+<g id="edge6" class="edge">
+<title>compute_tradeoff&#45;&gt;context_gap</title>
+<path fill="none" stroke="#c8501f" d="M164.83,-174.48C164.83,-162.44 164.83,-146.31 164.83,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="167.29,-132.88 164.84,-125.88 162.39,-132.88 167.29,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="207.58" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">caps design, not intent</text>
+</g>
+<!-- stale_belief -->
+<g id="node7" class="node">
+<title>stale_belief</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="155.04,-36.28 10.62,-36.28 10.62,0 155.04,0 155.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="31.46" y="-18.19" font-family="Geist Mono" font-size="11.00">Wrong belief persists</text>
+<text xml:space="preserve" text-anchor="start" x="23.58" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">still lists Turkey trip he never took</text>
+</g>
+<!-- context_gap&#45;&gt;stale_belief -->
+<g id="edge7" class="edge">
+<title>context_gap&#45;&gt;stale_belief</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M147.84,-86.95C135.64,-74.22 119.05,-56.92 105.69,-42.98"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="107.46,-41.29 100.85,-37.93 103.93,-44.68 107.46,-41.29"/>
+<text xml:space="preserve" text-anchor="middle" x="170.74" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">no contradiction check</text>
+</g>
+<!-- early_field -->
+<g id="node8" class="node">
+<title>early_field</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="316.79,-36.28 176.88,-36.28 176.88,0 316.79,0 316.79,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="201.08" y="-18.19" font-family="Geist Mono" font-size="11.00">Field is 3 years old</text>
+<text xml:space="preserve" text-anchor="start" x="189.83" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">gaps expected, not disqualifying</text>
+</g>
+<!-- context_gap&#45;&gt;early_field -->
+<g id="edge8" class="edge">
+<title>context_gap&#45;&gt;early_field</title>
+<path fill="none" stroke="#c8501f" d="M194.92,-86.84C202.92,-81.27 211.17,-74.68 217.83,-67.53 224.27,-60.62 229.98,-52.04 234.59,-44.04"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="236.55,-45.56 237.77,-38.24 232.25,-43.2 236.55,-45.56"/>
+<text xml:space="preserve" text-anchor="middle" x="261.39" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">unsolved, not final</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk&#x27;s own argument from ChatGPT&#x27;s v1 failure through the compute tradeoff to the unsolved context problem it closes on (ours). Node placement follows the speaker&#x27;s narrative order, not a formal proof (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>How memory evolved: ChatGPT v1 to v2</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/lessons-from-every-memory-system/s01_130.webp" alt="slide at 02:10"></a><div class="slidecap">Slide at 02:10 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/lessons-from-every-memory-system/s02_430.webp" alt="slide at 07:10"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/lessons-from-every-memory-system/s03_490.webp" alt="slide at 08:10"></a></div></div>
+<div class="textcol"><h2>How memory evolved: ChatGPT v1 to v2</h2><ul class="takeaways"><li>ChatGPT&#x27;s first serious memory implementation (Feb 2024) let users tell it to remember facts, which were stored in a visible, deletable list and added to every conversation&#x27;s context.</li><li>Khemani says the core flaw was that because every memory creation was visible, users felt responsible for managing memory themselves, and facts went stale (a since-past trip to Bengaluru stayed in his context indefinitely).</li><li>ChatGPT&#x27;s v2 (April 2025) replaced this with an asynchronously updated &#x27;running profile&#x27;, a dense, roughly 4,000-token summary refreshed every few days, which fixed the user-burden problem but not staleness (a still-listed Thailand/Turkey travel conflict persisted).</li></ul><div class="quote"><p>&ldquo;The biggest one was that as a user, because you could see every time a memory was created, it felt like you were responsible for both creating memories while you were just trying to have a conversation&rdquo;</p><span class="at">said at 03:07</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Claude took the opposite approach, then converged</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/lessons-from-every-memory-system/s03_490.webp" alt="slide at 08:10"></a><div class="slidecap">Slide at 08:10 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/lessons-from-every-memory-system/s04_550.webp" alt="slide at 09:10"></a></div></div>
+<div class="textcol"><h2>Claude took the opposite approach, then converged</h2><ul class="takeaways"><li>Claude&#x27;s first memory version (August 2025) had no stored profile at all, just tools to search past conversations by keyword or time period, with every conversation starting fresh.</li><li>After Khemani&#x27;s public comparison of the two architectures, Claude released v2 with its own running profile: visible to users (unlike ChatGPT&#x27;s), about 1,000 tokens versus ChatGPT&#x27;s 4,000, written as full sentences rather than dense keywords, updated every 24 hours, and editable.</li><li>ChatGPT later added its own conversation-search tool and made a version of its profile visible, converging toward the same general shape while keeping different implementation details.</li></ul><div class="quote"><p>&ldquo;this profile was a,000 tokens. So it was much smaller than chat GPT&#x27;s 4,000 tokens&rdquo;</p><span class="at">said at 08:16</span></div><div class="quote"><p>&ldquo;Claude&#x27;s profile updates every 24 hours. For chat GPT, it&#x27;s every few days. And Claude also let you let the user make explicit edits to this profile&rdquo;</p><span class="at">said at 08:49</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Lesson: memory cannot be outsourced</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/lessons-from-every-memory-system/s04_550.webp" alt="slide at 09:10"></a><div class="slidecap">Slide at 09:10 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Lesson: memory cannot be outsourced</h2><ul class="takeaways"><li>Because every major product (ChatGPT, Claude, Gemini, coding agents like Claude Code) independently arrived at a different concrete memory architecture despite converging on the general shape of a running profile, Khemani concludes there is no single correct way to do memory, and no serious team should treat it as an outsourced, bolted-on component, it has to be built and evolved alongside the product.</li></ul><div class="quote"><p>&ldquo;The implications of this is that memory cannot be outsourced. If you&#x27;re a serious team, you do not outsource memory. It is something that you build alongside your product&rdquo;</p><span class="at">said at 11:25</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Lesson: memory is a function of compute</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/lessons-from-every-memory-system/s05_920.webp" alt="slide at 15:20"></a><div class="slidecap">Slide at 15:20 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/lessons-from-every-memory-system/s06_1000.webp" alt="slide at 16:40"></a></div></div>
+<div class="textcol"><h2>Lesson: memory is a function of compute</h2><ul class="takeaways"><li>A running profile has two costs: an update cost (how often and how much compute is spent regenerating it) and a serving cost (how many tokens it adds to every conversation).</li><li>Khemani reads ChatGPT&#x27;s and Claude&#x27;s designs as opposite points on this tradeoff curve, larger profile, less frequent updates versus smaller profile, more frequent updates, driven by real GPU constraints rather than by an ideal design.</li></ul><div class="quote"><p>&ldquo;memory is a function of compute. What does that mean? Let&#x27;s look at the costs associated with a running profile&rdquo;</p><span class="at">said at 11:56</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>The unsolved problem: context, not architecture</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="6" class="sl"><img loading="lazy" class="main" src="img/lessons-from-every-memory-system/s06_1000.webp" alt="slide at 16:40"></a><div class="slidecap">Slide at 16:40 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>The unsolved problem: context, not architecture</h2><ul class="takeaways"><li>Khemani&#x27;s closing argument is that even a perfect memory architecture is capped by how much context it can gather about the user.</li><li>His own example: ChatGPT&#x27;s profile still lists him as having traveled to Turkey in 2025 (from a conversation weighing Thailand vs.</li><li>Turkey) despite him actually going to Thailand, a fact recorded in his email but never reasoned over.</li><li>He calls this a product problem, not a technology problem, these systems aren&#x27;t built to notice or resolve such contradictions.</li></ul><div class="quote"><p>&ldquo;So for me, none of this feels like 2026. And what I keep asking myself every day is when will personal AI feel like personal AI&rdquo;</p><span class="at">said at 18:14</span></div><div class="quote"><p>&ldquo;I still think we&#x27;re very early. Memory for AI is just a three-year-old field&rdquo;</p><span class="at">said at 18:14</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The &#x27;memory is a function of compute&#x27; framing is a useful lens for scoping a memory feature: the real design choice is where on the update-frequency/profile-size curve to sit, not whether to build a profile at all. (ours)</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/lessons-from-every-memory-system/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/lessons-from-every-memory-system/s01_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/lessons-from-every-memory-system/s02_430.webp" alt="slide at 07:10"><div class="ts">07:10</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/lessons-from-every-memory-system/s03_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/lessons-from-every-memory-system/s04_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/lessons-from-every-memory-system/s05_920.webp" alt="slide at 15:20"><div class="ts">15:20</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/lessons-from-every-memory-system/s06_1000.webp" alt="slide at 16:40"><div class="ts">16:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (7)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">warns</td><td>ChatGPT memory v1 made every memory-creation event visible to the user, which put the burden of managing memory on the user during ordinary conversation.</td><td class="tt">03:07</td></tr><tr><td class="st">asserts</td><td>Claude&#x27;s running profile is roughly 1,000 tokens, much smaller than ChatGPT&#x27;s roughly 4,000-token profile.</td><td class="tt">08:16</td></tr><tr><td class="st">asserts</td><td>Claude updates its profile every 24 hours (versus ChatGPT&#x27;s every few days) and lets users make explicit edits to it.</td><td class="tt">08:49</td></tr><tr><td class="st">recommends</td><td>Serious product teams should build memory in-house alongside their product rather than outsourcing it, since no single architecture fits every product.</td><td class="tt">11:25</td></tr><tr><td class="st">asserts</td><td>A memory system&#x27;s design is fundamentally a compute tradeoff between the cost of updating a profile and the cost of serving it in every conversation.</td><td class="tt">11:56</td></tr><tr><td class="st">warns</td><td>Current memory systems don&#x27;t reason over rich existing context (email, in-person conversations) and aren&#x27;t even curious about contradictions in what they know, which is why personal AI still doesn&#x27;t feel complete.</td><td class="tt">18:14</td></tr><tr><td class="st">asserts</td><td>Despite its current gaps, memory for AI is still an early, roughly three-year-old field.</td><td class="tt">18:14</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/lessons-from-every-memory-system/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/5ZGyKWjQDr0?t=10"}, {"src": "img/lessons-from-every-memory-system/s01_130.webp", "mmss": "02:10", "yt": "https://youtu.be/5ZGyKWjQDr0?t=130"}, {"src": "img/lessons-from-every-memory-system/s02_430.webp", "mmss": "07:10", "yt": "https://youtu.be/5ZGyKWjQDr0?t=430"}, {"src": "img/lessons-from-every-memory-system/s03_490.webp", "mmss": "08:10", "yt": "https://youtu.be/5ZGyKWjQDr0?t=490"}, {"src": "img/lessons-from-every-memory-system/s04_550.webp", "mmss": "09:10", "yt": "https://youtu.be/5ZGyKWjQDr0?t=550"}, {"src": "img/lessons-from-every-memory-system/s05_920.webp", "mmss": "15:20", "yt": "https://youtu.be/5ZGyKWjQDr0?t=920"}, {"src": "img/lessons-from-every-memory-system/s06_1000.webp", "mmss": "16:40", "yt": "https://youtu.be/5ZGyKWjQDr0?t=1000"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "5ZGyKWjQDr0", "slug": "lessons-from-every-memory-system", "title": "Lessons from Studying Every Memory System", "speaker": "Shlok Khemani", "company": "Independent", "themes": ["memory", "product-ux", "context-engineering"], "tier": "slide-brief", "depth": "take", "diagram": {"title": "Why memory systems still feel unfinished (ours, from the slides)", "lanes": ["Premise", "Mechanism", "Consequence"], "nodes": [{"id": "v1_flaw", "label": "ChatGPT v1: visible list", "sub": "user manages memory, facts go stale", "lane": 0, "kind": "system", "claim": "c1", "t": 187}, {"id": "no_outsource", "label": "Memory cannot be outsourced", "sub": "every top product builds it in-house", "lane": 0, "kind": "actor", "claim": "c4", "t": 685}, {"id": "claude_profile", "label": "Claude profile", "sub": "~1,000 tokens, updates every 24h", "lane": 1, "kind": "store", "claim": "c2", "t": 496}, {"id": "chatgpt_profile", "label": "ChatGPT profile", "sub": "~4,000 tokens, updates every few days", "lane": 1, "kind": "store", "claim": "c3", "t": 529}, {"id": "compute_tradeoff", "label": "Memory = function of compute", "sub": "update cost vs. serving cost tradeoff", "lane": 1, "kind": "system", "claim": "c5", "t": 716}, {"id": "context_gap", "label": "Massive context problem", "sub": "can't reason over email or conversations", "lane": 2, "kind": "system", "claim": "c6", "t": 1094}, {"id": "stale_belief", "label": "Wrong belief persists", "sub": "still lists Turkey trip he never took", "lane": 2, "kind": "external", "claim": "c6", "t": 1094}, {"id": "early_field", "label": "Field is 3 years old", "sub": "gaps expected, not disqualifying", "lane": 2, "kind": "actor", "claim": "c7", "t": 1094}], "edges": [{"from": "v1_flaw", "to": "no_outsource", "label": "forced rebuild", "kind": "flow"}, {"from": "no_outsource", "to": "claude_profile", "label": "in-house design", "kind": "flow"}, {"from": "no_outsource", "to": "chatgpt_profile", "label": "in-house design", "kind": "flow"}, {"from": "claude_profile", "to": "compute_tradeoff", "label": "smaller, more often", "kind": "data"}, {"from": "chatgpt_profile", "to": "compute_tradeoff", "label": "larger, less often", "kind": "data"}, {"from": "compute_tradeoff", "to": "context_gap", "label": "caps design, not intent", "kind": "flow"}, {"from": "context_gap", "to": "stale_belief", "label": "no contradiction check", "kind": "data"}, {"from": "context_gap", "to": "early_field", "label": "unsolved, not final", "kind": "flow"}], "caption": "This traces the talk's own argument from ChatGPT's v1 failure through the compute tradeoff to the unsolved context problem it closes on (ours). Node placement follows the speaker's narrative order, not a formal proof (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "warns", "topic": "ChatGPT memory v1's design flaw", "text": "ChatGPT memory v1 made every memory-creation event visible to the user, which put the burden of managing memory on the user during ordinary conversation.", "quote": "The biggest one was that as a user, because you could see every time a memory was created, it felt like you were responsible for both creating memories while you were just trying to have a conversation", "t": 187}, {"id": "c2", "stance": "asserts", "topic": "Claude's smaller profile size", "text": "Claude's running profile is roughly 1,000 tokens, much smaller than ChatGPT's roughly 4,000-token profile.", "quote": "this profile was a,000 tokens. So it was much smaller than chat GPT's 4,000 tokens", "t": 496}, {"id": "c3", "stance": "asserts", "topic": "update frequency and editability", "text": "Claude updates its profile every 24 hours (versus ChatGPT's every few days) and lets users make explicit edits to it.", "quote": "Claude's profile updates every 24 hours. For chat GPT, it's every few days. And Claude also let you let the user make explicit edits to this profile", "t": 529}, {"id": "c4", "stance": "recommends", "topic": "memory cannot be outsourced", "text": "Serious product teams should build memory in-house alongside their product rather than outsourcing it, since no single architecture fits every product.", "quote": "The implications of this is that memory cannot be outsourced. If you're a serious team, you do not outsource memory. It is something that you build alongside your product", "t": 685}, {"id": "c5", "stance": "asserts", "topic": "memory is a function of compute", "text": "A memory system's design is fundamentally a compute tradeoff between the cost of updating a profile and the cost of serving it in every conversation.", "quote": "memory is a function of compute. What does that mean? Let's look at the costs associated with a running profile", "t": 716}, {"id": "c6", "stance": "warns", "topic": "the massive context problem", "text": "Current memory systems don't reason over rich existing context (email, in-person conversations) and aren't even curious about contradictions in what they know, which is why personal AI still doesn't feel complete.", "quote": "So for me, none of this feels like 2026. And what I keep asking myself every day is when will personal AI feel like personal AI", "t": 1094}, {"id": "c7", "stance": "asserts", "topic": "field maturity", "text": "Despite its current gaps, memory for AI is still an early, roughly three-year-old field.", "quote": "I still think we're very early. Memory for AI is just a three-year-old field", "t": 1094}]}</script>
+</body></html>

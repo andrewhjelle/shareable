@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Task Fidelity Scaling Laws &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/YYH0DMQr30A" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 20 min</span><span class="ln"></span></div>
+<h1 class="lede">Task Fidelity Scaling Laws</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Kobie Crawford &middot; Snorkel</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/YYH0DMQr30A" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/YYH0DMQr30A</a> &middot; 20 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Data curation</span><span class="chip hot">Coding agents</span><span class="chip hot">Evals & benchmarks</span></div>
+<p class="deck" style="font-size:15px">Snorkel ran a controlled RL experiment comparing agentic (terminal-bench-style) training tasks that passed their four-part quality bar against ones that didn&#x27;t, holding model, compute, and task count fixed</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Snorkel&#x27;s accepted (high-quality) tasks produced a 6% RL performance improvement versus 1% from rejected (low-quality) tasks, a 5x gap traced to task quality alone, with model, compute, and task count held constant (c4, c5).</li><li>Accepted tasks are objectively harder -- twice as many tool calls and lower pass rates -- but their failures are &#x27;cleaner,&#x27; meaning models fail because the task is genuinely difficult, not because the environment is broken (c3, c7).</li><li>The most common reason a task gets rejected is underspecification -- the test definition doesn&#x27;t clearly state the desired outcome up front, then the backend tests check for things that were never actually requested (c8).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">TASK QUALITY GATE AND ITS RL PAYOFF (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 358.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- raw_tasks -->
+<g id="node1" class="node">
+<title>raw_tasks</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="148.92,-298.87 0,-298.87 0,-262.59 148.92,-262.59 148.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="51.59" y="-280.78" font-family="Geist Mono" font-size="11.00">Task pool</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">terminal&#45;bench&#45;style agentic tasks</text>
+</g>
+<!-- criteria -->
+<g id="node3" class="node">
+<title>criteria</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="256.17,-211.34 78.75,-211.34 78.75,-175.06 256.17,-175.06 256.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="117.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Four&#45;part quality bar</text>
+<text xml:space="preserve" text-anchor="start" x="91.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">achievable, non&#45;trivial, correct, reliable env</text>
+</g>
+<!-- raw_tasks&#45;&gt;criteria -->
+<g id="edge1" class="edge">
+<title>raw_tasks&#45;&gt;criteria</title>
+<path fill="none" stroke="#c8501f" d="M93.73,-262.01C107.82,-249.05 127.06,-231.35 142.35,-217.29"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="143.61,-219.47 147.1,-212.92 140.29,-215.86 143.61,-219.47"/>
+<text xml:space="preserve" text-anchor="middle" x="146.4" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">candidates</text>
+</g>
+<!-- experts -->
+<g id="node2" class="node">
+<title>experts</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="349.92,-298.87 171,-298.87 171,-262.59 349.92,-262.59 349.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="207.21" y="-280.78" font-family="Geist Mono" font-size="11.00">Experts + LLM judges</text>
+<text xml:space="preserve" text-anchor="start" x="183.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">shared rubrics, inter&#45;annotator agreement</text>
+</g>
+<!-- experts&#45;&gt;criteria -->
+<g id="edge2" class="edge">
+<title>experts&#45;&gt;criteria</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M241.19,-262.01C227.1,-249.05 207.86,-231.35 192.57,-217.29"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="194.63,-215.86 187.82,-212.92 191.31,-219.47 194.63,-215.86"/>
+<text xml:space="preserve" text-anchor="middle" x="243.9" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">rubric review</text>
+</g>
+<!-- accepted -->
+<g id="node4" class="node">
+<title>accepted</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="158.3,-123.81 32.63,-123.81 32.63,-87.53 158.3,-87.53 158.3,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="58.34" y="-105.72" font-family="Geist Mono" font-size="11.00">Accepted tasks</text>
+<text xml:space="preserve" text-anchor="start" x="45.59" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">2x tool calls, cleaner failures</text>
+</g>
+<!-- criteria&#45;&gt;accepted -->
+<g id="edge3" class="edge">
+<title>criteria&#45;&gt;accepted</title>
+<path fill="none" stroke="#c8501f" d="M152.54,-174.48C141.83,-161.75 127.26,-144.45 115.53,-130.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="117.72,-129.3 111.33,-125.53 113.97,-132.46 117.72,-129.3"/>
+<text xml:space="preserve" text-anchor="middle" x="144.02" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">pass</text>
+</g>
+<!-- rejected -->
+<g id="node5" class="node">
+<title>rejected</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="301.92,-123.81 183,-123.81 183,-87.53 301.92,-87.53 301.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="206.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Rejected tasks</text>
+<text xml:space="preserve" text-anchor="start" x="195.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">often underspecified tests</text>
+</g>
+<!-- criteria&#45;&gt;rejected -->
+<g id="edge4" class="edge">
+<title>criteria&#45;&gt;rejected</title>
+<path fill="none" stroke="#c8501f" d="M183,-174.48C194.16,-161.75 209.33,-144.45 221.56,-130.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="223.17,-132.39 225.94,-125.51 219.48,-129.15 223.17,-132.39"/>
+<text xml:space="preserve" text-anchor="middle" x="215.45" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">fail</text>
+</g>
+<!-- rl_high -->
+<g id="node6" class="node">
+<title>rl_high</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="158.92,-36.28 28,-36.28 28,0 158.92,0 158.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="40.96" y="-18.19" font-family="Geist Mono" font-size="11.00">RL on accepted tasks</text>
+<text xml:space="preserve" text-anchor="start" x="59.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">+6% improvement</text>
+</g>
+<!-- accepted&#45;&gt;rl_high -->
+<g id="edge5" class="edge">
+<title>accepted&#45;&gt;rl_high</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M95.05,-86.95C94.76,-74.91 94.39,-58.78 94.07,-45.27"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="96.52,-45.29 93.91,-38.35 91.62,-45.41 96.52,-45.29"/>
+<text xml:space="preserve" text-anchor="middle" x="115.95" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">training set</text>
+</g>
+<!-- rl_low -->
+<g id="node7" class="node">
+<title>rl_low</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="307.67,-36.28 181.25,-36.28 181.25,0 307.67,0 307.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="194.21" y="-18.19" font-family="Geist Mono" font-size="11.00">RL on rejected tasks</text>
+<text xml:space="preserve" text-anchor="start" x="210.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">+1% improvement</text>
+</g>
+<!-- rejected&#45;&gt;rl_low -->
+<g id="edge6" class="edge">
+<title>rejected&#45;&gt;rl_low</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M242.87,-86.95C243.16,-74.91 243.53,-58.78 243.85,-45.27"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="246.3,-45.41 244.01,-38.35 241.4,-45.29 246.3,-45.41"/>
+<text xml:space="preserve" text-anchor="middle" x="264.95" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">training set</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Snorkel routes agentic tasks through a four-part quality gate before RL training, and the accepted set produced roughly 5x the improvement of the rejected set with model and compute held fixed (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Snorkel&#x27;s data-quality thesis applied to agentic tasks</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/task-fidelity-scaling-laws/s01_60.webp" alt="slide at 01:00"></a><div class="slidecap">Slide at 01:00 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s02_70.webp" alt="slide at 01:10"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s03_100.webp" alt="slide at 01:40"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s04_120.webp" alt="slide at 02:00"></a></div></div>
+<div class="textcol"><h2>Snorkel&#x27;s data-quality thesis applied to agentic tasks</h2><ul class="takeaways"><li>Snorkel, founded in 2019 out of a Stanford AI research lab, has centered its work on the claim that data quality is critical to model outcomes.</li><li>This talk extends that thesis into the agentic space, treating task quality and data quality as effectively the same problem when building terminal-bench-style containerized agentic tasks for training and evaluation.</li></ul><div class="quote"><p>&ldquo;the core thesis has been that the quality of data is critical and that you the data that you&#x27;re looking at you want to make sure is is top quality&rdquo;</p><span class="at">said at 01:03</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>What counts as a quality task</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/task-fidelity-scaling-laws/s05_290.webp" alt="slide at 04:50"></a><div class="slidecap">Slide at 04:50 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>What counts as a quality task</h2><ul class="takeaways"><li>Snorkel defines task quality around four criteria drawn from environments like Harbor and OpenEnv: the task is achievable, non-trivial, functionally correct (the logic behaves as expected), and the environment itself is reliable.</li><li>Tasks that pass all four tests are &#x27;accepted&#x27; and used for training; tasks that fail any of them are &#x27;rejected.&#x27;</li></ul><div class="quote"><p>&ldquo;that the task is achievable, that is non-trivial, uh, that is functionally correct, that the logic actually plays as expected, and then the environment itself is reliable.&rdquo;</p><span class="at">said at 03:38</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Accepted tasks are harder, and fail more meaningfully</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="6" class="sl"><img loading="lazy" class="main" src="img/task-fidelity-scaling-laws/s06_420.webp" alt="slide at 07:00"></a><div class="slidecap">Slide at 07:00 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s07_520.webp" alt="slide at 08:40"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s08_540.webp" alt="slide at 09:00"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s09_570.webp" alt="slide at 09:30"></a></div></div>
+<div class="textcol"><h2>Accepted tasks are harder, and fail more meaningfully</h2><ul class="takeaways"><li>Testing accepted versus rejected tasks against Sonnet 4.5 and Codex-family models, Snorkel found accepted tasks averaged twice as many tool calls, lower pass rates, and more output tokens, indicating genuinely harder tasks rather than noise.</li><li>Breaking failures into categories (e.g. logic error vs. incomplete task vs. environment problem), the team found accepted tasks produce &#x27;cleaner&#x27; failures -- ones caused by real task difficulty rather than broken or underspecified environments.</li></ul><div class="quote"><p>&ldquo;we found that uh our accepted tasks averaged twice as many tool calls, uh, demonstrating more difficulty, more steps needed, and, uh, and more engagement with the external tools.&rdquo;</p><span class="at">said at 05:43</span></div><div class="quote"><p>&ldquo;the accepted tasks are producing cleaner failures. These are failures due to the task itself being more difficult, truly more difficult that that the steps that it needs to to accomplish are are more difficult&rdquo;</p><span class="at">said at 07:48</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Same model, same compute, 5x the improvement from quality alone</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="9" class="sl"><img loading="lazy" class="main" src="img/task-fidelity-scaling-laws/s09_570.webp" alt="slide at 09:30"></a><div class="slidecap">Slide at 09:30 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Same model, same compute, 5x the improvement from quality alone</h2><ul class="takeaways"><li>Snorkel ran an RL training run with identical model, compute budget, and task count, differing only in whether the task set was accepted (high quality) or rejected (low quality).</li><li>The low-quality task set improved the base model by about 1%; the high-quality set improved it by about 6%, a roughly 5x difference attributable to task quality alone.</li></ul><div class="quote"><p>&ldquo;the low-quality tasks only improved the base model by about 1% improvement, but the improvement was about a 6% improvement with the higher-quality tasks.&rdquo;</p><span class="at">said at 09:52</span></div><div class="quote"><p>&ldquo;that uplift of the 5x uplift difference based on on on on just quality is really striking from our point of view.&rdquo;</p><span class="at">said at 09:52</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>How Snorkel keeps quality high</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="10" class="sl"><img loading="lazy" class="main" src="img/task-fidelity-scaling-laws/s10_660.webp" alt="slide at 11:00"></a><div class="slidecap">Slide at 11:00 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s11_670.webp" alt="slide at 11:10"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s12_690.webp" alt="slide at 11:30"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s13_700.webp" alt="slide at 11:40"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s14_710.webp" alt="slide at 11:50"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s15_740.webp" alt="slide at 12:20"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s16_750.webp" alt="slide at 12:30"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s17_760.webp" alt="slide at 12:40"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/task-fidelity-scaling-laws/s18_880.webp" alt="slide at 14:40"></a></div></div>
+<div class="textcol"><h2>How Snorkel keeps quality high</h2><ul class="takeaways"><li>Snorkel attributes its ability to filter for quality to keeping human domain experts in the loop when generating tasks and data.</li><li>In Q&amp;A, the speaker identified underspecified test definitions -- where the expected outcome isn&#x27;t stated up front but backend tests check for unstated requirements -- as a leading cause of rejection, and described a platform combining human annotators with LLM judges against shared rubrics to scale quality assessment and track inter-annotator agreement.</li></ul><div class="quote"><p>&ldquo;we have a strong feeling that the expert in the loop is an important element of delivering data quality.&rdquo;</p><span class="at">said at 10:23</span></div><div class="quote"><p>&ldquo;when you when the task is defined in a way that the desired testable outcome is not clearly specified in the test definition up front, but then on the back end the tests themselves expect certain things to pass that were never actually requested.&rdquo;</p><span class="at">said at 14:29</span></div><div class="quote"><p>&ldquo;the way that our platform works we actually do a number of things to bring together human annotators as well as using LLM judges.&rdquo;</p><span class="at">said at 18:40</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>A 5x swing in RL improvement from task-set quality alone, with model and compute held fixed, is a bigger lever than most teams spend time on -- it suggests that curating/rejecting training tasks may matter more than swapping base models or tuning hyperparameters for agentic RL, though the result is self-reported on Snorkel&#x27;s own acceptance criteria rather than an independently replicated benchmark (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/task-fidelity-scaling-laws/s00_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/task-fidelity-scaling-laws/s01_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/task-fidelity-scaling-laws/s02_70.webp" alt="slide at 01:10"><div class="ts">01:10</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/task-fidelity-scaling-laws/s03_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/task-fidelity-scaling-laws/s04_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/task-fidelity-scaling-laws/s05_290.webp" alt="slide at 04:50"><div class="ts">04:50</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/task-fidelity-scaling-laws/s06_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/task-fidelity-scaling-laws/s07_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/task-fidelity-scaling-laws/s08_540.webp" alt="slide at 09:00"><div class="ts">09:00</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/task-fidelity-scaling-laws/s09_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/task-fidelity-scaling-laws/s10_660.webp" alt="slide at 11:00"><div class="ts">11:00</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/task-fidelity-scaling-laws/s11_670.webp" alt="slide at 11:10"><div class="ts">11:10</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/task-fidelity-scaling-laws/s12_690.webp" alt="slide at 11:30"><div class="ts">11:30</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/task-fidelity-scaling-laws/s13_700.webp" alt="slide at 11:40"><div class="ts">11:40</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/task-fidelity-scaling-laws/s14_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/task-fidelity-scaling-laws/s15_740.webp" alt="slide at 12:20"><div class="ts">12:20</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/task-fidelity-scaling-laws/s16_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/task-fidelity-scaling-laws/s17_760.webp" alt="slide at 12:40"><div class="ts">12:40</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/task-fidelity-scaling-laws/s18_880.webp" alt="slide at 14:40"><div class="ts">14:40</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/task-fidelity-scaling-laws/s19_920.webp" alt="slide at 15:20"><div class="ts">15:20</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/task-fidelity-scaling-laws/s20_940.webp" alt="slide at 15:40"><div class="ts">15:40</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/task-fidelity-scaling-laws/s21_960.webp" alt="slide at 16:00"><div class="ts">16:00</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/task-fidelity-scaling-laws/s22_970.webp" alt="slide at 16:10"><div class="ts">16:10</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/task-fidelity-scaling-laws/s23_990.webp" alt="slide at 16:30"><div class="ts">16:30</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/task-fidelity-scaling-laws/s24_1000.webp" alt="slide at 16:40"><div class="ts">16:40</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/task-fidelity-scaling-laws/s25_1050.webp" alt="slide at 17:30"><div class="ts">17:30</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/task-fidelity-scaling-laws/s26_1060.webp" alt="slide at 17:40"><div class="ts">17:40</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/task-fidelity-scaling-laws/s27_1080.webp" alt="slide at 18:00"><div class="ts">18:00</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/task-fidelity-scaling-laws/s28_1090.webp" alt="slide at 18:10"><div class="ts">18:10</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/task-fidelity-scaling-laws/s29_1120.webp" alt="slide at 18:40"><div class="ts">18:40</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/task-fidelity-scaling-laws/s30_1130.webp" alt="slide at 18:50"><div class="ts">18:50</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/task-fidelity-scaling-laws/s31_1140.webp" alt="slide at 19:00"><div class="ts">19:00</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/task-fidelity-scaling-laws/s32_1150.webp" alt="slide at 19:10"><div class="ts">19:10</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/task-fidelity-scaling-laws/s33_1160.webp" alt="slide at 19:20"><div class="ts">19:20</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/task-fidelity-scaling-laws/s34_1170.webp" alt="slide at 19:30"><div class="ts">19:30</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/task-fidelity-scaling-laws/s35_1190.webp" alt="slide at 19:50"><div class="ts">19:50</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/task-fidelity-scaling-laws/s36_1210.webp" alt="slide at 20:10"><div class="ts">20:10</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/task-fidelity-scaling-laws/s37_1220.webp" alt="slide at 20:20"><div class="ts">20:20</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Snorkel&#x27;s founding thesis since 2019 is that data quality is critical, and this extends to task quality in agentic settings.</td><td class="tt">01:03</td></tr><tr><td class="st">asserts</td><td>Snorkel defines task quality by four criteria: achievable, non-trivial, functionally correct, and a reliable environment.</td><td class="tt">03:38</td></tr><tr><td class="st">asserts</td><td>Accepted tasks averaged twice as many tool calls as rejected tasks, indicating greater difficulty.</td><td class="tt">05:43</td></tr><tr><td class="st">asserts</td><td>With model, compute, and task count held constant, low-quality tasks improved the base model by about 1% while high-quality tasks improved it by about 6%.</td><td class="tt">09:52</td></tr><tr><td class="st">asserts</td><td>The gap between low- and high-quality task training amounts to roughly a 5x uplift difference attributable to task quality.</td><td class="tt">09:52</td></tr><tr><td class="st">recommends</td><td>Snorkel credits keeping human experts in the loop as a key element of delivering data/task quality.</td><td class="tt">10:23</td></tr><tr><td class="st">asserts</td><td>Accepted tasks produce cleaner failures caused by genuine task difficulty rather than broken environments, making them more useful training signal.</td><td class="tt">07:48</td></tr><tr><td class="st">warns</td><td>A common cause of rejection is a task whose desired outcome isn&#x27;t clearly specified up front while backend tests check for unstated requirements.</td><td class="tt">14:29</td></tr><tr><td class="st">asserts</td><td>Snorkel&#x27;s platform combines human annotators with LLM judges against shared rubrics to scale and assess quality.</td><td class="tt">18:40</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/task-fidelity-scaling-laws/s00_20.webp", "mmss": "00:20", "yt": "https://youtu.be/YYH0DMQr30A?t=20"}, {"src": "img/task-fidelity-scaling-laws/s01_60.webp", "mmss": "01:00", "yt": "https://youtu.be/YYH0DMQr30A?t=60"}, {"src": "img/task-fidelity-scaling-laws/s02_70.webp", "mmss": "01:10", "yt": "https://youtu.be/YYH0DMQr30A?t=70"}, {"src": "img/task-fidelity-scaling-laws/s03_100.webp", "mmss": "01:40", "yt": "https://youtu.be/YYH0DMQr30A?t=100"}, {"src": "img/task-fidelity-scaling-laws/s04_120.webp", "mmss": "02:00", "yt": "https://youtu.be/YYH0DMQr30A?t=120"}, {"src": "img/task-fidelity-scaling-laws/s05_290.webp", "mmss": "04:50", "yt": "https://youtu.be/YYH0DMQr30A?t=290"}, {"src": "img/task-fidelity-scaling-laws/s06_420.webp", "mmss": "07:00", "yt": "https://youtu.be/YYH0DMQr30A?t=420"}, {"src": "img/task-fidelity-scaling-laws/s07_520.webp", "mmss": "08:40", "yt": "https://youtu.be/YYH0DMQr30A?t=520"}, {"src": "img/task-fidelity-scaling-laws/s08_540.webp", "mmss": "09:00", "yt": "https://youtu.be/YYH0DMQr30A?t=540"}, {"src": "img/task-fidelity-scaling-laws/s09_570.webp", "mmss": "09:30", "yt": "https://youtu.be/YYH0DMQr30A?t=570"}, {"src": "img/task-fidelity-scaling-laws/s10_660.webp", "mmss": "11:00", "yt": "https://youtu.be/YYH0DMQr30A?t=660"}, {"src": "img/task-fidelity-scaling-laws/s11_670.webp", "mmss": "11:10", "yt": "https://youtu.be/YYH0DMQr30A?t=670"}, {"src": "img/task-fidelity-scaling-laws/s12_690.webp", "mmss": "11:30", "yt": "https://youtu.be/YYH0DMQr30A?t=690"}, {"src": "img/task-fidelity-scaling-laws/s13_700.webp", "mmss": "11:40", "yt": "https://youtu.be/YYH0DMQr30A?t=700"}, {"src": "img/task-fidelity-scaling-laws/s14_710.webp", "mmss": "11:50", "yt": "https://youtu.be/YYH0DMQr30A?t=710"}, {"src": "img/task-fidelity-scaling-laws/s15_740.webp", "mmss": "12:20", "yt": "https://youtu.be/YYH0DMQr30A?t=740"}, {"src": "img/task-fidelity-scaling-laws/s16_750.webp", "mmss": "12:30", "yt": "https://youtu.be/YYH0DMQr30A?t=750"}, {"src": "img/task-fidelity-scaling-laws/s17_760.webp", "mmss": "12:40", "yt": "https://youtu.be/YYH0DMQr30A?t=760"}, {"src": "img/task-fidelity-scaling-laws/s18_880.webp", "mmss": "14:40", "yt": "https://youtu.be/YYH0DMQr30A?t=880"}, {"src": "img/task-fidelity-scaling-laws/s19_920.webp", "mmss": "15:20", "yt": "https://youtu.be/YYH0DMQr30A?t=920"}, {"src": "img/task-fidelity-scaling-laws/s20_940.webp", "mmss": "15:40", "yt": "https://youtu.be/YYH0DMQr30A?t=940"}, {"src": "img/task-fidelity-scaling-laws/s21_960.webp", "mmss": "16:00", "yt": "https://youtu.be/YYH0DMQr30A?t=960"}, {"src": "img/task-fidelity-scaling-laws/s22_970.webp", "mmss": "16:10", "yt": "https://youtu.be/YYH0DMQr30A?t=970"}, {"src": "img/task-fidelity-scaling-laws/s23_990.webp", "mmss": "16:30", "yt": "https://youtu.be/YYH0DMQr30A?t=990"}, {"src": "img/task-fidelity-scaling-laws/s24_1000.webp", "mmss": "16:40", "yt": "https://youtu.be/YYH0DMQr30A?t=1000"}, {"src": "img/task-fidelity-scaling-laws/s25_1050.webp", "mmss": "17:30", "yt": "https://youtu.be/YYH0DMQr30A?t=1050"}, {"src": "img/task-fidelity-scaling-laws/s26_1060.webp", "mmss": "17:40", "yt": "https://youtu.be/YYH0DMQr30A?t=1060"}, {"src": "img/task-fidelity-scaling-laws/s27_1080.webp", "mmss": "18:00", "yt": "https://youtu.be/YYH0DMQr30A?t=1080"}, {"src": "img/task-fidelity-scaling-laws/s28_1090.webp", "mmss": "18:10", "yt": "https://youtu.be/YYH0DMQr30A?t=1090"}, {"src": "img/task-fidelity-scaling-laws/s29_1120.webp", "mmss": "18:40", "yt": "https://youtu.be/YYH0DMQr30A?t=1120"}, {"src": "img/task-fidelity-scaling-laws/s30_1130.webp", "mmss": "18:50", "yt": "https://youtu.be/YYH0DMQr30A?t=1130"}, {"src": "img/task-fidelity-scaling-laws/s31_1140.webp", "mmss": "19:00", "yt": "https://youtu.be/YYH0DMQr30A?t=1140"}, {"src": "img/task-fidelity-scaling-laws/s32_1150.webp", "mmss": "19:10", "yt": "https://youtu.be/YYH0DMQr30A?t=1150"}, {"src": "img/task-fidelity-scaling-laws/s33_1160.webp", "mmss": "19:20", "yt": "https://youtu.be/YYH0DMQr30A?t=1160"}, {"src": "img/task-fidelity-scaling-laws/s34_1170.webp", "mmss": "19:30", "yt": "https://youtu.be/YYH0DMQr30A?t=1170"}, {"src": "img/task-fidelity-scaling-laws/s35_1190.webp", "mmss": "19:50", "yt": "https://youtu.be/YYH0DMQr30A?t=1190"}, {"src": "img/task-fidelity-scaling-laws/s36_1210.webp", "mmss": "20:10", "yt": "https://youtu.be/YYH0DMQr30A?t=1210"}, {"src": "img/task-fidelity-scaling-laws/s37_1220.webp", "mmss": "20:20", "yt": "https://youtu.be/YYH0DMQr30A?t=1220"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "YYH0DMQr30A", "slug": "task-fidelity-scaling-laws", "title": "Task Fidelity Scaling Laws", "speaker": "Kobie Crawford", "company": "Snorkel", "themes": ["data-curation", "coding-agents", "evals-benchmarks"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Task quality gate and its RL payoff (ours, from the slides)", "lanes": ["Inputs", "Quality Gate", "Training Outcome"], "nodes": [{"id": "raw_tasks", "label": "Task pool", "sub": "terminal-bench-style agentic tasks", "lane": 0, "kind": "store", "claim": "c1", "t": 63}, {"id": "experts", "label": "Experts + LLM judges", "sub": "shared rubrics, inter-annotator agreement", "lane": 0, "kind": "actor", "claim": "c9", "t": 1120}, {"id": "criteria", "label": "Four-part quality bar", "sub": "achievable, non-trivial, correct, reliable env", "lane": 1, "kind": "system", "claim": "c2", "t": 218}, {"id": "accepted", "label": "Accepted tasks", "sub": "2x tool calls, cleaner failures", "lane": 1, "kind": "store", "claim": "c3", "t": 343}, {"id": "rejected", "label": "Rejected tasks", "sub": "often underspecified tests", "lane": 1, "kind": "store", "claim": "c8", "t": 869}, {"id": "rl_high", "label": "RL on accepted tasks", "sub": "+6% improvement", "lane": 2, "kind": "system", "claim": "c4", "t": 592}, {"id": "rl_low", "label": "RL on rejected tasks", "sub": "+1% improvement", "lane": 2, "kind": "system", "claim": "c4", "t": 592}], "edges": [{"from": "raw_tasks", "to": "criteria", "label": "candidates", "kind": "flow"}, {"from": "experts", "to": "criteria", "label": "rubric review", "kind": "data"}, {"from": "criteria", "to": "accepted", "label": "pass", "kind": "flow"}, {"from": "criteria", "to": "rejected", "label": "fail", "kind": "flow"}, {"from": "accepted", "to": "rl_high", "label": "training set", "kind": "data"}, {"from": "rejected", "to": "rl_low", "label": "training set", "kind": "data"}], "caption": "Snorkel routes agentic tasks through a four-part quality gate before RL training, and the accepted set produced roughly 5x the improvement of the rejected set with model and compute held fixed (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "Snorkel's core thesis", "text": "Snorkel's founding thesis since 2019 is that data quality is critical, and this extends to task quality in agentic settings.", "quote": "the core thesis has been that the quality of data is critical and that you the data that you're looking at you want to make sure is is top quality", "t": 63}, {"id": "c2", "stance": "asserts", "topic": "four task-quality criteria", "text": "Snorkel defines task quality by four criteria: achievable, non-trivial, functionally correct, and a reliable environment.", "quote": "that the task is achievable, that is non-trivial, uh, that is functionally correct, that the logic actually plays as expected, and then the environment itself is reliable.", "t": 218}, {"id": "c3", "stance": "asserts", "topic": "accepted task difficulty", "text": "Accepted tasks averaged twice as many tool calls as rejected tasks, indicating greater difficulty.", "quote": "we found that uh our accepted tasks averaged twice as many tool calls, uh, demonstrating more difficulty, more steps needed, and, uh, and more engagement with the external tools.", "t": 343}, {"id": "c4", "stance": "asserts", "topic": "RL training results", "text": "With model, compute, and task count held constant, low-quality tasks improved the base model by about 1% while high-quality tasks improved it by about 6%.", "quote": "the low-quality tasks only improved the base model by about 1% improvement, but the improvement was about a 6% improvement with the higher-quality tasks.", "t": 592}, {"id": "c5", "stance": "asserts", "topic": "5x uplift from quality", "text": "The gap between low- and high-quality task training amounts to roughly a 5x uplift difference attributable to task quality.", "quote": "that uplift of the 5x uplift difference based on on on on just quality is really striking from our point of view.", "t": 592}, {"id": "c6", "stance": "recommends", "topic": "expert-in-the-loop", "text": "Snorkel credits keeping human experts in the loop as a key element of delivering data/task quality.", "quote": "we have a strong feeling that the expert in the loop is an important element of delivering data quality.", "t": 623}, {"id": "c7", "stance": "asserts", "topic": "cleaner failures", "text": "Accepted tasks produce cleaner failures caused by genuine task difficulty rather than broken environments, making them more useful training signal.", "quote": "the accepted tasks are producing cleaner failures. These are failures due to the task itself being more difficult, truly more difficult that that the steps that it needs to to accomplish are are more difficult", "t": 468}, {"id": "c8", "stance": "warns", "topic": "underspecified tasks", "text": "A common cause of rejection is a task whose desired outcome isn't clearly specified up front while backend tests check for unstated requirements.", "quote": "when you when the task is defined in a way that the desired testable outcome is not clearly specified in the test definition up front, but then on the back end the tests themselves expect certain things to pass that were never actually requested.", "t": 869}, {"id": "c9", "stance": "asserts", "topic": "human annotators plus LLM judges", "text": "Snorkel's platform combines human annotators with LLM judges against shared rubrics to scale and assess quality.", "quote": "the way that our platform works we actually do a number of things to bring together human annotators as well as using LLM judges.", "t": 1120}]}</script>
+</body></html>

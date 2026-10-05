@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Evals Are Broken, Use Them Anyway &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/QuuIywMG4s8" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 19 min</span><span class="ln"></span></div>
+<h1 class="lede">Evals Are Broken, Use Them Anyway</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Ara Khan &middot; Cline</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/QuuIywMG4s8" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/QuuIywMG4s8</a> &middot; 19 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">take</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Coding agents</span><span class="chip hot">Agentic engineering</span></div>
+<p class="deck" style="font-size:15px">Gives concrete heuristics for deciding when to trust a published model eval and a worked example of how Cline built its own agentic coding benchmark from real user sessions using Terminal Bench and Harbor</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Most people misread evals either as objective truth or as worthless vibes; the fix is heuristics: don&#x27;t trust a lab&#x27;s own numbers, wait a few weeks before switching models, and prefer new/precise evals over stale standardized ones (c1, c2, c3, c4).</li><li>Cline built its own evals from real, opted-in user coding sessions and ran them through Terminal Bench (89 tasks) on Harbor infrastructure because single-turn evals can&#x27;t capture multi-step agent behavior (c5, c6, c7).</li><li>Improving a harness score moves through three zones -- obvious bug fixes, nuanced per-model prompt tuning, and overfitting -- and the goal is a good score plus a good vibe check, not just the number (c8, c9).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">HOW THE TALK ARGUES EVALS SHOULD BE USED (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 630.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- n1 -->
+<g id="node1" class="node">
+<title>n1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="199.3,-211.34 37.63,-211.34 37.63,-175.06 199.3,-175.06 199.3,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="74.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Two camps wrong</text>
+<text xml:space="preserve" text-anchor="start" x="50.59" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">objective&#45;metrics camp vs taste camp</text>
+</g>
+<!-- n4 -->
+<g id="node4" class="node">
+<title>n4</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="406.05,-123.81 206.88,-123.81 206.88,-87.53 406.05,-87.53 406.05,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="255.84" y="-105.72" font-family="Geist Mono" font-size="11.00">Distrust lab numbers</text>
+<text xml:space="preserve" text-anchor="start" x="219.84" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">don&#39;t take self&#45;reported eval scores at face value</text>
+</g>
+<!-- n1&#45;&gt;n4 -->
+<g id="edge1" class="edge">
+<title>n1&#45;&gt;n4</title>
+<path fill="none" stroke="#c8501f" d="M157.41,-174.48C187.28,-160.89 228.61,-142.09 260.17,-127.73"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="260.82,-130.12 266.18,-125 258.79,-125.66 260.82,-130.12"/>
+<text xml:space="preserve" text-anchor="middle" x="252.22" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">drives heuristic</text>
+</g>
+<!-- n5 -->
+<g id="node5" class="node">
+<title>n5</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="184.92,-123.81 0,-123.81 0,-87.53 184.92,-87.53 184.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="39.96" y="-105.72" font-family="Geist Mono" font-size="11.00">Wait before switching</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">let new model reputation settle a few weeks</text>
+</g>
+<!-- n1&#45;&gt;n5 -->
+<g id="edge2" class="edge">
+<title>n1&#45;&gt;n5</title>
+<path fill="none" stroke="#c8501f" d="M113.07,-174.48C109.38,-162.32 104.42,-146 100.29,-132.41"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.66,-131.8 98.28,-125.82 97.97,-133.23 102.66,-131.8"/>
+<text xml:space="preserve" text-anchor="middle" x="135.52" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">drives heuristic</text>
+</g>
+<!-- n2 -->
+<g id="node2" class="node">
+<title>n2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="383.55,-211.34 229.38,-211.34 229.38,-175.06 383.55,-175.06 383.55,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="247.59" y="-193.25" font-family="Geist Mono" font-size="11.00">Stale standardized evals</text>
+<text xml:space="preserve" text-anchor="start" x="242.34" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">OpenAI: SWE&#45;bench Verified is stale</text>
+</g>
+<!-- n2&#45;&gt;n4 -->
+<g id="edge3" class="edge">
+<title>n2&#45;&gt;n4</title>
+<path fill="none" stroke="#c8501f" d="M306.46,-174.48C306.46,-162.44 306.46,-146.31 306.46,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="308.91,-132.88 306.46,-125.88 304.01,-132.88 308.91,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="340.21" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reinforces distrust</text>
+</g>
+<!-- n3 -->
+<g id="node3" class="node">
+<title>n3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="595.8,-386.4 443.13,-386.4 443.13,-350.12 595.8,-350.12 595.8,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="456.46" y="-368.31" font-family="Geist Mono" font-size="11.00">Single&#45;turn evals too easy</text>
+<text xml:space="preserve" text-anchor="start" x="456.09" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">binary answer, limited search space</text>
+</g>
+<!-- n6 -->
+<g id="node6" class="node">
+<title>n6</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="622.05,-298.87 416.88,-298.87 416.88,-262.59 622.05,-262.59 622.05,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="477.84" y="-280.78" font-family="Geist Mono" font-size="11.00">Cline&#39;s own evals</text>
+<text xml:space="preserve" text-anchor="start" x="429.84" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">built from real, paid, opted&#45;in user coding sessions</text>
+</g>
+<!-- n3&#45;&gt;n6 -->
+<g id="edge4" class="edge">
+<title>n3&#45;&gt;n6</title>
+<path fill="none" stroke="#c8501f" d="M519.46,-349.54C519.46,-337.5 519.46,-321.37 519.46,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="521.91,-307.94 519.46,-300.94 517.01,-307.94 521.91,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="558.46" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">motivates own evals</text>
+</g>
+<!-- n9 -->
+<g id="node9" class="node">
+<title>n9</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="388.8,-36.28 224.13,-36.28 224.13,0 388.8,0 388.8,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="259.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Score + vibe check</text>
+<text xml:space="preserve" text-anchor="start" x="237.09" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">hill climb on eval score and product feel</text>
+</g>
+<!-- n4&#45;&gt;n9 -->
+<g id="edge8" class="edge">
+<title>n4&#45;&gt;n9</title>
+<path fill="none" stroke="#c8501f" d="M306.46,-86.95C306.46,-74.91 306.46,-58.78 306.46,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="308.91,-45.35 306.46,-38.35 304.01,-45.35 308.91,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="325.21" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">feeds into</text>
+</g>
+<!-- n5&#45;&gt;n9 -->
+<g id="edge9" class="edge">
+<title>n5&#45;&gt;n9</title>
+<path fill="none" stroke="#c8501f" d="M137.06,-86.84C171.25,-73.18 218.52,-54.29 254.43,-39.93"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="254.92,-42.38 260.51,-37.5 253.1,-37.83 254.92,-42.38"/>
+<text xml:space="preserve" text-anchor="middle" x="231.02" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">feeds into</text>
+</g>
+<!-- n7 -->
+<g id="node7" class="node">
+<title>n7</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="609.3,-211.34 429.63,-211.34 429.63,-175.06 609.3,-175.06 609.3,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="482.34" y="-193.25" font-family="Geist Mono" font-size="11.00">Terminal Bench</text>
+<text xml:space="preserve" text-anchor="start" x="442.59" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Stanford, 89 real&#45;world programming tasks</text>
+</g>
+<!-- n6&#45;&gt;n7 -->
+<g id="edge5" class="edge">
+<title>n6&#45;&gt;n7</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M519.46,-262.01C519.46,-249.97 519.46,-233.84 519.46,-220.33"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="521.91,-220.41 519.46,-213.41 517.01,-220.41 521.91,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="544.96" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">evaluated via</text>
+</g>
+<!-- n8 -->
+<g id="node8" class="node">
+<title>n8</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="610.8,-123.81 428.13,-123.81 428.13,-87.53 610.8,-87.53 610.8,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="462.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Overfitting danger zone</text>
+<text xml:space="preserve" text-anchor="start" x="441.09" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">zone 3: straight&#45;up cheating to inflate score</text>
+</g>
+<!-- n7&#45;&gt;n8 -->
+<g id="edge6" class="edge">
+<title>n7&#45;&gt;n8</title>
+<path fill="none" stroke="#c8501f" d="M519.46,-174.48C519.46,-162.44 519.46,-146.31 519.46,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="521.91,-132.88 519.46,-125.88 517.01,-132.88 521.91,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="553.21" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">triaged into zones</text>
+</g>
+<!-- n8&#45;&gt;n9 -->
+<g id="edge7" class="edge">
+<title>n8&#45;&gt;n9</title>
+<path fill="none" stroke="#c8501f" d="M475.07,-86.84C441.18,-73.24 394.39,-54.45 358.69,-40.11"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="359.61,-37.84 352.2,-37.51 357.78,-42.39 359.61,-37.84"/>
+<text xml:space="preserve" text-anchor="middle" x="464.34" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">avoid via vibe check</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk argument from two mistaken camps about evals, through Cline heuristics and its own benchmark build, to the recommended dual check of score and vibe (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Two ways people get evals wrong</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/evals-broken-use-anyway/s04_90.webp" alt="slide at 01:30"></a><div class="slidecap">Slide at 01:30 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s05_120.webp" alt="slide at 02:00"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s06_140.webp" alt="slide at 02:20"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s08_170.webp" alt="slide at 02:50"></a></div></div>
+<div class="textcol"><h2>Two ways people get evals wrong</h2><ul class="takeaways"><li>The speaker frames most people&#x27;s misunderstanding of evals as splitting into two camps: an &#x27;objective metrics&#x27; camp that treats leaderboard scores as literal truth (e.g. assuming two models with similar scores perform identically), and a &#x27;taste&#x27; camp that dismisses evals entirely in favor of vibes.</li><li>The talk&#x27;s stance is that evals are neither the end-all-be-all nor useless.</li></ul><div class="quote"><p>&ldquo;there&#x27;s basically two camps of people who are wrong about things, right? So there&#x27;s two camps of wrong on evals.&rdquo;</p><span class="at">said at 01:33</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Three heuristics for using other people&#x27;s evals</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="9" class="sl"><img loading="lazy" class="main" src="img/evals-broken-use-anyway/s09_220.webp" alt="slide at 03:40"></a><div class="slidecap">Slide at 03:40 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s10_250.webp" alt="slide at 04:10"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s11_310.webp" alt="slide at 05:10"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s13_340.webp" alt="slide at 05:40"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s14_370.webp" alt="slide at 06:10"></a></div></div>
+<div class="textcol"><h2>Three heuristics for using other people&#x27;s evals</h2><ul class="takeaways"><li>First, don&#x27;t take a model lab&#x27;s self-reported eval numbers at face value -- treat them as approximations.</li><li>Second, stay current but don&#x27;t be the earliest adopter; let a new model&#x27;s reputation settle for a couple weeks before switching.</li><li>Third, prefer new and precise evals over old standardized ones, citing OpenAI&#x27;s own statement that SWE-bench Verified no longer measures frontier coding capability.</li></ul><div class="quote"><p>&ldquo;the first heuristic is that whenever a model apps comes out with like a number, just don&#x27;t believe them. Just don&#x27;t.&rdquo;</p><span class="at">said at 03:36</span></div><div class="quote"><p>&ldquo;the second heuristic is that like you want to stay current, but you don&#x27;t want to be the earliest adopter.&rdquo;</p><span class="at">said at 04:08</span></div><div class="quote"><p>&ldquo;this is a blog post from OpenAI where they straight up said as we bench verified no longer measures frontier coding capabilities&rdquo;</p><span class="at">said at 05:42</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Why Cline built its own evals</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="15" class="sl"><img loading="lazy" class="main" src="img/evals-broken-use-anyway/s15_610.webp" alt="slide at 10:10"></a><div class="slidecap">Slide at 10:10 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Why Cline built its own evals</h2><ul class="takeaways"><li>Cline found existing evals too rudimentary to reflect real day-to-day programming work, so it built evals from a dataset of real, opted-in user coding sessions (with users paid for their data).</li><li>The speaker distinguishes this from simple single-turn evals (e.g. a trivia question with a binary answer), which are easy to grade but don&#x27;t capture the multi-step, open-ended nature of agentic work like reading files, running scripts, and setting up environments.</li></ul><div class="quote"><p>&ldquo;we got like we went through a lot of like a massive data sets of like people who had opted in to share their coding usage of client with us and we offered them money&rdquo;</p><span class="at">said at 08:17</span></div><div class="quote"><p>&ldquo;a single turn email is very easy to do because it has like a binary answer. It has just like a very limited search space of what the answer could be.&rdquo;</p><span class="at">said at 09:19</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Running evals with Terminal Bench and Harbor</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="16" class="sl"><img loading="lazy" class="main" src="img/evals-broken-use-anyway/s16_640.webp" alt="slide at 10:40"></a><div class="slidecap">Slide at 10:40 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s17_660.webp" alt="slide at 11:00"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s18_920.webp" alt="slide at 15:20"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s19_930.webp" alt="slide at 15:30"></a></div></div>
+<div class="textcol"><h2>Running evals with Terminal Bench and Harbor</h2><ul class="takeaways"><li>Cline adopted Terminal Bench, a Stanford-built suite of 89 approximate real-world programming tasks (race conditions, database issues, infra problems) designed to work with any coding-agent CLI, with some tasks taking 30-40 minutes to run.</li><li>Harbor, from the Laude Institute, standardizes the infrastructure (isolated VMs with defined CPU/RAM) so all 89 tasks can run in parallel, with the slowest task setting the overall runtime.</li></ul><div class="quote"><p>&ldquo;came up with Terminal Bench, which does the same thing, where they came up with like 89 coding problems, which are which are just like very approximate, decent representation of like real world programming problems&rdquo;</p><span class="at">said at 10:19</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Three zones of improvement when hill climbing</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="19" class="sl"><img loading="lazy" class="main" src="img/evals-broken-use-anyway/s19_930.webp" alt="slide at 15:30"></a><div class="slidecap">Slide at 15:30 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s20_1060.webp" alt="slide at 17:40"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s21_1070.webp" alt="slide at 17:50"></a><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s22_1110.webp" alt="slide at 18:30"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/evals-broken-use-anyway/s23_1120.webp" alt="slide at 18:40"></a></div></div>
+<div class="textcol"><h2>Three zones of improvement when hill climbing</h2><ul class="takeaways"><li>After a benchmark run, failures get triaged into zone one (obvious harness bugs), zone two (nuanced, model-family-specific prompt tuning -- the &#x27;essence&#x27; of working with agents), and zone three, a danger zone of straight-up overfitting/cheating to inflate the score.</li><li>The speaker&#x27;s closing advice is to hill climb on both the eval score and a genuine vibe check of whether the product actually feels good to use.</li></ul><div class="quote"><p>&ldquo;zone three is the danger zone where it&#x27;s like you&#x27;re straight up overfitting. So, you&#x27;re overfitting in the sense of like you&#x27;re just straight up cheating to get the highest score&rdquo;</p><span class="at">said at 16:01</span></div><div class="quote"><p>&ldquo;you you got to both pass the vibe check. Like, does it actually feel good to use this product in this model? And at the same time, you also have like a very very very decent uh score&rdquo;</p><span class="at">said at 17:03</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The three-zone framing (bug fix / nuance / overfit) is a useful lens for any team building internal evals, not just coding agents -- the danger zone criticism implicitly applies to published vendor benchmarks too, which raises the question of how much frontier-lab marketing already lives in zone three (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/evals-broken-use-anyway/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/evals-broken-use-anyway/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/evals-broken-use-anyway/s02_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/evals-broken-use-anyway/s03_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/evals-broken-use-anyway/s04_90.webp" alt="slide at 01:30"><div class="ts">01:30</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/evals-broken-use-anyway/s05_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/evals-broken-use-anyway/s06_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/evals-broken-use-anyway/s07_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/evals-broken-use-anyway/s08_170.webp" alt="slide at 02:50"><div class="ts">02:50</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/evals-broken-use-anyway/s09_220.webp" alt="slide at 03:40"><div class="ts">03:40</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/evals-broken-use-anyway/s10_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/evals-broken-use-anyway/s11_310.webp" alt="slide at 05:10"><div class="ts">05:10</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/evals-broken-use-anyway/s12_320.webp" alt="slide at 05:20"><div class="ts">05:20</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/evals-broken-use-anyway/s13_340.webp" alt="slide at 05:40"><div class="ts">05:40</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/evals-broken-use-anyway/s14_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/evals-broken-use-anyway/s15_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/evals-broken-use-anyway/s16_640.webp" alt="slide at 10:40"><div class="ts">10:40</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/evals-broken-use-anyway/s17_660.webp" alt="slide at 11:00"><div class="ts">11:00</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/evals-broken-use-anyway/s18_920.webp" alt="slide at 15:20"><div class="ts">15:20</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/evals-broken-use-anyway/s19_930.webp" alt="slide at 15:30"><div class="ts">15:30</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/evals-broken-use-anyway/s20_1060.webp" alt="slide at 17:40"><div class="ts">17:40</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/evals-broken-use-anyway/s21_1070.webp" alt="slide at 17:50"><div class="ts">17:50</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/evals-broken-use-anyway/s22_1110.webp" alt="slide at 18:30"><div class="ts">18:30</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/evals-broken-use-anyway/s23_1120.webp" alt="slide at 18:40"><div class="ts">18:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>People misjudge evals by falling into either an objective-metrics camp that overtrusts benchmark numbers or a taste camp that dismisses evals entirely.</td><td class="tt">01:33</td></tr><tr><td class="st">recommends</td><td>Don&#x27;t take a model lab&#x27;s own published eval numbers at face value.</td><td class="tt">03:36</td></tr><tr><td class="st">recommends</td><td>Stay current on model releases but wait a few weeks before switching rather than adopting immediately.</td><td class="tt">04:08</td></tr><tr><td class="st">warns</td><td>OpenAI itself acknowledged that SWE-bench Verified no longer measures frontier coding capability, illustrating that standardized evals go stale.</td><td class="tt">05:42</td></tr><tr><td class="st">asserts</td><td>Cline built its own evals using a dataset of real coding sessions from users who opted in and were paid to share their usage.</td><td class="tt">08:17</td></tr><tr><td class="st">asserts</td><td>Single-turn evals are easy to grade because they have a binary answer, unlike open-ended agentic tasks.</td><td class="tt">09:19</td></tr><tr><td class="st">asserts</td><td>Terminal Bench, built by Stanford researchers, provides 89 approximate real-world programming tasks usable with any coding-agent CLI.</td><td class="tt">10:19</td></tr><tr><td class="st">warns</td><td>The third zone of eval improvement is a danger zone of straight-up overfitting or cheating to inflate the score.</td><td class="tt">16:01</td></tr><tr><td class="st">recommends</td><td>Teams should improve both the measurable eval score and the subjective vibe check of whether the product feels good to use.</td><td class="tt">17:03</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/evals-broken-use-anyway/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/QuuIywMG4s8?t=10"}, {"src": "img/evals-broken-use-anyway/s01_20.webp", "mmss": "00:20", "yt": "https://youtu.be/QuuIywMG4s8?t=20"}, {"src": "img/evals-broken-use-anyway/s02_30.webp", "mmss": "00:30", "yt": "https://youtu.be/QuuIywMG4s8?t=30"}, {"src": "img/evals-broken-use-anyway/s03_40.webp", "mmss": "00:40", "yt": "https://youtu.be/QuuIywMG4s8?t=40"}, {"src": "img/evals-broken-use-anyway/s04_90.webp", "mmss": "01:30", "yt": "https://youtu.be/QuuIywMG4s8?t=90"}, {"src": "img/evals-broken-use-anyway/s05_120.webp", "mmss": "02:00", "yt": "https://youtu.be/QuuIywMG4s8?t=120"}, {"src": "img/evals-broken-use-anyway/s06_140.webp", "mmss": "02:20", "yt": "https://youtu.be/QuuIywMG4s8?t=140"}, {"src": "img/evals-broken-use-anyway/s07_150.webp", "mmss": "02:30", "yt": "https://youtu.be/QuuIywMG4s8?t=150"}, {"src": "img/evals-broken-use-anyway/s08_170.webp", "mmss": "02:50", "yt": "https://youtu.be/QuuIywMG4s8?t=170"}, {"src": "img/evals-broken-use-anyway/s09_220.webp", "mmss": "03:40", "yt": "https://youtu.be/QuuIywMG4s8?t=220"}, {"src": "img/evals-broken-use-anyway/s10_250.webp", "mmss": "04:10", "yt": "https://youtu.be/QuuIywMG4s8?t=250"}, {"src": "img/evals-broken-use-anyway/s11_310.webp", "mmss": "05:10", "yt": "https://youtu.be/QuuIywMG4s8?t=310"}, {"src": "img/evals-broken-use-anyway/s12_320.webp", "mmss": "05:20", "yt": "https://youtu.be/QuuIywMG4s8?t=320"}, {"src": "img/evals-broken-use-anyway/s13_340.webp", "mmss": "05:40", "yt": "https://youtu.be/QuuIywMG4s8?t=340"}, {"src": "img/evals-broken-use-anyway/s14_370.webp", "mmss": "06:10", "yt": "https://youtu.be/QuuIywMG4s8?t=370"}, {"src": "img/evals-broken-use-anyway/s15_610.webp", "mmss": "10:10", "yt": "https://youtu.be/QuuIywMG4s8?t=610"}, {"src": "img/evals-broken-use-anyway/s16_640.webp", "mmss": "10:40", "yt": "https://youtu.be/QuuIywMG4s8?t=640"}, {"src": "img/evals-broken-use-anyway/s17_660.webp", "mmss": "11:00", "yt": "https://youtu.be/QuuIywMG4s8?t=660"}, {"src": "img/evals-broken-use-anyway/s18_920.webp", "mmss": "15:20", "yt": "https://youtu.be/QuuIywMG4s8?t=920"}, {"src": "img/evals-broken-use-anyway/s19_930.webp", "mmss": "15:30", "yt": "https://youtu.be/QuuIywMG4s8?t=930"}, {"src": "img/evals-broken-use-anyway/s20_1060.webp", "mmss": "17:40", "yt": "https://youtu.be/QuuIywMG4s8?t=1060"}, {"src": "img/evals-broken-use-anyway/s21_1070.webp", "mmss": "17:50", "yt": "https://youtu.be/QuuIywMG4s8?t=1070"}, {"src": "img/evals-broken-use-anyway/s22_1110.webp", "mmss": "18:30", "yt": "https://youtu.be/QuuIywMG4s8?t=1110"}, {"src": "img/evals-broken-use-anyway/s23_1120.webp", "mmss": "18:40", "yt": "https://youtu.be/QuuIywMG4s8?t=1120"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "QuuIywMG4s8", "slug": "evals-broken-use-anyway", "title": "Evals Are Broken, Use Them Anyway", "speaker": "Ara Khan", "company": "Cline", "themes": ["evals-benchmarks", "coding-agents", "agentic-engineering"], "tier": "slide-brief", "depth": "take", "diagram": {"title": "How the talk argues evals should be used (ours)", "caption": "This traces the talk argument from two mistaken camps about evals, through Cline heuristics and its own benchmark build, to the recommended dual check of score and vibe (ours).", "lanes": ["premise", "mechanism", "consequence"], "nodes": [{"id": "n1", "label": "Two camps wrong", "sub": "objective-metrics camp vs taste camp", "lane": 0, "t": 93, "claim": "c1", "kind": "actor"}, {"id": "n2", "label": "Stale standardized evals", "sub": "OpenAI: SWE-bench Verified is stale", "lane": 0, "t": 342, "claim": "c4", "kind": "external"}, {"id": "n3", "label": "Single-turn evals too easy", "sub": "binary answer, limited search space", "lane": 0, "t": 559, "claim": "c6", "kind": "external"}, {"id": "n4", "label": "Distrust lab numbers", "sub": "don't take self-reported eval scores at face value", "lane": 1, "t": 216, "claim": "c2", "kind": "system"}, {"id": "n5", "label": "Wait before switching", "sub": "let new model reputation settle a few weeks", "lane": 1, "t": 248, "claim": "c3", "kind": "system"}, {"id": "n6", "label": "Cline's own evals", "sub": "built from real, paid, opted-in user coding sessions", "lane": 1, "t": 497, "claim": "c5", "kind": "system"}, {"id": "n7", "label": "Terminal Bench", "sub": "Stanford, 89 real-world programming tasks", "lane": 1, "t": 619, "claim": "c7", "kind": "external"}, {"id": "n8", "label": "Overfitting danger zone", "sub": "zone 3: straight-up cheating to inflate score", "lane": 2, "t": 961, "claim": "c8", "kind": "system"}, {"id": "n9", "label": "Score + vibe check", "sub": "hill climb on eval score and product feel", "lane": 2, "t": 1023, "claim": "c9", "kind": "actor"}], "edges": [{"from": "n1", "to": "n4", "label": "drives heuristic", "kind": "flow"}, {"from": "n1", "to": "n5", "label": "drives heuristic", "kind": "flow"}, {"from": "n2", "to": "n4", "label": "reinforces distrust", "kind": "flow"}, {"from": "n3", "to": "n6", "label": "motivates own evals", "kind": "flow"}, {"from": "n6", "to": "n7", "label": "evaluated via", "kind": "data"}, {"from": "n7", "to": "n8", "label": "triaged into zones", "kind": "flow"}, {"from": "n8", "to": "n9", "label": "avoid via vibe check", "kind": "flow"}, {"from": "n4", "to": "n9", "label": "feeds into", "kind": "flow"}, {"from": "n5", "to": "n9", "label": "feeds into", "kind": "flow"}]}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "two camps wrong about evals", "text": "People misjudge evals by falling into either an objective-metrics camp that overtrusts benchmark numbers or a taste camp that dismisses evals entirely.", "quote": "there's basically two camps of people who are wrong about things, right? So there's two camps of wrong on evals.", "t": 93}, {"id": "c2", "stance": "recommends", "topic": "distrust self-reported eval numbers", "text": "Don't take a model lab's own published eval numbers at face value.", "quote": "the first heuristic is that whenever a model apps comes out with like a number, just don't believe them. Just don't.", "t": 216}, {"id": "c3", "stance": "recommends", "topic": "don't be earliest adopter", "text": "Stay current on model releases but wait a few weeks before switching rather than adopting immediately.", "quote": "the second heuristic is that like you want to stay current, but you don't want to be the earliest adopter.", "t": 248}, {"id": "c4", "stance": "warns", "topic": "old evals go stale", "text": "OpenAI itself acknowledged that SWE-bench Verified no longer measures frontier coding capability, illustrating that standardized evals go stale.", "quote": "this is a blog post from OpenAI where they straight up said as we bench verified no longer measures frontier coding capabilities", "t": 342}, {"id": "c5", "stance": "asserts", "topic": "Cline built evals from real user data", "text": "Cline built its own evals using a dataset of real coding sessions from users who opted in and were paid to share their usage.", "quote": "we got like we went through a lot of like a massive data sets of like people who had opted in to share their coding usage of client with us and we offered them money", "t": 497}, {"id": "c6", "stance": "asserts", "topic": "agent evals harder than single-turn evals", "text": "Single-turn evals are easy to grade because they have a binary answer, unlike open-ended agentic tasks.", "quote": "a single turn email is very easy to do because it has like a binary answer. It has just like a very limited search space of what the answer could be.", "t": 559}, {"id": "c7", "stance": "asserts", "topic": "Terminal Bench", "text": "Terminal Bench, built by Stanford researchers, provides 89 approximate real-world programming tasks usable with any coding-agent CLI.", "quote": "came up with Terminal Bench, which does the same thing, where they came up with like 89 coding problems, which are which are just like very approximate, decent representation of like real world programming problems", "t": 619}, {"id": "c8", "stance": "warns", "topic": "overfitting danger zone", "text": "The third zone of eval improvement is a danger zone of straight-up overfitting or cheating to inflate the score.", "quote": "zone three is the danger zone where it's like you're straight up overfitting. So, you're overfitting in the sense of like you're just straight up cheating to get the highest score", "t": 961}, {"id": "c9", "stance": "recommends", "topic": "hill climb on both score and vibe check", "text": "Teams should improve both the measurable eval score and the subjective vibe check of whether the product feels good to use.", "quote": "you you got to both pass the vibe check. Like, does it actually feel good to use this product in this model? And at the same time, you also have like a very very very decent uh score", "t": 1023}]}</script>
+</body></html>

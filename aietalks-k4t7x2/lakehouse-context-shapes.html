@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>AI on Your Lakehouse: Context Comes in Shapes, Not Queries &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/kRkcNOsRyYg" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 119 min</span><span class="ln"></span></div>
+<h1 class="lede">AI on Your Lakehouse: Context Comes in Shapes, Not Queries</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Zach Blumenfeld &middot; Neo4j</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/kRkcNOsRyYg" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/kRkcNOsRyYg</a> &middot; 119 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Context engineering</span><span class="chip hot">MCP & protocols</span><span class="chip hot">Data curation</span></div>
+<p class="deck" style="font-size:15px">Walks through three concrete graph patterns (connections/semantic layer, table-of-contents/outline, and theme clusters) for grounding a coding agent against a mixed warehouse-plus-documents lakehouse, live inside Claude Code with the Neo...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Three graph shapes were taught: connections (a semantic layer over warehouse tables, built via a metadata graph called Neo4j Neocarta), table of contents/outline (a containment tree plus links over documents), and themes (Leiden community detection over document link structure) (c1).</li><li>Semantic/vector search structurally cannot answer estate-level questions like proving something is missing or finding undocumented patterns, because it can only match things that exist, not absence (c2).</li><li>The document graph was built with deterministic loading (folder/section containment plus explicit links) rather than LLM entity extraction, trading some GraphRAG-style richness for idempotent, cheaper, faster builds (c3).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">THREE GRAPH SHAPES FOR LAKEHOUSE CONTEXT (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 644.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- warehouse -->
+<g id="node1" class="node">
+<title>warehouse</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="152.67,-298.87 0,-298.87 0,-262.59 152.67,-262.59 152.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="26.08" y="-280.78" font-family="Geist Mono" font-size="11.00">BigQuery warehouse</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Row data stays in place, not copied</text>
+</g>
+<!-- semantic_layer -->
+<g id="node3" class="node">
+<title>semantic_layer</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="264.67,-211.34 106,-211.34 106,-175.06 264.67,-175.06 264.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="126.08" y="-193.25" font-family="Geist Mono" font-size="11.00">Neocarta semantic layer</text>
+<text xml:space="preserve" text-anchor="start" x="118.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Metadata only: tables, columns, joins</text>
+</g>
+<!-- warehouse&#45;&gt;semantic_layer -->
+<g id="edge1" class="edge">
+<title>warehouse&#45;&gt;semantic_layer</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M98.92,-262.01C115.58,-248.93 138.39,-231.04 156.39,-216.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="157.59,-219.08 161.59,-212.83 154.57,-215.23 157.59,-219.08"/>
+<text xml:space="preserve" text-anchor="middle" x="165.11" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">MCP metadata</text>
+</g>
+<!-- docs -->
+<g id="node2" class="node">
+<title>docs</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="515.54,-298.87 365.12,-298.87 365.12,-262.59 515.54,-262.59 515.54,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="408.46" y="-280.78" font-family="Geist Mono" font-size="11.00">PDF manuals</text>
+<text xml:space="preserve" text-anchor="start" x="378.08" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Loaded via folder/section structure</text>
+</g>
+<!-- toc -->
+<g id="node4" class="node">
+<title>toc</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="635.8,-211.34 486.88,-211.34 486.88,-175.06 635.8,-175.06 635.8,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="503.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Table of contents graph</text>
+<text xml:space="preserve" text-anchor="start" x="499.84" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Containment tree plus explicit links</text>
+</g>
+<!-- docs&#45;&gt;toc -->
+<g id="edge2" class="edge">
+<title>docs&#45;&gt;toc</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M465.41,-262.01C483.98,-248.88 509.44,-230.88 529.46,-216.73"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="530.76,-218.81 535.06,-212.77 527.93,-214.81 530.76,-218.81"/>
+<text xml:space="preserve" text-anchor="middle" x="533.58" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">folder/section</text>
+</g>
+<!-- themes -->
+<g id="node5" class="node">
+<title>themes</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="464.42,-211.34 286.25,-211.34 286.25,-175.06 464.42,-175.06 464.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="337.83" y="-193.25" font-family="Geist Mono" font-size="11.00">Theme clusters</text>
+<text xml:space="preserve" text-anchor="start" x="299.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Leiden community detection, no LLM labels</text>
+</g>
+<!-- docs&#45;&gt;themes -->
+<g id="edge3" class="edge">
+<title>docs&#45;&gt;themes</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M426.87,-262.01C417.28,-249.39 404.28,-232.29 393.74,-218.42"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="395.89,-217.2 389.7,-213.1 391.99,-220.16 395.89,-217.2"/>
+<text xml:space="preserve" text-anchor="middle" x="436.48" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">link structure</text>
+</g>
+<!-- agent -->
+<g id="node6" class="node">
+<title>agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="447.92,-123.81 302.75,-123.81 302.75,-87.53 447.92,-87.53 447.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="328.83" y="-105.72" font-family="Geist Mono" font-size="11.00">Claude Code agent</text>
+<text xml:space="preserve" text-anchor="start" x="315.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Grounds queries in graph context</text>
+</g>
+<!-- semantic_layer&#45;&gt;agent -->
+<g id="edge8" class="edge">
+<title>semantic_layer&#45;&gt;agent</title>
+<path fill="none" stroke="#c8501f" d="M224.7,-174.48C254.89,-160.89 296.65,-142.09 328.55,-127.73"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="329.26,-130.1 334.64,-124.99 327.25,-125.63 329.26,-130.1"/>
+<text xml:space="preserve" text-anchor="middle" x="319.46" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">semantic layer</text>
+</g>
+<!-- text2sql -->
+<g id="node7" class="node">
+<title>text2sql</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="178.54,-123.81 34.12,-123.81 34.12,-87.53 178.54,-87.53 178.54,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="78.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Text&#45;to&#45;SQL</text>
+<text xml:space="preserve" text-anchor="start" x="47.08" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Queries BigQuery directly, no ETL</text>
+</g>
+<!-- semantic_layer&#45;&gt;text2sql -->
+<g id="edge4" class="edge">
+<title>semantic_layer&#45;&gt;text2sql</title>
+<path fill="none" stroke="#c8501f" d="M168.97,-174.48C157.21,-161.75 141.23,-144.45 128.35,-130.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="130.26,-128.96 123.71,-125.48 126.66,-132.29 130.26,-128.96"/>
+<text xml:space="preserve" text-anchor="middle" x="176.81" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">informs query</text>
+</g>
+<!-- toc&#45;&gt;agent -->
+<g id="edge6" class="edge">
+<title>toc&#45;&gt;agent</title>
+<path fill="none" stroke="#c8501f" d="M522.8,-174.48C493.37,-160.95 452.71,-142.25 421.53,-127.91"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="422.58,-125.7 415.2,-125 420.54,-130.15 422.58,-125.7"/>
+<text xml:space="preserve" text-anchor="middle" x="493.35" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">context</text>
+</g>
+<!-- themes&#45;&gt;agent -->
+<g id="edge7" class="edge">
+<title>themes&#45;&gt;agent</title>
+<path fill="none" stroke="#c8501f" d="M375.33,-174.48C375.33,-162.44 375.33,-146.31 375.33,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="377.79,-132.88 375.34,-125.88 372.89,-132.88 377.79,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="389.58" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">clusters</text>
+</g>
+<!-- cli -->
+<g id="node8" class="node">
+<title>cli</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="449.04,-36.28 301.62,-36.28 301.62,0 449.04,0 449.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="314.58" y="-18.19" font-family="Geist Mono" font-size="11.00">Neo4j CLI text&#45;to&#45;Cypher</text>
+<text xml:space="preserve" text-anchor="start" x="322.08" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Bundled Cypher and GDS skills</text>
+</g>
+<!-- agent&#45;&gt;cli -->
+<g id="edge9" class="edge">
+<title>agent&#45;&gt;cli</title>
+<path fill="none" stroke="#c8501f" d="M375.33,-86.95C375.33,-74.91 375.33,-58.78 375.33,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="377.79,-45.35 375.34,-38.35 372.89,-45.35 377.79,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="402.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">text&#45;to&#45;Cypher</text>
+</g>
+<!-- text2sql&#45;&gt;warehouse -->
+<g id="edge5" class="edge">
+<title>text2sql&#45;&gt;warehouse</title>
+<path fill="none" stroke="#c8501f" d="M80.28,-124.27C64.68,-136.47 46.25,-154.23 37.58,-175.06 26.29,-202.23 42.02,-233.99 56.7,-255.34"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="54.64,-256.67 60.71,-260.93 58.62,-253.81 54.64,-256.67"/>
+<text xml:space="preserve" text-anchor="middle" x="66.46" y="-190.75" font-family="Geist Mono" font-size="8.50" fill="#c8501f">queries directly</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Connections, table of contents, and themes are three deterministic graph patterns layered over a warehouse and documents to ground a coding agent, none of them requiring a full ETL copy of the underlying data (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Three shapes for grounding an agent</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/lakehouse-context-shapes/s02_290.webp" alt="slide at 04:50"></a><div class="slidecap">Slide at 04:50 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Three shapes for grounding an agent</h2><ul class="takeaways"><li>The workshop introduces three graph patterns for giving a coding agent context over a lakehouse: connections (a semantic layer over the SQL warehouse), table of contents/outline (a containment tree over documents with explicit cross-links), and themes (community detection to surface document clusters).</li><li>All three are demonstrated live against a fictional auto-repair company&#x27;s BigQuery warehouse and PDF manuals using Claude Code, the Neo4j MCP server, and the Neo4j CLI.</li></ul><div class="quote"><p>&ldquo;And so there&#x27;s going to be three concrete shapes that we&#x27;ll introduce you to today.&rdquo;</p><span class="at">said at 06:14</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Why vector search can&#x27;t answer estate-level questions</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/lakehouse-context-shapes/s04_580.webp" alt="slide at 09:40"></a><div class="slidecap">Slide at 09:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s05_680.webp" alt="slide at 11:20"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s06_840.webp" alt="slide at 14:00"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s07_1000.webp" alt="slide at 16:40"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s08_1140.webp" alt="slide at 19:00"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s09_1280.webp" alt="slide at 21:20"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s10_1450.webp" alt="slide at 24:10"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s11_1560.webp" alt="slide at 26:00"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s12_1710.webp" alt="slide at 28:30"></a></div></div>
+<div class="textcol"><h2>Why vector search can&#x27;t answer estate-level questions</h2><ul class="takeaways"><li>Estate-level questions such as which documentation is missing, which is unused, or what patterns recur across an entire corpus are described as effectively unanswerable by semantic/vector search alone, since similarity search can only surface what exists and cannot prove a negative.</li><li>The talk positions graph traversal as the mechanism for these whole-corpus questions, as opposed to single-record lookups.</li></ul><div class="quote"><p>&ldquo;So this is sort of like proving a negative which can be very hard with something like semantic search uh which can only match similar things, right?&rdquo;</p><span class="at">said at 05:12</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Deterministic loading instead of LLM entity extraction</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="19" class="sl"><img loading="lazy" class="main" src="img/lakehouse-context-shapes/s19_3040.webp" alt="slide at 50:40"></a><div class="slidecap">Slide at 50:40 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Deterministic loading instead of LLM entity extraction</h2><ul class="takeaways"><li>Rather than using an LLM to extract entities and relationships from documents (the GraphRAG approach), the document graph is built deterministically from each document&#x27;s existing folder structure, section nesting, and explicit links.</li><li>This is framed as a lighter-weight, idempotent alternative to full entity-extraction pipelines, at the cost of the richer entity typing that extraction-based graphs can provide.</li></ul><div class="quote"><p>&ldquo;here what I&#x27;m going to show you is something that&#x27;s much more lightweight and I think maybe to the point that you were making um we&#x27;re actually going to use a deterministic loading.&rdquo;</p><span class="at">said at 49:46</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>The graph as semantic layer, not an ETL copy</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="12" class="sl"><img loading="lazy" class="main" src="img/lakehouse-context-shapes/s12_1710.webp" alt="slide at 28:30"></a><div class="slidecap">Slide at 28:30 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s13_1820.webp" alt="slide at 30:20"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s14_1920.webp" alt="slide at 32:00"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s15_2020.webp" alt="slide at 33:40"></a></div></div>
+<div class="textcol"><h2>The graph as semantic layer, not an ETL copy</h2><ul class="takeaways"><li>For the structured (warehouse) side, the graph does not copy the underlying row data; it stores only metadata (tables, columns, join paths) pulled in via an MCP server (Neocarta), and the agent uses that metadata graph to inform a text-to-SQL query against BigQuery directly.</li><li>This is distinguished from a full ETL of warehouse data into the graph, which the speaker says is warranted mainly when raw graph-query performance (recursive joins, embeddings, clustering) is needed.</li></ul><div class="quote"><p>&ldquo;we&#x27;re not using the graph to copy the data over. There&#x27;s not like an ETL into graph. What we&#x27;re doing is we&#x27;re using the graph as a semantic layer.&rdquo;</p><span class="at">said at 27:17</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Themes via community detection, and where the company is headed</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="15" class="sl"><img loading="lazy" class="main" src="img/lakehouse-context-shapes/s15_2020.webp" alt="slide at 33:40"></a><div class="slidecap">Slide at 33:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s16_2400.webp" alt="slide at 40:00"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s17_2520.webp" alt="slide at 42:00"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s18_2710.webp" alt="slide at 45:10"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s19_3040.webp" alt="slide at 50:40"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s20_3270.webp" alt="slide at 54:30"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s21_3380.webp" alt="slide at 56:20"></a><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s22_3640.webp" alt="slide at 60:40"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s23_3760.webp" alt="slide at 62:40"></a></div></div>
+<div class="textcol"><h2>Themes via community detection, and where the company is headed</h2><ul class="takeaways"><li>The themes shape runs Leiden community detection over the document link graph to surface clusters (e.g., a braking-parts cluster) purely from existing link/title metadata, without any LLM labeling step, which keeps results stable and cheap to rerun.</li><li>The speaker frames Neo4j&#x27;s current strategic focus as building out this space between ontologies, semantic layers, and a newer &quot;virtual graph&quot; capability rather than pushing customers toward full ETL into a graph database.</li></ul><div class="quote"><p>&ldquo;Here we&#x27;re doing the former. We&#x27;re just taking what&#x27;s in the data and we&#x27;re just showing it to you.&rdquo;</p><span class="at">said at 93:29</span></div><div class="quote"><p>&ldquo;we&#x27;re focused a lot right now on these concepts of ontologies and semantic layers and what we&#x27;re calling virtual graph where the focus isn&#x27;t only just etling data in&rdquo;</p><span class="at">said at 35:16</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">06</span><span>Recommendation: use the vendor CLI for text-to-Cypher</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="38" class="sl"><img loading="lazy" class="main" src="img/lakehouse-context-shapes/s38_5950.webp" alt="slide at 99:10"></a><div class="slidecap">Slide at 99:10 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="39" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s39_6120.webp" alt="slide at 102:00"></a><a href="#" data-slide="40" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s40_6270.webp" alt="slide at 104:30"></a><a href="#" data-slide="41" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s41_6370.webp" alt="slide at 106:10"></a><a href="#" data-slide="42" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s42_6460.webp" alt="slide at 107:40"></a><a href="#" data-slide="43" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s43_6630.webp" alt="slide at 110:30"></a><a href="#" data-slide="44" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s44_6760.webp" alt="slide at 112:40"></a><a href="#" data-slide="45" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s45_6890.webp" alt="slide at 114:50"></a><a href="#" data-slide="46" class="sl"><img loading="lazy" class="thumb" src="img/lakehouse-context-shapes/s46_6980.webp" alt="slide at 116:20"></a></div></div>
+<div class="textcol"><h2>Recommendation: use the vendor CLI for text-to-Cypher</h2><ul class="takeaways"><li>The speaker recommends using the Neo4j CLI plus its bundled Cypher and graph-data-science skills for any text-to-Cypher agent work, citing it as a substantial improvement over the text-to-Cypher experience from even six months to a year earlier.</li></ul><div class="quote"><p>&ldquo;if you are going to be writing cipher or doing anything text to cipher with an agent, I&#x27;d highly recommend using the Neo Forj CLY.&rdquo;</p><span class="at">said at 100:30</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The workshop is explicitly framed as conceptual/model-agnostic rather than a benchmarked comparison against vector search; the speaker says directly, when asked about accuracy at scale, that no formal benchmarking was run on what was shown, which is worth weighing against the estate-level-question claims.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/lakehouse-context-shapes/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/lakehouse-context-shapes/s01_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/lakehouse-context-shapes/s02_290.webp" alt="slide at 04:50"><div class="ts">04:50</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/lakehouse-context-shapes/s03_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/lakehouse-context-shapes/s04_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/lakehouse-context-shapes/s05_680.webp" alt="slide at 11:20"><div class="ts">11:20</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/lakehouse-context-shapes/s06_840.webp" alt="slide at 14:00"><div class="ts">14:00</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/lakehouse-context-shapes/s07_1000.webp" alt="slide at 16:40"><div class="ts">16:40</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/lakehouse-context-shapes/s08_1140.webp" alt="slide at 19:00"><div class="ts">19:00</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/lakehouse-context-shapes/s09_1280.webp" alt="slide at 21:20"><div class="ts">21:20</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/lakehouse-context-shapes/s10_1450.webp" alt="slide at 24:10"><div class="ts">24:10</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/lakehouse-context-shapes/s11_1560.webp" alt="slide at 26:00"><div class="ts">26:00</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/lakehouse-context-shapes/s12_1710.webp" alt="slide at 28:30"><div class="ts">28:30</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/lakehouse-context-shapes/s13_1820.webp" alt="slide at 30:20"><div class="ts">30:20</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/lakehouse-context-shapes/s14_1920.webp" alt="slide at 32:00"><div class="ts">32:00</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/lakehouse-context-shapes/s15_2020.webp" alt="slide at 33:40"><div class="ts">33:40</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/lakehouse-context-shapes/s16_2400.webp" alt="slide at 40:00"><div class="ts">40:00</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/lakehouse-context-shapes/s17_2520.webp" alt="slide at 42:00"><div class="ts">42:00</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/lakehouse-context-shapes/s18_2710.webp" alt="slide at 45:10"><div class="ts">45:10</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/lakehouse-context-shapes/s19_3040.webp" alt="slide at 50:40"><div class="ts">50:40</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/lakehouse-context-shapes/s20_3270.webp" alt="slide at 54:30"><div class="ts">54:30</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/lakehouse-context-shapes/s21_3380.webp" alt="slide at 56:20"><div class="ts">56:20</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/lakehouse-context-shapes/s22_3640.webp" alt="slide at 60:40"><div class="ts">60:40</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/lakehouse-context-shapes/s23_3760.webp" alt="slide at 62:40"><div class="ts">62:40</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/lakehouse-context-shapes/s24_3910.webp" alt="slide at 65:10"><div class="ts">65:10</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/lakehouse-context-shapes/s25_4030.webp" alt="slide at 67:10"><div class="ts">67:10</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/lakehouse-context-shapes/s26_4120.webp" alt="slide at 68:40"><div class="ts">68:40</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/lakehouse-context-shapes/s27_4280.webp" alt="slide at 71:20"><div class="ts">71:20</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/lakehouse-context-shapes/s28_4390.webp" alt="slide at 73:10"><div class="ts">73:10</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/lakehouse-context-shapes/s29_4670.webp" alt="slide at 77:50"><div class="ts">77:50</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/lakehouse-context-shapes/s30_4830.webp" alt="slide at 80:30"><div class="ts">80:30</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/lakehouse-context-shapes/s31_4970.webp" alt="slide at 82:50"><div class="ts">82:50</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/lakehouse-context-shapes/s32_5110.webp" alt="slide at 85:10"><div class="ts">85:10</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/lakehouse-context-shapes/s33_5210.webp" alt="slide at 86:50"><div class="ts">86:50</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/lakehouse-context-shapes/s34_5370.webp" alt="slide at 89:30"><div class="ts">89:30</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/lakehouse-context-shapes/s35_5530.webp" alt="slide at 92:10"><div class="ts">92:10</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/lakehouse-context-shapes/s36_5670.webp" alt="slide at 94:30"><div class="ts">94:30</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/lakehouse-context-shapes/s37_5820.webp" alt="slide at 97:00"><div class="ts">97:00</div></a><a href="#" data-slide="38"><img loading="lazy" src="img/lakehouse-context-shapes/s38_5950.webp" alt="slide at 99:10"><div class="ts">99:10</div></a><a href="#" data-slide="39"><img loading="lazy" src="img/lakehouse-context-shapes/s39_6120.webp" alt="slide at 102:00"><div class="ts">102:00</div></a><a href="#" data-slide="40"><img loading="lazy" src="img/lakehouse-context-shapes/s40_6270.webp" alt="slide at 104:30"><div class="ts">104:30</div></a><a href="#" data-slide="41"><img loading="lazy" src="img/lakehouse-context-shapes/s41_6370.webp" alt="slide at 106:10"><div class="ts">106:10</div></a><a href="#" data-slide="42"><img loading="lazy" src="img/lakehouse-context-shapes/s42_6460.webp" alt="slide at 107:40"><div class="ts">107:40</div></a><a href="#" data-slide="43"><img loading="lazy" src="img/lakehouse-context-shapes/s43_6630.webp" alt="slide at 110:30"><div class="ts">110:30</div></a><a href="#" data-slide="44"><img loading="lazy" src="img/lakehouse-context-shapes/s44_6760.webp" alt="slide at 112:40"><div class="ts">112:40</div></a><a href="#" data-slide="45"><img loading="lazy" src="img/lakehouse-context-shapes/s45_6890.webp" alt="slide at 114:50"><div class="ts">114:50</div></a><a href="#" data-slide="46"><img loading="lazy" src="img/lakehouse-context-shapes/s46_6980.webp" alt="slide at 116:20"><div class="ts">116:20</div></a><a href="#" data-slide="47"><img loading="lazy" src="img/lakehouse-context-shapes/s47_7080.webp" alt="slide at 118:00"><div class="ts">118:00</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The workshop teaches three graph patterns for context: connections, table of contents/outline, and themes.</td><td class="tt">06:14</td></tr><tr><td class="st">warns</td><td>Semantic search cannot prove a negative, so it struggles with estate-level questions about what&#x27;s missing.</td><td class="tt">05:12</td></tr><tr><td class="st">recommends</td><td>The document graph is built with deterministic loading from existing structure and links rather than LLM entity extraction.</td><td class="tt">49:46</td></tr><tr><td class="st">asserts</td><td>The theme clusters are taken directly from document/link structure via Leiden community detection, without any LLM labeling.</td><td class="tt">93:29</td></tr><tr><td class="st">recommends</td><td>For any text-to-Cypher agent work, using the Neo4j CLI plus its Cypher and GDS skills is recommended as a major improvement over past approaches.</td><td class="tt">100:30</td></tr><tr><td class="st">asserts</td><td>An ontology helps a system interpret and reason about data, while a semantic layer helps it agree on consistent terms to query data accurately.</td><td class="tt">23:36</td></tr><tr><td class="st">asserts</td><td>The warehouse-side graph stores only metadata pulled via MCP, not a copy of the row data, and is used to inform text-to-SQL rather than replace the warehouse.</td><td class="tt">27:17</td></tr><tr><td class="st">asserts</td><td>Neo4j&#x27;s current strategic focus is ontologies, semantic layers, and a new virtual-graph capability that lets data stay in place rather than requiring full ETL into a graph.</td><td class="tt">35:16</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/lakehouse-context-shapes/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/kRkcNOsRyYg?t=10"}, {"src": "img/lakehouse-context-shapes/s01_120.webp", "mmss": "02:00", "yt": "https://youtu.be/kRkcNOsRyYg?t=120"}, {"src": "img/lakehouse-context-shapes/s02_290.webp", "mmss": "04:50", "yt": "https://youtu.be/kRkcNOsRyYg?t=290"}, {"src": "img/lakehouse-context-shapes/s03_450.webp", "mmss": "07:30", "yt": "https://youtu.be/kRkcNOsRyYg?t=450"}, {"src": "img/lakehouse-context-shapes/s04_580.webp", "mmss": "09:40", "yt": "https://youtu.be/kRkcNOsRyYg?t=580"}, {"src": "img/lakehouse-context-shapes/s05_680.webp", "mmss": "11:20", "yt": "https://youtu.be/kRkcNOsRyYg?t=680"}, {"src": "img/lakehouse-context-shapes/s06_840.webp", "mmss": "14:00", "yt": "https://youtu.be/kRkcNOsRyYg?t=840"}, {"src": "img/lakehouse-context-shapes/s07_1000.webp", "mmss": "16:40", "yt": "https://youtu.be/kRkcNOsRyYg?t=1000"}, {"src": "img/lakehouse-context-shapes/s08_1140.webp", "mmss": "19:00", "yt": "https://youtu.be/kRkcNOsRyYg?t=1140"}, {"src": "img/lakehouse-context-shapes/s09_1280.webp", "mmss": "21:20", "yt": "https://youtu.be/kRkcNOsRyYg?t=1280"}, {"src": "img/lakehouse-context-shapes/s10_1450.webp", "mmss": "24:10", "yt": "https://youtu.be/kRkcNOsRyYg?t=1450"}, {"src": "img/lakehouse-context-shapes/s11_1560.webp", "mmss": "26:00", "yt": "https://youtu.be/kRkcNOsRyYg?t=1560"}, {"src": "img/lakehouse-context-shapes/s12_1710.webp", "mmss": "28:30", "yt": "https://youtu.be/kRkcNOsRyYg?t=1710"}, {"src": "img/lakehouse-context-shapes/s13_1820.webp", "mmss": "30:20", "yt": "https://youtu.be/kRkcNOsRyYg?t=1820"}, {"src": "img/lakehouse-context-shapes/s14_1920.webp", "mmss": "32:00", "yt": "https://youtu.be/kRkcNOsRyYg?t=1920"}, {"src": "img/lakehouse-context-shapes/s15_2020.webp", "mmss": "33:40", "yt": "https://youtu.be/kRkcNOsRyYg?t=2020"}, {"src": "img/lakehouse-context-shapes/s16_2400.webp", "mmss": "40:00", "yt": "https://youtu.be/kRkcNOsRyYg?t=2400"}, {"src": "img/lakehouse-context-shapes/s17_2520.webp", "mmss": "42:00", "yt": "https://youtu.be/kRkcNOsRyYg?t=2520"}, {"src": "img/lakehouse-context-shapes/s18_2710.webp", "mmss": "45:10", "yt": "https://youtu.be/kRkcNOsRyYg?t=2710"}, {"src": "img/lakehouse-context-shapes/s19_3040.webp", "mmss": "50:40", "yt": "https://youtu.be/kRkcNOsRyYg?t=3040"}, {"src": "img/lakehouse-context-shapes/s20_3270.webp", "mmss": "54:30", "yt": "https://youtu.be/kRkcNOsRyYg?t=3270"}, {"src": "img/lakehouse-context-shapes/s21_3380.webp", "mmss": "56:20", "yt": "https://youtu.be/kRkcNOsRyYg?t=3380"}, {"src": "img/lakehouse-context-shapes/s22_3640.webp", "mmss": "60:40", "yt": "https://youtu.be/kRkcNOsRyYg?t=3640"}, {"src": "img/lakehouse-context-shapes/s23_3760.webp", "mmss": "62:40", "yt": "https://youtu.be/kRkcNOsRyYg?t=3760"}, {"src": "img/lakehouse-context-shapes/s24_3910.webp", "mmss": "65:10", "yt": "https://youtu.be/kRkcNOsRyYg?t=3910"}, {"src": "img/lakehouse-context-shapes/s25_4030.webp", "mmss": "67:10", "yt": "https://youtu.be/kRkcNOsRyYg?t=4030"}, {"src": "img/lakehouse-context-shapes/s26_4120.webp", "mmss": "68:40", "yt": "https://youtu.be/kRkcNOsRyYg?t=4120"}, {"src": "img/lakehouse-context-shapes/s27_4280.webp", "mmss": "71:20", "yt": "https://youtu.be/kRkcNOsRyYg?t=4280"}, {"src": "img/lakehouse-context-shapes/s28_4390.webp", "mmss": "73:10", "yt": "https://youtu.be/kRkcNOsRyYg?t=4390"}, {"src": "img/lakehouse-context-shapes/s29_4670.webp", "mmss": "77:50", "yt": "https://youtu.be/kRkcNOsRyYg?t=4670"}, {"src": "img/lakehouse-context-shapes/s30_4830.webp", "mmss": "80:30", "yt": "https://youtu.be/kRkcNOsRyYg?t=4830"}, {"src": "img/lakehouse-context-shapes/s31_4970.webp", "mmss": "82:50", "yt": "https://youtu.be/kRkcNOsRyYg?t=4970"}, {"src": "img/lakehouse-context-shapes/s32_5110.webp", "mmss": "85:10", "yt": "https://youtu.be/kRkcNOsRyYg?t=5110"}, {"src": "img/lakehouse-context-shapes/s33_5210.webp", "mmss": "86:50", "yt": "https://youtu.be/kRkcNOsRyYg?t=5210"}, {"src": "img/lakehouse-context-shapes/s34_5370.webp", "mmss": "89:30", "yt": "https://youtu.be/kRkcNOsRyYg?t=5370"}, {"src": "img/lakehouse-context-shapes/s35_5530.webp", "mmss": "92:10", "yt": "https://youtu.be/kRkcNOsRyYg?t=5530"}, {"src": "img/lakehouse-context-shapes/s36_5670.webp", "mmss": "94:30", "yt": "https://youtu.be/kRkcNOsRyYg?t=5670"}, {"src": "img/lakehouse-context-shapes/s37_5820.webp", "mmss": "97:00", "yt": "https://youtu.be/kRkcNOsRyYg?t=5820"}, {"src": "img/lakehouse-context-shapes/s38_5950.webp", "mmss": "99:10", "yt": "https://youtu.be/kRkcNOsRyYg?t=5950"}, {"src": "img/lakehouse-context-shapes/s39_6120.webp", "mmss": "102:00", "yt": "https://youtu.be/kRkcNOsRyYg?t=6120"}, {"src": "img/lakehouse-context-shapes/s40_6270.webp", "mmss": "104:30", "yt": "https://youtu.be/kRkcNOsRyYg?t=6270"}, {"src": "img/lakehouse-context-shapes/s41_6370.webp", "mmss": "106:10", "yt": "https://youtu.be/kRkcNOsRyYg?t=6370"}, {"src": "img/lakehouse-context-shapes/s42_6460.webp", "mmss": "107:40", "yt": "https://youtu.be/kRkcNOsRyYg?t=6460"}, {"src": "img/lakehouse-context-shapes/s43_6630.webp", "mmss": "110:30", "yt": "https://youtu.be/kRkcNOsRyYg?t=6630"}, {"src": "img/lakehouse-context-shapes/s44_6760.webp", "mmss": "112:40", "yt": "https://youtu.be/kRkcNOsRyYg?t=6760"}, {"src": "img/lakehouse-context-shapes/s45_6890.webp", "mmss": "114:50", "yt": "https://youtu.be/kRkcNOsRyYg?t=6890"}, {"src": "img/lakehouse-context-shapes/s46_6980.webp", "mmss": "116:20", "yt": "https://youtu.be/kRkcNOsRyYg?t=6980"}, {"src": "img/lakehouse-context-shapes/s47_7080.webp", "mmss": "118:00", "yt": "https://youtu.be/kRkcNOsRyYg?t=7080"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "kRkcNOsRyYg", "slug": "lakehouse-context-shapes", "title": "AI on Your Lakehouse: Context Comes in Shapes, Not Queries", "speaker": "Zach Blumenfeld", "company": "Neo4j", "themes": ["context-engineering", "mcp-protocols", "data-curation"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Three graph shapes for lakehouse context (ours)", "lanes": ["Data sources", "Graph layer", "Agent"], "nodes": [{"id": "warehouse", "label": "BigQuery warehouse", "sub": "Row data stays in place, not copied", "lane": 0, "kind": "external", "claim": "c7", "t": 1637}, {"id": "docs", "label": "PDF manuals", "sub": "Loaded via folder/section structure", "lane": 0, "kind": "external", "claim": "c3", "t": 2986}, {"id": "semantic_layer", "label": "Neocarta semantic layer", "sub": "Metadata only: tables, columns, joins", "lane": 1, "kind": "store", "claim": "c7", "t": 1637}, {"id": "toc", "label": "Table of contents graph", "sub": "Containment tree plus explicit links", "lane": 1, "kind": "store", "claim": "c3", "t": 2986}, {"id": "themes", "label": "Theme clusters", "sub": "Leiden community detection, no LLM labels", "lane": 1, "kind": "store", "claim": "c4", "t": 5609}, {"id": "agent", "label": "Claude Code agent", "sub": "Grounds queries in graph context", "lane": 2, "kind": "actor", "claim": "c1", "t": 374}, {"id": "text2sql", "label": "Text-to-SQL", "sub": "Queries BigQuery directly, no ETL", "lane": 2, "kind": "system", "claim": "c7", "t": 1637}, {"id": "cli", "label": "Neo4j CLI text-to-Cypher", "sub": "Bundled Cypher and GDS skills", "lane": 2, "kind": "system", "claim": "c5", "t": 6030}], "edges": [{"from": "warehouse", "to": "semantic_layer", "label": "MCP metadata", "kind": "data"}, {"from": "docs", "to": "toc", "label": "folder/section", "kind": "data"}, {"from": "docs", "to": "themes", "label": "link structure", "kind": "data"}, {"from": "semantic_layer", "to": "text2sql", "label": "informs query", "kind": "flow"}, {"from": "text2sql", "to": "warehouse", "label": "queries directly", "kind": "flow"}, {"from": "toc", "to": "agent", "label": "context", "kind": "flow"}, {"from": "themes", "to": "agent", "label": "clusters", "kind": "flow"}, {"from": "semantic_layer", "to": "agent", "label": "semantic layer", "kind": "flow"}, {"from": "agent", "to": "cli", "label": "text-to-Cypher", "kind": "flow"}], "caption": "Connections, table of contents, and themes are three deterministic graph patterns layered over a warehouse and documents to ground a coding agent, none of them requiring a full ETL copy of the underlying data (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "three graph shapes", "text": "The workshop teaches three graph patterns for context: connections, table of contents/outline, and themes.", "quote": "And so there's going to be three concrete shapes that we'll introduce you to today.", "t": 374}, {"id": "c2", "stance": "warns", "topic": "limits of semantic search", "text": "Semantic search cannot prove a negative, so it struggles with estate-level questions about what's missing.", "quote": "So this is sort of like proving a negative which can be very hard with something like semantic search uh which can only match similar things, right?", "t": 312}, {"id": "c3", "stance": "recommends", "topic": "deterministic document loading", "text": "The document graph is built with deterministic loading from existing structure and links rather than LLM entity extraction.", "quote": "here what I'm going to show you is something that's much more lightweight and I think maybe to the point that you were making um we're actually going to use a deterministic loading.", "t": 2986}, {"id": "c4", "stance": "asserts", "topic": "Leiden community detection for themes", "text": "The theme clusters are taken directly from document/link structure via Leiden community detection, without any LLM labeling.", "quote": "Here we're doing the former. We're just taking what's in the data and we're just showing it to you.", "t": 5609}, {"id": "c5", "stance": "recommends", "topic": "Neo4j CLI for text-to-Cypher", "text": "For any text-to-Cypher agent work, using the Neo4j CLI plus its Cypher and GDS skills is recommended as a major improvement over past approaches.", "quote": "if you are going to be writing cipher or doing anything text to cipher with an agent, I'd highly recommend using the Neo Forj CLY.", "t": 6030}, {"id": "c6", "stance": "asserts", "topic": "ontology vs semantic layer", "text": "An ontology helps a system interpret and reason about data, while a semantic layer helps it agree on consistent terms to query data accurately.", "quote": "an ontology helps something interpret and reason about the data. A semantic layer helps something understand what the consistent agreed upon terms are so it can query the data accurately.", "t": 1416}, {"id": "c7", "stance": "asserts", "topic": "graph as semantic layer, not ETL", "text": "The warehouse-side graph stores only metadata pulled via MCP, not a copy of the row data, and is used to inform text-to-SQL rather than replace the warehouse.", "quote": "we're not using the graph to copy the data over. There's not like an ETL into graph. What we're doing is we're using the graph as a semantic layer.", "t": 1637}, {"id": "c8", "stance": "asserts", "topic": "Neo4j strategic direction", "text": "Neo4j's current strategic focus is ontologies, semantic layers, and a new virtual-graph capability that lets data stay in place rather than requiring full ETL into a graph.", "quote": "we're focused a lot right now on these concepts of ontologies and semantic layers and what we're calling virtual graph where the focus isn't only just etling data in", "t": 2116}]}</script>
+</body></html>

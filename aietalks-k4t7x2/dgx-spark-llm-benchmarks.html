@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Running LLMs locally: Practical LLM Performance on DGX Spark &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/c5-kx2bwoCk" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 10 min</span><span class="ln"></span></div>
+<h1 class="lede">Running LLMs locally: Practical LLM Performance on DGX Spark</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Mozhgan Kabiri chimeh &middot; NVIDIA</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/c5-kx2bwoCk" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/c5-kx2bwoCk</a> &middot; 10 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Local models</span><span class="chip hot">Infra & serving</span><span class="chip hot">Evals & benchmarks</span></div>
+<p class="deck" style="font-size:15px">Gives concrete throughput and time-to-first-token numbers for running 1</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>A 1.5B instruct model hit 61.73 tokens/sec while a 14B NVFP4-quantized model, despite being nearly 10x larger, still reached 20.19 tokens/sec (c1, c2).</li><li>The same 14B model unquantized (base) dropped to 8.40 tokens/sec, and the NVFP4 version was 3.4x faster to first token than that unquantized base (c4, c5).</li><li>The presenter&#x27;s takeaway: on this 128GB unified-memory system, memory capacity and memory bandwidth are different constraints, and quantization format matters as much as the hardware for real throughput (c6, c7).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">DGX SPARK QUANTIZATION BENCHMARK (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 437.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- dgx -->
+<g id="node1" class="node">
+<title>dgx</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="281.05,-386.4 137.38,-386.4 137.38,-350.12 281.05,-350.12 281.05,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="163.46" y="-368.31" font-family="Geist Mono" font-size="11.00">DGX Spark (GB10)</text>
+<text xml:space="preserve" text-anchor="start" x="150.34" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">128GB unified CPU+GPU memory</text>
+</g>
+<!-- m15 -->
+<g id="node2" class="node">
+<title>m15</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="120.42,-298.87 0,-298.87 0,-262.59 120.42,-262.59 120.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-280.78" font-family="Geist Mono" font-size="11.00">1.5B instruct model</text>
+<text xml:space="preserve" text-anchor="start" x="18.59" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">61.73 tok/s throughput</text>
+</g>
+<!-- dgx&#45;&gt;m15 -->
+<g id="edge1" class="edge">
+<title>dgx&#45;&gt;m15</title>
+<path fill="none" stroke="#c8501f" d="M178.34,-349.54C155.06,-336.18 123.02,-317.78 98.17,-303.52"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="99.65,-301.54 92.36,-300.18 97.21,-305.79 99.65,-301.54"/>
+<text xml:space="preserve" text-anchor="middle" x="151.51" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs</text>
+</g>
+<!-- m14nv -->
+<g id="node3" class="node">
+<title>m14nv</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="428.67,-298.87 297.75,-298.87 297.75,-262.59 428.67,-262.59 428.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="310.71" y="-280.78" font-family="Geist Mono" font-size="11.00">14B NVFP4 quantized</text>
+<text xml:space="preserve" text-anchor="start" x="313.34" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">20.19 tok/s despite 10x size</text>
+</g>
+<!-- dgx&#45;&gt;m14nv -->
+<g id="edge2" class="edge">
+<title>dgx&#45;&gt;m14nv</title>
+<path fill="none" stroke="#c8501f" d="M241.12,-349.54C265.17,-336.18 298.3,-317.78 323.97,-303.52"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="325.09,-305.7 330.02,-300.16 322.71,-301.42 325.09,-305.7"/>
+<text xml:space="preserve" text-anchor="middle" x="303.31" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs</text>
+</g>
+<!-- m14base -->
+<g id="node4" class="node">
+<title>m14base</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="276.17,-298.87 142.25,-298.87 142.25,-262.59 276.17,-262.59 276.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="155.21" y="-280.78" font-family="Geist Mono" font-size="11.00">14B unquantized base</text>
+<text xml:space="preserve" text-anchor="start" x="169.84" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">8.40 tok/s throughput</text>
+</g>
+<!-- dgx&#45;&gt;m14base -->
+<g id="edge3" class="edge">
+<title>dgx&#45;&gt;m14base</title>
+<path fill="none" stroke="#c8501f" d="M209.21,-349.54C209.21,-337.5 209.21,-321.37 209.21,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="211.66,-307.94 209.21,-300.94 206.76,-307.94 211.66,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="217.09" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs</text>
+</g>
+<!-- throughput -->
+<g id="node5" class="node">
+<title>throughput</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="237.8,-211.34 104.63,-211.34 104.63,-175.06 237.8,-175.06 237.8,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="124.34" y="-193.25" font-family="Geist Mono" font-size="11.00">Throughput (tok/s)</text>
+<text xml:space="preserve" text-anchor="start" x="117.59" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">vLLM harness, Docker isolated</text>
+</g>
+<!-- m15&#45;&gt;throughput -->
+<g id="edge4" class="edge">
+<title>m15&#45;&gt;throughput</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M83.21,-262.01C100.18,-248.93 123.4,-231.04 141.73,-216.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="142.99,-219.04 147.04,-212.82 140,-215.15 142.99,-219.04"/>
+<text xml:space="preserve" text-anchor="middle" x="140.73" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">measured</text>
+</g>
+<!-- m14nv&#45;&gt;throughput -->
+<g id="edge5" class="edge">
+<title>m14nv&#45;&gt;throughput</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M332.94,-262.04C315.73,-252.35 293.61,-240.48 273.21,-231.34 260.2,-225.51 245.97,-219.88 232.38,-214.85"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="233.3,-212.58 225.89,-212.47 231.62,-217.18 233.3,-212.58"/>
+<text xml:space="preserve" text-anchor="middle" x="314.33" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">measured</text>
+</g>
+<!-- ttft -->
+<g id="node6" class="node">
+<title>ttft</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="388.17,-211.34 260.25,-211.34 260.25,-175.06 388.17,-175.06 388.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="278.84" y="-193.25" font-family="Geist Mono" font-size="11.00">Time&#45;to&#45;first&#45;token</text>
+<text xml:space="preserve" text-anchor="start" x="273.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">NVFP4 3.4x faster than base</text>
+</g>
+<!-- m14nv&#45;&gt;ttft -->
+<g id="edge7" class="edge">
+<title>m14nv&#45;&gt;ttft</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M355.13,-262.01C349.53,-249.74 342,-233.22 335.77,-219.56"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="338.04,-218.63 332.91,-213.28 333.58,-220.66 338.04,-218.63"/>
+<text xml:space="preserve" text-anchor="middle" x="364.42" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">measured</text>
+</g>
+<!-- m14base&#45;&gt;throughput -->
+<g id="edge6" class="edge">
+<title>m14base&#45;&gt;throughput</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M185.45,-261.99C179.8,-256.46 174.53,-249.87 171.46,-242.59 168.55,-235.69 167.63,-227.73 167.68,-220.28"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="170.12,-220.5 168.03,-213.39 165.23,-220.25 170.12,-220.5"/>
+<text xml:space="preserve" text-anchor="middle" x="189.84" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">measured</text>
+</g>
+<!-- m14base&#45;&gt;ttft -->
+<g id="edge8" class="edge">
+<title>m14base&#45;&gt;ttft</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M215.33,-262.16C219.62,-252.02 226.24,-239.67 235.46,-231.34 242.26,-225.19 250.23,-219.97 258.55,-215.56"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="259.4,-217.88 264.58,-212.57 257.22,-213.49 259.4,-217.88"/>
+<text xml:space="preserve" text-anchor="middle" x="253.84" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">measured</text>
+</g>
+<!-- takeaway -->
+<g id="node7" class="node">
+<title>takeaway</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="334.8,-123.81 159.62,-123.81 159.62,-87.53 334.8,-87.53 334.8,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="191.71" y="-105.72" font-family="Geist Mono" font-size="11.00">Capacity != bandwidth</text>
+<text xml:space="preserve" text-anchor="start" x="172.59" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">128GB fits models; bandwidth caps speed</text>
+</g>
+<!-- throughput&#45;&gt;takeaway -->
+<g id="edge9" class="edge">
+<title>throughput&#45;&gt;takeaway</title>
+<path fill="none" stroke="#c8501f" d="M186.96,-174.48C198.27,-161.75 213.64,-144.45 226.03,-130.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="227.66,-132.36 230.48,-125.5 224,-129.11 227.66,-132.36"/>
+<text xml:space="preserve" text-anchor="middle" x="227.26" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reveals</text>
+</g>
+<!-- ttft&#45;&gt;takeaway -->
+<g id="edge10" class="edge">
+<title>ttft&#45;&gt;takeaway</title>
+<path fill="none" stroke="#c8501f" d="M308.26,-174.48C296.8,-161.75 281.22,-144.45 268.67,-130.51"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="270.66,-129.06 264.16,-125.49 267.02,-132.34 270.66,-129.06"/>
+<text xml:space="preserve" text-anchor="middle" x="303.82" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reveals</text>
+</g>
+<!-- usecase -->
+<g id="node8" class="node">
+<title>usecase</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="329.55,-36.28 164.88,-36.28 164.88,0 329.55,0 329.55,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="200.71" y="-18.19" font-family="Geist Mono" font-size="11.00">Recommended use</text>
+<text xml:space="preserve" text-anchor="start" x="177.84" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">steady&#45;state, private data, prototyping</text>
+</g>
+<!-- takeaway&#45;&gt;usecase -->
+<g id="edge11" class="edge">
+<title>takeaway&#45;&gt;usecase</title>
+<path fill="none" stroke="#c8501f" d="M247.21,-86.95C247.21,-74.91 247.21,-58.78 247.21,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="249.66,-45.35 247.21,-38.35 244.76,-45.35 249.66,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="261.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">informs</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Quantization format appears to shift where the bottleneck sits, from raw compute toward memory bandwidth, based on the throughput and TTFT numbers given for the same 14B model (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The hardware: unified memory, not just more GPU</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>The hardware: unified memory, not just more GPU</h2><ul class="takeaways"><li>DGX Spark (referred to in the talk&#x27;s audio as &quot;Jetson Spark&quot;) is built around the GB10 Grace Blackwell superchip, combining CPU and GPU in a unified memory architecture with 128GB of memory, which the presenter says lets developers run models up to roughly 200 billion parameters locally on a desk-sized system.</li><li>It runs the same NVIDIA AI software stack used in production, intended to let workflows move from desktop to data center with minimal changes.</li></ul><div class="quote"><p>&ldquo;It&#x27;s powered by the GB10 Grace Blackwell superchip, combining CPU and GPU with a unified memory architecture.&rdquo;</p><span class="at">said at 01:34</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Throughput measurements across model sizes and quantization</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Throughput measurements across model sizes and quantization</h2><ul class="takeaways"><li>Using an automated benchmarking harness (Docker isolation, three warm-up runs, 1-second GPU metric logging) serving models through vLLM, the presenter measured completion tokens/sec across a 1.5B to 14B range.</li><li>The 1.5B instruct model delivered 61.73 tokens/sec; a 14B model quantized to NVFP4 (4-bit floating point) still reached 20.19 tokens/sec despite being nearly 10x larger, while the same 14B model unquantized dropped to 8.40 tokens/sec.</li></ul><div class="quote"><p>&ldquo;billion instruct model delivering a massive 61.73 tokens per second.&rdquo;</p><span class="at">said at 05:46</span></div><div class="quote"><p>&ldquo;Despite being nearly 10 times larger than the 1.5 billion model, it still achieves 20.19 tokens per second.&rdquo;</p><span class="at">said at 05:46</span></div><div class="quote"><p>&ldquo;Have a look at the 14 billion base model. It drops to just 8.40 tokens per second.&rdquo;</p><span class="at">said at 06:47</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Quantization&#x27;s effect on responsiveness (time to first token)</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Quantization&#x27;s effect on responsiveness (time to first token)</h2><ul class="takeaways"><li>The presenter separates raw throughput from time-to-first-token (TTFT), calling TTFT the metric that defines perceived responsiveness.</li><li>The NVFP4-quantized 14B model was measured at 3.4x faster time-to-first-token than the same unquantized 14B base model, which the presenter attributes to NVFP4 increasing &quot;intelligence per byte&quot; moved rather than to raw compute.</li></ul><div class="quote"><p>&ldquo;we were we are able to maintain a sophisticated, high-intelligent model at a throughput that is still faster than the average human reading speed&rdquo;</p><span class="at">said at 06:16</span></div><div class="quote"><p>&ldquo;the 14 billion NVFB4 is 3.4 times faster to first token than the unoptimized 14 base model&rdquo;</p><span class="at">said at 08:22</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Capacity vs. bandwidth, and when to use it locally</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Capacity vs. bandwidth, and when to use it locally</h2><ul class="takeaways"><li>The stated key takeaway is that memory capacity (fitting a large model) and memory bandwidth (how fast data can be moved to feed compute) are separate constraints; the 128GB unified memory fits large models, but bandwidth still governs throughput.</li><li>The presenter recommends the local setup for steady-state workloads, privacy-sensitive data, and rapid prototyping, with the option to scale the same stack out to cloud or data center once ready.</li></ul><div class="quote"><p>&ldquo;A key takeaway here from this data is that memory capacity is not the same as the memory bandwidth.&rdquo;</p><span class="at">said at 08:22</span></div><div class="quote"><p>&ldquo;For steady-state workloads, privacy-sensitive data, and rapid prototyping.&rdquo;</p><span class="at">said at 09:25</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The transcript audio consistently renders the product name as &quot;Jetson Spark&quot;; the talk title names it DGX Spark, so quotes below preserve the as-spoken/as-transcribed wording while prose here uses the title&#x27;s naming.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The 1.5B instruct model delivered 61.73 tokens per second in the benchmark.</td><td class="tt">05:46</td></tr><tr><td class="st">asserts</td><td>The 14B NVFP4-quantized model still achieved 20.19 tokens per second despite being nearly 10 times larger than the 1.5B model.</td><td class="tt">05:46</td></tr><tr><td class="st">asserts</td><td>NVIDIA&#x27;s NVFP4 4-bit quantization kept the larger model&#x27;s throughput faster than average human reading speed.</td><td class="tt">06:16</td></tr><tr><td class="st">asserts</td><td>The unquantized 14B base model&#x27;s throughput dropped to 8.40 tokens per second.</td><td class="tt">06:47</td></tr><tr><td class="st">asserts</td><td>The 14B NVFP4 model was measured as 3.4 times faster to first token than the unoptimized 14B base model.</td><td class="tt">08:22</td></tr><tr><td class="st">asserts</td><td>The system is powered by the GB10 Grace Blackwell superchip, combining CPU and GPU in a unified memory architecture.</td><td class="tt">01:34</td></tr><tr><td class="st">asserts</td><td>Memory capacity and memory bandwidth are distinct constraints; capacity lets large models fit, but bandwidth still governs throughput.</td><td class="tt">08:22</td></tr><tr><td class="st">recommends</td><td>The presenter recommends the local setup for steady-state workloads, privacy-sensitive data, and rapid prototyping.</td><td class="tt">09:25</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div class="frame wide"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "c5-kx2bwoCk", "slug": "dgx-spark-llm-benchmarks", "title": "Running LLMs locally: Practical LLM Performance on DGX Spark", "speaker": "Mozhgan Kabiri chimeh", "company": "NVIDIA", "themes": ["local-models", "infra-serving", "evals-benchmarks"], "tier": "transcript-brief", "depth": "pattern", "diagram": {"title": "DGX Spark quantization benchmark (ours)", "lanes": ["Hardware", "Models tested", "Benchmark metrics", "Takeaway"], "nodes": [{"id": "dgx", "label": "DGX Spark (GB10)", "sub": "128GB unified CPU+GPU memory", "lane": 0, "kind": "system", "claim": "c6", "t": 94}, {"id": "m15", "label": "1.5B instruct model", "sub": "61.73 tok/s throughput", "lane": 1, "kind": "system", "claim": "c1", "t": 346}, {"id": "m14nv", "label": "14B NVFP4 quantized", "sub": "20.19 tok/s despite 10x size", "lane": 1, "kind": "system", "claim": "c2", "t": 346}, {"id": "m14base", "label": "14B unquantized base", "sub": "8.40 tok/s throughput", "lane": 1, "kind": "system", "claim": "c4", "t": 407}, {"id": "throughput", "label": "Throughput (tok/s)", "sub": "vLLM harness, Docker isolated", "lane": 2, "kind": "data", "claim": "c1", "t": 346}, {"id": "ttft", "label": "Time-to-first-token", "sub": "NVFP4 3.4x faster than base", "lane": 2, "kind": "data", "claim": "c5", "t": 502}, {"id": "takeaway", "label": "Capacity != bandwidth", "sub": "128GB fits models; bandwidth caps speed", "lane": 3, "kind": "system", "claim": "c7", "t": 502}, {"id": "usecase", "label": "Recommended use", "sub": "steady-state, private data, prototyping", "lane": 3, "kind": "actor", "claim": "c8", "t": 565}], "edges": [{"from": "dgx", "to": "m15", "label": "runs", "kind": "flow"}, {"from": "dgx", "to": "m14nv", "label": "runs", "kind": "flow"}, {"from": "dgx", "to": "m14base", "label": "runs", "kind": "flow"}, {"from": "m15", "to": "throughput", "label": "measured", "kind": "data"}, {"from": "m14nv", "to": "throughput", "label": "measured", "kind": "data"}, {"from": "m14base", "to": "throughput", "label": "measured", "kind": "data"}, {"from": "m14nv", "to": "ttft", "label": "measured", "kind": "data"}, {"from": "m14base", "to": "ttft", "label": "measured", "kind": "data"}, {"from": "throughput", "to": "takeaway", "label": "reveals", "kind": "flow"}, {"from": "ttft", "to": "takeaway", "label": "reveals", "kind": "flow"}, {"from": "takeaway", "to": "usecase", "label": "informs", "kind": "flow"}], "caption": "Quantization format appears to shift where the bottleneck sits, from raw compute toward memory bandwidth, based on the throughput and TTFT numbers given for the same 14B model (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "1.5B model throughput", "text": "The 1.5B instruct model delivered 61.73 tokens per second in the benchmark.", "quote": "billion instruct model delivering a massive 61.73 tokens per second.", "t": 346}, {"id": "c2", "stance": "asserts", "topic": "14B NVFP4 throughput vs 1.5B", "text": "The 14B NVFP4-quantized model still achieved 20.19 tokens per second despite being nearly 10 times larger than the 1.5B model.", "quote": "Despite being nearly 10 times larger than the 1.5 billion model, it still achieves 20.19 tokens per second.", "t": 346}, {"id": "c3", "stance": "asserts", "topic": "NVFP4 throughput vs human reading speed", "text": "NVIDIA's NVFP4 4-bit quantization kept the larger model's throughput faster than average human reading speed.", "quote": "we were we are able to maintain a sophisticated, high-intelligent model at a throughput that is still faster than the average human reading speed", "t": 376}, {"id": "c4", "stance": "asserts", "topic": "14B base model throughput", "text": "The unquantized 14B base model's throughput dropped to 8.40 tokens per second.", "quote": "Have a look at the 14 billion base model. It drops to just 8.40 tokens per second.", "t": 407}, {"id": "c5", "stance": "asserts", "topic": "time-to-first-token comparison", "text": "The 14B NVFP4 model was measured as 3.4 times faster to first token than the unoptimized 14B base model.", "quote": "the 14 billion NVFB4 is 3.4 times faster to first token than the unoptimized 14 base model", "t": 502}, {"id": "c6", "stance": "asserts", "topic": "hardware architecture", "text": "The system is powered by the GB10 Grace Blackwell superchip, combining CPU and GPU in a unified memory architecture.", "quote": "It's powered by the GB10 Grace Blackwell superchip, combining CPU and GPU with a unified memory architecture.", "t": 94}, {"id": "c7", "stance": "asserts", "topic": "capacity vs bandwidth", "text": "Memory capacity and memory bandwidth are distinct constraints; capacity lets large models fit, but bandwidth still governs throughput.", "quote": "A key takeaway here from this data is that memory capacity is not the same as the memory bandwidth.", "t": 502}, {"id": "c8", "stance": "recommends", "topic": "when to use it locally", "text": "The presenter recommends the local setup for steady-state workloads, privacy-sensitive data, and rapid prototyping.", "quote": "For steady-state workloads, privacy-sensitive data, and rapid prototyping.", "t": 565}]}</script>
+</body></html>

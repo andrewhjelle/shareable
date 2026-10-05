@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>What Lies Beneath the API &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/HvZXAOZ3iv8" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 12 min</span><span class="ln"></span></div>
+<h1 class="lede">What Lies Beneath the API</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Benjamin Cowen &middot; Modal</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/HvZXAOZ3iv8" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/HvZXAOZ3iv8</a> &middot; 12 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Post-training</span><span class="chip hot">Infra & serving</span><span class="chip hot">Agentic engineering</span></div>
+<p class="deck" style="font-size:15px">Gives concrete signals for deciding when a product should move from a frontier API to fine-tuning or RL-trained custom models, including named customer results (Intercom, Decagon) and the observation that plateauing evals plus rising API...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>As products mature and specialize, more companies are turning to fine-tuning for better performance and lower cost than a frontier API (c1), with named examples like Intercom beating their frontier API at 1/5 the cost (c3).</li><li>Signals it&#x27;s time to fine-tune: paying more for API calls than customers pay you, plateauing evals, and having mature data collection -- without mature data and evals, it&#x27;s not time to train yet (c5, c6).</li><li>Training infrastructure has gotten much simpler: supervised fine-tuning in 300 lines of Python, and one customer scaled to 50,000-100,000 sandboxes for RL rollouts on serverless compute (c8, c9).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">FRONTIER API TO CUSTOM-TRAINED MODEL (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 607.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- api -->
+<g id="node1" class="node">
+<title>api</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="183.79,-298.87 0.38,-298.87 0.38,-262.59 183.79,-262.59 183.79,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="63.21" y="-280.78" font-family="Geist Mono" font-size="11.00">Frontier API</text>
+<text xml:space="preserve" text-anchor="start" x="13.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Can&#39;t customize beyond prompt engineering</text>
+</g>
+<!-- cost -->
+<g id="node2" class="node">
+<title>cost</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="184.17,-211.34 0,-211.34 0,-175.06 184.17,-175.06 184.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="65.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Cost signal</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Paying more for API than customers pay you</text>
+</g>
+<!-- api&#45;&gt;cost -->
+<g id="edge1" class="edge">
+<title>api&#45;&gt;cost</title>
+<path fill="none" stroke="#c8501f" d="M92.08,-262.01C92.08,-249.97 92.08,-233.84 92.08,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="94.54,-220.41 92.09,-213.41 89.64,-220.41 94.54,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="129.58" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">prompting hits limit</text>
+</g>
+<!-- sft -->
+<g id="node5" class="node">
+<title>sft</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="365.79,-123.81 176.38,-123.81 176.38,-87.53 365.79,-87.53 365.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="248.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Fine&#45;tune</text>
+<text xml:space="preserve" text-anchor="start" x="189.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Supervised fine&#45;tuning in ~300 lines of Python</text>
+</g>
+<!-- cost&#45;&gt;sft -->
+<g id="edge2" class="edge">
+<title>cost&#45;&gt;sft</title>
+<path fill="none" stroke="#c8501f" d="M129.17,-174.48C157.49,-160.95 196.63,-142.25 226.63,-127.91"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="227.42,-130.25 232.68,-125.02 225.31,-125.83 227.42,-130.25"/>
+<text xml:space="preserve" text-anchor="middle" x="203.18" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">signal</text>
+</g>
+<!-- data -->
+<g id="node3" class="node">
+<title>data</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="370.04,-211.34 206.12,-211.34 206.12,-175.06 370.04,-175.06 370.04,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="237.08" y="-193.25" font-family="Geist Mono" font-size="11.00">Data + mature evals</text>
+<text xml:space="preserve" text-anchor="start" x="219.08" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Garbage in, garbage out without them</text>
+</g>
+<!-- data&#45;&gt;sft -->
+<g id="edge3" class="edge">
+<title>data&#45;&gt;sft</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M284.56,-174.48C282.15,-162.32 278.9,-146 276.2,-132.41"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="278.67,-132.24 274.9,-125.85 273.86,-133.2 278.67,-132.24"/>
+<text xml:space="preserve" text-anchor="middle" x="303.48" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">precondition</text>
+</g>
+<!-- harness -->
+<g id="node4" class="node">
+<title>harness</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="576.92,-211.34 409.25,-211.34 409.25,-175.06 576.92,-175.06 576.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="457.83" y="-193.25" font-family="Geist Mono" font-size="11.00">Agent harness</text>
+<text xml:space="preserve" text-anchor="start" x="422.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Harness in place = ready for RL training</text>
+</g>
+<!-- rl -->
+<g id="node6" class="node">
+<title>rl</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="598.67,-123.81 387.5,-123.81 387.5,-87.53 598.67,-87.53 598.67,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="467.58" y="-105.72" font-family="Geist Mono" font-size="11.00">RL rollouts</text>
+<text xml:space="preserve" text-anchor="start" x="400.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">One customer scaled to 50,000&#45;100,000 sandboxes</text>
+</g>
+<!-- harness&#45;&gt;rl -->
+<g id="edge4" class="edge">
+<title>harness&#45;&gt;rl</title>
+<path fill="none" stroke="#c8501f" d="M493.08,-174.48C493.08,-162.44 493.08,-146.31 493.08,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="495.54,-132.88 493.09,-125.88 490.64,-132.88 495.54,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="513.71" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables RL</text>
+</g>
+<!-- result -->
+<g id="node7" class="node">
+<title>result</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="576.17,-36.28 386,-36.28 386,0 576.17,0 576.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="433.46" y="-18.19" font-family="Geist Mono" font-size="11.00">Custom model wins</text>
+<text xml:space="preserve" text-anchor="start" x="398.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Intercom beats its frontier API at 1/5 the cost</text>
+</g>
+<!-- sft&#45;&gt;result -->
+<g id="edge5" class="edge">
+<title>sft&#45;&gt;result</title>
+<path fill="none" stroke="#c8501f" d="M314.85,-86.84C348.27,-73.24 394.4,-54.45 429.59,-40.11"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="430.41,-42.42 435.97,-37.51 428.57,-37.89 430.41,-42.42"/>
+<text xml:space="preserve" text-anchor="middle" x="399.53" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">yields</text>
+</g>
+<!-- window -->
+<g id="node8" class="node">
+<title>window</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="353.04,-36.28 189.12,-36.28 189.12,0 353.04,0 353.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="230.58" y="-18.19" font-family="Geist Mono" font-size="11.00">Decision window</text>
+<text xml:space="preserve" text-anchor="start" x="202.08" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Speaker: maybe ~1 year away, not 10</text>
+</g>
+<!-- sft&#45;&gt;window -->
+<g id="edge7" class="edge">
+<title>sft&#45;&gt;window</title>
+<path fill="none" stroke="#c8501f" d="M271.08,-86.95C271.08,-74.91 271.08,-58.78 271.08,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="273.54,-45.35 271.09,-38.35 268.64,-45.35 273.54,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="294.33" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">prepare now</text>
+</g>
+<!-- rl&#45;&gt;result -->
+<g id="edge6" class="edge">
+<title>rl&#45;&gt;result</title>
+<path fill="none" stroke="#c8501f" d="M490.6,-86.95C488.91,-74.91 486.65,-58.78 484.75,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="487.18,-44.93 483.78,-38.34 482.32,-45.61 487.18,-44.93"/>
+<text xml:space="preserve" text-anchor="middle" x="499.05" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">scales</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This reconstructs the talk&#x27;s decision path from frontier API to a trained model as an argument rather than a literal system diagram; the specific edges are our inference from how the speaker sequenced the signals and outcomes (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Frontier API vs full custom training is a spectrum</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/fine-tuning-vs-frontier-api/s02_30.webp" alt="slide at 00:30"></a><div class="slidecap">Slide at 00:30 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s03_50.webp" alt="slide at 00:50"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s04_80.webp" alt="slide at 01:20"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s05_90.webp" alt="slide at 01:30"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s06_100.webp" alt="slide at 01:40"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s07_110.webp" alt="slide at 01:50"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s08_120.webp" alt="slide at 02:00"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s09_130.webp" alt="slide at 02:10"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s10_150.webp" alt="slide at 02:30"></a></div></div>
+<div class="textcol"><h2>Frontier API vs full custom training is a spectrum</h2><ul class="takeaways"><li>The speaker frames AI application development as a spectrum: frontier APIs on one end let people build fast but can&#x27;t be customized beyond prompt engineering, while full custom training on the other end requires isolating infrastructure and often pulls AI engineers or scientists into infrastructure work.</li><li>As companies mature and specialize, more are turning to fine-tuning to get better performance and lower cost than the frontier API provides.</li></ul><div class="quote"><p>&ldquo;as companies mature and their products mature and specialize, we&#x27;re seeing more and more turn to fine-tuning to get in increased performance, better costs, and so forth&rdquo;</p><span class="at">said at 00:32</span></div><div class="quote"><p>&ldquo;they&#x27;re amazing. Um but uh you can&#x27;t customize it at all uh beyond prompt engineering&rdquo;</p><span class="at">said at 02:07</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Companies are already winning with fine-tuned models</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="15" class="sl"><img loading="lazy" class="main" src="img/fine-tuning-vs-frontier-api/s15_240.webp" alt="slide at 04:00"></a><div class="slidecap">Slide at 04:00 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s16_260.webp" alt="slide at 04:20"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s17_270.webp" alt="slide at 04:30"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s18_290.webp" alt="slide at 04:50"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s19_300.webp" alt="slide at 05:00"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s20_310.webp" alt="slide at 05:10"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s21_320.webp" alt="slide at 05:20"></a><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s22_330.webp" alt="slide at 05:30"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s23_350.webp" alt="slide at 05:50"></a></div></div>
+<div class="textcol"><h2>Companies are already winning with fine-tuned models</h2><ul class="takeaways"><li>The talk cites Intercom beating their frontier API at 1/5 the cost after fine-tuning, and quotes a customer, Decagon, framing the reason: frontier labs optimize their models to win on everything, whereas a company fine-tuning its own model optimizes to win at its specific business logic.</li></ul><div class="quote"><p>&ldquo;Intercom is beating their frontier API at 1/5 the cost&rdquo;</p><span class="at">said at 04:10</span></div><div class="quote"><p>&ldquo;don&#x27;t have the exact same goal as you, right? They want their models to win on everything possible. And um we want our models to win at our business logic, right?&rdquo;</p><span class="at">said at 04:41</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Signals that it&#x27;s time to fine-tune</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="24" class="sl"><img loading="lazy" class="main" src="img/fine-tuning-vs-frontier-api/s24_360.webp" alt="slide at 06:00"></a><div class="slidecap">Slide at 06:00 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s25_390.webp" alt="slide at 06:30"></a><a href="#" data-slide="26" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s26_420.webp" alt="slide at 07:00"></a><a href="#" data-slide="27" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s27_430.webp" alt="slide at 07:10"></a></div></div>
+<div class="textcol"><h2>Signals that it&#x27;s time to fine-tune</h2><ul class="takeaways"><li>Proposed readiness signals include paying more for API calls than your customers pay you (after already trying prompt-engineering tricks like &#x27;caveman mode&#x27; to cut tokens), plateauing evals, and latency/throughput requirements the API can&#x27;t meet.</li><li>But the speaker warns that without collected data and mature evals, garbage-in-garbage-out applies and it&#x27;s not yet time to train.</li></ul><div class="quote"><p>&ldquo;if you&#x27;ve uh moved to caveman mode and you&#x27;re still paying more for your API than your customers are paying you, that might be a signal that your economics aren&#x27;t scaling, right?&rdquo;</p><span class="at">said at 06:15</span></div><div class="quote"><p>&ldquo;there&#x27;s a decades-old adage in training that if you have garbage data, it&#x27;s garbage in, garbage out. So if you haven&#x27;t been collecting data and you don&#x27;t have mature evals, it&#x27;s probably not time to train&rdquo;</p><span class="at">said at 06:47</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>If you&#x27;ve built a product, you likely already have what&#x27;s needed to train</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="28" class="sl"><img loading="lazy" class="main" src="img/fine-tuning-vs-frontier-api/s28_440.webp" alt="slide at 07:20"></a><div class="slidecap">Slide at 07:20 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="29" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s29_450.webp" alt="slide at 07:30"></a><a href="#" data-slide="30" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s30_460.webp" alt="slide at 07:40"></a><a href="#" data-slide="31" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s31_490.webp" alt="slide at 08:10"></a></div></div>
+<div class="textcol"><h2>If you&#x27;ve built a product, you likely already have what&#x27;s needed to train</h2><ul class="takeaways"><li>The speaker&#x27;s main takeaway is that a product with evaluation and data collection already in place has touched most of what&#x27;s needed to train a custom model, and a product with an agent harness already has what&#x27;s needed to train a model via reinforcement learning to perform that service.</li></ul><div class="quote"><p>&ldquo;if you&#x27;ve built an agent harness, then you have what you need to have a new model, you know, learn through reinforcement learning how to provide your service&rdquo;</p><span class="at">said at 07:17</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Training infrastructure has gotten much easier and cheaper</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="31" class="sl"><img loading="lazy" class="main" src="img/fine-tuning-vs-frontier-api/s31_490.webp" alt="slide at 08:10"></a><div class="slidecap">Slide at 08:10 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="32" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s32_550.webp" alt="slide at 09:10"></a><a href="#" data-slide="33" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s33_560.webp" alt="slide at 09:20"></a><a href="#" data-slide="34" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s34_570.webp" alt="slide at 09:30"></a><a href="#" data-slide="35" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s35_580.webp" alt="slide at 09:40"></a><a href="#" data-slide="36" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s36_640.webp" alt="slide at 10:40"></a><a href="#" data-slide="37" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s37_650.webp" alt="slide at 10:50"></a><a href="#" data-slide="38" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s38_660.webp" alt="slide at 11:00"></a><a href="#" data-slide="39" class="sl"><img loading="lazy" class="thumb" src="img/fine-tuning-vs-frontier-api/s39_670.webp" alt="slide at 11:10"></a></div></div>
+<div class="textcol"><h2>Training infrastructure has gotten much easier and cheaper</h2><ul class="takeaways"><li>Open-source training libraries now let teams write supervised fine-tuning in about 300 lines of Python without managing a dedicated cluster, and serverless compute allows fast fan-out for hyperparameter tuning or RL rollouts, including one customer scaling to 50,000-100,000 sandboxes for RL.</li><li>The speaker&#x27;s overall prediction is not to train immediately, but to start preparing now since the decision point may arrive in 6 months to a year rather than 10 years out.</li></ul><div class="quote"><p>&ldquo;You can do supervised fine-tuning in 300 lines of Python&rdquo;</p><span class="at">said at 08:21</span></div><div class="quote"><p>&ldquo;we have one of the most amazing things in the last quarter has been customer scaling up to 50,000, 100,000 sandboxes just to do RL&rdquo;</p><span class="at">said at 10:26</span></div><div class="quote"><p>&ldquo;I&#x27;m not saying go train your model right now. I&#x27;m saying it&#x27;s not something that is like, &quot;Oh, I&#x27;ll do that in 10 years.&quot; You might You might want to train your model in 1 year, right?&rdquo;</p><span class="at">said at 11:28</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The framing implicitly favors Modal&#x27;s own serverless training/serving product, so the ease-of-fine-tuning claims (300 lines of Python, no infra team needed) are worth weighing against the fact that data curation and eval maturity -- the harder, non-infra part of the problem -- are treated as a precondition rather than something the platform solves (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s02_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s03_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s04_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s05_90.webp" alt="slide at 01:30"><div class="ts">01:30</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s06_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s07_110.webp" alt="slide at 01:50"><div class="ts">01:50</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s08_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s09_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s10_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s11_170.webp" alt="slide at 02:50"><div class="ts">02:50</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s12_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s13_210.webp" alt="slide at 03:30"><div class="ts">03:30</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s14_220.webp" alt="slide at 03:40"><div class="ts">03:40</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s15_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s16_260.webp" alt="slide at 04:20"><div class="ts">04:20</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s17_270.webp" alt="slide at 04:30"><div class="ts">04:30</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s18_290.webp" alt="slide at 04:50"><div class="ts">04:50</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s19_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s20_310.webp" alt="slide at 05:10"><div class="ts">05:10</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s21_320.webp" alt="slide at 05:20"><div class="ts">05:20</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s22_330.webp" alt="slide at 05:30"><div class="ts">05:30</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s23_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s24_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s25_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s26_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s27_430.webp" alt="slide at 07:10"><div class="ts">07:10</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s28_440.webp" alt="slide at 07:20"><div class="ts">07:20</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s29_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s30_460.webp" alt="slide at 07:40"><div class="ts">07:40</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s31_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s32_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s33_560.webp" alt="slide at 09:20"><div class="ts">09:20</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s34_570.webp" alt="slide at 09:30"><div class="ts">09:30</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s35_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s36_640.webp" alt="slide at 10:40"><div class="ts">10:40</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s37_650.webp" alt="slide at 10:50"><div class="ts">10:50</div></a><a href="#" data-slide="38"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s38_660.webp" alt="slide at 11:00"><div class="ts">11:00</div></a><a href="#" data-slide="39"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s39_670.webp" alt="slide at 11:10"><div class="ts">11:10</div></a><a href="#" data-slide="40"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s40_680.webp" alt="slide at 11:20"><div class="ts">11:20</div></a><a href="#" data-slide="41"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s41_720.webp" alt="slide at 12:00"><div class="ts">12:00</div></a><a href="#" data-slide="42"><img loading="lazy" src="img/fine-tuning-vs-frontier-api/s42_730.webp" alt="slide at 12:10"><div class="ts">12:10</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>As companies and products mature and specialize, more are turning to fine-tuning for better performance and cost than a frontier API.</td><td class="tt">00:32</td></tr><tr><td class="st">asserts</td><td>Frontier APIs can&#x27;t be customized beyond prompt engineering.</td><td class="tt">02:07</td></tr><tr><td class="st">asserts</td><td>Intercom fine-tuned a model that beats their frontier API at one-fifth the cost.</td><td class="tt">04:10</td></tr><tr><td class="st">asserts</td><td>Frontier labs optimize models to win on everything, while a company fine-tuning wants to win specifically at its own business logic.</td><td class="tt">04:41</td></tr><tr><td class="st">recommends</td><td>If you&#x27;ve already resorted to prompt tricks like caveman mode and still pay more for the API than customers pay you, that signals your economics aren&#x27;t scaling and fine-tuning may help.</td><td class="tt">06:15</td></tr><tr><td class="st">warns</td><td>Without collected data and mature evals it&#x27;s not yet time to train, per the garbage-in-garbage-out adage.</td><td class="tt">06:47</td></tr><tr><td class="st">asserts</td><td>If you&#x27;ve built a product with evals and an agent harness, you likely already have what&#x27;s needed to fine-tune or RL-train a custom model.</td><td class="tt">07:17</td></tr><tr><td class="st">asserts</td><td>Open-source libraries now make supervised fine-tuning possible in about 300 lines of Python.</td><td class="tt">08:21</td></tr><tr><td class="st">asserts</td><td>One Modal customer scaled RL training to 50,000-100,000 sandboxes for rollouts.</td><td class="tt">10:26</td></tr><tr><td class="st">predicts</td><td>Teams shouldn&#x27;t train immediately, but the decision point to train a custom model is likely closer than 10 years away, possibly within a year.</td><td class="tt">11:28</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/fine-tuning-vs-frontier-api/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/HvZXAOZ3iv8?t=10"}, {"src": "img/fine-tuning-vs-frontier-api/s01_20.webp", "mmss": "00:20", "yt": "https://youtu.be/HvZXAOZ3iv8?t=20"}, {"src": "img/fine-tuning-vs-frontier-api/s02_30.webp", "mmss": "00:30", "yt": "https://youtu.be/HvZXAOZ3iv8?t=30"}, {"src": "img/fine-tuning-vs-frontier-api/s03_50.webp", "mmss": "00:50", "yt": "https://youtu.be/HvZXAOZ3iv8?t=50"}, {"src": "img/fine-tuning-vs-frontier-api/s04_80.webp", "mmss": "01:20", "yt": "https://youtu.be/HvZXAOZ3iv8?t=80"}, {"src": "img/fine-tuning-vs-frontier-api/s05_90.webp", "mmss": "01:30", "yt": "https://youtu.be/HvZXAOZ3iv8?t=90"}, {"src": "img/fine-tuning-vs-frontier-api/s06_100.webp", "mmss": "01:40", "yt": "https://youtu.be/HvZXAOZ3iv8?t=100"}, {"src": "img/fine-tuning-vs-frontier-api/s07_110.webp", "mmss": "01:50", "yt": "https://youtu.be/HvZXAOZ3iv8?t=110"}, {"src": "img/fine-tuning-vs-frontier-api/s08_120.webp", "mmss": "02:00", "yt": "https://youtu.be/HvZXAOZ3iv8?t=120"}, {"src": "img/fine-tuning-vs-frontier-api/s09_130.webp", "mmss": "02:10", "yt": "https://youtu.be/HvZXAOZ3iv8?t=130"}, {"src": "img/fine-tuning-vs-frontier-api/s10_150.webp", "mmss": "02:30", "yt": "https://youtu.be/HvZXAOZ3iv8?t=150"}, {"src": "img/fine-tuning-vs-frontier-api/s11_170.webp", "mmss": "02:50", "yt": "https://youtu.be/HvZXAOZ3iv8?t=170"}, {"src": "img/fine-tuning-vs-frontier-api/s12_180.webp", "mmss": "03:00", "yt": "https://youtu.be/HvZXAOZ3iv8?t=180"}, {"src": "img/fine-tuning-vs-frontier-api/s13_210.webp", "mmss": "03:30", "yt": "https://youtu.be/HvZXAOZ3iv8?t=210"}, {"src": "img/fine-tuning-vs-frontier-api/s14_220.webp", "mmss": "03:40", "yt": "https://youtu.be/HvZXAOZ3iv8?t=220"}, {"src": "img/fine-tuning-vs-frontier-api/s15_240.webp", "mmss": "04:00", "yt": "https://youtu.be/HvZXAOZ3iv8?t=240"}, {"src": "img/fine-tuning-vs-frontier-api/s16_260.webp", "mmss": "04:20", "yt": "https://youtu.be/HvZXAOZ3iv8?t=260"}, {"src": "img/fine-tuning-vs-frontier-api/s17_270.webp", "mmss": "04:30", "yt": "https://youtu.be/HvZXAOZ3iv8?t=270"}, {"src": "img/fine-tuning-vs-frontier-api/s18_290.webp", "mmss": "04:50", "yt": "https://youtu.be/HvZXAOZ3iv8?t=290"}, {"src": "img/fine-tuning-vs-frontier-api/s19_300.webp", "mmss": "05:00", "yt": "https://youtu.be/HvZXAOZ3iv8?t=300"}, {"src": "img/fine-tuning-vs-frontier-api/s20_310.webp", "mmss": "05:10", "yt": "https://youtu.be/HvZXAOZ3iv8?t=310"}, {"src": "img/fine-tuning-vs-frontier-api/s21_320.webp", "mmss": "05:20", "yt": "https://youtu.be/HvZXAOZ3iv8?t=320"}, {"src": "img/fine-tuning-vs-frontier-api/s22_330.webp", "mmss": "05:30", "yt": "https://youtu.be/HvZXAOZ3iv8?t=330"}, {"src": "img/fine-tuning-vs-frontier-api/s23_350.webp", "mmss": "05:50", "yt": "https://youtu.be/HvZXAOZ3iv8?t=350"}, {"src": "img/fine-tuning-vs-frontier-api/s24_360.webp", "mmss": "06:00", "yt": "https://youtu.be/HvZXAOZ3iv8?t=360"}, {"src": "img/fine-tuning-vs-frontier-api/s25_390.webp", "mmss": "06:30", "yt": "https://youtu.be/HvZXAOZ3iv8?t=390"}, {"src": "img/fine-tuning-vs-frontier-api/s26_420.webp", "mmss": "07:00", "yt": "https://youtu.be/HvZXAOZ3iv8?t=420"}, {"src": "img/fine-tuning-vs-frontier-api/s27_430.webp", "mmss": "07:10", "yt": "https://youtu.be/HvZXAOZ3iv8?t=430"}, {"src": "img/fine-tuning-vs-frontier-api/s28_440.webp", "mmss": "07:20", "yt": "https://youtu.be/HvZXAOZ3iv8?t=440"}, {"src": "img/fine-tuning-vs-frontier-api/s29_450.webp", "mmss": "07:30", "yt": "https://youtu.be/HvZXAOZ3iv8?t=450"}, {"src": "img/fine-tuning-vs-frontier-api/s30_460.webp", "mmss": "07:40", "yt": "https://youtu.be/HvZXAOZ3iv8?t=460"}, {"src": "img/fine-tuning-vs-frontier-api/s31_490.webp", "mmss": "08:10", "yt": "https://youtu.be/HvZXAOZ3iv8?t=490"}, {"src": "img/fine-tuning-vs-frontier-api/s32_550.webp", "mmss": "09:10", "yt": "https://youtu.be/HvZXAOZ3iv8?t=550"}, {"src": "img/fine-tuning-vs-frontier-api/s33_560.webp", "mmss": "09:20", "yt": "https://youtu.be/HvZXAOZ3iv8?t=560"}, {"src": "img/fine-tuning-vs-frontier-api/s34_570.webp", "mmss": "09:30", "yt": "https://youtu.be/HvZXAOZ3iv8?t=570"}, {"src": "img/fine-tuning-vs-frontier-api/s35_580.webp", "mmss": "09:40", "yt": "https://youtu.be/HvZXAOZ3iv8?t=580"}, {"src": "img/fine-tuning-vs-frontier-api/s36_640.webp", "mmss": "10:40", "yt": "https://youtu.be/HvZXAOZ3iv8?t=640"}, {"src": "img/fine-tuning-vs-frontier-api/s37_650.webp", "mmss": "10:50", "yt": "https://youtu.be/HvZXAOZ3iv8?t=650"}, {"src": "img/fine-tuning-vs-frontier-api/s38_660.webp", "mmss": "11:00", "yt": "https://youtu.be/HvZXAOZ3iv8?t=660"}, {"src": "img/fine-tuning-vs-frontier-api/s39_670.webp", "mmss": "11:10", "yt": "https://youtu.be/HvZXAOZ3iv8?t=670"}, {"src": "img/fine-tuning-vs-frontier-api/s40_680.webp", "mmss": "11:20", "yt": "https://youtu.be/HvZXAOZ3iv8?t=680"}, {"src": "img/fine-tuning-vs-frontier-api/s41_720.webp", "mmss": "12:00", "yt": "https://youtu.be/HvZXAOZ3iv8?t=720"}, {"src": "img/fine-tuning-vs-frontier-api/s42_730.webp", "mmss": "12:10", "yt": "https://youtu.be/HvZXAOZ3iv8?t=730"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "HvZXAOZ3iv8", "slug": "fine-tuning-vs-frontier-api", "title": "What Lies Beneath the API", "speaker": "Benjamin Cowen", "company": "Modal", "themes": ["post-training", "infra-serving", "agentic-engineering"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Frontier API to custom-trained model (ours)", "lanes": ["Frontier API baseline", "Readiness signals", "Train", "Outcome"], "nodes": [{"id": "api", "label": "Frontier API", "sub": "Can't customize beyond prompt engineering", "lane": 0, "kind": "external", "claim": "c2", "t": 127}, {"id": "cost", "label": "Cost signal", "sub": "Paying more for API than customers pay you", "lane": 1, "kind": "system", "claim": "c5", "t": 375}, {"id": "data", "label": "Data + mature evals", "sub": "Garbage in, garbage out without them", "lane": 1, "kind": "store", "claim": "c6", "t": 407}, {"id": "harness", "label": "Agent harness", "sub": "Harness in place = ready for RL training", "lane": 1, "kind": "system", "claim": "c7", "t": 437}, {"id": "sft", "label": "Fine-tune", "sub": "Supervised fine-tuning in ~300 lines of Python", "lane": 2, "kind": "system", "claim": "c8", "t": 501}, {"id": "rl", "label": "RL rollouts", "sub": "One customer scaled to 50,000-100,000 sandboxes", "lane": 2, "kind": "system", "claim": "c9", "t": 626}, {"id": "result", "label": "Custom model wins", "sub": "Intercom beats its frontier API at 1/5 the cost", "lane": 3, "kind": "external", "claim": "c3", "t": 250}, {"id": "window", "label": "Decision window", "sub": "Speaker: maybe ~1 year away, not 10", "lane": 3, "kind": "system", "claim": "c10", "t": 688}], "edges": [{"from": "api", "to": "cost", "label": "prompting hits limit", "kind": "flow"}, {"from": "cost", "to": "sft", "label": "signal", "kind": "flow"}, {"from": "data", "to": "sft", "label": "precondition", "kind": "data"}, {"from": "harness", "to": "rl", "label": "enables RL", "kind": "flow"}, {"from": "sft", "to": "result", "label": "yields", "kind": "flow"}, {"from": "rl", "to": "result", "label": "scales", "kind": "flow"}, {"from": "sft", "to": "window", "label": "prepare now", "kind": "flow"}], "caption": "This reconstructs the talk's decision path from frontier API to a trained model as an argument rather than a literal system diagram; the specific edges are our inference from how the speaker sequenced the signals and outcomes (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "fine-tuning trend", "text": "As companies and products mature and specialize, more are turning to fine-tuning for better performance and cost than a frontier API.", "quote": "as companies mature and their products mature and specialize, we're seeing more and more turn to fine-tuning to get in increased performance, better costs, and so forth", "t": 32}, {"id": "c2", "stance": "asserts", "topic": "frontier API customization limits", "text": "Frontier APIs can't be customized beyond prompt engineering.", "quote": "they're amazing. Um but uh you can't customize it at all uh beyond prompt engineering", "t": 127}, {"id": "c3", "stance": "asserts", "topic": "customer fine-tuning results", "text": "Intercom fine-tuned a model that beats their frontier API at one-fifth the cost.", "quote": "Intercom is beating their frontier API at 1/5 the cost", "t": 250}, {"id": "c4", "stance": "asserts", "topic": "why fine-tune vs frontier labs", "text": "Frontier labs optimize models to win on everything, while a company fine-tuning wants to win specifically at its own business logic.", "quote": "don't have the exact same goal as you, right? They want their models to win on everything possible. And um we want our models to win at our business logic, right?", "t": 281}, {"id": "c5", "stance": "recommends", "topic": "signal: economics not scaling", "text": "If you've already resorted to prompt tricks like caveman mode and still pay more for the API than customers pay you, that signals your economics aren't scaling and fine-tuning may help.", "quote": "if you've uh moved to caveman mode and you're still paying more for your API than your customers are paying you, that might be a signal that your economics aren't scaling, right?", "t": 375}, {"id": "c6", "stance": "warns", "topic": "data readiness precondition", "text": "Without collected data and mature evals it's not yet time to train, per the garbage-in-garbage-out adage.", "quote": "there's a decades-old adage in training that if you have garbage data, it's garbage in, garbage out. So if you haven't been collecting data and you don't have mature evals, it's probably not time to train", "t": 407}, {"id": "c7", "stance": "asserts", "topic": "main takeaway on readiness", "text": "If you've built a product with evals and an agent harness, you likely already have what's needed to fine-tune or RL-train a custom model.", "quote": "if you've built an agent harness, then you have what you need to have a new model, you know, learn through reinforcement learning how to provide your service", "t": 437}, {"id": "c8", "stance": "asserts", "topic": "training simplicity", "text": "Open-source libraries now make supervised fine-tuning possible in about 300 lines of Python.", "quote": "You can do supervised fine-tuning in 300 lines of Python", "t": 501}, {"id": "c9", "stance": "asserts", "topic": "RL rollout scale", "text": "One Modal customer scaled RL training to 50,000-100,000 sandboxes for rollouts.", "quote": "we have one of the most amazing things in the last quarter has been customer scaling up to 50,000, 100,000 sandboxes just to do RL", "t": 626}, {"id": "c10", "stance": "predicts", "topic": "training timeline", "text": "Teams shouldn't train immediately, but the decision point to train a custom model is likely closer than 10 years away, possibly within a year.", "quote": "I'm not saying go train your model right now. I'm saying it's not something that is like, \"Oh, I'll do that in 10 years.\" You might You might want to train your model in 1 year, right?", "t": 688}]}</script>
+</body></html>

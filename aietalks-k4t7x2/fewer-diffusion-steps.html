@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>You Might Not Need 50 Diffusion Steps &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/gHs5ZiY80PM" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 18 min</span><span class="ln"></span></div>
+<h1 class="lede">You Might Not Need 50 Diffusion Steps</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Ziv Ilan &middot; Nvidia</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/gHs5ZiY80PM" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/gHs5ZiY80PM</a> &middot; 18 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Generative media</span><span class="chip hot">Infra & serving</span></div>
+<p class="deck" style="font-size:15px">Explains three concrete, stackable techniques (quantization, caching, step distillation) that Nvidia used to get diffusion image/video models to real-time generation on a single Blackwell B200 GPU, including which is highest-effort but h...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Three incremental optimization layers apply to diffusion models: quantization (easiest, smaller memory/compute footprint), caching (skip recomputation between similar denoising steps), and step distillation (reduce 50 steps to as few as 1-8, biggest payoff).</li><li>Step distillation, not parameter-count reduction, is described as the only current path to real-time generation, demonstrated live at GTC on a single Blackwell B200 GPU.</li><li>Distillation requires post-training compute and data considerations (general open-source data works for general use cases; domain-specific use cases need domain-specific fine-tuning data), but doesn&#x27;t require top-tier compute like GB200.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">THREE STACKABLE OPTIMIZATIONS FOR REAL-TIME DIFFUSION (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 625.00 332.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 327.9)">
+<title>G</title>
+<!-- base -->
+<g id="node1" class="node">
+<title>base</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="294.67,-323.9 169.75,-323.9 169.75,-287.62 294.67,-287.62 294.67,-323.9"/>
+<text xml:space="preserve" text-anchor="start" x="194.33" y="-305.81" font-family="Geist Mono" font-size="11.00">Diffusion model</text>
+<text xml:space="preserve" text-anchor="start" x="182.71" y="-297.66" font-family="Geist Mono" font-size="8.00" fill="#807565">20&#45;50 denoising steps, slow</text>
+</g>
+<!-- quant -->
+<g id="node2" class="node">
+<title>quant</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="174.42,-180.09 0,-180.09 0,-143.81 174.42,-143.81 174.42,-180.09"/>
+<text xml:space="preserve" text-anchor="start" x="56.83" y="-162" font-family="Geist Mono" font-size="11.00">Quantization</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-153.85" font-family="Geist Mono" font-size="8.00" fill="#807565">Post&#45;training; attention&#45;heavy limits gains</text>
+</g>
+<!-- base&#45;&gt;quant -->
+<g id="edge1" class="edge">
+<title>base&#45;&gt;quant</title>
+<path fill="none" stroke="#c8501f" d="M214.14,-287.09C188.06,-261.58 139.83,-214.41 110.91,-186.13"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="112.85,-184.6 106.14,-181.46 109.43,-188.11 112.85,-184.6"/>
+<text xml:space="preserve" text-anchor="middle" x="208.51" y="-259.55" font-family="Geist Mono" font-size="8.50" fill="#c8501f">quantize</text>
+</g>
+<!-- cache -->
+<g id="node3" class="node">
+<title>cache</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="318.79,-180.09 179.62,-180.09 179.62,-143.81 318.79,-143.81 318.79,-180.09"/>
+<text xml:space="preserve" text-anchor="start" x="204.58" y="-162" font-family="Geist Mono" font-size="11.00">Caching (T&#45;cache)</text>
+<text xml:space="preserve" text-anchor="start" x="192.58" y="-153.85" font-family="Geist Mono" font-size="8.00" fill="#807565">Skip recompute on similar steps</text>
+</g>
+<!-- base&#45;&gt;cache -->
+<g id="edge2" class="edge">
+<title>base&#45;&gt;cache</title>
+<path fill="none" stroke="#c8501f" d="M234.33,-287.09C237.3,-262.32 242.71,-217.15 246.13,-188.67"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="248.54,-189.15 246.94,-181.9 243.67,-188.56 248.54,-189.15"/>
+<text xml:space="preserve" text-anchor="middle" x="259.6" y="-259.55" font-family="Geist Mono" font-size="8.50" fill="#c8501f">cache steps</text>
+</g>
+<!-- distill -->
+<g id="node4" class="node">
+<title>distill</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="447.79,-236.37 296.62,-236.37 296.62,-200.09 447.79,-200.09 447.79,-236.37"/>
+<text xml:space="preserve" text-anchor="start" x="335.46" y="-218.28" font-family="Geist Mono" font-size="11.00">Step distillation</text>
+<text xml:space="preserve" text-anchor="start" x="309.58" y="-210.13" font-family="Geist Mono" font-size="8.00" fill="#807565">50 steps to 1&#45;8, 10x&#45;200x speedup</text>
+</g>
+<!-- base&#45;&gt;distill -->
+<g id="edge3" class="edge">
+<title>base&#45;&gt;distill</title>
+<path fill="none" stroke="#c8501f" d="M261.22,-287.04C282.99,-273.74 312.94,-255.44 336.24,-241.21"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="337.25,-243.46 341.95,-237.72 334.7,-239.28 337.25,-243.46"/>
+<text xml:space="preserve" text-anchor="middle" x="331.97" y="-259.55" font-family="Geist Mono" font-size="8.50" fill="#c8501f">distill steps</text>
+</g>
+<!-- demo -->
+<g id="node8" class="node">
+<title>demo</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="304.92,-36.28 139.5,-36.28 139.5,0 304.92,0 304.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="173.46" y="-18.19" font-family="Geist Mono" font-size="11.00">GTC real&#45;time demo</text>
+<text xml:space="preserve" text-anchor="start" x="152.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Two distillation techniques, 1 B200 GPU</text>
+</g>
+<!-- quant&#45;&gt;demo -->
+<g id="edge7" class="edge">
+<title>quant&#45;&gt;demo</title>
+<path fill="none" stroke="#c8501f" d="M104.03,-143.28C128.22,-117.87 172.85,-70.99 199.8,-42.68"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="201.5,-44.45 204.55,-37.69 197.95,-41.07 201.5,-44.45"/>
+<text xml:space="preserve" text-anchor="middle" x="174.96" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#c8501f">stacks into</text>
+</g>
+<!-- cache&#45;&gt;demo -->
+<g id="edge8" class="edge">
+<title>cache&#45;&gt;demo</title>
+<path fill="none" stroke="#c8501f" d="M240.58,-143.17C237.98,-137.15 235.39,-130.3 233.71,-123.81 226.93,-97.52 224.15,-66.5 223,-45.09"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="225.46,-45.21 222.69,-38.34 220.57,-45.44 225.46,-45.21"/>
+<text xml:space="preserve" text-anchor="middle" x="253.96" y="-103.22" font-family="Geist Mono" font-size="8.50" fill="#c8501f">stacks into</text>
+</g>
+<!-- traj -->
+<g id="node5" class="node">
+<title>traj</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="441.42,-123.81 285,-123.81 285,-87.53 441.42,-87.53 441.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="322.71" y="-105.72" font-family="Geist Mono" font-size="11.00">Trajectory&#45;based</text>
+<text xml:space="preserve" text-anchor="start" x="297.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Student follows teacher&#39;s exact path</text>
+</g>
+<!-- distill&#45;&gt;traj -->
+<g id="edge4" class="edge">
+<title>distill&#45;&gt;traj</title>
+<path fill="none" stroke="#c8501f" d="M370.76,-199.47C369.29,-181.41 367,-153.25 365.33,-132.69"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="367.79,-132.68 364.78,-125.9 362.9,-133.07 367.79,-132.68"/>
+<text xml:space="preserve" text-anchor="middle" x="387.04" y="-159.5" font-family="Geist Mono" font-size="8.50" fill="#c8501f">trajectory</text>
+</g>
+<!-- dist -->
+<g id="node6" class="node">
+<title>dist</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="616.92,-123.81 463.5,-123.81 463.5,-87.53 616.92,-87.53 616.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="496.34" y="-105.72" font-family="Geist Mono" font-size="11.00">Distribution&#45;based</text>
+<text xml:space="preserve" text-anchor="start" x="476.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Matches final output only, preferred</text>
+</g>
+<!-- distill&#45;&gt;dist -->
+<g id="edge5" class="edge">
+<title>distill&#45;&gt;dist</title>
+<path fill="none" stroke="#c8501f" d="M399.2,-199.47C428.35,-180.29 474.83,-149.69 506.39,-128.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="507.52,-131.12 512.02,-125.22 504.83,-127.02 507.52,-131.12"/>
+<text xml:space="preserve" text-anchor="middle" x="502.07" y="-159.5" font-family="Geist Mono" font-size="8.50" fill="#c8501f">distribution</text>
+</g>
+<!-- dist&#45;&gt;demo -->
+<g id="edge9" class="edge">
+<title>dist&#45;&gt;demo</title>
+<path fill="none" stroke="#c8501f" d="M473.93,-86.84C422.17,-72.92 350.24,-53.58 296.52,-39.13"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="297.26,-36.79 289.86,-37.34 295.99,-41.52 297.26,-36.79"/>
+<text xml:space="preserve" text-anchor="middle" x="420.5" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">stacks into</text>
+</g>
+<!-- fastgen -->
+<g id="node7" class="node">
+<title>fastgen</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="490.04,-323.9 316.38,-323.9 316.38,-287.62 490.04,-287.62 490.04,-323.9"/>
+<text xml:space="preserve" text-anchor="start" x="365.71" y="-305.81" font-family="Geist Mono" font-size="11.00">FastGen tooling</text>
+<text xml:space="preserve" text-anchor="start" x="329.33" y="-297.66" font-family="Geist Mono" font-size="8.00" fill="#807565">Post&#45;training pipeline for 20&#45;40B+ models</text>
+</g>
+<!-- fastgen&#45;&gt;distill -->
+<g id="edge6" class="edge">
+<title>fastgen&#45;&gt;distill</title>
+<path fill="none" stroke="#c8501f" d="M396.79,-287.04C392.34,-274.77 386.35,-258.25 381.4,-244.59"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="383.83,-244.1 379.14,-238.35 379.22,-245.77 383.83,-244.1"/>
+<text xml:space="preserve" text-anchor="middle" x="403.82" y="-259.55" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Nvidia layers quantization, caching, and step distillation on top of a slow baseline diffusion model, with distillation carrying the most weight toward the live single-GPU real-time demo (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Diffusion models need latency work before enterprise use</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/fewer-diffusion-steps/s04_80.webp" alt="slide at 01:20"></a><div class="slidecap">Slide at 01:20 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s05_180.webp" alt="slide at 03:00"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s08_220.webp" alt="slide at 03:40"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s09_230.webp" alt="slide at 03:50"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s10_240.webp" alt="slide at 04:00"></a></div></div>
+<div class="textcol"><h2>Diffusion models need latency work before enterprise use</h2><ul class="takeaways"><li>The speaker frames diffusion image/video models (denoising over 20-50 iterative steps) as maturing fast in quality (Flux 2, LTX 2, Nano Banana) but not yet fast, mature, or scalable enough for developer/enterprise contexts, and says the field is borrowing optimization concepts already proven in the LLM/VLM ecosystem.</li></ul><div class="quote"><p>&ldquo;this ecosystem is is not as mature as the auto regressive LLM VLM ecosystem&rdquo;</p><span class="at">said at 02:05</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Quantization: the easy, lower-impact layer</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="10" class="sl"><img loading="lazy" class="main" src="img/fewer-diffusion-steps/s10_240.webp" alt="slide at 04:00"></a><div class="slidecap">Slide at 04:00 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s11_270.webp" alt="slide at 04:30"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s12_310.webp" alt="slide at 05:10"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s13_320.webp" alt="slide at 05:20"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s14_350.webp" alt="slide at 05:50"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s15_380.webp" alt="slide at 06:20"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s16_450.webp" alt="slide at 07:30"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s17_460.webp" alt="slide at 07:40"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s18_480.webp" alt="slide at 08:00"></a></div></div>
+<div class="textcol"><h2>Quantization: the easy, lower-impact layer</h2><ul class="takeaways"><li>Post-training quantization is described as simpler than quantization-aware training but harder to apply cleanly to diffusion models than to LLMs because diffusion models are more attention-heavy, making quantization&#x27;s impact on quality less predictable, though still worthwhile on modern hardware.</li><li>Nvidia&#x27;s work with Black Forest Labs on Flux 2 used dynamic quantization, and pre-quantized checkpoints are available on Hugging Face via the open-source TRT-LLM visual-gen repo.</li></ul><div class="quote"><p>&ldquo;this type of models are more attention heavy, which means that the impact of doing quantization is not as impactful as the LLMs VLMs&rdquo;</p><span class="at">said at 04:09</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Caching: skipping recomputation between similar steps</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="20" class="sl"><img loading="lazy" class="main" src="img/fewer-diffusion-steps/s20_540.webp" alt="slide at 09:00"></a><div class="slidecap">Slide at 09:00 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s21_550.webp" alt="slide at 09:10"></a></div></div>
+<div class="textcol"><h2>Caching: skipping recomputation between similar steps</h2><ul class="takeaways"><li>Unlike KV caching in autoregressive LLMs, diffusion caching (e.g., T-cache) compares denoising steps and skips recomputation when the change between steps is minimal, either across the whole latent space or, in more modern chunk-based approaches, for isolated regions of a frame.</li><li>Done incorrectly, caching can meaningfully degrade image/video quality, so thresholds must be tuned and tested.</li></ul><div class="quote"><p>&ldquo;Caching is something that if you don&#x27;t do the right way, can have quite a significant impact on the quality of the image&rdquo;</p><span class="at">said at 08:47</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Step distillation: the biggest payoff</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="21" class="sl"><img loading="lazy" class="main" src="img/fewer-diffusion-steps/s21_550.webp" alt="slide at 09:10"></a><div class="slidecap">Slide at 09:10 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s24_630.webp" alt="slide at 10:30"></a><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s25_640.webp" alt="slide at 10:40"></a></div></div>
+<div class="textcol"><h2>Step distillation: the biggest payoff</h2><ul class="takeaways"><li>Distillation in diffusion targets step count, not parameter count: a student model is trained to match a teacher&#x27;s output using far fewer denoising steps (4, 8, or even one-shot instead of 50), which can yield 10x to 200x performance improvement and is described as the only realistic route to real-time generation today.</li><li>The two main approaches are trajectory-based (student follows the teacher&#x27;s exact denoising path) and distribution-based (student only matches the final output distribution), with distribution-based currently considered the more common, better-quality technique; recent work combines both.</li></ul><div class="quote"><p>&ldquo;the goal is not to get to a smaller model, okay? You&#x27;ll still have the same number of parameters. This is more about step distillation&rdquo;</p><span class="at">said at 09:49</span></div><div class="quote"><p>&ldquo;it&#x27;s something that can give you 10x, 200x improvement in performance&rdquo;</p><span class="at">said at 10:19</span></div><div class="quote"><p>&ldquo;The more common, I would say, and better quality technique these days is distribution based&rdquo;</p><span class="at">said at 11:56</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Real-time demo and open-source tooling</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="25" class="sl"><img loading="lazy" class="main" src="img/fewer-diffusion-steps/s25_640.webp" alt="slide at 10:40"></a><div class="slidecap">Slide at 10:40 &middot; click any slide to enlarge &middot; 7 more from this section below</div><div class=strip><a href="#" data-slide="26" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s26_690.webp" alt="slide at 11:30"></a><a href="#" data-slide="27" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s27_810.webp" alt="slide at 13:30"></a><a href="#" data-slide="28" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s28_820.webp" alt="slide at 13:40"></a><a href="#" data-slide="29" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s29_910.webp" alt="slide at 15:10"></a><a href="#" data-slide="30" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s30_950.webp" alt="slide at 15:50"></a><a href="#" data-slide="31" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s31_960.webp" alt="slide at 16:00"></a><a href="#" data-slide="32" class="sl"><img loading="lazy" class="thumb" src="img/fewer-diffusion-steps/s32_1000.webp" alt="slide at 16:40"></a></div></div>
+<div class="textcol"><h2>Real-time demo and open-source tooling</h2><ul class="takeaways"><li>Nvidia demonstrated real-time video generation at the recent GTC conference in San Jose using two distillation techniques on a single Blackwell B200 GPU.</li><li>FastGen, an open-source Nvidia research repo, structures the post-training/scale-sharding process for large (20-40B+ parameter, trending toward hundreds of billions) video diffusion models, and supports fine-tuning on open-source data by default or custom data for domain-specific quality needs.</li></ul><div class="quote"><p>&ldquo;there&#x27;s some demo we did in the last GTC conference a couple of weeks ago in in San Jose uh with two different um distillation techniques&rdquo;</p><span class="at">said at 10:41</span></div><div class="quote"><p>&ldquo;what&#x27;s good about distillation is that you don&#x27;t need um GB200, right? You can do it with Hoppers, you can do it with H200, H100, B200&rdquo;</p><span class="at">said at 16:53</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The claim that distillation doesn&#x27;t require GB200-class compute (H100/H200/B200 suffice) lowers the bar for teams assuming real-time diffusion serving is out of reach without top-tier clusters -- worth confirming that holds for larger 20-40B video models specifically, not just small 2-4B ones (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/fewer-diffusion-steps/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/fewer-diffusion-steps/s01_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/fewer-diffusion-steps/s02_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/fewer-diffusion-steps/s03_70.webp" alt="slide at 01:10"><div class="ts">01:10</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/fewer-diffusion-steps/s04_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/fewer-diffusion-steps/s05_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/fewer-diffusion-steps/s06_190.webp" alt="slide at 03:10"><div class="ts">03:10</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/fewer-diffusion-steps/s07_210.webp" alt="slide at 03:30"><div class="ts">03:30</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/fewer-diffusion-steps/s08_220.webp" alt="slide at 03:40"><div class="ts">03:40</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/fewer-diffusion-steps/s09_230.webp" alt="slide at 03:50"><div class="ts">03:50</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/fewer-diffusion-steps/s10_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/fewer-diffusion-steps/s11_270.webp" alt="slide at 04:30"><div class="ts">04:30</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/fewer-diffusion-steps/s12_310.webp" alt="slide at 05:10"><div class="ts">05:10</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/fewer-diffusion-steps/s13_320.webp" alt="slide at 05:20"><div class="ts">05:20</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/fewer-diffusion-steps/s14_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/fewer-diffusion-steps/s15_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/fewer-diffusion-steps/s16_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/fewer-diffusion-steps/s17_460.webp" alt="slide at 07:40"><div class="ts">07:40</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/fewer-diffusion-steps/s18_480.webp" alt="slide at 08:00"><div class="ts">08:00</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/fewer-diffusion-steps/s19_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/fewer-diffusion-steps/s20_540.webp" alt="slide at 09:00"><div class="ts">09:00</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/fewer-diffusion-steps/s21_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/fewer-diffusion-steps/s22_560.webp" alt="slide at 09:20"><div class="ts">09:20</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/fewer-diffusion-steps/s23_580.webp" alt="slide at 09:40"><div class="ts">09:40</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/fewer-diffusion-steps/s24_630.webp" alt="slide at 10:30"><div class="ts">10:30</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/fewer-diffusion-steps/s25_640.webp" alt="slide at 10:40"><div class="ts">10:40</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/fewer-diffusion-steps/s26_690.webp" alt="slide at 11:30"><div class="ts">11:30</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/fewer-diffusion-steps/s27_810.webp" alt="slide at 13:30"><div class="ts">13:30</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/fewer-diffusion-steps/s28_820.webp" alt="slide at 13:40"><div class="ts">13:40</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/fewer-diffusion-steps/s29_910.webp" alt="slide at 15:10"><div class="ts">15:10</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/fewer-diffusion-steps/s30_950.webp" alt="slide at 15:50"><div class="ts">15:50</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/fewer-diffusion-steps/s31_960.webp" alt="slide at 16:00"><div class="ts">16:00</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/fewer-diffusion-steps/s32_1000.webp" alt="slide at 16:40"><div class="ts">16:40</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/fewer-diffusion-steps/s33_1010.webp" alt="slide at 16:50"><div class="ts">16:50</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/fewer-diffusion-steps/s34_1020.webp" alt="slide at 17:00"><div class="ts">17:00</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/fewer-diffusion-steps/s35_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/fewer-diffusion-steps/s36_1060.webp" alt="slide at 17:40"><div class="ts">17:40</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/fewer-diffusion-steps/s37_1070.webp" alt="slide at 17:50"><div class="ts">17:50</div></a><a href="#" data-slide="38"><img loading="lazy" src="img/fewer-diffusion-steps/s38_1080.webp" alt="slide at 18:00"><div class="ts">18:00</div></a><a href="#" data-slide="39"><img loading="lazy" src="img/fewer-diffusion-steps/s39_1090.webp" alt="slide at 18:10"><div class="ts">18:10</div></a><a href="#" data-slide="40"><img loading="lazy" src="img/fewer-diffusion-steps/s40_1100.webp" alt="slide at 18:20"><div class="ts">18:20</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The diffusion model ecosystem is less mature for developer/enterprise use than the autoregressive LLM/VLM ecosystem.</td><td class="tt">02:05</td></tr><tr><td class="st">warns</td><td>Quantization is harder to apply cleanly to diffusion models than to LLMs because diffusion models are more attention-heavy.</td><td class="tt">04:09</td></tr><tr><td class="st">warns</td><td>Caching done incorrectly can significantly degrade image or video quality even while boosting speed.</td><td class="tt">08:47</td></tr><tr><td class="st">asserts</td><td>Diffusion distillation reduces the number of denoising steps rather than the number of model parameters.</td><td class="tt">09:49</td></tr><tr><td class="st">predicts</td><td>Reducing denoising steps while maintaining quality can yield a 10x to 200x performance improvement.</td><td class="tt">10:19</td></tr><tr><td class="st">asserts</td><td>Distribution-based distillation, where the student only matches final output distribution, is currently the more common and better-quality technique versus trajectory-based.</td><td class="tt">11:56</td></tr><tr><td class="st">asserts</td><td>Nvidia demonstrated real-time video generation at GTC using two different distillation techniques.</td><td class="tt">10:41</td></tr><tr><td class="st">asserts</td><td>Distillation does not require top-tier GB200 compute; older hardware like H100/H200/B200 can be used.</td><td class="tt">16:53</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/fewer-diffusion-steps/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/gHs5ZiY80PM?t=10"}, {"src": "img/fewer-diffusion-steps/s01_40.webp", "mmss": "00:40", "yt": "https://youtu.be/gHs5ZiY80PM?t=40"}, {"src": "img/fewer-diffusion-steps/s02_50.webp", "mmss": "00:50", "yt": "https://youtu.be/gHs5ZiY80PM?t=50"}, {"src": "img/fewer-diffusion-steps/s03_70.webp", "mmss": "01:10", "yt": "https://youtu.be/gHs5ZiY80PM?t=70"}, {"src": "img/fewer-diffusion-steps/s04_80.webp", "mmss": "01:20", "yt": "https://youtu.be/gHs5ZiY80PM?t=80"}, {"src": "img/fewer-diffusion-steps/s05_180.webp", "mmss": "03:00", "yt": "https://youtu.be/gHs5ZiY80PM?t=180"}, {"src": "img/fewer-diffusion-steps/s06_190.webp", "mmss": "03:10", "yt": "https://youtu.be/gHs5ZiY80PM?t=190"}, {"src": "img/fewer-diffusion-steps/s07_210.webp", "mmss": "03:30", "yt": "https://youtu.be/gHs5ZiY80PM?t=210"}, {"src": "img/fewer-diffusion-steps/s08_220.webp", "mmss": "03:40", "yt": "https://youtu.be/gHs5ZiY80PM?t=220"}, {"src": "img/fewer-diffusion-steps/s09_230.webp", "mmss": "03:50", "yt": "https://youtu.be/gHs5ZiY80PM?t=230"}, {"src": "img/fewer-diffusion-steps/s10_240.webp", "mmss": "04:00", "yt": "https://youtu.be/gHs5ZiY80PM?t=240"}, {"src": "img/fewer-diffusion-steps/s11_270.webp", "mmss": "04:30", "yt": "https://youtu.be/gHs5ZiY80PM?t=270"}, {"src": "img/fewer-diffusion-steps/s12_310.webp", "mmss": "05:10", "yt": "https://youtu.be/gHs5ZiY80PM?t=310"}, {"src": "img/fewer-diffusion-steps/s13_320.webp", "mmss": "05:20", "yt": "https://youtu.be/gHs5ZiY80PM?t=320"}, {"src": "img/fewer-diffusion-steps/s14_350.webp", "mmss": "05:50", "yt": "https://youtu.be/gHs5ZiY80PM?t=350"}, {"src": "img/fewer-diffusion-steps/s15_380.webp", "mmss": "06:20", "yt": "https://youtu.be/gHs5ZiY80PM?t=380"}, {"src": "img/fewer-diffusion-steps/s16_450.webp", "mmss": "07:30", "yt": "https://youtu.be/gHs5ZiY80PM?t=450"}, {"src": "img/fewer-diffusion-steps/s17_460.webp", "mmss": "07:40", "yt": "https://youtu.be/gHs5ZiY80PM?t=460"}, {"src": "img/fewer-diffusion-steps/s18_480.webp", "mmss": "08:00", "yt": "https://youtu.be/gHs5ZiY80PM?t=480"}, {"src": "img/fewer-diffusion-steps/s19_490.webp", "mmss": "08:10", "yt": "https://youtu.be/gHs5ZiY80PM?t=490"}, {"src": "img/fewer-diffusion-steps/s20_540.webp", "mmss": "09:00", "yt": "https://youtu.be/gHs5ZiY80PM?t=540"}, {"src": "img/fewer-diffusion-steps/s21_550.webp", "mmss": "09:10", "yt": "https://youtu.be/gHs5ZiY80PM?t=550"}, {"src": "img/fewer-diffusion-steps/s22_560.webp", "mmss": "09:20", "yt": "https://youtu.be/gHs5ZiY80PM?t=560"}, {"src": "img/fewer-diffusion-steps/s23_580.webp", "mmss": "09:40", "yt": "https://youtu.be/gHs5ZiY80PM?t=580"}, {"src": "img/fewer-diffusion-steps/s24_630.webp", "mmss": "10:30", "yt": "https://youtu.be/gHs5ZiY80PM?t=630"}, {"src": "img/fewer-diffusion-steps/s25_640.webp", "mmss": "10:40", "yt": "https://youtu.be/gHs5ZiY80PM?t=640"}, {"src": "img/fewer-diffusion-steps/s26_690.webp", "mmss": "11:30", "yt": "https://youtu.be/gHs5ZiY80PM?t=690"}, {"src": "img/fewer-diffusion-steps/s27_810.webp", "mmss": "13:30", "yt": "https://youtu.be/gHs5ZiY80PM?t=810"}, {"src": "img/fewer-diffusion-steps/s28_820.webp", "mmss": "13:40", "yt": "https://youtu.be/gHs5ZiY80PM?t=820"}, {"src": "img/fewer-diffusion-steps/s29_910.webp", "mmss": "15:10", "yt": "https://youtu.be/gHs5ZiY80PM?t=910"}, {"src": "img/fewer-diffusion-steps/s30_950.webp", "mmss": "15:50", "yt": "https://youtu.be/gHs5ZiY80PM?t=950"}, {"src": "img/fewer-diffusion-steps/s31_960.webp", "mmss": "16:00", "yt": "https://youtu.be/gHs5ZiY80PM?t=960"}, {"src": "img/fewer-diffusion-steps/s32_1000.webp", "mmss": "16:40", "yt": "https://youtu.be/gHs5ZiY80PM?t=1000"}, {"src": "img/fewer-diffusion-steps/s33_1010.webp", "mmss": "16:50", "yt": "https://youtu.be/gHs5ZiY80PM?t=1010"}, {"src": "img/fewer-diffusion-steps/s34_1020.webp", "mmss": "17:00", "yt": "https://youtu.be/gHs5ZiY80PM?t=1020"}, {"src": "img/fewer-diffusion-steps/s35_1030.webp", "mmss": "17:10", "yt": "https://youtu.be/gHs5ZiY80PM?t=1030"}, {"src": "img/fewer-diffusion-steps/s36_1060.webp", "mmss": "17:40", "yt": "https://youtu.be/gHs5ZiY80PM?t=1060"}, {"src": "img/fewer-diffusion-steps/s37_1070.webp", "mmss": "17:50", "yt": "https://youtu.be/gHs5ZiY80PM?t=1070"}, {"src": "img/fewer-diffusion-steps/s38_1080.webp", "mmss": "18:00", "yt": "https://youtu.be/gHs5ZiY80PM?t=1080"}, {"src": "img/fewer-diffusion-steps/s39_1090.webp", "mmss": "18:10", "yt": "https://youtu.be/gHs5ZiY80PM?t=1090"}, {"src": "img/fewer-diffusion-steps/s40_1100.webp", "mmss": "18:20", "yt": "https://youtu.be/gHs5ZiY80PM?t=1100"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "gHs5ZiY80PM", "slug": "fewer-diffusion-steps", "title": "You Might Not Need 50 Diffusion Steps", "speaker": "Ziv Ilan", "company": "Nvidia", "themes": ["generative-media", "infra-serving"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Three stackable optimizations for real-time diffusion (ours, from the slides)", "lanes": ["Baseline model", "Optimization techniques", "Real-time outcome"], "nodes": [{"id": "base", "label": "Diffusion model", "sub": "20-50 denoising steps, slow", "lane": 0, "kind": "system", "claim": "c1", "t": 125}, {"id": "quant", "label": "Quantization", "sub": "Post-training; attention-heavy limits gains", "lane": 1, "kind": "system", "claim": "c2", "t": 249}, {"id": "cache", "label": "Caching (T-cache)", "sub": "Skip recompute on similar steps", "lane": 1, "kind": "system", "claim": "c3", "t": 527}, {"id": "distill", "label": "Step distillation", "sub": "50 steps to 1-8, 10x-200x speedup", "lane": 1, "kind": "system", "claim": "c5", "t": 619}, {"id": "traj", "label": "Trajectory-based", "sub": "Student follows teacher's exact path", "lane": 1, "kind": "system", "claim": "c6", "t": 716}, {"id": "dist", "label": "Distribution-based", "sub": "Matches final output only, preferred", "lane": 1, "kind": "system", "claim": "c6", "t": 716}, {"id": "fastgen", "label": "FastGen tooling", "sub": "Post-training pipeline for 20-40B+ models", "lane": 1, "kind": "external", "claim": "c8", "t": 1013}, {"id": "demo", "label": "GTC real-time demo", "sub": "Two distillation techniques, 1 B200 GPU", "lane": 2, "kind": "system", "claim": "c7", "t": 641}], "edges": [{"from": "base", "to": "quant", "label": "quantize", "kind": "flow"}, {"from": "base", "to": "cache", "label": "cache steps", "kind": "flow"}, {"from": "base", "to": "distill", "label": "distill steps", "kind": "flow"}, {"from": "distill", "to": "traj", "label": "trajectory", "kind": "flow"}, {"from": "distill", "to": "dist", "label": "distribution", "kind": "flow"}, {"from": "fastgen", "to": "distill", "label": "enables", "kind": "flow"}, {"from": "quant", "to": "demo", "label": "stacks into", "kind": "flow"}, {"from": "cache", "to": "demo", "label": "stacks into", "kind": "flow"}, {"from": "dist", "to": "demo", "label": "stacks into", "kind": "flow"}], "caption": "Nvidia layers quantization, caching, and step distillation on top of a slow baseline diffusion model, with distillation carrying the most weight toward the live single-GPU real-time demo (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "diffusion ecosystem maturity gap", "text": "The diffusion model ecosystem is less mature for developer/enterprise use than the autoregressive LLM/VLM ecosystem.", "quote": "this ecosystem is is not as mature as the auto regressive LLM VLM ecosystem", "t": 125}, {"id": "c2", "stance": "warns", "topic": "quantization harder for diffusion", "text": "Quantization is harder to apply cleanly to diffusion models than to LLMs because diffusion models are more attention-heavy.", "quote": "this type of models are more attention heavy, which means that the impact of doing quantization is not as impactful as the LLMs VLMs", "t": 249}, {"id": "c3", "stance": "warns", "topic": "caching quality risk", "text": "Caching done incorrectly can significantly degrade image or video quality even while boosting speed.", "quote": "Caching is something that if you don't do the right way, can have quite a significant impact on the quality of the image", "t": 527}, {"id": "c4", "stance": "asserts", "topic": "distillation targets steps not parameters", "text": "Diffusion distillation reduces the number of denoising steps rather than the number of model parameters.", "quote": "the goal is not to get to a smaller model, okay? You'll still have the same number of parameters. This is more about step distillation", "t": 589}, {"id": "c5", "stance": "predicts", "topic": "distillation performance gain", "text": "Reducing denoising steps while maintaining quality can yield a 10x to 200x performance improvement.", "quote": "it's something that can give you 10x, 200x improvement in performance", "t": 619}, {"id": "c6", "stance": "asserts", "topic": "distribution-based distillation preferred", "text": "Distribution-based distillation, where the student only matches final output distribution, is currently the more common and better-quality technique versus trajectory-based.", "quote": "The more common, I would say, and better quality technique these days is distribution based", "t": 716}, {"id": "c7", "stance": "asserts", "topic": "GTC real-time demo", "text": "Nvidia demonstrated real-time video generation at GTC using two different distillation techniques.", "quote": "there's some demo we did in the last GTC conference a couple of weeks ago in in San Jose uh with two different um distillation techniques", "t": 641}, {"id": "c8", "stance": "asserts", "topic": "compute requirement for distillation", "text": "Distillation does not require top-tier GB200 compute; older hardware like H100/H200/B200 can be used.", "quote": "what's good about distillation is that you don't need um GB200, right? You can do it with Hoppers, you can do it with H200, H100, B200", "t": 1013}]}</script>
+</body></html>

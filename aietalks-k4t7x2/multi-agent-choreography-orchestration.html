@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>From Chaos to Choreography: Multi-Agent Orchestration Patterns That Actually Work &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/2czYyrTzILg" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 26 min</span><span class="ln"></span></div>
+<h1 class="lede">From Chaos to Choreography: Multi-Agent Orchestration Patterns That Actually Work</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Sandipan Bhaumik &middot; Databricks</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/2czYyrTzILg" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/2czYyrTzILg</a> &middot; 26 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Infra & serving</span><span class="chip hot">Memory</span></div>
+<p class="deck" style="font-size:15px">Names the specific coordination failure mode (a stale-cache race condition between two agents that produced a 20% incorrect-decision rate in a financial-services production system) and the concrete patterns used to fix the class of bug: ...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Going from one agent to five agents doesn&#x27;t add linear complexity: the speaker states it makes the system &quot;25 times more complex&quot; because coordination connections grow combinatorially (c1).</li><li>A real credit-decisioning deployment hit a stale-cache race condition, one agent wrote a 750 credit score while another read a cached 680 for the same customer 500ms later, causing 20% of decisions to carry incorrect risk ratings (c2, c3).</li><li>The fix pattern is immutable, versioned state (append-only, never updated in place) plus circuit breakers and saga-style compensate methods for failure recovery, rather than shared mutable state agents write to directly (c7, c8, c9).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">FROM STALE CACHE TO SAFE HANDOFFS (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 209.00 832.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 828.05)">
+<title>G</title>
+<!-- cs_agent -->
+<g id="node1" class="node">
+<title>cs_agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="158.3,-824.05 42.38,-824.05 42.38,-787.77 158.3,-787.77 158.3,-824.05"/>
+<text xml:space="preserve" text-anchor="start" x="55.34" y="-805.96" font-family="Geist Mono" font-size="11.00">Credit&#45;score agent</text>
+<text xml:space="preserve" text-anchor="start" x="59.84" y="-797.81" font-family="Geist Mono" font-size="8.00" fill="#807565">writes score 750 to DB</text>
+</g>
+<!-- cache -->
+<g id="node2" class="node">
+<title>cache</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="159.05,-736.52 41.63,-736.52 41.63,-700.24 159.05,-700.24 159.05,-736.52"/>
+<text xml:space="preserve" text-anchor="start" x="72.21" y="-718.43" font-family="Geist Mono" font-size="11.00">Stale cache</text>
+<text xml:space="preserve" text-anchor="start" x="54.59" y="-710.28" font-family="Geist Mono" font-size="8.00" fill="#807565">not invalidated after write</text>
+</g>
+<!-- cs_agent&#45;&gt;cache -->
+<g id="edge1" class="edge">
+<title>cs_agent&#45;&gt;cache</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M100.34,-787.19C100.34,-775.15 100.34,-759.02 100.34,-745.51"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="102.79,-745.59 100.34,-738.59 97.89,-745.59 102.79,-745.59"/>
+<text xml:space="preserve" text-anchor="middle" x="119.84" y="-759.69" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">writes 750</text>
+</g>
+<!-- risk_agent -->
+<g id="node3" class="node">
+<title>risk_agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="168.8,-648.99 31.88,-648.99 31.88,-612.71 168.8,-612.71 168.8,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="74.84" y="-630.9" font-family="Geist Mono" font-size="11.00">Risk agent</text>
+<text xml:space="preserve" text-anchor="start" x="44.84" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">reads cached 680, 500ms later</text>
+</g>
+<!-- cache&#45;&gt;risk_agent -->
+<g id="edge2" class="edge">
+<title>cache&#45;&gt;risk_agent</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M100.34,-699.66C100.34,-687.62 100.34,-671.49 100.34,-657.98"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="102.79,-658.06 100.34,-651.06 97.89,-658.06 102.79,-658.06"/>
+<text xml:space="preserve" text-anchor="middle" x="127.34" y="-672.16" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">stale read 680</text>
+</g>
+<!-- impact -->
+<g id="node4" class="node">
+<title>impact</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="169.92,-561.46 30.75,-561.46 30.75,-525.18 169.92,-525.18 169.92,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="43.71" y="-543.37" font-family="Geist Mono" font-size="11.00">20% wrong risk ratings</text>
+<text xml:space="preserve" text-anchor="start" x="60.59" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">surfaced within 3 days</text>
+</g>
+<!-- risk_agent&#45;&gt;impact -->
+<g id="edge3" class="edge">
+<title>risk_agent&#45;&gt;impact</title>
+<path fill="none" stroke="#c8501f" d="M100.34,-612.13C100.34,-600.09 100.34,-583.96 100.34,-570.45"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.79,-570.53 100.34,-563.53 97.89,-570.53 102.79,-570.53"/>
+<text xml:space="preserve" text-anchor="middle" x="112.71" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#c8501f">causes</text>
+</g>
+<!-- decision_rule -->
+<g id="node5" class="node">
+<title>decision_rule</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="200.67,-473.93 0,-473.93 0,-437.65 200.67,-437.65 200.67,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="25.71" y="-455.84" font-family="Geist Mono" font-size="11.00">Choreography vs orchestration</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">simple/high&#45;autonomy vs complex/low&#45;autonomy</text>
+</g>
+<!-- impact&#45;&gt;decision_rule -->
+<g id="edge4" class="edge">
+<title>impact&#45;&gt;decision_rule</title>
+<path fill="none" stroke="#c8501f" d="M100.34,-524.6C100.34,-512.56 100.34,-496.43 100.34,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.79,-483 100.34,-476 97.89,-483 102.79,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="117.96" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">drives fix</text>
+</g>
+<!-- orchestrator -->
+<g id="node6" class="node">
+<title>orchestrator</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="184.92,-386.4 15.75,-386.4 15.75,-350.12 184.92,-350.12 184.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="69.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Orchestrator</text>
+<text xml:space="preserve" text-anchor="start" x="28.71" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">agents dumb; orchestrator retries+logs</text>
+</g>
+<!-- decision_rule&#45;&gt;orchestrator -->
+<g id="edge5" class="edge">
+<title>decision_rule&#45;&gt;orchestrator</title>
+<path fill="none" stroke="#c8501f" d="M100.34,-437.07C100.34,-425.03 100.34,-408.9 100.34,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.79,-395.47 100.34,-388.47 97.89,-395.47 102.79,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="126.59" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">low autonomy</text>
+</g>
+<!-- versioned_state -->
+<g id="node7" class="node">
+<title>versioned_state</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="184.17,-298.87 16.5,-298.87 16.5,-262.59 184.17,-262.59 184.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="35.09" y="-280.78" font-family="Geist Mono" font-size="11.00">Immutable versioned state</text>
+<text xml:space="preserve" text-anchor="start" x="29.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">append&#45;only handoffs, no shared writes</text>
+</g>
+<!-- orchestrator&#45;&gt;versioned_state -->
+<g id="edge6" class="edge">
+<title>orchestrator&#45;&gt;versioned_state</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M100.34,-349.54C100.34,-337.5 100.34,-321.37 100.34,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="102.79,-307.94 100.34,-300.94 97.89,-307.94 102.79,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="125.46" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">state handoff</text>
+</g>
+<!-- data_contract -->
+<g id="node8" class="node">
+<title>data_contract</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="173.3,-211.34 27.38,-211.34 27.38,-175.06 173.3,-175.06 173.3,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="51.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Data contract check</text>
+<text xml:space="preserve" text-anchor="start" x="40.34" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">rejects handoff if confidence &lt;0.7</text>
+</g>
+<!-- versioned_state&#45;&gt;data_contract -->
+<g id="edge7" class="edge">
+<title>versioned_state&#45;&gt;data_contract</title>
+<path fill="none" stroke="#c8501f" d="M100.34,-262.01C100.34,-249.97 100.34,-233.84 100.34,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.79,-220.41 100.34,-213.41 97.89,-220.41 102.79,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="139.34" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">checked at boundary</text>
+</g>
+<!-- circuit_breaker -->
+<g id="node9" class="node">
+<title>circuit_breaker</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="166.55,-123.81 34.13,-123.81 34.13,-87.53 166.55,-87.53 166.55,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="65.09" y="-105.72" font-family="Geist Mono" font-size="11.00">Circuit breaker</text>
+<text xml:space="preserve" text-anchor="start" x="47.09" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">opens after 5 failures in a row</text>
+</g>
+<!-- data_contract&#45;&gt;circuit_breaker -->
+<g id="edge8" class="edge">
+<title>data_contract&#45;&gt;circuit_breaker</title>
+<path fill="none" stroke="#c8501f" d="M100.34,-174.48C100.34,-162.44 100.34,-146.31 100.34,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.79,-132.88 100.34,-125.88 97.89,-132.88 102.79,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="130.34" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">on repeated fail</text>
+</g>
+<!-- saga -->
+<g id="node10" class="node">
+<title>saga</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="169.55,-36.28 31.13,-36.28 31.13,0 169.55,0 169.55,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="56.84" y="-18.19" font-family="Geist Mono" font-size="11.00">Saga compensate</text>
+<text xml:space="preserve" text-anchor="start" x="44.09" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">execute + compensate rollback</text>
+</g>
+<!-- circuit_breaker&#45;&gt;saga -->
+<g id="edge9" class="edge">
+<title>circuit_breaker&#45;&gt;saga</title>
+<path fill="none" stroke="#c8501f" d="M100.34,-86.95C100.34,-74.91 100.34,-58.78 100.34,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="102.79,-45.35 100.34,-38.35 97.89,-45.35 102.79,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="124.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">trips rollback</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk stale-cache incident into the fix patterns it recommends next; the exact wiring between orchestration and the state patterns is our inference, not a diagram shown on screen (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Why complexity explodes past one agent</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="6" class="sl"><img loading="lazy" class="main" src="img/multi-agent-choreography-orchestration/s06_270.webp" alt="slide at 04:30"></a><div class="slidecap">Slide at 04:30 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Why complexity explodes past one agent</h2><ul class="takeaways"><li>The speaker argues that adding agents is not like adding features: coordination complexity grows combinatorially rather than linearly, since each additional agent adds potential connections, race conditions, and failure points between agents.</li></ul><div class="quote"><p>&ldquo;it doesn&#x27;t get just five times harder. It gets 25 times more complex. Coordination complexity grows exponentially.&rdquo;</p><span class="at">said at 04:44</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>A production war story: stale cache, wrong risk ratings</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/multi-agent-choreography-orchestration/s03_140.webp" alt="slide at 02:20"></a><div class="slidecap">Slide at 02:20 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s04_180.webp" alt="slide at 03:00"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s05_240.webp" alt="slide at 04:00"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s06_270.webp" alt="slide at 04:30"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s07_310.webp" alt="slide at 05:10"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s08_320.webp" alt="slide at 05:20"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s09_340.webp" alt="slide at 05:40"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s10_350.webp" alt="slide at 05:50"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s11_370.webp" alt="slide at 06:10"></a></div></div>
+<div class="textcol"><h2>A production war story: stale cache, wrong risk ratings</h2><ul class="takeaways"><li>In a five-agent credit-decisioning system, a credit-score agent wrote a score of 750 to the database while a risk-assessment agent read a cached value of 680 for the same customer 500 milliseconds later, because the cache wasn&#x27;t invalidated after the write.</li><li>This caused 20% of decisions to carry incorrect risk ratings before the team traced it back to the caching layer over two days.</li></ul><div class="quote"><p>&ldquo;In 3 days&#x27; time, we started seeing weird approvals. Uh 20% of the decisions had incorrect risk ratings.&rdquo;</p><span class="at">said at 02:38</span></div><div class="quote"><p>&ldquo;Credit score agent calculated a score of 750 and wrote to the database. The risk assessment agent, on the other hand, read from the database 500 milliseconds later and got a score of 680 for the same customer.&rdquo;</p><span class="at">said at 03:09</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Choreography vs. orchestration as a decision, not a default</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="11" class="sl"><img loading="lazy" class="main" src="img/multi-agent-choreography-orchestration/s11_370.webp" alt="slide at 06:10"></a><div class="slidecap">Slide at 06:10 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s12_450.webp" alt="slide at 07:30"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s13_460.webp" alt="slide at 07:40"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s14_490.webp" alt="slide at 08:10"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s15_560.webp" alt="slide at 09:20"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s16_610.webp" alt="slide at 10:10"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s17_670.webp" alt="slide at 11:10"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s18_690.webp" alt="slide at 11:30"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s19_750.webp" alt="slide at 12:30"></a></div></div>
+<div class="textcol"><h2>Choreography vs. orchestration as a decision, not a default</h2><ul class="takeaways"><li>Choreography (agents coordinate through published events, no central controller) scales well and is loosely coupled but is described as a debugging nightmare without strong observability.</li><li>Orchestration (a central coordinator calls each agent directly, manages state, retries, and logging, and agents never call each other) trades autonomy for traceability.</li><li>The speaker&#x27;s rule of thumb: simple workflow with high autonomy needs favors choreography; complex workflow with low autonomy tolerance favors orchestration.</li></ul><div class="quote"><p>&ldquo;However, the nightmare of choreography is debugging. When something fails, you&#x27;re playing detective with no real clue.&rdquo;</p><span class="at">said at 06:50</span></div><div class="quote"><p>&ldquo;Agents are dumb. They just take the input, they do the work, they return the output. The orchestrator does all the smart coordination.&rdquo;</p><span class="at">said at 08:58</span></div><div class="quote"><p>&ldquo;Simple workflow, high autonomy, you go with choreography. You need complex workflow with low autonomy tolerance, you go with orchestration.&rdquo;</p><span class="at">said at 10:01</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>State: replace shared mutable writes with immutable, versioned handoffs</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="22" class="sl"><img loading="lazy" class="main" src="img/multi-agent-choreography-orchestration/s22_910.webp" alt="slide at 15:10"></a><div class="slidecap">Slide at 15:10 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s23_980.webp" alt="slide at 16:20"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s24_1000.webp" alt="slide at 16:40"></a></div></div>
+<div class="textcol"><h2>State: replace shared mutable writes with immutable, versioned handoffs</h2><ul class="takeaways"><li>Instead of multiple agents writing to the same record (which produces lost updates and stale reads), each agent hands off an immutable, versioned state object that is appended, not updated, letting failures be traced by walking back through prior versions.</li><li>Data contracts between agents (e.g., an analysis agent rejecting a handoff if a confidence score is below 0.7) catch bad data at the handoff boundary instead of several agents downstream.</li></ul><div class="quote"><p>&ldquo;It prevents race conditions on shared state. No stale reads. It provides a clear lineage.&rdquo;</p><span class="at">said at 14:45</span></div><div class="quote"><p>&ldquo;If confidence is below 0.7, it will reject the handoff.&rdquo;</p><span class="at">said at 15:47</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Failure recovery: circuit breakers and saga-style compensation</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="24" class="sl"><img loading="lazy" class="main" src="img/multi-agent-choreography-orchestration/s24_1000.webp" alt="slide at 16:40"></a><div class="slidecap">Slide at 16:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s25_1090.webp" alt="slide at 18:10"></a><a href="#" data-slide="26" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s26_1130.webp" alt="slide at 18:50"></a><a href="#" data-slide="27" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s27_1150.webp" alt="slide at 19:10"></a><a href="#" data-slide="28" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s28_1160.webp" alt="slide at 19:20"></a><a href="#" data-slide="29" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s29_1200.webp" alt="slide at 20:00"></a><a href="#" data-slide="30" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s30_1250.webp" alt="slide at 20:50"></a><a href="#" data-slide="31" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s31_1310.webp" alt="slide at 21:50"></a><a href="#" data-slide="32" class="sl"><img loading="lazy" class="thumb" src="img/multi-agent-choreography-orchestration/s32_1410.webp" alt="slide at 23:30"></a></div></div>
+<div class="textcol"><h2>Failure recovery: circuit breakers and saga-style compensation</h2><ul class="takeaways"><li>A circuit breaker wraps each inter-agent call and opens after repeated failures (the example given is five in a row), so the system fails fast instead of retrying into a timeout each time, then tests recovery with a single request after a cooldown.</li><li>Separately, a saga/compensation pattern gives every agent both an execute and a compensate method, so the orchestrator can walk backward through completed steps and undo them if a later agent fails.</li></ul><div class="quote"><p>&ldquo;If agent B fails repeatedly, say five times in a row, the circuit breaker opens.&rdquo;</p><span class="at">said at 16:49</span></div><div class="quote"><p>&ldquo;Every agent has two methods, execute and compensate. Execute does the work. Compensate rolls it back, undoes it.&rdquo;</p><span class="at">said at 18:54</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The talk maps its patterns to specific Databricks components (LangGraph as orchestrator, Unity Catalog for contracts, MLflow for tracing, AI Gateway for circuit breakers), but the underlying patterns, immutable versioned state, circuit breakers, saga compensation, are generic distributed-systems patterns and not specific to that stack.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s00_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s01_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s02_110.webp" alt="slide at 01:50"><div class="ts">01:50</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s03_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s04_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s05_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s06_270.webp" alt="slide at 04:30"><div class="ts">04:30</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s07_310.webp" alt="slide at 05:10"><div class="ts">05:10</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s08_320.webp" alt="slide at 05:20"><div class="ts">05:20</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s09_340.webp" alt="slide at 05:40"><div class="ts">05:40</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s10_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s11_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s12_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s13_460.webp" alt="slide at 07:40"><div class="ts">07:40</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s14_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s15_560.webp" alt="slide at 09:20"><div class="ts">09:20</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s16_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s17_670.webp" alt="slide at 11:10"><div class="ts">11:10</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s18_690.webp" alt="slide at 11:30"><div class="ts">11:30</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s19_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s20_770.webp" alt="slide at 12:50"><div class="ts">12:50</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s21_840.webp" alt="slide at 14:00"><div class="ts">14:00</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s22_910.webp" alt="slide at 15:10"><div class="ts">15:10</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s23_980.webp" alt="slide at 16:20"><div class="ts">16:20</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s24_1000.webp" alt="slide at 16:40"><div class="ts">16:40</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s25_1090.webp" alt="slide at 18:10"><div class="ts">18:10</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s26_1130.webp" alt="slide at 18:50"><div class="ts">18:50</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s27_1150.webp" alt="slide at 19:10"><div class="ts">19:10</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s28_1160.webp" alt="slide at 19:20"><div class="ts">19:20</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s29_1200.webp" alt="slide at 20:00"><div class="ts">20:00</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s30_1250.webp" alt="slide at 20:50"><div class="ts">20:50</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s31_1310.webp" alt="slide at 21:50"><div class="ts">21:50</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s32_1410.webp" alt="slide at 23:30"><div class="ts">23:30</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s33_1440.webp" alt="slide at 24:00"><div class="ts">24:00</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s34_1490.webp" alt="slide at 24:50"><div class="ts">24:50</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s35_1530.webp" alt="slide at 25:30"><div class="ts">25:30</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/multi-agent-choreography-orchestration/s36_1580.webp" alt="slide at 26:20"><div class="ts">26:20</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Moving from one to five agents doesn&#x27;t get five times harder; coordination complexity grows exponentially, roughly 25 times more complex.</td><td class="tt">04:44</td></tr><tr><td class="st">asserts</td><td>A five-agent credit-decisioning deployment produced weird approvals within three days, with 20% of decisions carrying incorrect risk ratings.</td><td class="tt">02:38</td></tr><tr><td class="st">asserts</td><td>The credit-score agent wrote a score of 750 while the risk-assessment agent read a stale cached score of 680 for the same customer 500 milliseconds later.</td><td class="tt">03:09</td></tr><tr><td class="st">warns</td><td>Choreography is a debugging nightmare when something fails, because there&#x27;s no central coordinator to trace through.</td><td class="tt">06:50</td></tr><tr><td class="st">asserts</td><td>In orchestration, agents are deliberately kept simple; the orchestrator alone handles the smart coordination, execution graph, retries, and logging.</td><td class="tt">08:58</td></tr><tr><td class="st">recommends</td><td>Choose choreography for simple, high-autonomy workflows and orchestration for complex workflows with low autonomy tolerance.</td><td class="tt">10:01</td></tr><tr><td class="st">recommends</td><td>Immutable, versioned state handoffs between agents prevent race conditions and stale reads and provide a clear lineage of what each agent produced.</td><td class="tt">14:45</td></tr><tr><td class="st">recommends</td><td>A circuit breaker opens after an agent fails repeatedly, such as five times in a row, so subsequent calls fail fast instead of waiting for a timeout.</td><td class="tt">16:49</td></tr><tr><td class="st">recommends</td><td>Every agent should implement both an execute and a compensate method so failures can be rolled back by walking backward through completed steps.</td><td class="tt">18:54</td></tr><tr><td class="st">recommends</td><td>A data contract can reject a handoff outright, such as when a confidence score falls below 0.7, catching bad data at the boundary instead of downstream.</td><td class="tt">15:47</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/multi-agent-choreography-orchestration/s00_40.webp", "mmss": "00:40", "yt": "https://youtu.be/2czYyrTzILg?t=40"}, {"src": "img/multi-agent-choreography-orchestration/s01_80.webp", "mmss": "01:20", "yt": "https://youtu.be/2czYyrTzILg?t=80"}, {"src": "img/multi-agent-choreography-orchestration/s02_110.webp", "mmss": "01:50", "yt": "https://youtu.be/2czYyrTzILg?t=110"}, {"src": "img/multi-agent-choreography-orchestration/s03_140.webp", "mmss": "02:20", "yt": "https://youtu.be/2czYyrTzILg?t=140"}, {"src": "img/multi-agent-choreography-orchestration/s04_180.webp", "mmss": "03:00", "yt": "https://youtu.be/2czYyrTzILg?t=180"}, {"src": "img/multi-agent-choreography-orchestration/s05_240.webp", "mmss": "04:00", "yt": "https://youtu.be/2czYyrTzILg?t=240"}, {"src": "img/multi-agent-choreography-orchestration/s06_270.webp", "mmss": "04:30", "yt": "https://youtu.be/2czYyrTzILg?t=270"}, {"src": "img/multi-agent-choreography-orchestration/s07_310.webp", "mmss": "05:10", "yt": "https://youtu.be/2czYyrTzILg?t=310"}, {"src": "img/multi-agent-choreography-orchestration/s08_320.webp", "mmss": "05:20", "yt": "https://youtu.be/2czYyrTzILg?t=320"}, {"src": "img/multi-agent-choreography-orchestration/s09_340.webp", "mmss": "05:40", "yt": "https://youtu.be/2czYyrTzILg?t=340"}, {"src": "img/multi-agent-choreography-orchestration/s10_350.webp", "mmss": "05:50", "yt": "https://youtu.be/2czYyrTzILg?t=350"}, {"src": "img/multi-agent-choreography-orchestration/s11_370.webp", "mmss": "06:10", "yt": "https://youtu.be/2czYyrTzILg?t=370"}, {"src": "img/multi-agent-choreography-orchestration/s12_450.webp", "mmss": "07:30", "yt": "https://youtu.be/2czYyrTzILg?t=450"}, {"src": "img/multi-agent-choreography-orchestration/s13_460.webp", "mmss": "07:40", "yt": "https://youtu.be/2czYyrTzILg?t=460"}, {"src": "img/multi-agent-choreography-orchestration/s14_490.webp", "mmss": "08:10", "yt": "https://youtu.be/2czYyrTzILg?t=490"}, {"src": "img/multi-agent-choreography-orchestration/s15_560.webp", "mmss": "09:20", "yt": "https://youtu.be/2czYyrTzILg?t=560"}, {"src": "img/multi-agent-choreography-orchestration/s16_610.webp", "mmss": "10:10", "yt": "https://youtu.be/2czYyrTzILg?t=610"}, {"src": "img/multi-agent-choreography-orchestration/s17_670.webp", "mmss": "11:10", "yt": "https://youtu.be/2czYyrTzILg?t=670"}, {"src": "img/multi-agent-choreography-orchestration/s18_690.webp", "mmss": "11:30", "yt": "https://youtu.be/2czYyrTzILg?t=690"}, {"src": "img/multi-agent-choreography-orchestration/s19_750.webp", "mmss": "12:30", "yt": "https://youtu.be/2czYyrTzILg?t=750"}, {"src": "img/multi-agent-choreography-orchestration/s20_770.webp", "mmss": "12:50", "yt": "https://youtu.be/2czYyrTzILg?t=770"}, {"src": "img/multi-agent-choreography-orchestration/s21_840.webp", "mmss": "14:00", "yt": "https://youtu.be/2czYyrTzILg?t=840"}, {"src": "img/multi-agent-choreography-orchestration/s22_910.webp", "mmss": "15:10", "yt": "https://youtu.be/2czYyrTzILg?t=910"}, {"src": "img/multi-agent-choreography-orchestration/s23_980.webp", "mmss": "16:20", "yt": "https://youtu.be/2czYyrTzILg?t=980"}, {"src": "img/multi-agent-choreography-orchestration/s24_1000.webp", "mmss": "16:40", "yt": "https://youtu.be/2czYyrTzILg?t=1000"}, {"src": "img/multi-agent-choreography-orchestration/s25_1090.webp", "mmss": "18:10", "yt": "https://youtu.be/2czYyrTzILg?t=1090"}, {"src": "img/multi-agent-choreography-orchestration/s26_1130.webp", "mmss": "18:50", "yt": "https://youtu.be/2czYyrTzILg?t=1130"}, {"src": "img/multi-agent-choreography-orchestration/s27_1150.webp", "mmss": "19:10", "yt": "https://youtu.be/2czYyrTzILg?t=1150"}, {"src": "img/multi-agent-choreography-orchestration/s28_1160.webp", "mmss": "19:20", "yt": "https://youtu.be/2czYyrTzILg?t=1160"}, {"src": "img/multi-agent-choreography-orchestration/s29_1200.webp", "mmss": "20:00", "yt": "https://youtu.be/2czYyrTzILg?t=1200"}, {"src": "img/multi-agent-choreography-orchestration/s30_1250.webp", "mmss": "20:50", "yt": "https://youtu.be/2czYyrTzILg?t=1250"}, {"src": "img/multi-agent-choreography-orchestration/s31_1310.webp", "mmss": "21:50", "yt": "https://youtu.be/2czYyrTzILg?t=1310"}, {"src": "img/multi-agent-choreography-orchestration/s32_1410.webp", "mmss": "23:30", "yt": "https://youtu.be/2czYyrTzILg?t=1410"}, {"src": "img/multi-agent-choreography-orchestration/s33_1440.webp", "mmss": "24:00", "yt": "https://youtu.be/2czYyrTzILg?t=1440"}, {"src": "img/multi-agent-choreography-orchestration/s34_1490.webp", "mmss": "24:50", "yt": "https://youtu.be/2czYyrTzILg?t=1490"}, {"src": "img/multi-agent-choreography-orchestration/s35_1530.webp", "mmss": "25:30", "yt": "https://youtu.be/2czYyrTzILg?t=1530"}, {"src": "img/multi-agent-choreography-orchestration/s36_1580.webp", "mmss": "26:20", "yt": "https://youtu.be/2czYyrTzILg?t=1580"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "2czYyrTzILg", "slug": "multi-agent-choreography-orchestration", "title": "From Chaos to Choreography: Multi-Agent Orchestration Patterns That Actually Work", "speaker": "Sandipan Bhaumik", "company": "Databricks", "themes": ["agentic-engineering", "infra-serving", "memory"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "From stale cache to safe handoffs (ours, from the slides)", "lanes": ["The incident", "Coordination choice", "State and recovery patterns"], "nodes": [{"id": "cs_agent", "label": "Credit-score agent", "sub": "writes score 750 to DB", "lane": 0, "kind": "actor", "claim": "c3", "t": 189}, {"id": "cache", "label": "Stale cache", "sub": "not invalidated after write", "lane": 0, "kind": "store", "claim": "c3", "t": 189}, {"id": "risk_agent", "label": "Risk agent", "sub": "reads cached 680, 500ms later", "lane": 0, "kind": "actor", "claim": "c3", "t": 189}, {"id": "impact", "label": "20% wrong risk ratings", "sub": "surfaced within 3 days", "lane": 0, "kind": "system", "claim": "c2", "t": 158}, {"id": "decision_rule", "label": "Choreography vs orchestration", "sub": "simple/high-autonomy vs complex/low-autonomy", "lane": 1, "kind": "system", "claim": "c6", "t": 601}, {"id": "orchestrator", "label": "Orchestrator", "sub": "agents dumb; orchestrator retries+logs", "lane": 1, "kind": "system", "claim": "c5", "t": 538}, {"id": "versioned_state", "label": "Immutable versioned state", "sub": "append-only handoffs, no shared writes", "lane": 2, "kind": "store", "claim": "c7", "t": 885}, {"id": "data_contract", "label": "Data contract check", "sub": "rejects handoff if confidence <0.7", "lane": 2, "kind": "system", "claim": "c10", "t": 947}, {"id": "circuit_breaker", "label": "Circuit breaker", "sub": "opens after 5 failures in a row", "lane": 2, "kind": "system", "claim": "c8", "t": 1009}, {"id": "saga", "label": "Saga compensate", "sub": "execute + compensate rollback", "lane": 2, "kind": "system", "claim": "c9", "t": 1134}], "edges": [{"from": "cs_agent", "to": "cache", "label": "writes 750", "kind": "data"}, {"from": "cache", "to": "risk_agent", "label": "stale read 680", "kind": "data"}, {"from": "risk_agent", "to": "impact", "label": "causes", "kind": "flow"}, {"from": "impact", "to": "decision_rule", "label": "drives fix", "kind": "flow"}, {"from": "decision_rule", "to": "orchestrator", "label": "low autonomy", "kind": "flow"}, {"from": "orchestrator", "to": "versioned_state", "label": "state handoff", "kind": "data"}, {"from": "versioned_state", "to": "data_contract", "label": "checked at boundary", "kind": "flow"}, {"from": "data_contract", "to": "circuit_breaker", "label": "on repeated fail", "kind": "flow"}, {"from": "circuit_breaker", "to": "saga", "label": "trips rollback", "kind": "flow"}], "caption": "This traces the talk stale-cache incident into the fix patterns it recommends next; the exact wiring between orchestration and the state patterns is our inference, not a diagram shown on screen (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "coordination complexity growth", "text": "Moving from one to five agents doesn't get five times harder; coordination complexity grows exponentially, roughly 25 times more complex.", "quote": "it doesn't get just five times harder. It gets 25 times more complex. Coordination complexity grows exponentially.", "t": 284}, {"id": "c2", "stance": "asserts", "topic": "production incident impact", "text": "A five-agent credit-decisioning deployment produced weird approvals within three days, with 20% of decisions carrying incorrect risk ratings.", "quote": "In 3 days' time, we started seeing weird approvals. Uh 20% of the decisions had incorrect risk ratings.", "t": 158}, {"id": "c3", "stance": "asserts", "topic": "root cause: stale cache read", "text": "The credit-score agent wrote a score of 750 while the risk-assessment agent read a stale cached score of 680 for the same customer 500 milliseconds later.", "quote": "Credit score agent calculated a score of 750 and wrote to the database. The risk assessment agent, on the other hand, read from the database 500 milliseconds later and got a score of 680 for the same customer.", "t": 189}, {"id": "c4", "stance": "warns", "topic": "choreography debugging difficulty", "text": "Choreography is a debugging nightmare when something fails, because there's no central coordinator to trace through.", "quote": "However, the nightmare of choreography is debugging. When something fails, you're playing detective with no real clue.", "t": 410}, {"id": "c5", "stance": "asserts", "topic": "orchestration pattern definition", "text": "In orchestration, agents are deliberately kept simple; the orchestrator alone handles the smart coordination, execution graph, retries, and logging.", "quote": "Agents are dumb. They just take the input, they do the work, they return the output. The orchestrator does all the smart coordination.", "t": 538}, {"id": "c6", "stance": "recommends", "topic": "choreography vs orchestration decision rule", "text": "Choose choreography for simple, high-autonomy workflows and orchestration for complex workflows with low autonomy tolerance.", "quote": "Simple workflow, high autonomy, you go with choreography. You need complex workflow with low autonomy tolerance, you go with orchestration.", "t": 601}, {"id": "c7", "stance": "recommends", "topic": "immutable versioned state", "text": "Immutable, versioned state handoffs between agents prevent race conditions and stale reads and provide a clear lineage of what each agent produced.", "quote": "It prevents race conditions on shared state. No stale reads. It provides a clear lineage.", "t": 885}, {"id": "c8", "stance": "recommends", "topic": "circuit breaker pattern", "text": "A circuit breaker opens after an agent fails repeatedly, such as five times in a row, so subsequent calls fail fast instead of waiting for a timeout.", "quote": "If agent B fails repeatedly, say five times in a row, the circuit breaker opens.", "t": 1009}, {"id": "c9", "stance": "recommends", "topic": "saga/compensation pattern", "text": "Every agent should implement both an execute and a compensate method so failures can be rolled back by walking backward through completed steps.", "quote": "Every agent has two methods, execute and compensate. Execute does the work. Compensate rolls it back, undoes it.", "t": 1134}, {"id": "c10", "stance": "recommends", "topic": "data contracts at handoff", "text": "A data contract can reject a handoff outright, such as when a confidence score falls below 0.7, catching bad data at the boundary instead of downstream.", "quote": "If confidence is below 0.7, it will reject the handoff.", "t": 947}]}</script>
+</body></html>

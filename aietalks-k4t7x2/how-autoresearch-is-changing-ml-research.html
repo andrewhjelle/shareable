@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>How Autoresearch is changing ML research &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/iCj_ATyThvc" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 16 min</span><span class="ln"></span></div>
+<h1 class="lede">How Autoresearch is changing ML research</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Zhengyao Jiang &middot; Weco</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/iCj_ATyThvc" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/iCj_ATyThvc</a> &middot; 16 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Data curation</span></div>
+<p class="deck" style="font-size:15px">Jiang&#x27;s central argument is that once execution is automated, the differentiators become eval design and codebase abstraction, which is a concrete, actionable framing for anyone building or buying an agentic research/engineering pipeline</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Weco&#x27;s Aiden agent set 7 leaderboard records in OpenAI&#x27;s 22-day Parameter Golf competition (best human: 3) and posted a PR H-index of 10 versus the next-best human&#x27;s 7.</li><li>It ran about 1,300 experiments on a single H100 node using only ~4% of the competition&#x27;s total compute, yet produced ~15% of the records with a 28% leaderboard hit rate, roughly six times the community average.</li><li>Jiang argues the real leverage now is eval design and code abstraction: a loose data-prep API let Aiden&#x27;s own pipeline leak test data into training, and tightening the API dropped the leakage rate to zero.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">WHERE AUTORESEARCH&#x27;S LEVERAGE SITS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 532.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- aiden -->
+<g id="node1" class="node">
+<title>aiden</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="356.67,-386.4 186.75,-386.4 186.75,-350.12 356.67,-350.12 356.67,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="242.46" y="-368.31" font-family="Geist Mono" font-size="11.00">Aiden agent</text>
+<text xml:space="preserve" text-anchor="start" x="199.71" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">1,300 experiments in 22 days on 1 H100</text>
+</g>
+<!-- recombine -->
+<g id="node2" class="node">
+<title>recombine</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="177.42,-298.87 0,-298.87 0,-262.59 177.42,-262.59 177.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="26.46" y="-280.78" font-family="Geist Mono" font-size="11.00">Recombines human ideas</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">gated&#45;attention + quant fix + tokenizer fix</text>
+</g>
+<!-- aiden&#45;&gt;recombine -->
+<g id="edge1" class="edge">
+<title>aiden&#45;&gt;recombine</title>
+<path fill="none" stroke="#c8501f" d="M233.79,-349.54C204.84,-336.01 164.83,-317.31 134.16,-302.97"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="135.33,-300.81 127.95,-300.07 133.25,-305.25 135.33,-300.81"/>
+<text xml:space="preserve" text-anchor="middle" x="209.54" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">generates</text>
+</g>
+<!-- looseapi -->
+<g id="node3" class="node">
+<title>looseapi</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="337.54,-298.87 205.88,-298.87 205.88,-262.59 337.54,-262.59 337.54,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="221.83" y="-280.78" font-family="Geist Mono" font-size="11.00">Loose data&#45;prep API</text>
+<text xml:space="preserve" text-anchor="start" x="218.83" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">let test data leak into training</text>
+</g>
+<!-- aiden&#45;&gt;looseapi -->
+<g id="edge4" class="edge">
+<title>aiden&#45;&gt;looseapi</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M271.71,-349.54C271.71,-337.5 271.71,-321.37 271.71,-307.86"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="274.16,-307.94 271.71,-300.94 269.26,-307.94 274.16,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="279.96" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">uses</text>
+</g>
+<!-- hitrate -->
+<g id="node7" class="node">
+<title>hitrate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="524.04,-298.87 359.38,-298.87 359.38,-262.59 524.04,-262.59 524.04,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="410.96" y="-280.78" font-family="Geist Mono" font-size="11.00">28% hit rate</text>
+<text xml:space="preserve" text-anchor="start" x="372.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">~6x community avg on 4% of compute</text>
+</g>
+<!-- aiden&#45;&gt;hitrate -->
+<g id="edge3" class="edge">
+<title>aiden&#45;&gt;hitrate</title>
+<path fill="none" stroke="#c8501f" d="M306.93,-349.54C333.72,-336.06 370.68,-317.47 399.12,-303.16"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="400.03,-305.44 405.18,-300.11 397.82,-301.07 400.03,-305.44"/>
+<text xml:space="preserve" text-anchor="middle" x="383.39" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">produces</text>
+</g>
+<!-- records -->
+<g id="node6" class="node">
+<title>records</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="149.67,-211.34 3.75,-211.34 3.75,-175.06 149.67,-175.06 149.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="24.21" y="-193.25" font-family="Geist Mono" font-size="11.00">7 records, H&#45;index 10</text>
+<text xml:space="preserve" text-anchor="start" x="16.71" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">best human: 3 records, H&#45;index 7</text>
+</g>
+<!-- recombine&#45;&gt;records -->
+<g id="edge2" class="edge">
+<title>recombine&#45;&gt;records</title>
+<path fill="none" stroke="#c8501f" d="M86.22,-262.01C84.53,-249.97 82.27,-233.84 80.38,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="82.8,-219.99 79.4,-213.4 77.95,-220.67 82.8,-219.99"/>
+<text xml:space="preserve" text-anchor="middle" x="94.3" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">yields</text>
+</g>
+<!-- evalfocus -->
+<g id="node4" class="node">
+<title>evalfocus</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="385.42,-211.34 172,-211.34 172,-175.06 385.42,-175.06 385.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="224.71" y="-193.25" font-family="Geist Mono" font-size="11.00">Eval/abstraction focus</text>
+<text xml:space="preserve" text-anchor="start" x="184.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Jiang: new leverage point, per Karpathy&#39;s 2015 claim</text>
+</g>
+<!-- looseapi&#45;&gt;evalfocus -->
+<g id="edge5" class="edge">
+<title>looseapi&#45;&gt;evalfocus</title>
+<path fill="none" stroke="#c8501f" d="M273.16,-262.01C274.15,-249.97 275.47,-233.84 276.57,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="279.01,-220.58 277.14,-213.41 274.13,-220.18 279.01,-220.58"/>
+<text xml:space="preserve" text-anchor="middle" x="298.88" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">exposes gap</text>
+</g>
+<!-- tightapi -->
+<g id="node5" class="node">
+<title>tightapi</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="346.79,-123.81 210.62,-123.81 210.62,-87.53 346.79,-87.53 346.79,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="244.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Tightened API</text>
+<text xml:space="preserve" text-anchor="start" x="223.58" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">blocked test data from training</text>
+</g>
+<!-- evalfocus&#45;&gt;tightapi -->
+<g id="edge6" class="edge">
+<title>evalfocus&#45;&gt;tightapi</title>
+<path fill="none" stroke="#c8501f" d="M278.71,-174.48C278.71,-162.44 278.71,-146.31 278.71,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="281.16,-132.88 278.71,-125.88 276.26,-132.88 281.16,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="296.33" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">drives fix</text>
+</g>
+<!-- zeroleak -->
+<g id="node8" class="node">
+<title>zeroleak</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="337.42,-36.28 220,-36.28 220,0 337.42,0 337.42,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="232.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Leakage rate: zero</text>
+<text xml:space="preserve" text-anchor="start" x="244.58" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">after API tightened</text>
+</g>
+<!-- tightapi&#45;&gt;zeroleak -->
+<g id="edge7" class="edge">
+<title>tightapi&#45;&gt;zeroleak</title>
+<path fill="none" stroke="#c8501f" d="M278.71,-86.95C278.71,-74.91 278.71,-58.78 278.71,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="281.16,-45.35 278.71,-38.35 276.26,-45.35 281.16,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="295.96" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">results in</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Jiang&#x27;s talk as agent execution scaling on one side and eval/abstraction fixes on the other, both feeding measured outcomes (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Aiden out-published the human competitors</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="0" class="sl"><img loading="lazy" class="main" src="img/how-autoresearch-is-changing-ml-research/s00_180.webp" alt="slide at 03:00"></a><div class="slidecap">Slide at 03:00 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Aiden out-published the human competitors</h2><ul class="takeaways"><li>In OpenAI&#x27;s Parameter Golf hiring competition, Weco&#x27;s autonomous agent Aiden set seven leaderboard records over 22 days versus three for the best human competitor.</li><li>Jiang also reports a PR-based H-index of 10 for Aiden against 7 for the next-best human, arguing this measures community impact (whether others build on the work) rather than just a raw benchmark score.</li></ul><div class="quote"><p>&ldquo;By the end, Aid has set seven leaderboard records. Each one is a new best for the competition stampled by OpenAI and the best human only made three.&rdquo;</p><span class="at">said at 02:35</span></div><div class="quote"><p>&ldquo;Aiden was 10 and the next human was seven.&rdquo;</p><span class="at">said at 03:37</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Throughput isn&#x27;t the whole story — quality held up too</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/how-autoresearch-is-changing-ml-research/s01_250.webp" alt="slide at 04:10"></a><div class="slidecap">Slide at 04:10 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Throughput isn&#x27;t the whole story — quality held up too</h2><ul class="takeaways"><li>Aiden ran roughly 1,300 experiments over 22 days on a single H100 node.</li><li>Jiang says it used at most 4% of the competition&#x27;s total compute but produced about 15% of the leaderboard records, and 28% of its submissions made the leaderboard, a hit rate he says is roughly six times the community average.</li></ul><div class="quote"><p>&ldquo;Over 22 days, it ran about 1,300 experiments on a single H100 node.&rdquo;</p><span class="at">said at 04:08</span></div><div class="quote"><p>&ldquo;of competition&#x27;s total compute. and it made about 15% of the records. Also, 28% of its submissions made the leaderboard. Roughly six times higher heat rate than the community average.&rdquo;</p><span class="at">said at 04:39</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>It recombines human ideas rather than inventing from scratch</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/how-autoresearch-is-changing-ml-research/s02_550.webp" alt="slide at 09:10"></a><div class="slidecap">Slide at 09:10 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/how-autoresearch-is-changing-ml-research/s03_750.webp" alt="slide at 12:30"></a></div></div>
+<div class="textcol"><h2>It recombines human ideas rather than inventing from scratch</h2><ul class="takeaways"><li>Jiang traces Aiden&#x27;s record-setting submissions to ideas already circulating in papers or abandoned by other participants, such as a gated-attention technique from a Qwen paper that Aiden combined with a quantization fix and a separately posted tokenizer improvement to produce a leaderboard record.</li><li>He compares this shift to Karpathy&#x27;s decade-old observation that gradient descent could out-code humans, arguing autoresearch is now commoditizing certain execution skills while raising the value of eval and abstraction design.</li></ul><div class="quote"><p>&ldquo;paper called gated attention and it worked but it introduced more parameters and it broke the 16 megapy file size limit&rdquo;</p><span class="at">said at 06:42</span></div><div class="quote"><p>&ldquo;I really like one tweet from Andre Kapasi about 10 years ago where he said greeting descent can write code better than you&rdquo;</p><span class="at">said at 09:53</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>The eval and the code abstraction are the new leverage points</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/how-autoresearch-is-changing-ml-research/s04_870.webp" alt="slide at 14:30"></a><div class="slidecap">Slide at 14:30 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/how-autoresearch-is-changing-ml-research/s05_950.webp" alt="slide at 15:50"></a></div></div>
+<div class="textcol"><h2>The eval and the code abstraction are the new leverage points</h2><ul class="takeaways"><li>In a separate fraud-detection pipeline experiment, a loose data-preprocessing API let test-set information leak into training data, inflating the score.</li><li>Tightening the API into a stricter interface that prevented test data from reaching training dropped the leakage rate to zero, which Jiang uses to argue that codebase abstraction now functions like architecture design in neural networks: it biases what solutions the agent can even reach.</li></ul><div class="quote"><p>&ldquo;there&#x27;s a certain certain test set information got leaked to the training information. We then tighten the obstruction to a more strict API where the test data couldn&#x27;t reach the training and the data leakage rate just dropped to zero&rdquo;</p><span class="at">said at 14:03</span></div></div>
+</div>
+</section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s00_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s01_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s02_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s03_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s04_870.webp" alt="slide at 14:30"><div class="ts">14:30</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/how-autoresearch-is-changing-ml-research/s05_950.webp" alt="slide at 15:50"><div class="ts">15:50</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (7)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Weco&#x27;s Aiden agent set seven leaderboard records in a 22-day OpenAI-run competition, more than double the best human competitor&#x27;s three.</td><td class="tt">02:35</td></tr><tr><td class="st">asserts</td><td>Measured by an academic-style H-index computed over pull requests, Aiden scored 10 versus 7 for the next-best human contributor.</td><td class="tt">03:37</td></tr><tr><td class="st">asserts</td><td>Aiden ran about 1,300 experiments over 22 days on a single H100 GPU node.</td><td class="tt">04:08</td></tr><tr><td class="st">asserts</td><td>Aiden used only about 4% of the competition&#x27;s total compute but produced 15% of the records and had a 28% leaderboard hit rate, roughly six times the community average.</td><td class="tt">04:39</td></tr><tr><td class="st">asserts</td><td>A record-setting submission combined a gated-attention technique from a research paper with a quantization fix and a separately posted tokenizer improvement.</td><td class="tt">06:42</td></tr><tr><td class="st">predicts</td><td>Jiang compares the current moment to gradient descent commoditizing hand-written code a decade ago, predicting autoresearch will similarly commoditize execution skills while raising the value of eval and abstraction design.</td><td class="tt">09:53</td></tr><tr><td class="st">warns</td><td>A loosely designed data-preprocessing API let test-set information leak into training in a fraud-detection experiment; tightening the API to prevent that access dropped the leakage rate to zero.</td><td class="tt">14:03</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/how-autoresearch-is-changing-ml-research/s00_180.webp", "mmss": "03:00", "yt": "https://youtu.be/iCj_ATyThvc?t=180"}, {"src": "img/how-autoresearch-is-changing-ml-research/s01_250.webp", "mmss": "04:10", "yt": "https://youtu.be/iCj_ATyThvc?t=250"}, {"src": "img/how-autoresearch-is-changing-ml-research/s02_550.webp", "mmss": "09:10", "yt": "https://youtu.be/iCj_ATyThvc?t=550"}, {"src": "img/how-autoresearch-is-changing-ml-research/s03_750.webp", "mmss": "12:30", "yt": "https://youtu.be/iCj_ATyThvc?t=750"}, {"src": "img/how-autoresearch-is-changing-ml-research/s04_870.webp", "mmss": "14:30", "yt": "https://youtu.be/iCj_ATyThvc?t=870"}, {"src": "img/how-autoresearch-is-changing-ml-research/s05_950.webp", "mmss": "15:50", "yt": "https://youtu.be/iCj_ATyThvc?t=950"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "iCj_ATyThvc", "slug": "how-autoresearch-is-changing-ml-research", "title": "How Autoresearch is changing ML research", "speaker": "Zhengyao Jiang", "company": "Weco", "themes": ["agentic-engineering", "evals-benchmarks", "data-curation"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Where autoresearch's leverage sits (ours)", "lanes": ["Agent execution", "Leverage point", "Outcome"], "nodes": [{"id": "aiden", "label": "Aiden agent", "sub": "1,300 experiments in 22 days on 1 H100", "lane": 0, "kind": "actor", "claim": "c3", "t": 248}, {"id": "recombine", "label": "Recombines human ideas", "sub": "gated-attention + quant fix + tokenizer fix", "lane": 0, "kind": "system", "claim": "c5", "t": 402}, {"id": "looseapi", "label": "Loose data-prep API", "sub": "let test data leak into training", "lane": 1, "kind": "store", "claim": "c7", "t": 843}, {"id": "evalfocus", "label": "Eval/abstraction focus", "sub": "Jiang: new leverage point, per Karpathy's 2015 claim", "lane": 1, "kind": "system", "claim": "c6", "t": 593}, {"id": "tightapi", "label": "Tightened API", "sub": "blocked test data from training", "lane": 1, "kind": "system", "claim": "c7", "t": 843}, {"id": "records", "label": "7 records, H-index 10", "sub": "best human: 3 records, H-index 7", "lane": 2, "kind": "system", "claim": "c1", "t": 155}, {"id": "hitrate", "label": "28% hit rate", "sub": "~6x community avg on 4% of compute", "lane": 2, "kind": "system", "claim": "c4", "t": 279}, {"id": "zeroleak", "label": "Leakage rate: zero", "sub": "after API tightened", "lane": 2, "kind": "system", "claim": "c7", "t": 843}], "edges": [{"from": "aiden", "to": "recombine", "label": "generates", "kind": "flow"}, {"from": "recombine", "to": "records", "label": "yields", "kind": "flow"}, {"from": "aiden", "to": "hitrate", "label": "produces", "kind": "flow"}, {"from": "aiden", "to": "looseapi", "label": "uses", "kind": "data"}, {"from": "looseapi", "to": "evalfocus", "label": "exposes gap", "kind": "flow"}, {"from": "evalfocus", "to": "tightapi", "label": "drives fix", "kind": "flow"}, {"from": "tightapi", "to": "zeroleak", "label": "results in", "kind": "flow"}], "caption": "This traces Jiang's talk as agent execution scaling on one side and eval/abstraction fixes on the other, both feeding measured outcomes (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "Parameter Golf leaderboard records", "text": "Weco's Aiden agent set seven leaderboard records in a 22-day OpenAI-run competition, more than double the best human competitor's three.", "quote": "By the end, Aid has set seven leaderboard records. Each one is a new best for the competition stampled by OpenAI and the best human only made three.", "t": 155}, {"id": "c2", "stance": "asserts", "topic": "PR H-index comparison", "text": "Measured by an academic-style H-index computed over pull requests, Aiden scored 10 versus 7 for the next-best human contributor.", "quote": "Aiden was 10 and the next human was seven.", "t": 217}, {"id": "c3", "stance": "asserts", "topic": "experiment throughput", "text": "Aiden ran about 1,300 experiments over 22 days on a single H100 GPU node.", "quote": "Over 22 days, it ran about 1,300 experiments on a single H100 node.", "t": 248}, {"id": "c4", "stance": "asserts", "topic": "compute efficiency and hit rate", "text": "Aiden used only about 4% of the competition's total compute but produced 15% of the records and had a 28% leaderboard hit rate, roughly six times the community average.", "quote": "of competition's total compute. and it made about 15% of the records. Also, 28% of its submissions made the leaderboard. Roughly six times higher heat rate than the community average.", "t": 279}, {"id": "c5", "stance": "asserts", "topic": "idea recombination example", "text": "A record-setting submission combined a gated-attention technique from a research paper with a quantization fix and a separately posted tokenizer improvement.", "quote": "paper called gated attention and it worked but it introduced more parameters and it broke the 16 megapy file size limit", "t": 402}, {"id": "c6", "stance": "predicts", "topic": "autoresearch commoditizing execution", "text": "Jiang compares the current moment to gradient descent commoditizing hand-written code a decade ago, predicting autoresearch will similarly commoditize execution skills while raising the value of eval and abstraction design.", "quote": "I really like one tweet from Andre Kapasi about 10 years ago where he said greeting descent can write code better than you", "t": 593}, {"id": "c7", "stance": "warns", "topic": "data leakage via loose API", "text": "A loosely designed data-preprocessing API let test-set information leak into training in a fraud-detection experiment; tightening the API to prevent that access dropped the leakage rate to zero.", "quote": "there's a certain certain test set information got leaked to the training information. We then tighten the obstruction to a more strict API where the test data couldn't reach the training and the data leakage rate just dropped to zero", "t": 843}]}</script>
+</body></html>

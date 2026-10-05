@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>You Didn&#x27;t Ship a Bug. You Just Wrote It for a Human. &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/lMCxVorb9wM" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 12 min</span><span class="ln"></span></div>
+<h1 class="lede">You Didn&#x27;t Ship a Bug. You Just Wrote It for a Human.</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Ravi Madabhushi &middot; Scalekit</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/lMCxVorb9wM" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/lMCxVorb9wM</a> &middot; 12 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Security</span><span class="chip hot">Agentic engineering</span><span class="chip hot">MCP & protocols</span></div>
+<p class="deck" style="font-size:15px">Madabhushi names a specific, checkable failure mode: MCP servers and OAuth scopes built for human actors don&#x27;t constrain what an agent can do once it&#x27;s authenticated, so agents end up over-permissioned by default</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Most agents get more permissions and scopes than their actual job requires, because existing auth primitives don&#x27;t support fine-grained scoping.</li><li>Traditional auth assumes whoever authenticates is who acts, and that the actor is deterministic; agents break both assumptions since they act on behalf of a user and behave non-deterministically.</li><li>Most MCP servers surface all available tools regardless of which user authorized the agent, letting the agent pick the wrong tool for its context.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">BINDING AGENTS TO PRINCIPALS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 358.00 657.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 652.99)">
+<title>G</title>
+<!-- human_auth -->
+<g id="node1" class="node">
+<title>human_auth</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="272.67,-648.99 75,-648.99 75,-612.71 272.67,-612.71 272.67,-648.99"/>
+<text xml:space="preserve" text-anchor="start" x="124.71" y="-630.9" font-family="Geist Mono" font-size="11.00">Human/service auth</text>
+<text xml:space="preserve" text-anchor="start" x="87.96" y="-622.75" font-family="Geist Mono" font-size="8.00" fill="#807565">authenticator=actor, fixed perms at registration</text>
+</g>
+<!-- over_scoped -->
+<g id="node2" class="node">
+<title>over_scoped</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="258.79,-561.46 88.87,-561.46 88.87,-525.18 258.79,-525.18 258.79,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="125.46" y="-543.37" font-family="Geist Mono" font-size="11.00">Agents over&#45;scoped</text>
+<text xml:space="preserve" text-anchor="start" x="101.83" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">way more perms/scopes than job needs</text>
+</g>
+<!-- human_auth&#45;&gt;over_scoped -->
+<g id="edge1" class="edge">
+<title>human_auth&#45;&gt;over_scoped</title>
+<path fill="none" stroke="#c8501f" d="M173.83,-612.13C173.83,-600.09 173.83,-583.96 173.83,-570.45"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="176.29,-570.53 173.84,-563.53 171.39,-570.53 176.29,-570.53"/>
+<text xml:space="preserve" text-anchor="middle" x="212.08" y="-584.63" font-family="Geist Mono" font-size="8.50" fill="#c8501f">breaks under agents</text>
+</g>
+<!-- actor_ne_principal -->
+<g id="node3" class="node">
+<title>actor_ne_principal</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="282.04,-473.93 65.62,-473.93 65.62,-437.65 282.04,-437.65 282.04,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="131.46" y="-455.84" font-family="Geist Mono" font-size="11.00">Actor != principal</text>
+<text xml:space="preserve" text-anchor="start" x="78.58" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">agent acts on behalf of user, needs delegated access</text>
+</g>
+<!-- over_scoped&#45;&gt;actor_ne_principal -->
+<g id="edge2" class="edge">
+<title>over_scoped&#45;&gt;actor_ne_principal</title>
+<path fill="none" stroke="#c8501f" d="M173.83,-524.6C173.83,-512.56 173.83,-496.43 173.83,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="176.29,-483 173.84,-476 171.39,-483 176.29,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="193.33" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">root cause</text>
+</g>
+<!-- nondeterministic -->
+<g id="node4" class="node">
+<title>nondeterministic</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="161.67,-386.4 0,-386.4 0,-350.12 161.67,-350.12 161.67,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="15.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Non&#45;deterministic behavior</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">past runs don&#39;t guarantee future runs</text>
+</g>
+<!-- actor_ne_principal&#45;&gt;nondeterministic -->
+<g id="edge3" class="edge">
+<title>actor_ne_principal&#45;&gt;nondeterministic</title>
+<path fill="none" stroke="#c8501f" d="M154.57,-437.07C140.47,-424.11 121.23,-406.41 105.94,-392.35"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="108,-390.92 101.19,-387.98 104.69,-394.53 108,-390.92"/>
+<text xml:space="preserve" text-anchor="middle" x="140.4" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">plus</text>
+</g>
+<!-- mcp_exposure -->
+<g id="node5" class="node">
+<title>mcp_exposure</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="349.92,-386.4 183.75,-386.4 183.75,-350.12 349.92,-350.12 349.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="213.21" y="-368.31" font-family="Geist Mono" font-size="11.00">MCP surfaces all tools</text>
+<text xml:space="preserve" text-anchor="start" x="196.71" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">no limit by which user authorized agent</text>
+</g>
+<!-- actor_ne_principal&#45;&gt;mcp_exposure -->
+<g id="edge4" class="edge">
+<title>actor_ne_principal&#45;&gt;mcp_exposure</title>
+<path fill="none" stroke="#c8501f" d="M193.1,-437.07C207.2,-424.11 226.44,-406.41 241.73,-392.35"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="242.98,-394.53 246.48,-387.98 239.67,-390.92 242.98,-394.53"/>
+<text xml:space="preserve" text-anchor="middle" x="255.9" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">agent picks tool</text>
+</g>
+<!-- incidents -->
+<g id="node6" class="node">
+<title>incidents</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="262.67,-298.87 83,-298.87 83,-262.59 262.67,-262.59 262.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="139.08" y="-280.78" font-family="Geist Mono" font-size="11.00">Real incidents</text>
+<text xml:space="preserve" text-anchor="start" x="95.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">agents have deleted production databases</text>
+</g>
+<!-- nondeterministic&#45;&gt;incidents -->
+<g id="edge6" class="edge">
+<title>nondeterministic&#45;&gt;incidents</title>
+<path fill="none" stroke="#c8501f" d="M99.9,-349.54C113.71,-336.69 132.53,-319.2 147.6,-305.19"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="149.23,-307.02 152.69,-300.46 145.89,-303.43 149.23,-307.02"/>
+<text xml:space="preserve" text-anchor="middle" x="157.47" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">unpredictable</text>
+</g>
+<!-- mcp_exposure&#45;&gt;incidents -->
+<g id="edge5" class="edge">
+<title>mcp_exposure&#45;&gt;incidents</title>
+<path fill="none" stroke="#c8501f" d="M247.36,-349.54C233.12,-336.58 213.67,-318.88 198.21,-304.82"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="200.23,-303.35 193.41,-300.45 196.94,-306.97 200.23,-303.35"/>
+<text xml:space="preserve" text-anchor="middle" x="255.46" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">wrong tool used</text>
+</g>
+<!-- bind_identity -->
+<g id="node7" class="node">
+<title>bind_identity</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="262.67,-211.34 83,-211.34 83,-175.06 262.67,-175.06 262.67,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="119.58" y="-193.25" font-family="Geist Mono" font-size="11.00">Bind actor to principal</text>
+<text xml:space="preserve" text-anchor="start" x="95.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">agent gets own identity, fine&#45;grained creds</text>
+</g>
+<!-- incidents&#45;&gt;bind_identity -->
+<g id="edge7" class="edge">
+<title>incidents&#45;&gt;bind_identity</title>
+<path fill="none" stroke="#c8501f" d="M172.83,-262.01C172.83,-249.97 172.83,-233.84 172.83,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="175.29,-220.41 172.84,-213.41 170.39,-220.41 175.29,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="177.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">fix</text>
+</g>
+<!-- jit_elevation -->
+<g id="node8" class="node">
+<title>jit_elevation</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="262.29,-123.81 83.37,-123.81 83.37,-87.53 262.29,-87.53 262.29,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="122.58" y="-105.72" font-family="Geist Mono" font-size="11.00">Least privilege + JIT</text>
+<text xml:space="preserve" text-anchor="start" x="96.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">least privileged by default, ask for elevation</text>
+</g>
+<!-- bind_identity&#45;&gt;jit_elevation -->
+<g id="edge8" class="edge">
+<title>bind_identity&#45;&gt;jit_elevation</title>
+<path fill="none" stroke="#c8501f" d="M172.83,-174.48C172.83,-162.44 172.83,-146.31 172.83,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="175.29,-132.88 172.84,-125.88 170.39,-132.88 175.29,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="181.08" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">then</text>
+</g>
+<!-- audit_visibility -->
+<g id="node9" class="node">
+<title>audit_visibility</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="248.04,-36.28 97.62,-36.28 97.62,0 248.04,0 248.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="130.46" y="-18.19" font-family="Geist Mono" font-size="11.00">Full audit visibility</text>
+<text xml:space="preserve" text-anchor="start" x="110.58" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">who authorized what, for how long</text>
+</g>
+<!-- jit_elevation&#45;&gt;audit_visibility -->
+<g id="edge9" class="edge">
+<title>jit_elevation&#45;&gt;audit_visibility</title>
+<path fill="none" stroke="#c8501f" d="M172.83,-86.95C172.83,-74.91 172.83,-58.78 172.83,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="175.29,-45.35 172.84,-38.35 170.39,-45.35 175.29,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="180.33" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">plus</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces, in our reading, how Madabhushi&#x27;s talk moves from the old actor-equals-principal assumption through the specific ways agents break it to his recommended fix (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>A latency bug exposed an auth assumption built for humans</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/auth-for-agents/s02_80.webp" alt="slide at 01:20"></a><div class="slidecap">Slide at 01:20 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/auth-for-agents/s03_110.webp" alt="slide at 01:50"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/auth-for-agents/s04_140.webp" alt="slide at 02:20"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/auth-for-agents/s05_190.webp" alt="slide at 03:10"></a></div></div>
+<div class="textcol"><h2>A latency bug exposed an auth assumption built for humans</h2><ul class="takeaways"><li>Madabhushi traces the talk back to a recurring latency spike caused by a &#x27;last seen&#x27; timestamp being updated on every API hit.</li><li>Once agents started hitting their APIs, that update fired 60 times faster than expected because the system assumed a human update cadence, prompting him to question whether authentication and authorization need to be rebuilt for agents rather than patched.</li></ul><div class="quote"><p>&ldquo;we realized that this last seen update is happening 60 times faster than what it would, and that is creating unnecessary pressure in our DB write system&rdquo;</p><span class="at">said at 01:02</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Agents get over-scoped by default</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="5" class="sl"><img loading="lazy" class="main" src="img/auth-for-agents/s05_190.webp" alt="slide at 03:10"></a><div class="slidecap">Slide at 03:10 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Agents get over-scoped by default</h2><ul class="takeaways"><li>He states that most agents his company&#x27;s customers build have far more permissions and scopes than their job requires, not from carelessness but because existing auth primitives don&#x27;t support extremely fine-grained access, so broad-by-default becomes the norm.</li></ul><div class="quote"><p>&ldquo;most of the agents our customers are building have way too permissions and scopes than the agent&#x27;s responsibility or the agent&#x27;s job is&rdquo;</p><span class="at">said at 03:25</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Two old auth patterns both assume actor equals principal</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="6" class="sl"><img loading="lazy" class="main" src="img/auth-for-agents/s06_250.webp" alt="slide at 04:10"></a><div class="slidecap">Slide at 04:10 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/auth-for-agents/s07_300.webp" alt="slide at 05:00"></a></div></div>
+<div class="textcol"><h2>Two old auth patterns both assume actor equals principal</h2><ul class="takeaways"><li>Madabhushi describes the two existing identity patterns: a human authenticating and acting through their own session or API key, and a deterministic service account with fixed permissions.</li><li>Both rest on the same principle, that whoever authenticates is the one acting, and that every action ties back to permissions fixed at registration time.</li></ul><div class="quote"><p>&ldquo;the fundamental philosophy that we&#x27;ve always maintained is whoever is authenticating is the one that is acting. Every action the program or the human takes is based on fixed set of permissions that actor was granted at some time.&rdquo;</p><span class="at">said at 03:32</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Agents break the actor-equals-principal assumption</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="8" class="sl"><img loading="lazy" class="main" src="img/auth-for-agents/s08_380.webp" alt="slide at 06:20"></a><div class="slidecap">Slide at 06:20 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/auth-for-agents/s09_450.webp" alt="slide at 07:30"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/auth-for-agents/s10_480.webp" alt="slide at 08:00"></a></div></div>
+<div class="textcol"><h2>Agents break the actor-equals-principal assumption</h2><ul class="takeaways"><li>He argues agents fundamentally differ because the principal (the user) is not the same as the actor (the agent acting on the user&#x27;s behalf), and because the agent&#x27;s behavior is not deterministic the way a human-written program&#x27;s behavior is.</li><li>This means past behavior can&#x27;t guarantee the agent won&#x27;t do something different on its next run.</li></ul><div class="quote"><p>&ldquo;in the case of agents, the principal is not the same as an actor. You need to give delegated access, so that the agent can act on behalf of the user.&rdquo;</p><span class="at">said at 05:48</span></div><div class="quote"><p>&ldquo;Just because an agent does certain things today, you can&#x27;t be 100% certain that the agent can&#x27;t do the same or the exact same thing tomorrow, day after, or even if it&#x27;s the next immediate run.&rdquo;</p><span class="at">said at 06:21</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>MCP servers over-expose their tool surface</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="11" class="sl"><img loading="lazy" class="main" src="img/auth-for-agents/s11_510.webp" alt="slide at 08:30"></a><div class="slidecap">Slide at 08:30 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/auth-for-agents/s12_540.webp" alt="slide at 09:00"></a></div></div>
+<div class="textcol"><h2>MCP servers over-expose their tool surface</h2><ul class="takeaways"><li>Madabhushi says most MCP servers his company has worked with don&#x27;t limit which tools an agent can access based on who authorized it; they surface the full set of tools the user or application supports and let the agent decide, which can lead the agent to pick the wrong tool.</li></ul><div class="quote"><p>&ldquo;most of the MCP servers that we&#x27;ve worked with don&#x27;t actually limit the tool context access to the agent based on which user authorized the agent. They typically surface all the tools&rdquo;</p><span class="at">said at 08:22</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">06</span><span>Fine-grained, time-bound scopes and full audit visibility are the fix</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="12" class="sl"><img loading="lazy" class="main" src="img/auth-for-agents/s12_540.webp" alt="slide at 09:00"></a><div class="slidecap">Slide at 09:00 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/auth-for-agents/s13_660.webp" alt="slide at 11:00"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/auth-for-agents/s14_690.webp" alt="slide at 11:30"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/auth-for-agents/s15_730.webp" alt="slide at 12:10"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/auth-for-agents/s16_760.webp" alt="slide at 12:40"></a></div></div>
+<div class="textcol"><h2>Fine-grained, time-bound scopes and full audit visibility are the fix</h2><ul class="takeaways"><li>He recommends binding the agent (actor) to the principal at all times, giving agents their own identity with fine-grained, attribute- and context-level scopes rather than broad OAuth scopes, and enforcing least privilege with just-in-time elevation.</li><li>He also says teams need full visibility into every agent action, including who authorized it and for how long, because without that visibility you&#x27;re only hoping the agent behaves.</li></ul><div class="quote"><p>&ldquo;the actor, in this case, an agent, has to be bound to the principal at all times. And the agent should have its own identity. Agent should have extremely fine-grained credentials&rdquo;</p><span class="at">said at 09:03</span></div><div class="quote"><p>&ldquo;agents should be least privileged by default and they should be able to ask for just-in-time authorization if they want elevated scopes&rdquo;</p><span class="at">said at 10:55</span></div><div class="quote"><p>&ldquo;if you can&#x27;t deterministically control what your agent can or cannot do, then you&#x27;re just praying that agent doesn&#x27;t end up doing what it&#x27;s not supposed to do. And praying is not a strategy&rdquo;</p><span class="at">said at 11:59</span></div></div>
+</div>
+</section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/auth-for-agents/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/auth-for-agents/s01_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/auth-for-agents/s02_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/auth-for-agents/s03_110.webp" alt="slide at 01:50"><div class="ts">01:50</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/auth-for-agents/s04_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/auth-for-agents/s05_190.webp" alt="slide at 03:10"><div class="ts">03:10</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/auth-for-agents/s06_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/auth-for-agents/s07_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/auth-for-agents/s08_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/auth-for-agents/s09_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/auth-for-agents/s10_480.webp" alt="slide at 08:00"><div class="ts">08:00</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/auth-for-agents/s11_510.webp" alt="slide at 08:30"><div class="ts">08:30</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/auth-for-agents/s12_540.webp" alt="slide at 09:00"><div class="ts">09:00</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/auth-for-agents/s13_660.webp" alt="slide at 11:00"><div class="ts">11:00</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/auth-for-agents/s14_690.webp" alt="slide at 11:30"><div class="ts">11:30</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/auth-for-agents/s15_730.webp" alt="slide at 12:10"><div class="ts">12:10</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/auth-for-agents/s16_760.webp" alt="slide at 12:40"><div class="ts">12:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (10)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>A &#x27;last seen&#x27; timestamp update system built for humans updated 60x faster than expected once agents began hitting the API.</td><td class="tt">01:02</td></tr><tr><td class="st">asserts</td><td>Most agents built by customers have far more permissions and scopes than their job actually requires.</td><td class="tt">03:25</td></tr><tr><td class="st">asserts</td><td>Traditional auth systems, human or service account, assume whoever authenticates is the one acting and permissions are fixed at registration time.</td><td class="tt">03:32</td></tr><tr><td class="st">asserts</td><td>In agent systems the principal is not the same as the actor, since the agent needs delegated access to act on the user&#x27;s behalf.</td><td class="tt">05:48</td></tr><tr><td class="st">warns</td><td>Because agent programs aren&#x27;t human-written and deterministic, past behavior doesn&#x27;t guarantee the agent won&#x27;t act differently on a future run.</td><td class="tt">06:21</td></tr><tr><td class="st">warns</td><td>Most MCP servers surface all available tools rather than limiting access based on which user authorized the agent, letting the agent pick the wrong tool.</td><td class="tt">08:22</td></tr><tr><td class="st">recommends</td><td>The agent must be bound to the principal at all times and should have its own identity with fine-grained credentials.</td><td class="tt">09:03</td></tr><tr><td class="st">recommends</td><td>Agents should be least privileged by default and able to request just-in-time authorization for elevated scopes.</td><td class="tt">10:55</td></tr><tr><td class="st">warns</td><td>Without full visibility into and control over every agent action, teams are only hoping the agent doesn&#x27;t misbehave, which is not a real strategy.</td><td class="tt">11:59</td></tr><tr><td class="st">asserts</td><td>Agents acting with excessive permissions has already caused real incidents, including deleting production databases.</td><td class="tt">10:55</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/auth-for-agents/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/lMCxVorb9wM?t=10"}, {"src": "img/auth-for-agents/s01_30.webp", "mmss": "00:30", "yt": "https://youtu.be/lMCxVorb9wM?t=30"}, {"src": "img/auth-for-agents/s02_80.webp", "mmss": "01:20", "yt": "https://youtu.be/lMCxVorb9wM?t=80"}, {"src": "img/auth-for-agents/s03_110.webp", "mmss": "01:50", "yt": "https://youtu.be/lMCxVorb9wM?t=110"}, {"src": "img/auth-for-agents/s04_140.webp", "mmss": "02:20", "yt": "https://youtu.be/lMCxVorb9wM?t=140"}, {"src": "img/auth-for-agents/s05_190.webp", "mmss": "03:10", "yt": "https://youtu.be/lMCxVorb9wM?t=190"}, {"src": "img/auth-for-agents/s06_250.webp", "mmss": "04:10", "yt": "https://youtu.be/lMCxVorb9wM?t=250"}, {"src": "img/auth-for-agents/s07_300.webp", "mmss": "05:00", "yt": "https://youtu.be/lMCxVorb9wM?t=300"}, {"src": "img/auth-for-agents/s08_380.webp", "mmss": "06:20", "yt": "https://youtu.be/lMCxVorb9wM?t=380"}, {"src": "img/auth-for-agents/s09_450.webp", "mmss": "07:30", "yt": "https://youtu.be/lMCxVorb9wM?t=450"}, {"src": "img/auth-for-agents/s10_480.webp", "mmss": "08:00", "yt": "https://youtu.be/lMCxVorb9wM?t=480"}, {"src": "img/auth-for-agents/s11_510.webp", "mmss": "08:30", "yt": "https://youtu.be/lMCxVorb9wM?t=510"}, {"src": "img/auth-for-agents/s12_540.webp", "mmss": "09:00", "yt": "https://youtu.be/lMCxVorb9wM?t=540"}, {"src": "img/auth-for-agents/s13_660.webp", "mmss": "11:00", "yt": "https://youtu.be/lMCxVorb9wM?t=660"}, {"src": "img/auth-for-agents/s14_690.webp", "mmss": "11:30", "yt": "https://youtu.be/lMCxVorb9wM?t=690"}, {"src": "img/auth-for-agents/s15_730.webp", "mmss": "12:10", "yt": "https://youtu.be/lMCxVorb9wM?t=730"}, {"src": "img/auth-for-agents/s16_760.webp", "mmss": "12:40", "yt": "https://youtu.be/lMCxVorb9wM?t=760"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "lMCxVorb9wM", "slug": "auth-for-agents", "title": "You Didn't Ship a Bug. You Just Wrote It for a Human.", "speaker": "Ravi Madabhushi", "company": "Scalekit", "themes": ["security", "agentic-engineering", "mcp-protocols"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Binding agents to principals (ours)", "lanes": ["Old auth model", "Where agents break it", "The fix"], "nodes": [{"id": "human_auth", "label": "Human/service auth", "sub": "authenticator=actor, fixed perms at registration", "lane": 0, "kind": "actor", "claim": "c3", "t": 212}, {"id": "over_scoped", "label": "Agents over-scoped", "sub": "way more perms/scopes than job needs", "lane": 1, "kind": "system", "claim": "c2", "t": 205}, {"id": "actor_ne_principal", "label": "Actor != principal", "sub": "agent acts on behalf of user, needs delegated access", "lane": 1, "kind": "system", "claim": "c4", "t": 348}, {"id": "nondeterministic", "label": "Non-deterministic behavior", "sub": "past runs don't guarantee future runs", "lane": 1, "kind": "system", "claim": "c5", "t": 381}, {"id": "mcp_exposure", "label": "MCP surfaces all tools", "sub": "no limit by which user authorized agent", "lane": 1, "kind": "external", "claim": "c6", "t": 502}, {"id": "incidents", "label": "Real incidents", "sub": "agents have deleted production databases", "lane": 1, "kind": "system", "claim": "c10", "t": 655}, {"id": "bind_identity", "label": "Bind actor to principal", "sub": "agent gets own identity, fine-grained creds", "lane": 2, "kind": "actor", "claim": "c7", "t": 543}, {"id": "jit_elevation", "label": "Least privilege + JIT", "sub": "least privileged by default, ask for elevation", "lane": 2, "kind": "system", "claim": "c8", "t": 655}, {"id": "audit_visibility", "label": "Full audit visibility", "sub": "who authorized what, for how long", "lane": 2, "kind": "store", "claim": "c9", "t": 719}], "edges": [{"from": "human_auth", "to": "over_scoped", "label": "breaks under agents", "kind": "flow"}, {"from": "over_scoped", "to": "actor_ne_principal", "label": "root cause", "kind": "flow"}, {"from": "actor_ne_principal", "to": "nondeterministic", "label": "plus", "kind": "flow"}, {"from": "actor_ne_principal", "to": "mcp_exposure", "label": "agent picks tool", "kind": "flow"}, {"from": "mcp_exposure", "to": "incidents", "label": "wrong tool used", "kind": "flow"}, {"from": "nondeterministic", "to": "incidents", "label": "unpredictable", "kind": "flow"}, {"from": "incidents", "to": "bind_identity", "label": "fix", "kind": "flow"}, {"from": "bind_identity", "to": "jit_elevation", "label": "then", "kind": "flow"}, {"from": "jit_elevation", "to": "audit_visibility", "label": "plus", "kind": "flow"}], "caption": "This traces, in our reading, how Madabhushi's talk moves from the old actor-equals-principal assumption through the specific ways agents break it to his recommended fix (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "agent traffic breaking human-designed systems", "text": "A 'last seen' timestamp update system built for humans updated 60x faster than expected once agents began hitting the API.", "quote": "we realized that this last seen update is happening 60 times faster than what it would, and that is creating unnecessary pressure in our DB write system", "t": 62}, {"id": "c2", "stance": "asserts", "topic": "over-scoped agents", "text": "Most agents built by customers have far more permissions and scopes than their job actually requires.", "quote": "most of the agents our customers are building have way too permissions and scopes than the agent's responsibility or the agent's job is", "t": 205}, {"id": "c3", "stance": "asserts", "topic": "actor equals principal in old auth", "text": "Traditional auth systems, human or service account, assume whoever authenticates is the one acting and permissions are fixed at registration time.", "quote": "the fundamental philosophy that we've always maintained is whoever is authenticating is the one that is acting. Every action the program or the human takes is based on fixed set of permissions that actor was granted at some time.", "t": 212}, {"id": "c4", "stance": "asserts", "topic": "agent as delegated actor", "text": "In agent systems the principal is not the same as the actor, since the agent needs delegated access to act on the user's behalf.", "quote": "in the case of agents, the principal is not the same as an actor. You need to give delegated access, so that the agent can act on behalf of the user.", "t": 348}, {"id": "c5", "stance": "warns", "topic": "non-determinism", "text": "Because agent programs aren't human-written and deterministic, past behavior doesn't guarantee the agent won't act differently on a future run.", "quote": "Just because an agent does certain things today, you can't be 100% certain that the agent can't do the same or the exact same thing tomorrow, day after, or even if it's the next immediate run.", "t": 381}, {"id": "c6", "stance": "warns", "topic": "MCP tool over-exposure", "text": "Most MCP servers surface all available tools rather than limiting access based on which user authorized the agent, letting the agent pick the wrong tool.", "quote": "most of the MCP servers that we've worked with don't actually limit the tool context access to the agent based on which user authorized the agent. They typically surface all the tools", "t": 502}, {"id": "c7", "stance": "recommends", "topic": "binding actor to principal", "text": "The agent must be bound to the principal at all times and should have its own identity with fine-grained credentials.", "quote": "the actor, in this case, an agent, has to be bound to the principal at all times. And the agent should have its own identity. Agent should have extremely fine-grained credentials", "t": 543}, {"id": "c8", "stance": "recommends", "topic": "least privilege with JIT elevation", "text": "Agents should be least privileged by default and able to request just-in-time authorization for elevated scopes.", "quote": "agents should be least privileged by default and they should be able to ask for just-in-time authorization if they want elevated scopes", "t": 655}, {"id": "c9", "stance": "warns", "topic": "lack of audit visibility", "text": "Without full visibility into and control over every agent action, teams are only hoping the agent doesn't misbehave, which is not a real strategy.", "quote": "if you can't deterministically control what your agent can or cannot do, then you're just praying that agent doesn't end up doing what it's not supposed to do. And praying is not a strategy", "t": 719}, {"id": "c10", "stance": "asserts", "topic": "real incidents today", "text": "Agents acting with excessive permissions has already caused real incidents, including deleting production databases.", "quote": "We have seen enough incidents where agents end up doing rogue things. They end up deleting production databases and stuff like that.", "t": 655}]}</script>
+</body></html>

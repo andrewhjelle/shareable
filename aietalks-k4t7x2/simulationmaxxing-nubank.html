@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>SimulationMaxxing: How we ship agents 20x faster &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/KMR_RBoCa4M" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 16 min</span><span class="ln"></span></div>
+<h1 class="lede">SimulationMaxxing: How we ship agents 20x faster</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Aman Gupta &middot; Nubank</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/KMR_RBoCa4M" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/KMR_RBoCa4M</a> &middot; 16 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Evals & benchmarks</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Data curation</span></div>
+<p class="deck" style="font-size:15px">This talk gives production evidence for teams deciding whether to invest in simulated eval data versus waiting on production traces or hand-authored data to evaluate customer-support agents</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Generating eval data in simulation instead of waiting on production data let Nubank ship agents 20x faster, cutting release cycles from weeks to hours.</li><li>80% of domain-expert labels confirmed simulated conversations are usable data, and one agent&#x27;s customer-satisfaction score (TNPS) doubled while self-service rate improved by up to 4% in one case.</li><li>Recommendation: simulation only pays off if teams close the sim-to-real gap with offline, online, and human-review metrics that verify sim data tracks real production data.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">SIM-TO-REAL EVAL PIPELINE (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 729.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- sim_data -->
+<g id="node1" class="node">
+<title>sim_data</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="446.8,-386.4 246.88,-386.4 246.88,-350.12 446.8,-350.12 446.8,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="287.96" y="-368.31" font-family="Geist Mono" font-size="11.00">Simulated conversations</text>
+<text xml:space="preserve" text-anchor="start" x="259.84" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Generated instead of waiting on production data</text>
+</g>
+<!-- harness_iter -->
+<g id="node2" class="node">
+<title>harness_iter</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="436.67,-298.87 257,-298.87 257,-262.59 436.67,-262.59 436.67,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="287.59" y="-280.78" font-family="Geist Mono" font-size="11.00">Harness + eval iteration</text>
+<text xml:space="preserve" text-anchor="start" x="269.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Weeks to less than a day, hours or minutes</text>
+</g>
+<!-- sim_data&#45;&gt;harness_iter -->
+<g id="edge1" class="edge">
+<title>sim_data&#45;&gt;harness_iter</title>
+<path fill="none" stroke="#c8501f" d="M346.84,-349.54C346.84,-337.5 346.84,-321.37 346.84,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="349.29,-307.94 346.84,-300.94 344.39,-307.94 349.29,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="356.96" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">feeds</text>
+</g>
+<!-- human_review -->
+<g id="node3" class="node">
+<title>human_review</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="422.42,-211.34 271.25,-211.34 271.25,-175.06 422.42,-175.06 422.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="293.59" y="-193.25" font-family="Geist Mono" font-size="11.00">Domain&#45;expert review</text>
+<text xml:space="preserve" text-anchor="start" x="284.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">80% of sim labels confirmed usable</text>
+</g>
+<!-- harness_iter&#45;&gt;human_review -->
+<g id="edge2" class="edge">
+<title>harness_iter&#45;&gt;human_review</title>
+<path fill="none" stroke="#c8501f" d="M346.84,-262.01C346.84,-249.97 346.84,-233.84 346.84,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="349.29,-220.41 346.84,-213.41 344.39,-220.41 349.29,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="369.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reviewed by</text>
+</g>
+<!-- sim2real -->
+<g id="node4" class="node">
+<title>sim2real</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="425.8,-123.81 267.88,-123.81 267.88,-87.53 425.8,-87.53 425.8,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="295.09" y="-105.72" font-family="Geist Mono" font-size="11.00">Close sim&#45;to&#45;real gap</text>
+<text xml:space="preserve" text-anchor="start" x="280.84" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Offline, online, human&#45;review metrics</text>
+</g>
+<!-- human_review&#45;&gt;sim2real -->
+<g id="edge3" class="edge">
+<title>human_review&#45;&gt;sim2real</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M346.84,-174.48C346.84,-162.44 346.84,-146.31 346.84,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="349.29,-132.88 346.84,-125.88 344.39,-132.88 349.29,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="362.96" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">confirms</text>
+</g>
+<!-- regression -->
+<g id="node5" class="node">
+<title>regression</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="155.67,-36.28 0,-36.28 0,0 155.67,0 155.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="32.84" y="-18.19" font-family="Geist Mono" font-size="11.00">Regression caught</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Caught before it reached production</text>
+</g>
+<!-- sim2real&#45;&gt;regression -->
+<g id="edge4" class="edge">
+<title>sim2real&#45;&gt;regression</title>
+<path fill="none" stroke="#c8501f" d="M290.77,-86.84C247.34,-73.03 187.14,-53.89 141.82,-39.48"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="142.68,-37.19 135.27,-37.4 141.2,-41.86 142.68,-37.19"/>
+<text xml:space="preserve" text-anchor="middle" x="245.32" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">validates</text>
+</g>
+<!-- tnps -->
+<g id="node6" class="node">
+<title>tnps</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="331.55,-36.28 178.13,-36.28 178.13,0 331.55,0 331.55,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="220.71" y="-18.19" font-family="Geist Mono" font-size="11.00">TNPS doubled</text>
+<text xml:space="preserve" text-anchor="start" x="191.09" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">One agent&#39;s satisfaction score 2xed</text>
+</g>
+<!-- sim2real&#45;&gt;tnps -->
+<g id="edge5" class="edge">
+<title>sim2real&#45;&gt;tnps</title>
+<path fill="none" stroke="#c8501f" d="M327.77,-86.95C313.96,-74.1 295.14,-56.61 280.07,-42.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="281.78,-40.84 274.98,-37.87 278.44,-44.43 281.78,-40.84"/>
+<text xml:space="preserve" text-anchor="middle" x="323.22" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">validates</text>
+</g>
+<!-- ssr -->
+<g id="node7" class="node">
+<title>ssr</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="524.55,-36.28 353.13,-36.28 353.13,0 524.55,0 524.55,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="385.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Self&#45;service rate +4%</text>
+<text xml:space="preserve" text-anchor="start" x="366.09" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Improved without trading off satisfaction</text>
+</g>
+<!-- sim2real&#45;&gt;ssr -->
+<g id="edge6" class="edge">
+<title>sim2real&#45;&gt;ssr</title>
+<path fill="none" stroke="#c8501f" d="M365.9,-86.95C379.71,-74.1 398.53,-56.61 413.6,-42.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="415.23,-44.43 418.69,-37.87 411.89,-40.84 415.23,-44.43"/>
+<text xml:space="preserve" text-anchor="middle" x="415.22" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">validates</text>
+</g>
+<!-- model_test -->
+<g id="node8" class="node">
+<title>model_test</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="721.05,-36.28 546.62,-36.28 546.62,0 721.05,0 721.05,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="589.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Model comparison</text>
+<text xml:space="preserve" text-anchor="start" x="559.59" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Saved multiple weeks testing OSS models</text>
+</g>
+<!-- sim2real&#45;&gt;model_test -->
+<g id="edge7" class="edge">
+<title>sim2real&#45;&gt;model_test</title>
+<path fill="none" stroke="#c8501f" d="M406.65,-86.84C453.18,-72.98 517.75,-53.73 566.17,-39.31"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="566.64,-41.72 572.65,-37.38 565.24,-37.03 566.64,-41.72"/>
+<text xml:space="preserve" text-anchor="middle" x="524.39" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">validates</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Nubank&#x27;s reported flow from simulated conversations through human validation to production outcomes; the causal attribution between steps is Nubank&#x27;s own framing, not independently audited (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The bottleneck: eval data, not metrics</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="0" class="sl"><img loading="lazy" class="main" src="img/simulationmaxxing-nubank/s00_430.webp" alt="slide at 07:10"></a><div class="slidecap">Slide at 07:10 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>The bottleneck: eval data, not metrics</h2><ul class="takeaways"><li>Nubank frames agent evals as two problems: metrics and data.</li><li>Metrics have a known playbook (LLM-as-judge classifiers aligned to human judgment), but generating the multi-turn trajectory data to run those metrics on is expensive and slow, whether authored by hand or scraped from production traces, and that data problem is the real bottleneck to fast iteration.</li></ul><div class="quote"><p>&ldquo;we have verified in production that yes simulations circuit this timeline short circuit this timeline from a few weeks you can go to less than a day sometimes even a few hours a few minutes&rdquo;</p><span class="at">said at 06:12</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Simulation short-circuits the release cycle</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/simulationmaxxing-nubank/s01_510.webp" alt="slide at 08:30"></a><div class="slidecap">Slide at 08:30 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="0" class="sl"><img loading="lazy" class="thumb" src="img/simulationmaxxing-nubank/s00_430.webp" alt="slide at 07:10"></a><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/simulationmaxxing-nubank/s02_600.webp" alt="slide at 10:00"></a></div></div>
+<div class="textcol"><h2>Simulation short-circuits the release cycle</h2><ul class="takeaways"><li>Nubank&#x27;s core claim is that generating eval data in simulation instead of relying on production data lets teams ship agents 20x faster.</li><li>Where changing an agent harness, running offline evals, and waiting for a statistically significant production A/B test could together take weeks, simulation-driven iteration on the harness and evals now happens in hours.</li></ul><div class="quote"><p>&ldquo;If you generate your eval data in sim instead of waiting on production data you can ship agents 20x faster and we&#x27;ll give you evidence for that.&rdquo;</p><span class="at">said at 01:04</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Validating sim against real production data</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/simulationmaxxing-nubank/s02_600.webp" alt="slide at 10:00"></a><div class="slidecap">Slide at 10:00 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Validating sim against real production data</h2><ul class="takeaways"><li>Nubank checked whether simulated conversations are trustworthy substitutes for real data by comparing eval quality on simulated versus real data and running human review: domain experts confirmed 80% of sim-derived labels were usable, for both mature agents and new agents built from scratch.</li><li>The team recommends this offline/online/human-review validation step before trusting simulation results.</li></ul><div class="quote"><p>&ldquo;we had human review done where 80% of our domain expert labels confirmed that sims give us usable data not just for uh mature agents but also for green field agents.&rdquo;</p><span class="at">said at 11:22</span></div><div class="quote"><p>&ldquo;you really need to close out the sim toreal gap. So you need to you know set up like offline online human review kind of metrics to really understand how sim performs visav real production data&rdquo;</p><span class="at">said at 15:04</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Production results</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/simulationmaxxing-nubank/s03_950.webp" alt="slide at 15:50"></a><div class="slidecap">Slide at 15:50 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Production results</h2><ul class="takeaways"><li>Nubank reports simulation caught a regression before it reached production, doubled TNPS (customer satisfaction) for one agent, improved self-service rate by up to 4% in one case without trading it off against satisfaction, and cut multiple weeks off the process of testing open-source model options in the agent harness.</li></ul><div class="quote"><p>&ldquo;one of our agents, the TNPS, has 2xed uh thanks to simulation, robust evals, and investing in something super principled rather than, you know, throwing something at the wall and see what sticks.&rdquo;</p><span class="at">said at 11:55</span></div><div class="quote"><p>&ldquo;we caught a regression uh with simulation that could have made it to production, but simulation caught it.&rdquo;</p><span class="at">said at 11:55</span></div><div class="quote"><p>&ldquo;we are also able to pretty dramatically improve SSR across the board. But in one particular case, we were able to improve it by 4%.&rdquo;</p><span class="at">said at 12:25</span></div><div class="quote"><p>&ldquo;This has saved us multiple weeks of effort and probably underelling it.&rdquo;</p><span class="at">said at 14:01</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The 20x figure and the 80% human-review confirmation rate are Nubank&#x27;s own internal comparisons rather than independently audited numbers, and the talk doesn&#x27;t detail how the comparison baseline (pre-simulation cycle time) was measured.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/simulationmaxxing-nubank/s00_430.webp" alt="slide at 07:10"><div class="ts">07:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/simulationmaxxing-nubank/s01_510.webp" alt="slide at 08:30"><div class="ts">08:30</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/simulationmaxxing-nubank/s02_600.webp" alt="slide at 10:00"><div class="ts">10:00</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/simulationmaxxing-nubank/s03_950.webp" alt="slide at 15:50"><div class="ts">15:50</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Generating eval data in simulation instead of waiting on production data lets teams ship agents 20x faster.</td><td class="tt">01:04</td></tr><tr><td class="st">asserts</td><td>Simulation cut agent release cycles from a few weeks down to less than a day, sometimes hours or minutes.</td><td class="tt">06:12</td></tr><tr><td class="st">asserts</td><td>80% of domain-expert human review confirmed simulated conversations produce usable data for both mature and greenfield agents.</td><td class="tt">11:22</td></tr><tr><td class="st">asserts</td><td>One agent&#x27;s TNPS customer-satisfaction score doubled, attributed to simulation and robust evals.</td><td class="tt">11:55</td></tr><tr><td class="st">asserts</td><td>Simulation caught a regression that could have reached production before it shipped.</td><td class="tt">11:55</td></tr><tr><td class="st">asserts</td><td>Simulation-driven improvements raised self-service rate across the board, by up to 4% in one particular case, without sacrificing satisfaction.</td><td class="tt">12:25</td></tr><tr><td class="st">recommends</td><td>Teams should set up offline, online, and human-review metrics to confirm simulation performance tracks real production data before trusting it.</td><td class="tt">15:04</td></tr><tr><td class="st">asserts</td><td>Using simulation to test open-source model options in the agent harness saved multiple weeks of effort.</td><td class="tt">14:01</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/simulationmaxxing-nubank/s00_430.webp", "mmss": "07:10", "yt": "https://youtu.be/KMR_RBoCa4M?t=430"}, {"src": "img/simulationmaxxing-nubank/s01_510.webp", "mmss": "08:30", "yt": "https://youtu.be/KMR_RBoCa4M?t=510"}, {"src": "img/simulationmaxxing-nubank/s02_600.webp", "mmss": "10:00", "yt": "https://youtu.be/KMR_RBoCa4M?t=600"}, {"src": "img/simulationmaxxing-nubank/s03_950.webp", "mmss": "15:50", "yt": "https://youtu.be/KMR_RBoCa4M?t=950"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "KMR_RBoCa4M", "slug": "simulationmaxxing-nubank", "title": "SimulationMaxxing: How we ship agents 20x faster", "speaker": "Aman Gupta", "company": "Nubank", "themes": ["evals-benchmarks", "agentic-engineering", "data-curation"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Sim-to-real eval pipeline (ours)", "lanes": ["Simulation", "Validation", "Production outcomes"], "nodes": [{"id": "sim_data", "label": "Simulated conversations", "sub": "Generated instead of waiting on production data", "lane": 0, "kind": "system", "claim": "c1", "t": 64}, {"id": "harness_iter", "label": "Harness + eval iteration", "sub": "Weeks to less than a day, hours or minutes", "lane": 0, "kind": "system", "claim": "c2", "t": 372}, {"id": "human_review", "label": "Domain-expert review", "sub": "80% of sim labels confirmed usable", "lane": 1, "kind": "actor", "claim": "c3", "t": 682}, {"id": "sim2real", "label": "Close sim-to-real gap", "sub": "Offline, online, human-review metrics", "lane": 1, "kind": "system", "claim": "c7", "t": 904}, {"id": "regression", "label": "Regression caught", "sub": "Caught before it reached production", "lane": 2, "kind": "system", "claim": "c5", "t": 715}, {"id": "tnps", "label": "TNPS doubled", "sub": "One agent's satisfaction score 2xed", "lane": 2, "kind": "system", "claim": "c4", "t": 715}, {"id": "ssr", "label": "Self-service rate +4%", "sub": "Improved without trading off satisfaction", "lane": 2, "kind": "system", "claim": "c6", "t": 745}, {"id": "model_test", "label": "Model comparison", "sub": "Saved multiple weeks testing OSS models", "lane": 2, "kind": "system", "claim": "c8", "t": 841}], "edges": [{"from": "sim_data", "to": "harness_iter", "label": "feeds", "kind": "flow"}, {"from": "harness_iter", "to": "human_review", "label": "reviewed by", "kind": "flow"}, {"from": "human_review", "to": "sim2real", "label": "confirms", "kind": "data"}, {"from": "sim2real", "to": "regression", "label": "validates", "kind": "flow"}, {"from": "sim2real", "to": "tnps", "label": "validates", "kind": "flow"}, {"from": "sim2real", "to": "ssr", "label": "validates", "kind": "flow"}, {"from": "sim2real", "to": "model_test", "label": "validates", "kind": "flow"}], "caption": "This traces Nubank's reported flow from simulated conversations through human validation to production outcomes; the causal attribution between steps is Nubank's own framing, not independently audited (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "core 20x claim", "text": "Generating eval data in simulation instead of waiting on production data lets teams ship agents 20x faster.", "quote": "If you generate your eval data in sim instead of waiting on production data you can ship agents 20x faster and we'll give you evidence for that.", "t": 64}, {"id": "c2", "stance": "asserts", "topic": "release cycle compression", "text": "Simulation cut agent release cycles from a few weeks down to less than a day, sometimes hours or minutes.", "quote": "we have verified in production that yes simulations circuit this timeline short circuit this timeline from a few weeks you can go to less than a day sometimes even a few hours a few minutes", "t": 372}, {"id": "c3", "stance": "asserts", "topic": "human validation of sim data", "text": "80% of domain-expert human review confirmed simulated conversations produce usable data for both mature and greenfield agents.", "quote": "we had human review done where 80% of our domain expert labels confirmed that sims give us usable data not just for uh mature agents but also for green field agents.", "t": 682}, {"id": "c4", "stance": "asserts", "topic": "customer satisfaction improvement", "text": "One agent's TNPS customer-satisfaction score doubled, attributed to simulation and robust evals.", "quote": "one of our agents, the TNPS, has 2xed uh thanks to simulation, robust evals, and investing in something super principled rather than, you know, throwing something at the wall and see what sticks.", "t": 715}, {"id": "c5", "stance": "asserts", "topic": "caught regression pre-production", "text": "Simulation caught a regression that could have reached production before it shipped.", "quote": "we caught a regression uh with simulation that could have made it to production, but simulation caught it.", "t": 715}, {"id": "c6", "stance": "asserts", "topic": "self-service rate gains", "text": "Simulation-driven improvements raised self-service rate across the board, by up to 4% in one particular case, without sacrificing satisfaction.", "quote": "we are also able to pretty dramatically improve SSR across the board. But in one particular case, we were able to improve it by 4%.", "t": 745}, {"id": "c7", "stance": "recommends", "topic": "closing the sim-to-real gap", "text": "Teams should set up offline, online, and human-review metrics to confirm simulation performance tracks real production data before trusting it.", "quote": "you really need to close out the sim toreal gap. So you need to you know set up like offline online human review kind of metrics to really understand how sim performs visav real production data", "t": 904}, {"id": "c8", "stance": "asserts", "topic": "model comparison speed", "text": "Using simulation to test open-source model options in the agent harness saved multiple weeks of effort.", "quote": "This has saved us multiple weeks of effort and probably underelling it.", "t": 841}]}</script>
+</body></html>

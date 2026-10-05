@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Why Rust is the Ideal Language for Vibe-Coding &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/ugUeZ8-b-u0" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 16 min</span><span class="ln"></span></div>
+<h1 class="lede">Why Rust is the Ideal Language for Vibe-Coding</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Daniel Szoke &middot; Sentry</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/ugUeZ8-b-u0" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/ugUeZ8-b-u0</a> &middot; 16 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">take</span><span class="chip hot">Coding agents</span><span class="chip hot">Agentic engineering</span></div>
+<p class="deck" style="font-size:15px">Argues Rust&#x27;s strict compiler catches classes of bugs (type errors, thread-safety violations) before code ships, informing language choice for teams running autonomous coding agents in a compile-fix loop rather than relying only on LLM-g...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>TypeScript is now the top language on GitHub by contributor count, likely driven by AI-assisted coding, but the same dynamic flexibility that makes it easy for LLMs to write also makes mistakes easy to introduce, and tests alone can&#x27;t guarantee correctness (c1, c2, c3).</li><li>The speaker calls LLMs &#x27;alien intelligence&#x27; rather than artificial intelligence, since their failure modes don&#x27;t map to human ones -- an argument for wanting deterministic guardrails rather than trusting reviewed-looking code (c4).</li><li>Rust&#x27;s compiler enforces type, memory, and concurrency safety at compile time, catching bugs (like the fearless-concurrency example) that JS/Python/TS would let through silently, making it well suited to an agent loop that compiles, hits errors, and fixes them (c5, c6, c7, c8).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">WHY STRICT COMPILERS BEAT VIBE-CODED FLEXIBILITY (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 384.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- ts_rise -->
+<g id="node1" class="node">
+<title>ts_rise</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="300.79,-561.46 94.87,-561.46 94.87,-525.18 300.79,-525.18 300.79,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="144.96" y="-543.37" font-family="Geist Mono" font-size="11.00">TS tops GitHub via AI</text>
+<text xml:space="preserve" text-anchor="start" x="107.83" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">AI coding pushed TypeScript to #1 by contributors</text>
+</g>
+<!-- flex_bugs -->
+<g id="node2" class="node">
+<title>flex_bugs</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="314.67,-473.93 81,-473.93 81,-437.65 314.67,-437.65 314.67,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="147.96" y="-455.84" font-family="Geist Mono" font-size="11.00">Flexibility hides bugs</text>
+<text xml:space="preserve" text-anchor="start" x="93.96" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">Same dynamism that helps LLMs write also hides mistakes</text>
+</g>
+<!-- ts_rise&#45;&gt;flex_bugs -->
+<g id="edge1" class="edge">
+<title>ts_rise&#45;&gt;flex_bugs</title>
+<path fill="none" stroke="#c8501f" d="M197.83,-524.6C197.83,-512.56 197.83,-496.43 197.83,-482.92"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="200.29,-483 197.84,-476 195.39,-483 200.29,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="217.33" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#c8501f">same trait</text>
+</g>
+<!-- alien -->
+<g id="node3" class="node">
+<title>alien</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="197.67,-386.4 0,-386.4 0,-350.12 197.67,-350.12 197.67,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="38.83" y="-368.31" font-family="Geist Mono" font-size="11.00">LLMs = alien intelligence</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Harari framing: reasoning unlike human thought</text>
+</g>
+<!-- flex_bugs&#45;&gt;alien -->
+<g id="edge3" class="edge">
+<title>flex_bugs&#45;&gt;alien</title>
+<path fill="none" stroke="#c8501f" d="M177.32,-437.07C162.32,-424.11 141.84,-406.41 125.56,-392.35"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="127.37,-390.67 120.47,-387.95 124.16,-394.38 127.37,-390.67"/>
+<text xml:space="preserve" text-anchor="middle" x="179.39" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">unpredictable</text>
+</g>
+<!-- tests_limit -->
+<g id="node4" class="node">
+<title>tests_limit</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="375.67,-386.4 220,-386.4 220,-350.12 375.67,-350.12 375.67,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="241.21" y="-368.31" font-family="Geist Mono" font-size="11.00">Tests only prove failure</text>
+<text xml:space="preserve" text-anchor="start" x="232.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">Cannot test every input combination</text>
+</g>
+<!-- flex_bugs&#45;&gt;tests_limit -->
+<g id="edge2" class="edge">
+<title>flex_bugs&#45;&gt;tests_limit</title>
+<path fill="none" stroke="#c8501f" d="M218.56,-437.07C233.71,-424.11 254.4,-406.41 270.84,-392.35"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="272.26,-394.35 275.99,-387.94 269.08,-390.63 272.26,-394.35"/>
+<text xml:space="preserve" text-anchor="middle" x="277.07" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">tests miss it</text>
+</g>
+<!-- rust_compile -->
+<g id="node5" class="node">
+<title>rust_compile</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="313.17,-298.87 82.5,-298.87 82.5,-262.59 313.17,-262.59 313.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="137.08" y="-280.78" font-family="Geist Mono" font-size="11.00">Rust compiler blocks bug</text>
+<text xml:space="preserve" text-anchor="start" x="95.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">Thread&#45;unsafe counter fails to compile, not silently wrong</text>
+</g>
+<!-- alien&#45;&gt;rust_compile -->
+<g id="edge5" class="edge">
+<title>alien&#45;&gt;rust_compile</title>
+<path fill="none" stroke="#c8501f" d="M119.35,-349.54C134.35,-336.58 154.83,-318.88 171.11,-304.82"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="172.51,-306.85 176.2,-300.42 169.3,-303.14 172.51,-306.85"/>
+<text xml:space="preserve" text-anchor="middle" x="181.26" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">need guardrail</text>
+</g>
+<!-- tests_limit&#45;&gt;rust_compile -->
+<g id="edge4" class="edge">
+<title>tests_limit&#45;&gt;rust_compile</title>
+<path fill="none" stroke="#c8501f" d="M277.11,-349.54C261.96,-336.58 241.27,-318.88 224.83,-304.82"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="226.59,-303.1 219.68,-300.41 223.41,-306.82 226.59,-303.1"/>
+<text xml:space="preserve" text-anchor="middle" x="286.45" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">no compile check</text>
+</g>
+<!-- harder_first -->
+<g id="node6" class="node">
+<title>harder_first</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="280.54,-211.34 115.12,-211.34 115.12,-175.06 280.54,-175.06 280.54,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="141.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Harder for LLM first try</text>
+<text xml:space="preserve" text-anchor="start" x="128.08" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">Many compiler&#45;enforced rules to satisfy</text>
+</g>
+<!-- rust_compile&#45;&gt;harder_first -->
+<g id="edge6" class="edge">
+<title>rust_compile&#45;&gt;harder_first</title>
+<path fill="none" stroke="#c8501f" d="M197.83,-262.01C197.83,-249.97 197.83,-233.84 197.83,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="200.29,-220.41 197.84,-213.41 195.39,-220.41 200.29,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="218.08" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">more rules</text>
+</g>
+<!-- error_caught -->
+<g id="node7" class="node">
+<title>error_caught</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="302.67,-123.81 93,-123.81 93,-87.53 302.67,-87.53 302.67,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="135.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Each error = bug avoided</text>
+<text xml:space="preserve" text-anchor="start" x="105.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">Compile error caught is a bug avoided in production</text>
+</g>
+<!-- harder_first&#45;&gt;error_caught -->
+<g id="edge7" class="edge">
+<title>harder_first&#45;&gt;error_caught</title>
+<path fill="none" stroke="#c8501f" d="M197.83,-174.48C197.83,-162.44 197.83,-146.31 197.83,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="200.29,-132.88 197.84,-125.88 195.39,-132.88 200.29,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="228.21" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">agent loop fixes</text>
+</g>
+<!-- faster_review -->
+<g id="node8" class="node">
+<title>faster_review</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="315.79,-36.28 79.88,-36.28 79.88,0 315.79,0 315.79,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="134.46" y="-18.19" font-family="Geist Mono" font-size="11.00">Compiling beats AI review</text>
+<text xml:space="preserve" text-anchor="start" x="92.83" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">Faster than agent review, catches more than review would</text>
+</g>
+<!-- error_caught&#45;&gt;faster_review -->
+<g id="edge8" class="edge">
+<title>error_caught&#45;&gt;faster_review</title>
+<path fill="none" stroke="#c8501f" d="M197.83,-86.95C197.83,-74.91 197.83,-58.78 197.83,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="200.29,-45.35 197.84,-38.35 195.39,-45.35 200.29,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="211.71" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">net win</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The talk frames Rust as trading first-try ease for a compiler that catches bugs dynamic languages let through, which the speaker argues nets out faster than review in an agent compile-fix loop (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>TypeScript&#x27;s rise is credited to AI-assisted coding</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/rust-vibe-coding-guardrails/s03_60.webp" alt="slide at 01:00"></a><div class="slidecap">Slide at 01:00 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/rust-vibe-coding-guardrails/s04_80.webp" alt="slide at 01:20"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/rust-vibe-coding-guardrails/s05_100.webp" alt="slide at 01:40"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/rust-vibe-coding-guardrails/s06_210.webp" alt="slide at 03:30"></a></div></div>
+<div class="textcol"><h2>TypeScript&#x27;s rise is credited to AI-assisted coding</h2><ul class="takeaways"><li>Citing a GitHub article, the speaker notes AI-assisted development is believed to have pushed TypeScript to the top language on GitHub by contributor count, ahead of Python.</li><li>The conventional wisdom holds that Python, TypeScript, and JavaScript are ideal for vibe coding because they&#x27;re common, have many libraries, and are fast to scaffold and run.</li></ul><div class="quote"><p>&ldquo;AI has pushed TypeScript to the number one um language on GitHub by contributor counts at least&rdquo;</p><span class="at">said at 01:01</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>The flexibility that helps LLMs write code also hides bugs</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="6" class="sl"><img loading="lazy" class="main" src="img/rust-vibe-coding-guardrails/s06_210.webp" alt="slide at 03:30"></a><div class="slidecap">Slide at 03:30 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>The flexibility that helps LLMs write code also hides bugs</h2><ul class="takeaways"><li>The speaker argues the dynamic, flexible nature of JS/Python/TS that makes them easy for LLMs to write is also what makes mistakes -- sometimes subtle ones -- easy to introduce.</li><li>He argues optimizing for &#x27;easy for the model to write&#x27; is overstated as a goal and can even work against code quality.</li></ul><div class="quote"><p>&ldquo;the dynamic and flexible nature of the languages is what makes it easy for the agent or for the LLM, I should say, to write JavaScript, Python, TypeScript&rdquo;</p><span class="at">said at 04:09</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Tests and code review agents have structural limits</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="9" class="sl"><img loading="lazy" class="main" src="img/rust-vibe-coding-guardrails/s09_520.webp" alt="slide at 08:40"></a><div class="slidecap">Slide at 08:40 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/rust-vibe-coding-guardrails/s11_710.webp" alt="slide at 11:50"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/rust-vibe-coding-guardrails/s12_780.webp" alt="slide at 13:00"></a></div></div>
+<div class="textcol"><h2>Tests and code review agents have structural limits</h2><ul class="takeaways"><li>Tests can only prove incorrectness when they fail, and it&#x27;s impractical to test every possible input combination, so passing tests doesn&#x27;t prove correctness.</li><li>The speaker also cites Yuval Noah Harari&#x27;s framing of LLMs as &#x27;alien intelligence&#x27; rather than artificial intelligence, arguing their internal reasoning differs enough from human thinking that failure modes can be unexpected even when code looks well-written.</li></ul><div class="quote"><p>&ldquo;tests usually can only prove incorrectness when they fail because it&#x27;s impractical call to test every single possible input combination&rdquo;</p><span class="at">said at 05:43</span></div><div class="quote"><p>&ldquo;he doesn&#x27;t like that the A in AI is artificial because it understates how different um LLMs and other AI technologies are from how humans think&rdquo;</p><span class="at">said at 07:18</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Rust&#x27;s compiler catches bugs that dynamic languages let through</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="13" class="sl"><img loading="lazy" class="main" src="img/rust-vibe-coding-guardrails/s13_790.webp" alt="slide at 13:10"></a><div class="slidecap">Slide at 13:10 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/rust-vibe-coding-guardrails/s14_820.webp" alt="slide at 13:40"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/rust-vibe-coding-guardrails/s15_850.webp" alt="slide at 14:10"></a></div></div>
+<div class="textcol"><h2>Rust&#x27;s compiler catches bugs that dynamic languages let through</h2><ul class="takeaways"><li>In a fearless-concurrency example, code sharing a non-thread-safe counter across 100 threads compiles and runs in a language like TypeScript, occasionally producing a wrong value with no clear error.</li><li>In Rust, the same pattern fails to compile, with the compiler pointing to exactly which type isn&#x27;t thread-safe.</li></ul><div class="quote"><p>&ldquo;in Rust, this just doesn&#x27;t compile. You&#x27;re going to get a compile error&rdquo;</p><span class="at">said at 13:06</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>The trade-off: harder for LLMs, but a stronger guardrail for agent loops</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="15" class="sl"><img loading="lazy" class="main" src="img/rust-vibe-coding-guardrails/s15_850.webp" alt="slide at 14:10"></a><div class="slidecap">Slide at 14:10 &middot; click any slide to enlarge &middot; 5 more from this section below</div><div class=strip><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/rust-vibe-coding-guardrails/s16_890.webp" alt="slide at 14:50"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/rust-vibe-coding-guardrails/s17_920.webp" alt="slide at 15:20"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/rust-vibe-coding-guardrails/s18_930.webp" alt="slide at 15:30"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/rust-vibe-coding-guardrails/s19_950.webp" alt="slide at 15:50"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/rust-vibe-coding-guardrails/s20_960.webp" alt="slide at 16:00"></a></div></div>
+<div class="textcol"><h2>The trade-off: harder for LLMs, but a stronger guardrail for agent loops</h2><ul class="takeaways"><li>Rust is harder for LLMs to get right on the first try given its many compiler-enforced rules, but the speaker frames this as a benefit when an LLM is running inside an autonomous agent loop that can compile, read errors, and fix them.</li><li>Every compile error caught is a bug avoided in production, and he argues compiling is faster and more reliable than letting an AI agent review the code for the same class of errors.</li></ul><div class="quote"><p>&ldquo;Rust is harder for LLMs to get right on the first try because there&#x27;s so many rules they need to follow&rdquo;</p><span class="at">said at 14:11</span></div><div class="quote"><p>&ldquo;every compile error um is potentially a bug that you avoid in your production code&rdquo;</p><span class="at">said at 14:41</span></div><div class="quote"><p>&ldquo;I guarantee you that it&#x27;s faster than letting an AI agent review your code, and it might not even find all the errors that the Rust compiler is guaranteed to find&rdquo;</p><span class="at">said at 15:13</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The framing implies a broader claim worth watching: as agents increasingly work autonomously in compile-run-fix loops rather than one-shot generation, language choice may shift toward whatever gives the tightest, most legible feedback signal to the agent, not whatever is easiest to produce on the first pass (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s00_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s01_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s02_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s03_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s04_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s05_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s06_210.webp" alt="slide at 03:30"><div class="ts">03:30</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s07_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s08_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s09_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s10_560.webp" alt="slide at 09:20"><div class="ts">09:20</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s11_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s12_780.webp" alt="slide at 13:00"><div class="ts">13:00</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s13_790.webp" alt="slide at 13:10"><div class="ts">13:10</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s14_820.webp" alt="slide at 13:40"><div class="ts">13:40</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s15_850.webp" alt="slide at 14:10"><div class="ts">14:10</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s16_890.webp" alt="slide at 14:50"><div class="ts">14:50</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s17_920.webp" alt="slide at 15:20"><div class="ts">15:20</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s18_930.webp" alt="slide at 15:30"><div class="ts">15:30</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s19_950.webp" alt="slide at 15:50"><div class="ts">15:50</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/rust-vibe-coding-guardrails/s20_960.webp" alt="slide at 16:00"><div class="ts">16:00</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>A GitHub article credits AI-assisted development with pushing TypeScript to the top language on GitHub by contributor count.</td><td class="tt">01:01</td></tr><tr><td class="st">warns</td><td>The same dynamic flexibility that makes JS/Python/TypeScript easy for LLMs to write also makes it easy for those models to introduce mistakes.</td><td class="tt">04:09</td></tr><tr><td class="st">warns</td><td>Tests can only prove incorrectness when they fail, and it&#x27;s impractical to test every possible input combination, so passing tests doesn&#x27;t guarantee correctness.</td><td class="tt">05:43</td></tr><tr><td class="st">asserts</td><td>Citing Yuval Noah Harari, the speaker argues LLMs are better described as alien rather than artificial intelligence because their internal reasoning differs fundamentally from human thought.</td><td class="tt">07:18</td></tr><tr><td class="st">asserts</td><td>A thread-unsafe counter pattern that silently compiles and misbehaves in TypeScript fails to compile in Rust, with a specific error pointing to the unsafe type.</td><td class="tt">13:06</td></tr><tr><td class="st">asserts</td><td>Rust is harder for LLMs to get right on the first attempt because of the number of compiler-enforced rules it imposes.</td><td class="tt">14:11</td></tr><tr><td class="st">recommends</td><td>Each compile error the agent hits and fixes represents a bug avoided in production code.</td><td class="tt">14:41</td></tr><tr><td class="st">asserts</td><td>Compiling Rust code is faster than having an AI agent review the code, and the agent review might still miss errors the compiler is guaranteed to catch.</td><td class="tt">15:13</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/rust-vibe-coding-guardrails/s00_20.webp", "mmss": "00:20", "yt": "https://youtu.be/ugUeZ8-b-u0?t=20"}, {"src": "img/rust-vibe-coding-guardrails/s01_30.webp", "mmss": "00:30", "yt": "https://youtu.be/ugUeZ8-b-u0?t=30"}, {"src": "img/rust-vibe-coding-guardrails/s02_50.webp", "mmss": "00:50", "yt": "https://youtu.be/ugUeZ8-b-u0?t=50"}, {"src": "img/rust-vibe-coding-guardrails/s03_60.webp", "mmss": "01:00", "yt": "https://youtu.be/ugUeZ8-b-u0?t=60"}, {"src": "img/rust-vibe-coding-guardrails/s04_80.webp", "mmss": "01:20", "yt": "https://youtu.be/ugUeZ8-b-u0?t=80"}, {"src": "img/rust-vibe-coding-guardrails/s05_100.webp", "mmss": "01:40", "yt": "https://youtu.be/ugUeZ8-b-u0?t=100"}, {"src": "img/rust-vibe-coding-guardrails/s06_210.webp", "mmss": "03:30", "yt": "https://youtu.be/ugUeZ8-b-u0?t=210"}, {"src": "img/rust-vibe-coding-guardrails/s07_390.webp", "mmss": "06:30", "yt": "https://youtu.be/ugUeZ8-b-u0?t=390"}, {"src": "img/rust-vibe-coding-guardrails/s08_400.webp", "mmss": "06:40", "yt": "https://youtu.be/ugUeZ8-b-u0?t=400"}, {"src": "img/rust-vibe-coding-guardrails/s09_520.webp", "mmss": "08:40", "yt": "https://youtu.be/ugUeZ8-b-u0?t=520"}, {"src": "img/rust-vibe-coding-guardrails/s10_560.webp", "mmss": "09:20", "yt": "https://youtu.be/ugUeZ8-b-u0?t=560"}, {"src": "img/rust-vibe-coding-guardrails/s11_710.webp", "mmss": "11:50", "yt": "https://youtu.be/ugUeZ8-b-u0?t=710"}, {"src": "img/rust-vibe-coding-guardrails/s12_780.webp", "mmss": "13:00", "yt": "https://youtu.be/ugUeZ8-b-u0?t=780"}, {"src": "img/rust-vibe-coding-guardrails/s13_790.webp", "mmss": "13:10", "yt": "https://youtu.be/ugUeZ8-b-u0?t=790"}, {"src": "img/rust-vibe-coding-guardrails/s14_820.webp", "mmss": "13:40", "yt": "https://youtu.be/ugUeZ8-b-u0?t=820"}, {"src": "img/rust-vibe-coding-guardrails/s15_850.webp", "mmss": "14:10", "yt": "https://youtu.be/ugUeZ8-b-u0?t=850"}, {"src": "img/rust-vibe-coding-guardrails/s16_890.webp", "mmss": "14:50", "yt": "https://youtu.be/ugUeZ8-b-u0?t=890"}, {"src": "img/rust-vibe-coding-guardrails/s17_920.webp", "mmss": "15:20", "yt": "https://youtu.be/ugUeZ8-b-u0?t=920"}, {"src": "img/rust-vibe-coding-guardrails/s18_930.webp", "mmss": "15:30", "yt": "https://youtu.be/ugUeZ8-b-u0?t=930"}, {"src": "img/rust-vibe-coding-guardrails/s19_950.webp", "mmss": "15:50", "yt": "https://youtu.be/ugUeZ8-b-u0?t=950"}, {"src": "img/rust-vibe-coding-guardrails/s20_960.webp", "mmss": "16:00", "yt": "https://youtu.be/ugUeZ8-b-u0?t=960"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "ugUeZ8-b-u0", "slug": "rust-vibe-coding-guardrails", "title": "Why Rust is the Ideal Language for Vibe-Coding", "speaker": "Daniel Szoke", "company": "Sentry", "themes": ["coding-agents", "agentic-engineering"], "tier": "slide-brief", "depth": "take", "diagram": {"title": "Why strict compilers beat vibe-coded flexibility (ours, from the slides)", "lanes": ["premise", "mechanism", "consequence"], "nodes": [{"id": "ts_rise", "label": "TS tops GitHub via AI", "sub": "AI coding pushed TypeScript to #1 by contributors", "lane": 0, "kind": "external", "claim": "c1", "t": 61}, {"id": "flex_bugs", "label": "Flexibility hides bugs", "sub": "Same dynamism that helps LLMs write also hides mistakes", "lane": 0, "kind": "system", "claim": "c2", "t": 249}, {"id": "alien", "label": "LLMs = alien intelligence", "sub": "Harari framing: reasoning unlike human thought", "lane": 0, "kind": "external", "claim": "c4", "t": 438}, {"id": "tests_limit", "label": "Tests only prove failure", "sub": "Cannot test every input combination", "lane": 1, "kind": "system", "claim": "c3", "t": 343}, {"id": "rust_compile", "label": "Rust compiler blocks bug", "sub": "Thread-unsafe counter fails to compile, not silently wrong", "lane": 1, "kind": "system", "claim": "c5", "t": 786}, {"id": "harder_first", "label": "Harder for LLM first try", "sub": "Many compiler-enforced rules to satisfy", "lane": 1, "kind": "system", "claim": "c6", "t": 851}, {"id": "error_caught", "label": "Each error = bug avoided", "sub": "Compile error caught is a bug avoided in production", "lane": 2, "kind": "system", "claim": "c7", "t": 881}, {"id": "faster_review", "label": "Compiling beats AI review", "sub": "Faster than agent review, catches more than review would", "lane": 2, "kind": "system", "claim": "c8", "t": 913}], "edges": [{"from": "ts_rise", "to": "flex_bugs", "label": "same trait", "kind": "flow"}, {"from": "flex_bugs", "to": "tests_limit", "label": "tests miss it", "kind": "flow"}, {"from": "flex_bugs", "to": "alien", "label": "unpredictable", "kind": "flow"}, {"from": "tests_limit", "to": "rust_compile", "label": "no compile check", "kind": "flow"}, {"from": "alien", "to": "rust_compile", "label": "need guardrail", "kind": "flow"}, {"from": "rust_compile", "to": "harder_first", "label": "more rules", "kind": "flow"}, {"from": "harder_first", "to": "error_caught", "label": "agent loop fixes", "kind": "flow"}, {"from": "error_caught", "to": "faster_review", "label": "net win", "kind": "flow"}], "caption": "The talk frames Rust as trading first-try ease for a compiler that catches bugs dynamic languages let through, which the speaker argues nets out faster than review in an agent compile-fix loop (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "TypeScript adoption via AI coding", "text": "A GitHub article credits AI-assisted development with pushing TypeScript to the top language on GitHub by contributor count.", "quote": "AI has pushed TypeScript to the number one um language on GitHub by contributor counts at least", "t": 61}, {"id": "c2", "stance": "warns", "topic": "flexibility hides bugs", "text": "The same dynamic flexibility that makes JS/Python/TypeScript easy for LLMs to write also makes it easy for those models to introduce mistakes.", "quote": "the dynamic and flexible nature of the languages is what makes it easy for the agent or for the LLM, I should say, to write JavaScript, Python, TypeScript", "t": 249}, {"id": "c3", "stance": "warns", "topic": "limits of testing", "text": "Tests can only prove incorrectness when they fail, and it's impractical to test every possible input combination, so passing tests doesn't guarantee correctness.", "quote": "tests usually can only prove incorrectness when they fail because it's impractical call to test every single possible input combination", "t": 343}, {"id": "c4", "stance": "asserts", "topic": "alien intelligence framing", "text": "Citing Yuval Noah Harari, the speaker argues LLMs are better described as alien rather than artificial intelligence because their internal reasoning differs fundamentally from human thought.", "quote": "he doesn't like that the A in AI is artificial because it understates how different um LLMs and other AI technologies are from how humans think", "t": 438}, {"id": "c5", "stance": "asserts", "topic": "Rust compile-time safety example", "text": "A thread-unsafe counter pattern that silently compiles and misbehaves in TypeScript fails to compile in Rust, with a specific error pointing to the unsafe type.", "quote": "in Rust, this just doesn't compile. You're going to get a compile error", "t": 786}, {"id": "c6", "stance": "asserts", "topic": "Rust harder for LLMs on first try", "text": "Rust is harder for LLMs to get right on the first attempt because of the number of compiler-enforced rules it imposes.", "quote": "Rust is harder for LLMs to get right on the first try because there's so many rules they need to follow", "t": 851}, {"id": "c7", "stance": "recommends", "topic": "compile errors as caught bugs", "text": "Each compile error the agent hits and fixes represents a bug avoided in production code.", "quote": "every compile error um is potentially a bug that you avoid in your production code", "t": 881}, {"id": "c8", "stance": "asserts", "topic": "compiling faster than agent review", "text": "Compiling Rust code is faster than having an AI agent review the code, and the agent review might still miss errors the compiler is guaranteed to catch.", "quote": "I guarantee you that it's faster than letting an AI agent review your code, and it might not even find all the errors that the Rust compiler is guaranteed to find", "t": 913}]}</script>
+</body></html>

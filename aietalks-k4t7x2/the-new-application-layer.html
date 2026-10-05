@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>The New Application Layer &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/XKup1pj-34M" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Transcript brief &middot; 18 min</span><span class="ln"></span></div>
+<h1 class="lede">The New Application Layer</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Malte Ubl &middot; Vercel</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/XKup1pj-34M" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/XKup1pj-34M</a> &middot; 18 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">take</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Product & UX</span><span class="chip hot">Infra & serving</span></div>
+<p class="deck" style="font-size:15px">Gives a concrete checklist of low-risk agent archetypes (24/7 service agents, compressed-research agents, surfacing-existing-info agents) that a team can ship without redesigning a business process, plus two production numbers (75% conta...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Vercel frames agents as a new, economically-viable category of software and recommends starting with low-risk archetypes: 24/7 service agents, compressed-research agents, and agents that surface information already scattered across a company.</li><li>Two internal examples quantify the payoff: a contact-sales triage agent resolves about 75% of inbound messages as support issues, and an in-house support agent reaches a 90% deflection rate.</li><li>On vercel.com, over 60% of page views in the last 7 days came from AI agents rather than humans, and Ubl warns most popular agent harnesses wrongly run in the same place as the code they generate.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">WHY AGENTS CHANGE THE ECONOMICS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 741.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- pa -->
+<g id="node1" class="node">
+<title>pa</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="296.42,-298.87 114.5,-298.87 114.5,-262.59 296.42,-262.59 296.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="147.33" y="-280.78" font-family="Geist Mono" font-size="11.00">Agents = new software</text>
+<text xml:space="preserve" text-anchor="start" x="127.46" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">make prior&#45;uneconomical automation viable</text>
+</g>
+<!-- ma -->
+<g id="node3" class="node">
+<title>ma</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="154.92,-211.34 0,-211.34 0,-175.06 154.92,-175.06 154.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-193.25" font-family="Geist Mono" font-size="11.00">Contact&#45;sales triage agent</text>
+<text xml:space="preserve" text-anchor="start" x="13.33" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">~75% of inbound routed to support</text>
+</g>
+<!-- pa&#45;&gt;ma -->
+<g id="edge1" class="edge">
+<title>pa&#45;&gt;ma</title>
+<path fill="none" stroke="#c8501f" d="M178.94,-262.01C159.2,-248.82 132.12,-230.73 110.9,-216.55"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="112.39,-214.59 105.21,-212.74 109.67,-218.67 112.39,-214.59"/>
+<text xml:space="preserve" text-anchor="middle" x="163.37" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+<!-- mb -->
+<g id="node4" class="node">
+<title>mb</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="317.79,-211.34 177.12,-211.34 177.12,-175.06 317.79,-175.06 317.79,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="190.08" y="-193.25" font-family="Geist Mono" font-size="11.00">In&#45;house support agent</text>
+<text xml:space="preserve" text-anchor="start" x="212.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">90% deflection rate</text>
+</g>
+<!-- pa&#45;&gt;mb -->
+<g id="edge2" class="edge">
+<title>pa&#45;&gt;mb</title>
+<path fill="none" stroke="#c8501f" d="M214.16,-262.01C220.24,-249.62 228.45,-232.91 235.2,-219.18"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="237.22,-220.62 238.1,-213.26 232.82,-218.46 237.22,-220.62"/>
+<text xml:space="preserve" text-anchor="middle" x="243.22" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+<!-- pb -->
+<g id="node2" class="node">
+<title>pb</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="500.92,-298.87 340,-298.87 340,-262.59 500.92,-262.59 500.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="381.83" y="-280.78" font-family="Geist Mono" font-size="11.00">Make beats buy</text>
+<text xml:space="preserve" text-anchor="start" x="352.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">more firms build in&#45;house vs buy SaaS</text>
+</g>
+<!-- mc -->
+<g id="node5" class="node">
+<title>mc</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="499.42,-211.34 341.5,-211.34 341.5,-175.06 499.42,-175.06 499.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="354.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Agent traffic on vercel.com</text>
+<text xml:space="preserve" text-anchor="start" x="362.33" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">&gt;60% of page views, last 7 days</text>
+</g>
+<!-- pb&#45;&gt;mc -->
+<g id="edge3" class="edge">
+<title>pb&#45;&gt;mc</title>
+<path fill="none" stroke="#c8501f" d="M420.46,-262.01C420.46,-249.97 420.46,-233.84 420.46,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="422.91,-220.41 420.46,-213.41 418.01,-220.41 422.91,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="448.21" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">shows demand</text>
+</g>
+<!-- ca -->
+<g id="node7" class="node">
+<title>ca</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="296.54,-123.81 130.38,-123.81 130.38,-87.53 296.54,-87.53 296.54,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="157.96" y="-105.72" font-family="Geist Mono" font-size="11.00">Engineer demand rises</text>
+<text xml:space="preserve" text-anchor="start" x="143.33" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">cheaper software drives more of it built</text>
+</g>
+<!-- ma&#45;&gt;ca -->
+<g id="edge4" class="edge">
+<title>ma&#45;&gt;ca</title>
+<path fill="none" stroke="#c8501f" d="M105.64,-174.48C126.7,-161.23 155.63,-143.04 178.22,-128.83"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="179.41,-130.98 184.04,-125.17 176.81,-126.83 179.41,-130.98"/>
+<text xml:space="preserve" text-anchor="middle" x="174.6" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">proves ROI</text>
+</g>
+<!-- mb&#45;&gt;ca -->
+<g id="edge5" class="edge">
+<title>mb&#45;&gt;ca</title>
+<path fill="none" stroke="#c8501f" d="M240.42,-174.48C235.54,-162.21 228.97,-145.69 223.54,-132.03"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="225.92,-131.38 221.05,-125.78 221.36,-133.19 225.92,-131.38"/>
+<text xml:space="preserve" text-anchor="middle" x="253.5" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">proves ROI</text>
+</g>
+<!-- cb -->
+<g id="node8" class="node">
+<title>cb</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="525.67,-123.81 375.25,-123.81 375.25,-87.53 525.67,-87.53 525.67,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="388.21" y="-105.72" font-family="Geist Mono" font-size="11.00">Model layer commoditizes</text>
+<text xml:space="preserve" text-anchor="start" x="388.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">value shifts to the application layer</text>
+</g>
+<!-- mc&#45;&gt;cb -->
+<g id="edge6" class="edge">
+<title>mc&#45;&gt;cb</title>
+<path fill="none" stroke="#c8501f" d="M426.68,-174.48C430.98,-162.21 436.77,-145.69 441.57,-132.03"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="443.75,-133.21 443.75,-125.8 439.12,-131.59 443.75,-133.21"/>
+<text xml:space="preserve" text-anchor="middle" x="459.76" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">shifts usage</text>
+</g>
+<!-- md -->
+<g id="node6" class="node">
+<title>md</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="733.42,-211.34 521.5,-211.34 521.5,-175.06 733.42,-175.06 733.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="562.21" y="-193.25" font-family="Geist Mono" font-size="11.00">Harness runs with its code</text>
+<text xml:space="preserve" text-anchor="start" x="534.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">most harnesses share runtime with generated code</text>
+</g>
+<!-- md&#45;&gt;cb -->
+<g id="edge7" class="edge">
+<title>md&#45;&gt;cb</title>
+<path fill="none" stroke="#c8501f" d="M590.79,-174.48C562.78,-160.95 524.09,-142.25 494.42,-127.91"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="495.82,-125.87 488.45,-125.03 493.69,-130.28 495.82,-125.87"/>
+<text xml:space="preserve" text-anchor="middle" x="568.68" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">warns risk</text>
+</g>
+<!-- cc -->
+<g id="node9" class="node">
+<title>cc</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="535.79,-36.28 365.12,-36.28 365.12,0 535.79,0 535.79,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="394.58" y="-18.19" font-family="Geist Mono" font-size="11.00">Europe leads app layer</text>
+<text xml:space="preserve" text-anchor="start" x="378.08" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">AI SDK, Austria coding agent, Open Claw</text>
+</g>
+<!-- cb&#45;&gt;cc -->
+<g id="edge8" class="edge">
+<title>cb&#45;&gt;cc</title>
+<path fill="none" stroke="#c8501f" d="M450.46,-86.95C450.46,-74.91 450.46,-58.78 450.46,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="452.91,-45.35 450.46,-38.35 448.01,-45.35 452.91,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="472.58" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">opens room</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Ubl&#x27;s argument from working low-risk agent archetypes to his prediction that value accrues at the application layer, not the model layer (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Agents make previously uneconomical software worth building</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Agents make previously uneconomical software worth building</h2><ul class="takeaways"><li>Ubl argues agents are a new kind of software because they make automation economically viable for business logic that was too expensive to hand-code before.</li><li>He frames this as more software getting built overall, with more companies choosing to build in-house (&#x27;make&#x27;) rather than buy SaaS, which in turn increases rather than decreases demand for engineers as the cost of making software falls.</li></ul><div class="quote"><p>&ldquo;One of our main thesis is that agents are a new kind of software.&rdquo;</p><span class="at">said at 04:08</span></div><div class="quote"><p>&ldquo;more and more companies, when they ask that question whether they should buy some software, like a SaaS product, or make some software themselves, they&#x27;re answering that with the make side&rdquo;</p><span class="at">said at 05:13</span></div><div class="quote"><p>&ldquo;the cheaper it is to make software, the more software we&#x27;re going to make, right? And as a consequence, what&#x27;s actually happening is the demand for software engineers is going up&rdquo;</p><span class="at">said at 06:15</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Low-risk agent archetypes already shipping</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Low-risk agent archetypes already shipping</h2><ul class="takeaways"><li>Ubl lists archetypes he sees working today without major process changes: 24/7 service agents, &#x27;compressed research&#x27; agents that automate only the research step of an existing human-decision workflow, and agents that surface information that already exists but is practically unusable (issue trackers, chat logs, meeting recordings).</li><li>He gives two Vercel production examples with numbers: a contact-sales agent and an in-house support agent.</li></ul><div class="quote"><p>&ldquo;I hear about 75% of the time that agent says, Well, actually, they just wanted support.&rdquo;</p><span class="at">said at 09:22</span></div><div class="quote"><p>&ldquo;we actually did build our own in-house support agent, and it has what&#x27;s called a 90% deflection rate&rdquo;</p><span class="at">said at 11:56</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Software is increasingly built and used by agents, not humans</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Software is increasingly built and used by agents, not humans</h2><ul class="takeaways"><li>Ubl cites internal Vercel traffic data showing agents, not humans, are now the majority visitor to vercel.com, and describes a broader shift from UI-driven dashboards to CLI/API usage as the primary interface for agents.</li></ul><div class="quote"><p>&ldquo;over 60% of page views on vercel.com were AI agents&rdquo;</p><span class="at">said at 12:59</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>A named architecture mistake in current agent harnesses</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>A named architecture mistake in current agent harnesses</h2><ul class="takeaways"><li>Ubl warns that most popular agent harnesses combine where the harness runs with where the code it generates runs, calling this fundamentally the wrong architecture, and notes Anthropic&#x27;s newest agent product separates the two.</li></ul><div class="quote"><p>&ldquo;I think almost all currently popular agent harnesses have fundamentally the wrong architecture.&rdquo;</p><span class="at">said at 15:02</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Model layer commoditizing, application layer capturing value</span><span class="ln"></span></div>
+<div class="sec2 noslide">
+<div class="textcol"><h2>Model layer commoditizing, application layer capturing value</h2><ul class="takeaways"><li>Ubl contrasts two futures: one where model labs capture all the value and engineers become forward-deployed staff for whichever lab wins, versus one where model companies commoditize on price and the application layer captures the value.</li><li>He argues the second is what&#x27;s actually happening, citing Europe-built projects (Vercel&#x27;s AI SDK, an Austria-made coding agent, and Open Claw) as evidence of application-layer leadership independent of who wins on models.</li></ul><div class="quote"><p>&ldquo;I do see kind of two big futures ahead of us. One is where the big model labs win. In that world, AI will stay very expensive.&rdquo;</p><span class="at">said at 17:03</span></div><div class="quote"><p>&ldquo;it appears to me that Europe, against all odds, is taking actually a leadership role in AI engineering.&rdquo;</p><span class="at">said at 16:33</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The 75%/90% deflection figures are single-company anecdotes from Vercel&#x27;s own support and sales pipelines, not benchmarked against other vendors&#x27; agent-service numbers, so treat them as an existence proof of the archetype rather than a typical rate (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Ubl states agents are a new kind of software because they make previously uneconomical automation viable.</td><td class="tt">04:08</td></tr><tr><td class="st">asserts</td><td>More companies deciding whether to buy SaaS or build software themselves are now answering with the &#x27;make&#x27; side.</td><td class="tt">05:13</td></tr><tr><td class="st">predicts</td><td>As software gets cheaper to make, demand for software engineers is going up rather than down.</td><td class="tt">06:15</td></tr><tr><td class="st">asserts</td><td>Vercel&#x27;s contact-sales agent determines about 75% of inbound messages are actually support requests and routes them accordingly.</td><td class="tt">09:22</td></tr><tr><td class="st">asserts</td><td>Vercel&#x27;s in-house support agent reaches a 90% deflection rate, resolving most requests in real time without escalation.</td><td class="tt">11:56</td></tr><tr><td class="st">asserts</td><td>Over 60% of page views on vercel.com in the last 7 days came from AI agents rather than humans.</td><td class="tt">12:59</td></tr><tr><td class="st">warns</td><td>Most currently popular agent harnesses wrongly combine where the harness runs with where the code it generates runs.</td><td class="tt">15:02</td></tr><tr><td class="st">predicts</td><td>Ubl predicts model companies will commoditize on price rather than one lab capturing all the value, which favors the application layer.</td><td class="tt">17:03</td></tr><tr><td class="st">asserts</td><td>Citing Vercel&#x27;s AI SDK, an Austria-built coding agent, and Open Claw, Ubl asserts Europe is taking a leadership role in AI engineering at the application layer.</td><td class="tt">16:33</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div class="frame wide"><footer>Transcript brief &mdash; verbatim quotes, timestamped &middot; slides not yet extracted for this talk &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "XKup1pj-34M", "slug": "the-new-application-layer", "title": "The New Application Layer", "speaker": "Malte Ubl", "company": "Vercel", "themes": ["agentic-engineering", "product-ux", "infra-serving"], "tier": "transcript-brief", "depth": "take", "diagram": {"title": "Why agents change the economics (ours)", "lanes": ["Premise", "Mechanism", "Consequence"], "nodes": [{"id": "pa", "label": "Agents = new software", "sub": "make prior-uneconomical automation viable", "lane": 0, "kind": "system", "claim": "c1", "t": 248}, {"id": "pb", "label": "Make beats buy", "sub": "more firms build in-house vs buy SaaS", "lane": 0, "kind": "actor", "claim": "c2", "t": 313}, {"id": "ma", "label": "Contact-sales triage agent", "sub": "~75% of inbound routed to support", "lane": 1, "kind": "system", "claim": "c4", "t": 562}, {"id": "mb", "label": "In-house support agent", "sub": "90% deflection rate", "lane": 1, "kind": "system", "claim": "c5", "t": 716}, {"id": "mc", "label": "Agent traffic on vercel.com", "sub": ">60% of page views, last 7 days", "lane": 1, "kind": "external", "claim": "c6", "t": 779}, {"id": "md", "label": "Harness runs with its code", "sub": "most harnesses share runtime with generated code", "lane": 1, "kind": "system", "claim": "c7", "t": 902}, {"id": "ca", "label": "Engineer demand rises", "sub": "cheaper software drives more of it built", "lane": 2, "kind": "actor", "claim": "c3", "t": 375}, {"id": "cb", "label": "Model layer commoditizes", "sub": "value shifts to the application layer", "lane": 2, "kind": "external", "claim": "c8", "t": 1023}, {"id": "cc", "label": "Europe leads app layer", "sub": "AI SDK, Austria coding agent, Open Claw", "lane": 2, "kind": "actor", "claim": "c9", "t": 993}], "edges": [{"from": "pa", "to": "ma", "label": "enables", "kind": "flow"}, {"from": "pa", "to": "mb", "label": "enables", "kind": "flow"}, {"from": "pb", "to": "mc", "label": "shows demand", "kind": "flow"}, {"from": "ma", "to": "ca", "label": "proves ROI", "kind": "flow"}, {"from": "mb", "to": "ca", "label": "proves ROI", "kind": "flow"}, {"from": "mc", "to": "cb", "label": "shifts usage", "kind": "flow"}, {"from": "md", "to": "cb", "label": "warns risk", "kind": "flow"}, {"from": "cb", "to": "cc", "label": "opens room", "kind": "flow"}], "caption": "This traces Ubl's argument from working low-risk agent archetypes to his prediction that value accrues at the application layer, not the model layer (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "agents as new software category", "text": "Ubl states agents are a new kind of software because they make previously uneconomical automation viable.", "quote": "One of our main thesis is that agents are a new kind of software.", "t": 248}, {"id": "c2", "stance": "asserts", "topic": "build vs buy shift", "text": "More companies deciding whether to buy SaaS or build software themselves are now answering with the 'make' side.", "quote": "more and more companies, when they ask that question whether they should buy some software, like a SaaS product, or make some software themselves, they're answering that with the make side", "t": 313}, {"id": "c3", "stance": "predicts", "topic": "engineer demand", "text": "As software gets cheaper to make, demand for software engineers is going up rather than down.", "quote": "the cheaper it is to make software, the more software we're going to make, right? And as a consequence, what's actually happening is the demand for software engineers is going up", "t": 375}, {"id": "c4", "stance": "asserts", "topic": "contact-sales agent", "text": "Vercel's contact-sales agent determines about 75% of inbound messages are actually support requests and routes them accordingly.", "quote": "I hear about 75% of the time that agent says, Well, actually, they just wanted support.", "t": 562}, {"id": "c5", "stance": "asserts", "topic": "in-house support agent", "text": "Vercel's in-house support agent reaches a 90% deflection rate, resolving most requests in real time without escalation.", "quote": "we actually did build our own in-house support agent, and it has what's called a 90% deflection rate", "t": 716}, {"id": "c6", "stance": "asserts", "topic": "agent traffic share", "text": "Over 60% of page views on vercel.com in the last 7 days came from AI agents rather than humans.", "quote": "over 60% of page views on vercel.com were AI agents", "t": 779}, {"id": "c7", "stance": "warns", "topic": "agent harness architecture", "text": "Most currently popular agent harnesses wrongly combine where the harness runs with where the code it generates runs.", "quote": "I think almost all currently popular agent harnesses have fundamentally the wrong architecture.", "t": 902}, {"id": "c8", "stance": "predicts", "topic": "model commoditization", "text": "Ubl predicts model companies will commoditize on price rather than one lab capturing all the value, which favors the application layer.", "quote": "I do see kind of two big futures ahead of us. One is where the big model labs win. In that world, AI will stay very expensive.", "t": 1023}, {"id": "c9", "stance": "asserts", "topic": "Europe application-layer leadership", "text": "Citing Vercel's AI SDK, an Austria-built coding agent, and Open Claw, Ubl asserts Europe is taking a leadership role in AI engineering at the application layer.", "quote": "it appears to me that Europe, against all odds, is taking actually a leadership role in AI engineering.", "t": 993}]}</script>
+</body></html>

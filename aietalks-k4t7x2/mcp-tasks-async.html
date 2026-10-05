@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>MCP Tasks (async): Why Aren&#x27;t Any Agents Supporting Them? &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/s4r6nk5WsZw" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 23 min</span><span class="ln"></span></div>
+<h1 class="lede">MCP Tasks (async): Why Aren&#x27;t Any Agents Supporting Them?</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Cornelia Davis &middot; Temporal</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/s4r6nk5WsZw" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/s4r6nk5WsZw</a> &middot; 23 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">MCP & protocols</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Infra & serving</span></div>
+<p class="deck" style="font-size:15px">Explains, with a working demo, exactly what an MCP client has to implement to support long-running async tool calls (approvals, invoice processing) that survive network drops and server restarts</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>The MCP tasks spec was marked experimental in November and is genuinely complex to implement durably, which is the real reason no client supports it yet (c1, c2).</li><li>V1&#x27;s task-list endpoint has no filter, so it breaks down once an agent has a million tasks running (c4).</li><li>V2 (coming July) drops task list and the long-running session in favor of a stateless client-update endpoint, but shifts the durability burden onto the client, which must persist task IDs itself; scaling to millions of tasks is still unsolved (c6, c7, c8, c9).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">MCP TASKS: DURABILITY FROM V1 TO V2 (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 534.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- client_submit -->
+<g id="node1" class="node">
+<title>client_submit</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="468.79,-473.93 303.38,-473.93 303.38,-437.65 468.79,-437.65 468.79,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="339.96" y="-455.84" font-family="Geist Mono" font-size="11.00">Client submits task</text>
+<text xml:space="preserve" text-anchor="start" x="316.33" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">PO submitted while backend was down</text>
+</g>
+<!-- durable_req -->
+<g id="node3" class="node">
+<title>durable_req</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="402.29,-386.4 257.88,-386.4 257.88,-350.12 402.29,-350.12 402.29,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="277.58" y="-368.31" font-family="Geist Mono" font-size="11.00">Task must be durable</text>
+<text xml:space="preserve" text-anchor="start" x="270.83" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">survives crashes and disconnects</text>
+</g>
+<!-- client_submit&#45;&gt;durable_req -->
+<g id="edge1" class="edge">
+<title>client_submit&#45;&gt;durable_req</title>
+<path fill="none" stroke="#c8501f" d="M374.48,-437.07C366.3,-424.57 355.23,-407.66 346.19,-393.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="348.39,-392.74 342.5,-388.23 344.29,-395.42 348.39,-392.74"/>
+<text xml:space="preserve" text-anchor="middle" x="386.94" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">launches task</text>
+</g>
+<!-- persist_id -->
+<g id="node2" class="node">
+<title>persist_id</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="320.17,-123.81 178,-123.81 178,-87.53 320.17,-87.53 320.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="195.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Client persists task ID</text>
+<text xml:space="preserve" text-anchor="start" x="190.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">no ID means task unrecoverable</text>
+</g>
+<!-- still_unsolved -->
+<g id="node9" class="node">
+<title>still_unsolved</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="236.67,-36.28 97.5,-36.28 97.5,0 236.67,0 236.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="125.08" y="-18.19" font-family="Geist Mono" font-size="11.00">Still doesn&#39;t scale</text>
+<text xml:space="preserve" text-anchor="start" x="110.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">clients poll each task individually</text>
+</g>
+<!-- persist_id&#45;&gt;still_unsolved -->
+<g id="edge10" class="edge">
+<title>persist_id&#45;&gt;still_unsolved</title>
+<path fill="none" stroke="#c8501f" d="M233.9,-86.88C225.82,-77.59 215.61,-66.14 206.08,-56.28 201.8,-51.84 197.13,-47.22 192.56,-42.81"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="194.29,-41.07 187.53,-38.01 190.9,-44.62 194.29,-41.07"/>
+<text xml:space="preserve" text-anchor="middle" x="249.56" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">still polls per task</text>
+</g>
+<!-- lifecycle -->
+<g id="node4" class="node">
+<title>lifecycle</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="391.79,-298.87 220.38,-298.87 220.38,-262.59 391.79,-262.59 391.79,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="257.33" y="-280.78" font-family="Geist Mono" font-size="11.00">Task lifecycle states</text>
+<text xml:space="preserve" text-anchor="start" x="233.33" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">working, input&#45;required, then done or fail</text>
+</g>
+<!-- durable_req&#45;&gt;lifecycle -->
+<g id="edge2" class="edge">
+<title>durable_req&#45;&gt;lifecycle</title>
+<path fill="none" stroke="#c8501f" d="M325.11,-349.54C321.7,-337.38 317.12,-321.06 313.31,-307.47"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="315.71,-306.96 311.46,-300.89 310.99,-308.29 315.71,-306.96"/>
+<text xml:space="preserve" text-anchor="middle" x="346.9" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">governs states</text>
+</g>
+<!-- v1_list -->
+<g id="node5" class="node">
+<title>v1_list</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="142.17,-211.34 0,-211.34 0,-175.06 142.17,-175.06 142.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="44.08" y="-193.25" font-family="Geist Mono" font-size="11.00">V1 task list</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">no filter, breaks at 1 million tasks</text>
+</g>
+<!-- lifecycle&#45;&gt;v1_list -->
+<g id="edge5" class="edge">
+<title>lifecycle&#45;&gt;v1_list</title>
+<path fill="none" stroke="#c8501f" d="M257.11,-261.9C219.4,-248.18 167.22,-229.19 127.72,-214.81"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="128.84,-212.61 121.42,-212.52 127.16,-217.22 128.84,-212.61"/>
+<text xml:space="preserve" text-anchor="middle" x="233.03" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">recover via (V1)</text>
+</g>
+<!-- v2_stateless -->
+<g id="node6" class="node">
+<title>v2_stateless</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="342.17,-211.34 164,-211.34 164,-175.06 342.17,-175.06 342.17,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="197.21" y="-193.25" font-family="Geist Mono" font-size="11.00">V2 core goes stateless</text>
+<text xml:space="preserve" text-anchor="start" x="176.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">update endpoint replaces long&#45;run session</text>
+</g>
+<!-- lifecycle&#45;&gt;v2_stateless -->
+<g id="edge7" class="edge">
+<title>lifecycle&#45;&gt;v2_stateless</title>
+<path fill="none" stroke="#c8501f" d="M294.79,-262.01C290.9,-255.87 286.53,-248.94 282.58,-242.59 277.74,-234.78 272.5,-226.23 267.8,-218.52"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="270.18,-217.72 264.45,-213.01 265.99,-220.26 270.18,-217.72"/>
+<text xml:space="preserve" text-anchor="middle" x="319.33" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">V2 replaces session</text>
+</g>
+<!-- server_temporal -->
+<g id="node8" class="node">
+<title>server_temporal</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="525.92,-211.34 364.25,-211.34 364.25,-175.06 525.92,-175.06 525.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="400.83" y="-193.25" font-family="Geist Mono" font-size="11.00">Temporal backend</text>
+<text xml:space="preserve" text-anchor="start" x="377.21" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">resumes after restart, completes task</text>
+</g>
+<!-- lifecycle&#45;&gt;server_temporal -->
+<g id="edge3" class="edge">
+<title>lifecycle&#45;&gt;server_temporal</title>
+<path fill="none" stroke="#c8501f" d="M334.89,-262.01C356.41,-248.76 385.98,-230.57 409.07,-216.36"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="410.35,-218.45 415.03,-212.69 407.79,-214.27 410.35,-218.45"/>
+<text xml:space="preserve" text-anchor="middle" x="397.78" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">runs on</text>
+</g>
+<!-- v2_list_removed -->
+<g id="node7" class="node">
+<title>v2_list_removed</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="152.54,-123.81 27.62,-123.81 27.62,-87.53 152.54,-87.53 152.54,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="40.58" y="-105.72" font-family="Geist Mono" font-size="11.00">V2 removes task list</text>
+<text xml:space="preserve" text-anchor="start" x="41.71" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">wasn&#39;t useful at large scale</text>
+</g>
+<!-- v1_list&#45;&gt;v2_list_removed -->
+<g id="edge6" class="edge">
+<title>v1_list&#45;&gt;v2_list_removed</title>
+<path fill="none" stroke="#c8501f" d="M75.02,-174.48C77.72,-162.32 81.35,-146 84.37,-132.41"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="86.7,-133.21 85.82,-125.85 81.92,-132.15 86.7,-133.21"/>
+<text xml:space="preserve" text-anchor="middle" x="109.47" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">removed in V2</text>
+</g>
+<!-- v2_stateless&#45;&gt;persist_id -->
+<g id="edge8" class="edge">
+<title>v2_stateless&#45;&gt;persist_id</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M252.26,-174.48C251.69,-162.44 250.94,-146.31 250.31,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="252.76,-132.76 249.98,-125.88 247.86,-132.99 252.76,-132.76"/>
+<text xml:space="preserve" text-anchor="middle" x="280.95" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">burden shifts to</text>
+</g>
+<!-- v2_list_removed&#45;&gt;still_unsolved -->
+<g id="edge9" class="edge">
+<title>v2_list_removed&#45;&gt;still_unsolved</title>
+<path fill="none" stroke="#c8501f" d="M106.04,-86.95C117.5,-74.22 133.07,-56.92 145.62,-42.98"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="147.28,-44.81 150.14,-37.96 143.63,-41.53 147.28,-44.81"/>
+<text xml:space="preserve" text-anchor="middle" x="166.95" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">no batch recovery</text>
+</g>
+<!-- server_temporal&#45;&gt;client_submit -->
+<g id="edge4" class="edge">
+<title>server_temporal&#45;&gt;client_submit</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M446.15,-211.89C447.82,-250.85 448.1,-346.3 417.08,-417.65 415.11,-422.19 412.4,-426.61 409.4,-430.72"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="407.54,-429.13 405.1,-436.13 411.37,-432.18 407.54,-429.13"/>
+<text xml:space="preserve" text-anchor="middle" x="470.48" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">task completes</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces how Davis&#x27;s demo enforces task durability today and how V2&#x27;s stateless redesign shifts that burden onto the client, though neither version yet handles millions of tasks (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Why no client has implemented MCP tasks yet</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/mcp-tasks-async/s01_40.webp" alt="slide at 00:40"></a><div class="slidecap">Slide at 00:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s03_80.webp" alt="slide at 01:20"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s04_130.webp" alt="slide at 02:10"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s05_160.webp" alt="slide at 02:40"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s06_200.webp" alt="slide at 03:20"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s07_250.webp" alt="slide at 04:10"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s08_330.webp" alt="slide at 05:30"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s09_350.webp" alt="slide at 05:50"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s10_380.webp" alt="slide at 06:20"></a></div></div>
+<div class="textcol"><h2>Why no client has implemented MCP tasks yet</h2><ul class="takeaways"><li>Davis frames the talk around a simple answer: the MCP tasks specification that shipped in November was marked experimental, and the spec itself requires that once a task is launched it must be durable across client crashes, server crashes, and disconnected humans.</li><li>Implementing that durability requirement is what makes client-side support hard enough that, as of the talk, she says no one has built it.</li></ul><div class="quote"><p>&ldquo;the MCP tasks specification that came out in November was marked as experimental&rdquo;</p><span class="at">said at 00:30</span></div><div class="quote"><p>&ldquo;once you&#x27;ve locked launched a task it has to be durable&rdquo;</p><span class="at">said at 05:41</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Demo: a purchase-order task survives the backend being down</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="13" class="sl"><img loading="lazy" class="main" src="img/mcp-tasks-async/s13_470.webp" alt="slide at 07:50"></a><div class="slidecap">Slide at 07:50 &middot; click any slide to enlarge &middot; 7 more from this section below</div><div class=strip><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s14_500.webp" alt="slide at 08:20"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s15_520.webp" alt="slide at 08:40"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s16_550.webp" alt="slide at 09:10"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s17_620.webp" alt="slide at 10:20"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s18_640.webp" alt="slide at 10:40"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s19_660.webp" alt="slide at 11:00"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s20_720.webp" alt="slide at 12:00"></a></div></div>
+<div class="textcol"><h2>Demo: a purchase-order task survives the backend being down</h2><ul class="takeaways"><li>Davis demos a purchase-order workflow where invoice processing runs as a long-running MCP task with a human-approval step, implemented on top of Temporal.</li><li>The task&#x27;s lifecycle moves through working, input-required, and back to working before completing or failing.</li><li>In the demo, a purchase order submitted before the backend servers were even started still went through once they came up, illustrating the durability requirement in practice.</li></ul><div class="quote"><p>&ldquo;It has working. It can go into an input required. From input required, it can go back to working, and then eventually it&#x27;ll complete or be canceled or fail.&rdquo;</p><span class="at">said at 11:20</span></div><div class="quote"><p>&ldquo;even though my servers weren&#x27;t running, that submission did go through&rdquo;</p><span class="at">said at 07:43</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>V1&#x27;s task list doesn&#x27;t scale</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="21" class="sl"><img loading="lazy" class="main" src="img/mcp-tasks-async/s21_850.webp" alt="slide at 14:10"></a><div class="slidecap">Slide at 14:10 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s22_870.webp" alt="slide at 14:30"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s24_910.webp" alt="slide at 15:10"></a><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s25_930.webp" alt="slide at 15:30"></a><a href="#" data-slide="27" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s27_960.webp" alt="slide at 16:00"></a></div></div>
+<div class="textcol"><h2>V1&#x27;s task list doesn&#x27;t scale</h2><ul class="takeaways"><li>In tasks V1, a client that loses its connection can call task list to recover what tasks exist on the server.</li><li>Davis says that works with a handful of tasks but has no filter, so a client would have to page through a million tasks at the back end to find the one it cares about once an agent fleet is running at scale.</li></ul><div class="quote"><p>&ldquo;what happens if you&#x27;ve got a whole slew of agents out there and you&#x27;ve got a million tasks at the back end&rdquo;</p><span class="at">said at 13:29</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>V2 goes stateless but pushes durability onto the client</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="27" class="sl"><img loading="lazy" class="main" src="img/mcp-tasks-async/s27_960.webp" alt="slide at 16:00"></a><div class="slidecap">Slide at 16:00 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="30" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s30_1010.webp" alt="slide at 16:50"></a><a href="#" data-slide="31" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s31_1120.webp" alt="slide at 18:40"></a><a href="#" data-slide="32" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s32_1160.webp" alt="slide at 19:20"></a><a href="#" data-slide="33" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s33_1180.webp" alt="slide at 19:40"></a><a href="#" data-slide="34" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s34_1190.webp" alt="slide at 19:50"></a><a href="#" data-slide="35" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s35_1210.webp" alt="slide at 20:10"></a><a href="#" data-slide="36" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s36_1240.webp" alt="slide at 20:40"></a><a href="#" data-slide="37" class="sl"><img loading="lazy" class="thumb" src="img/mcp-tasks-async/s37_1250.webp" alt="slide at 20:50"></a></div></div>
+<div class="textcol"><h2>V2 goes stateless but pushes durability onto the client</h2><ul class="takeaways"><li>Citing a May blog post from the Agoric AI Foundation (where MCP now lives), Davis says V2 makes the protocol&#x27;s core stateless and moves tasks into an extension.</li><li>Task list is removed and the awkward long-running session for input-required is replaced with a client-initiated update call, similar to a Temporal signal.</li><li>Because list is gone, the spec now says clients should persist task IDs themselves, though it stops short of a hard &#x27;must&#x27; -- and without persisting the ID, a client has no way to recover the task.</li></ul><div class="quote"><p>&ldquo;one of the things that made me jump up and celebrate a little bit is that the protocol is going stateless&rdquo;</p><span class="at">said at 16:01</span></div><div class="quote"><p>&ldquo;Task list has gone away. Good. Wasn&#x27;t particularly useful anyway, especially at large scale.&rdquo;</p><span class="at">said at 17:04</span></div><div class="quote"><p>&ldquo;clients should persist task IDs, but it also points out that if you don&#x27;t persist task IDs, there is no way to get it back&rdquo;</p><span class="at">said at 18:37</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>What&#x27;s still unsolved</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="44" class="sl"><img loading="lazy" class="main" src="img/mcp-tasks-async/s44_1330.webp" alt="slide at 22:10"></a><div class="slidecap">Slide at 22:10 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>What&#x27;s still unsolved</h2><ul class="takeaways"><li>Davis says V2 is a real improvement but still doesn&#x27;t scale to millions of tasks, since every client would still be polling each task individually.</li><li>She&#x27;s exploring the spec&#x27;s notifications protocol, which would let clients subscribe to a single endpoint for change notifications instead, and plans a reference implementation in FastMCP within a month or two.</li></ul><div class="quote"><p>&ldquo;even though this is better, it still doesn&#x27;t scale to the millions&rdquo;</p><span class="at">said at 22:12</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The live demo (server killed mid-task, still resolves) is a real durability proof, but it&#x27;s Davis&#x27;s own client-side implementation on top of Temporal, not a reference implementation the wider ecosystem is using -- so the reliability shown here doesn&#x27;t yet generalize to other MCP clients until someone ships equivalent client-side support in FastMCP or elsewhere (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/mcp-tasks-async/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/mcp-tasks-async/s01_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/mcp-tasks-async/s02_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/mcp-tasks-async/s03_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/mcp-tasks-async/s04_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/mcp-tasks-async/s05_160.webp" alt="slide at 02:40"><div class="ts">02:40</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/mcp-tasks-async/s06_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/mcp-tasks-async/s07_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/mcp-tasks-async/s08_330.webp" alt="slide at 05:30"><div class="ts">05:30</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/mcp-tasks-async/s09_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/mcp-tasks-async/s10_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/mcp-tasks-async/s11_410.webp" alt="slide at 06:50"><div class="ts">06:50</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/mcp-tasks-async/s12_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/mcp-tasks-async/s13_470.webp" alt="slide at 07:50"><div class="ts">07:50</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/mcp-tasks-async/s14_500.webp" alt="slide at 08:20"><div class="ts">08:20</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/mcp-tasks-async/s15_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/mcp-tasks-async/s16_550.webp" alt="slide at 09:10"><div class="ts">09:10</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/mcp-tasks-async/s17_620.webp" alt="slide at 10:20"><div class="ts">10:20</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/mcp-tasks-async/s18_640.webp" alt="slide at 10:40"><div class="ts">10:40</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/mcp-tasks-async/s19_660.webp" alt="slide at 11:00"><div class="ts">11:00</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/mcp-tasks-async/s20_720.webp" alt="slide at 12:00"><div class="ts">12:00</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/mcp-tasks-async/s21_850.webp" alt="slide at 14:10"><div class="ts">14:10</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/mcp-tasks-async/s22_870.webp" alt="slide at 14:30"><div class="ts">14:30</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/mcp-tasks-async/s23_880.webp" alt="slide at 14:40"><div class="ts">14:40</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/mcp-tasks-async/s24_910.webp" alt="slide at 15:10"><div class="ts">15:10</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/mcp-tasks-async/s25_930.webp" alt="slide at 15:30"><div class="ts">15:30</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/mcp-tasks-async/s26_950.webp" alt="slide at 15:50"><div class="ts">15:50</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/mcp-tasks-async/s27_960.webp" alt="slide at 16:00"><div class="ts">16:00</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/mcp-tasks-async/s28_970.webp" alt="slide at 16:10"><div class="ts">16:10</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/mcp-tasks-async/s29_980.webp" alt="slide at 16:20"><div class="ts">16:20</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/mcp-tasks-async/s30_1010.webp" alt="slide at 16:50"><div class="ts">16:50</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/mcp-tasks-async/s31_1120.webp" alt="slide at 18:40"><div class="ts">18:40</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/mcp-tasks-async/s32_1160.webp" alt="slide at 19:20"><div class="ts">19:20</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/mcp-tasks-async/s33_1180.webp" alt="slide at 19:40"><div class="ts">19:40</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/mcp-tasks-async/s34_1190.webp" alt="slide at 19:50"><div class="ts">19:50</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/mcp-tasks-async/s35_1210.webp" alt="slide at 20:10"><div class="ts">20:10</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/mcp-tasks-async/s36_1240.webp" alt="slide at 20:40"><div class="ts">20:40</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/mcp-tasks-async/s37_1250.webp" alt="slide at 20:50"><div class="ts">20:50</div></a><a href="#" data-slide="38"><img loading="lazy" src="img/mcp-tasks-async/s38_1260.webp" alt="slide at 21:00"><div class="ts">21:00</div></a><a href="#" data-slide="39"><img loading="lazy" src="img/mcp-tasks-async/s39_1270.webp" alt="slide at 21:10"><div class="ts">21:10</div></a><a href="#" data-slide="40"><img loading="lazy" src="img/mcp-tasks-async/s40_1280.webp" alt="slide at 21:20"><div class="ts">21:20</div></a><a href="#" data-slide="41"><img loading="lazy" src="img/mcp-tasks-async/s41_1290.webp" alt="slide at 21:30"><div class="ts">21:30</div></a><a href="#" data-slide="42"><img loading="lazy" src="img/mcp-tasks-async/s42_1300.webp" alt="slide at 21:40"><div class="ts">21:40</div></a><a href="#" data-slide="43"><img loading="lazy" src="img/mcp-tasks-async/s43_1310.webp" alt="slide at 21:50"><div class="ts">21:50</div></a><a href="#" data-slide="44"><img loading="lazy" src="img/mcp-tasks-async/s44_1330.webp" alt="slide at 22:10"><div class="ts">22:10</div></a><a href="#" data-slide="45"><img loading="lazy" src="img/mcp-tasks-async/s45_1370.webp" alt="slide at 22:50"><div class="ts">22:50</div></a><a href="#" data-slide="46"><img loading="lazy" src="img/mcp-tasks-async/s46_1390.webp" alt="slide at 23:10"><div class="ts">23:10</div></a><a href="#" data-slide="47"><img loading="lazy" src="img/mcp-tasks-async/s47_1410.webp" alt="slide at 23:30"><div class="ts">23:30</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The MCP tasks specification that came out in November was marked as experimental.</td><td class="tt">00:30</td></tr><tr><td class="st">asserts</td><td>The spec requires that once a task is launched, it must be durable across crashes and disconnects.</td><td class="tt">05:41</td></tr><tr><td class="st">asserts</td><td>The spec defines a task lifecycle: working, input-required, back to working, then complete, canceled, or failed.</td><td class="tt">11:20</td></tr><tr><td class="st">warns</td><td>The V1 task list endpoint has no filter, so it breaks down once an agent fleet has a million tasks running.</td><td class="tt">13:29</td></tr><tr><td class="st">asserts</td><td>In the live demo, a purchase order submitted before the backend servers were running still went through once they started.</td><td class="tt">07:43</td></tr><tr><td class="st">predicts</td><td>The upcoming V2 MCP protocol makes the core protocol stateless.</td><td class="tt">16:01</td></tr><tr><td class="st">asserts</td><td>V2 removes the task list endpoint because it wasn&#x27;t useful at scale.</td><td class="tt">17:04</td></tr><tr><td class="st">recommends</td><td>With task list removed, clients should persist task IDs themselves, or there is no way to recover a task.</td><td class="tt">18:37</td></tr><tr><td class="st">warns</td><td>Even V2 doesn&#x27;t scale to millions of tasks because every client would still poll each task individually.</td><td class="tt">22:12</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/mcp-tasks-async/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/s4r6nk5WsZw?t=10"}, {"src": "img/mcp-tasks-async/s01_40.webp", "mmss": "00:40", "yt": "https://youtu.be/s4r6nk5WsZw?t=40"}, {"src": "img/mcp-tasks-async/s02_60.webp", "mmss": "01:00", "yt": "https://youtu.be/s4r6nk5WsZw?t=60"}, {"src": "img/mcp-tasks-async/s03_80.webp", "mmss": "01:20", "yt": "https://youtu.be/s4r6nk5WsZw?t=80"}, {"src": "img/mcp-tasks-async/s04_130.webp", "mmss": "02:10", "yt": "https://youtu.be/s4r6nk5WsZw?t=130"}, {"src": "img/mcp-tasks-async/s05_160.webp", "mmss": "02:40", "yt": "https://youtu.be/s4r6nk5WsZw?t=160"}, {"src": "img/mcp-tasks-async/s06_200.webp", "mmss": "03:20", "yt": "https://youtu.be/s4r6nk5WsZw?t=200"}, {"src": "img/mcp-tasks-async/s07_250.webp", "mmss": "04:10", "yt": "https://youtu.be/s4r6nk5WsZw?t=250"}, {"src": "img/mcp-tasks-async/s08_330.webp", "mmss": "05:30", "yt": "https://youtu.be/s4r6nk5WsZw?t=330"}, {"src": "img/mcp-tasks-async/s09_350.webp", "mmss": "05:50", "yt": "https://youtu.be/s4r6nk5WsZw?t=350"}, {"src": "img/mcp-tasks-async/s10_380.webp", "mmss": "06:20", "yt": "https://youtu.be/s4r6nk5WsZw?t=380"}, {"src": "img/mcp-tasks-async/s11_410.webp", "mmss": "06:50", "yt": "https://youtu.be/s4r6nk5WsZw?t=410"}, {"src": "img/mcp-tasks-async/s12_450.webp", "mmss": "07:30", "yt": "https://youtu.be/s4r6nk5WsZw?t=450"}, {"src": "img/mcp-tasks-async/s13_470.webp", "mmss": "07:50", "yt": "https://youtu.be/s4r6nk5WsZw?t=470"}, {"src": "img/mcp-tasks-async/s14_500.webp", "mmss": "08:20", "yt": "https://youtu.be/s4r6nk5WsZw?t=500"}, {"src": "img/mcp-tasks-async/s15_520.webp", "mmss": "08:40", "yt": "https://youtu.be/s4r6nk5WsZw?t=520"}, {"src": "img/mcp-tasks-async/s16_550.webp", "mmss": "09:10", "yt": "https://youtu.be/s4r6nk5WsZw?t=550"}, {"src": "img/mcp-tasks-async/s17_620.webp", "mmss": "10:20", "yt": "https://youtu.be/s4r6nk5WsZw?t=620"}, {"src": "img/mcp-tasks-async/s18_640.webp", "mmss": "10:40", "yt": "https://youtu.be/s4r6nk5WsZw?t=640"}, {"src": "img/mcp-tasks-async/s19_660.webp", "mmss": "11:00", "yt": "https://youtu.be/s4r6nk5WsZw?t=660"}, {"src": "img/mcp-tasks-async/s20_720.webp", "mmss": "12:00", "yt": "https://youtu.be/s4r6nk5WsZw?t=720"}, {"src": "img/mcp-tasks-async/s21_850.webp", "mmss": "14:10", "yt": "https://youtu.be/s4r6nk5WsZw?t=850"}, {"src": "img/mcp-tasks-async/s22_870.webp", "mmss": "14:30", "yt": "https://youtu.be/s4r6nk5WsZw?t=870"}, {"src": "img/mcp-tasks-async/s23_880.webp", "mmss": "14:40", "yt": "https://youtu.be/s4r6nk5WsZw?t=880"}, {"src": "img/mcp-tasks-async/s24_910.webp", "mmss": "15:10", "yt": "https://youtu.be/s4r6nk5WsZw?t=910"}, {"src": "img/mcp-tasks-async/s25_930.webp", "mmss": "15:30", "yt": "https://youtu.be/s4r6nk5WsZw?t=930"}, {"src": "img/mcp-tasks-async/s26_950.webp", "mmss": "15:50", "yt": "https://youtu.be/s4r6nk5WsZw?t=950"}, {"src": "img/mcp-tasks-async/s27_960.webp", "mmss": "16:00", "yt": "https://youtu.be/s4r6nk5WsZw?t=960"}, {"src": "img/mcp-tasks-async/s28_970.webp", "mmss": "16:10", "yt": "https://youtu.be/s4r6nk5WsZw?t=970"}, {"src": "img/mcp-tasks-async/s29_980.webp", "mmss": "16:20", "yt": "https://youtu.be/s4r6nk5WsZw?t=980"}, {"src": "img/mcp-tasks-async/s30_1010.webp", "mmss": "16:50", "yt": "https://youtu.be/s4r6nk5WsZw?t=1010"}, {"src": "img/mcp-tasks-async/s31_1120.webp", "mmss": "18:40", "yt": "https://youtu.be/s4r6nk5WsZw?t=1120"}, {"src": "img/mcp-tasks-async/s32_1160.webp", "mmss": "19:20", "yt": "https://youtu.be/s4r6nk5WsZw?t=1160"}, {"src": "img/mcp-tasks-async/s33_1180.webp", "mmss": "19:40", "yt": "https://youtu.be/s4r6nk5WsZw?t=1180"}, {"src": "img/mcp-tasks-async/s34_1190.webp", "mmss": "19:50", "yt": "https://youtu.be/s4r6nk5WsZw?t=1190"}, {"src": "img/mcp-tasks-async/s35_1210.webp", "mmss": "20:10", "yt": "https://youtu.be/s4r6nk5WsZw?t=1210"}, {"src": "img/mcp-tasks-async/s36_1240.webp", "mmss": "20:40", "yt": "https://youtu.be/s4r6nk5WsZw?t=1240"}, {"src": "img/mcp-tasks-async/s37_1250.webp", "mmss": "20:50", "yt": "https://youtu.be/s4r6nk5WsZw?t=1250"}, {"src": "img/mcp-tasks-async/s38_1260.webp", "mmss": "21:00", "yt": "https://youtu.be/s4r6nk5WsZw?t=1260"}, {"src": "img/mcp-tasks-async/s39_1270.webp", "mmss": "21:10", "yt": "https://youtu.be/s4r6nk5WsZw?t=1270"}, {"src": "img/mcp-tasks-async/s40_1280.webp", "mmss": "21:20", "yt": "https://youtu.be/s4r6nk5WsZw?t=1280"}, {"src": "img/mcp-tasks-async/s41_1290.webp", "mmss": "21:30", "yt": "https://youtu.be/s4r6nk5WsZw?t=1290"}, {"src": "img/mcp-tasks-async/s42_1300.webp", "mmss": "21:40", "yt": "https://youtu.be/s4r6nk5WsZw?t=1300"}, {"src": "img/mcp-tasks-async/s43_1310.webp", "mmss": "21:50", "yt": "https://youtu.be/s4r6nk5WsZw?t=1310"}, {"src": "img/mcp-tasks-async/s44_1330.webp", "mmss": "22:10", "yt": "https://youtu.be/s4r6nk5WsZw?t=1330"}, {"src": "img/mcp-tasks-async/s45_1370.webp", "mmss": "22:50", "yt": "https://youtu.be/s4r6nk5WsZw?t=1370"}, {"src": "img/mcp-tasks-async/s46_1390.webp", "mmss": "23:10", "yt": "https://youtu.be/s4r6nk5WsZw?t=1390"}, {"src": "img/mcp-tasks-async/s47_1410.webp", "mmss": "23:30", "yt": "https://youtu.be/s4r6nk5WsZw?t=1410"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "s4r6nk5WsZw", "slug": "mcp-tasks-async", "title": "MCP Tasks (async): Why Aren't Any Agents Supporting Them?", "speaker": "Cornelia Davis", "company": "Temporal", "themes": ["mcp-protocols", "agentic-engineering", "infra-serving"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "MCP tasks: durability from V1 to V2 (ours)", "lanes": ["Client", "MCP Task Protocol", "Server (Temporal)"], "nodes": [{"id": "client_submit", "label": "Client submits task", "sub": "PO submitted while backend was down", "lane": 0, "kind": "actor", "claim": "c5", "t": 463}, {"id": "persist_id", "label": "Client persists task ID", "sub": "no ID means task unrecoverable", "lane": 0, "kind": "actor", "claim": "c8", "t": 1117}, {"id": "durable_req", "label": "Task must be durable", "sub": "survives crashes and disconnects", "lane": 1, "kind": "system", "claim": "c2", "t": 341}, {"id": "lifecycle", "label": "Task lifecycle states", "sub": "working, input-required, then done or fail", "lane": 1, "kind": "system", "claim": "c3", "t": 680}, {"id": "v1_list", "label": "V1 task list", "sub": "no filter, breaks at 1 million tasks", "lane": 1, "kind": "store", "claim": "c4", "t": 809}, {"id": "v2_stateless", "label": "V2 core goes stateless", "sub": "update endpoint replaces long-run session", "lane": 1, "kind": "system", "claim": "c6", "t": 961}, {"id": "v2_list_removed", "label": "V2 removes task list", "sub": "wasn't useful at large scale", "lane": 1, "kind": "system", "claim": "c7", "t": 1024}, {"id": "server_temporal", "label": "Temporal backend", "sub": "resumes after restart, completes task", "lane": 2, "kind": "external", "claim": "c5", "t": 463}, {"id": "still_unsolved", "label": "Still doesn't scale", "sub": "clients poll each task individually", "lane": 2, "kind": "system", "claim": "c9", "t": 1332}], "edges": [{"from": "client_submit", "to": "durable_req", "label": "launches task", "kind": "flow"}, {"from": "durable_req", "to": "lifecycle", "label": "governs states", "kind": "flow"}, {"from": "lifecycle", "to": "server_temporal", "label": "runs on", "kind": "flow"}, {"from": "server_temporal", "to": "client_submit", "label": "task completes", "kind": "data"}, {"from": "lifecycle", "to": "v1_list", "label": "recover via (V1)", "kind": "flow"}, {"from": "v1_list", "to": "v2_list_removed", "label": "removed in V2", "kind": "flow"}, {"from": "lifecycle", "to": "v2_stateless", "label": "V2 replaces session", "kind": "flow"}, {"from": "v2_stateless", "to": "persist_id", "label": "burden shifts to", "kind": "data"}, {"from": "v2_list_removed", "to": "still_unsolved", "label": "no batch recovery", "kind": "flow"}, {"from": "persist_id", "to": "still_unsolved", "label": "still polls per task", "kind": "flow"}], "caption": "This traces how Davis's demo enforces task durability today and how V2's stateless redesign shifts that burden onto the client, though neither version yet handles millions of tasks (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "spec marked experimental", "text": "The MCP tasks specification that came out in November was marked as experimental.", "quote": "the MCP tasks specification that came out in November was marked as experimental", "t": 30}, {"id": "c2", "stance": "asserts", "topic": "durability requirement", "text": "The spec requires that once a task is launched, it must be durable across crashes and disconnects.", "quote": "once you've locked launched a task it has to be durable", "t": 341}, {"id": "c3", "stance": "asserts", "topic": "task lifecycle states", "text": "The spec defines a task lifecycle: working, input-required, back to working, then complete, canceled, or failed.", "quote": "It has working. It can go into an input required. From input required, it can go back to working, and then eventually it'll complete or be canceled or fail.", "t": 680}, {"id": "c4", "stance": "warns", "topic": "task list scale", "text": "The V1 task list endpoint has no filter, so it breaks down once an agent fleet has a million tasks running.", "quote": "what happens if you've got a whole slew of agents out there and you've got a million tasks at the back end", "t": 809}, {"id": "c5", "stance": "asserts", "topic": "demo durability", "text": "In the live demo, a purchase order submitted before the backend servers were running still went through once they started.", "quote": "even though my servers weren't running, that submission did go through", "t": 463}, {"id": "c6", "stance": "predicts", "topic": "V2 stateless protocol", "text": "The upcoming V2 MCP protocol makes the core protocol stateless.", "quote": "one of the things that made me jump up and celebrate a little bit is that the protocol is going stateless", "t": 961}, {"id": "c7", "stance": "asserts", "topic": "task list removed in V2", "text": "V2 removes the task list endpoint because it wasn't useful at scale.", "quote": "Task list has gone away. Good. Wasn't particularly useful anyway, especially at large scale.", "t": 1024}, {"id": "c8", "stance": "recommends", "topic": "client must persist task IDs", "text": "With task list removed, clients should persist task IDs themselves, or there is no way to recover a task.", "quote": "clients should persist task IDs, but it also points out that if you don't persist task IDs, there is no way to get it back", "t": 1117}, {"id": "c9", "stance": "warns", "topic": "scale still unsolved", "text": "Even V2 doesn't scale to millions of tasks because every client would still poll each task individually.", "quote": "even though this is better, it still doesn't scale to the millions", "t": 1332}]}</script>
+</body></html>

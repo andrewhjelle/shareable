@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>From Blind Spots to Merged PRs: Continuous Agentic Performance Optimization &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/JJGbw4ggaFs" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 22 min</span><span class="ln"></span></div>
+<h1 class="lede">From Blind Spots to Merged PRs: Continuous Agentic Performance Optimization</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>May Walter &middot; Hud</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/JJGbw4ggaFs" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/JJGbw4ggaFs</a> &middot; 22 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Coding agents</span><span class="chip hot">Infra & serving</span></div>
+<p class="deck" style="font-size:15px">Walter describes a working weekly automation that finds, verifies, and scores production performance fixes before a human ever sees them, which is a concrete pattern for anyone deciding how much of the performance-investigation phase (no...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Google&#x27;s 2026 DORA metrics show AI adoption boosts individual effectiveness but not team throughput, and software delivery instability rises.</li><li>An agentic workflow that runs weekly against production data, scores opportunities by ROI, applies a fix, and reruns tests to verify impact before a human reviews it.</li><li>Getting to a trustworthy autonomous pipeline required crossing an 80-90% confidence threshold, categorically different from using an agent interactively in an IDE.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">VERIFIED-FIX PIPELINE: PROD DATA TO HUMAN REVIEW (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 206.00 569.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 565.46)">
+<title>G</title>
+<!-- prod_context -->
+<g id="node1" class="node">
+<title>prod_context</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="188.3,-561.46 10.13,-561.46 10.13,-525.18 188.3,-525.18 188.3,-561.46"/>
+<text xml:space="preserve" text-anchor="start" x="48.21" y="-543.37" font-family="Geist Mono" font-size="11.00">Prod&#45;to&#45;code context</text>
+<text xml:space="preserve" text-anchor="start" x="23.09" y="-535.22" font-family="Geist Mono" font-size="8.00" fill="#807565">connects runtime data to function/file level</text>
+</g>
+<!-- weekly_run -->
+<g id="node2" class="node">
+<title>weekly_run</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="172.17,-473.93 26.25,-473.93 26.25,-437.65 172.17,-437.65 172.17,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="39.21" y="-455.84" font-family="Geist Mono" font-size="11.00">Weekly agentic workflow</text>
+<text xml:space="preserve" text-anchor="start" x="39.59" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">runs against real production data</text>
+</g>
+<!-- prod_context&#45;&gt;weekly_run -->
+<g id="edge1" class="edge">
+<title>prod_context&#45;&gt;weekly_run</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M99.21,-524.6C99.21,-512.56 99.21,-496.43 99.21,-482.92"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="101.66,-483 99.21,-476 96.76,-483 101.66,-483"/>
+<text xml:space="preserve" text-anchor="middle" x="113.09" y="-497.1" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">context</text>
+</g>
+<!-- score_roi -->
+<g id="node3" class="node">
+<title>score_roi</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="186.42,-386.4 12,-386.4 12,-350.12 186.42,-350.12 186.42,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="67.34" y="-368.31" font-family="Geist Mono" font-size="11.00">Score by ROI</text>
+<text xml:space="preserve" text-anchor="start" x="24.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">flags high&#45;ROI performance opportunities</text>
+</g>
+<!-- weekly_run&#45;&gt;score_roi -->
+<g id="edge2" class="edge">
+<title>weekly_run&#45;&gt;score_roi</title>
+<path fill="none" stroke="#c8501f" d="M99.21,-437.07C99.21,-425.03 99.21,-408.9 99.21,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="101.66,-395.47 99.21,-388.47 96.76,-395.47 101.66,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="123.96" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">scans weekly</text>
+</g>
+<!-- propose_fix -->
+<g id="node4" class="node">
+<title>propose_fix</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="171.05,-298.87 27.38,-298.87 27.38,-262.59 171.05,-262.59 171.05,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="53.46" y="-280.78" font-family="Geist Mono" font-size="11.00">Agent proposes fix</text>
+<text xml:space="preserve" text-anchor="start" x="40.34" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">sounds right but must be verified</text>
+</g>
+<!-- score_roi&#45;&gt;propose_fix -->
+<g id="edge3" class="edge">
+<title>score_roi&#45;&gt;propose_fix</title>
+<path fill="none" stroke="#c8501f" d="M99.21,-349.54C99.21,-337.5 99.21,-321.37 99.21,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="101.66,-307.94 99.21,-300.94 96.76,-307.94 101.66,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="119.09" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">flags issue</text>
+</g>
+<!-- rerun_tests -->
+<g id="node5" class="node">
+<title>rerun_tests</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="198.42,-211.34 0,-211.34 0,-175.06 198.42,-175.06 198.42,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="36.59" y="-193.25" font-family="Geist Mono" font-size="11.00">Rerun tests, verify impact</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">confirms measured impact before human sees it</text>
+</g>
+<!-- propose_fix&#45;&gt;rerun_tests -->
+<g id="edge4" class="edge">
+<title>propose_fix&#45;&gt;rerun_tests</title>
+<path fill="none" stroke="#c8501f" d="M99.21,-262.01C99.21,-249.97 99.21,-233.84 99.21,-220.33"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="101.66,-220.41 99.21,-213.41 96.76,-220.41 101.66,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="118.71" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">applies fix</text>
+</g>
+<!-- report -->
+<g id="node6" class="node">
+<title>report</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="187.92,-123.81 10.5,-123.81 10.5,-87.53 187.92,-87.53 187.92,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="59.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Prioritized report</text>
+<text xml:space="preserve" text-anchor="start" x="23.46" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">surfaces only highest&#45;ROI, lowest&#45;risk fixes</text>
+</g>
+<!-- rerun_tests&#45;&gt;report -->
+<g id="edge5" class="edge">
+<title>rerun_tests&#45;&gt;report</title>
+<path fill="none" stroke="#c8501f" d="M99.21,-174.48C99.21,-162.44 99.21,-146.31 99.21,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="101.66,-132.88 99.21,-125.88 96.76,-132.88 101.66,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="127.71" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">verified impact</text>
+</g>
+<!-- human -->
+<g id="node7" class="node">
+<title>human</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="182.3,-36.28 16.13,-36.28 16.13,0 182.3,0 182.3,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="59.46" y="-18.19" font-family="Geist Mono" font-size="11.00">Human reviewer</text>
+<text xml:space="preserve" text-anchor="start" x="29.09" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">reviews a verified result, not a proposal</text>
+</g>
+<!-- report&#45;&gt;human -->
+<g id="edge6" class="edge">
+<title>report&#45;&gt;human</title>
+<path fill="none" stroke="#c8501f" d="M99.21,-86.95C99.21,-74.91 99.21,-58.78 99.21,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="101.66,-45.35 99.21,-38.35 96.76,-45.35 101.66,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="132.59" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">surfaces top fixes</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces Walter&#x27;s weekly automation from production context through an agent-proposed and self-verified fix to a prioritized human report; the ROI-scoring step&#x27;s exact position is inferred from her ordering of the talk (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>AI makes individuals faster but not teams, and breaks things more</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="6" class="sl"><img loading="lazy" class="main" src="img/agentic-perf-optimization/s06_140.webp" alt="slide at 02:20"></a><div class="slidecap">Slide at 02:20 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s07_170.webp" alt="slide at 02:50"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s08_180.webp" alt="slide at 03:00"></a><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s09_200.webp" alt="slide at 03:20"></a></div></div>
+<div class="textcol"><h2>AI makes individuals faster but not teams, and breaks things more</h2><ul class="takeaways"><li>Walter cites Google&#x27;s 2026 DORA metrics showing the biggest measured impact of AI adoption is individual effectiveness, while team throughput stays roughly flat and software delivery instability increases.</li><li>She frames the talk&#x27;s project as an attempt to also use AI to close the resulting stability gap, not just to build faster.</li></ul><div class="quote"><p>&ldquo;the biggest impact of AI adoption on engineering is individual effectiveness&rdquo;</p><span class="at">said at 02:35</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>The &#x27;leaky bucket&#x27; problem: investigation time is a black box</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="9" class="sl"><img loading="lazy" class="main" src="img/agentic-perf-optimization/s09_200.webp" alt="slide at 03:20"></a><div class="slidecap">Slide at 03:20 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s10_240.webp" alt="slide at 04:00"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s11_280.webp" alt="slide at 04:40"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s12_350.webp" alt="slide at 05:50"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s13_360.webp" alt="slide at 06:00"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s14_370.webp" alt="slide at 06:10"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s15_380.webp" alt="slide at 06:20"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s16_430.webp" alt="slide at 07:10"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s17_490.webp" alt="slide at 08:10"></a></div></div>
+<div class="textcol"><h2>The &#x27;leaky bucket&#x27; problem: investigation time is a black box</h2><ul class="takeaways"><li>She describes a recurring pattern where performance issues are ignored until they become a crisis, largely because the investigation phase to find and scope an issue is unpredictable in duration and hard to prioritize.</li><li>The team built a weekly automated agentic workflow, running against real production context, to score and flag high-ROI performance opportunities without requiring someone to stop and investigate manually.</li></ul><div class="quote"><p>&ldquo;that mostly happens because the research phase is a black box. It could take an hour or weeks and we have to pay that debt&rdquo;</p><span class="at">said at 03:36</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Three failure modes the workflow had to guard against</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="17" class="sl"><img loading="lazy" class="main" src="img/agentic-perf-optimization/s17_490.webp" alt="slide at 08:10"></a><div class="slidecap">Slide at 08:10 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Three failure modes the workflow had to guard against</h2><ul class="takeaways"><li>Walter names three recurring problems with agent-proposed fixes: &#x27;plausible unverified&#x27; fixes that sound right but don&#x27;t actually work when tested, difficulty with complex ClickHouse queries, and &#x27;lazy fixes&#x27; like catching an exception instead of addressing its root cause.</li><li>Solving these required grounding the agent in actual production data rather than letting it theorize.</li></ul><div class="quote"><p>&ldquo;the agent would suggest a fix. It sounds right. It would look fairly real and then after we verified it it it just didn&#x27;t work&rdquo;</p><span class="at">said at 08:47</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Closing the loop: fix, rerun tests, verify impact, then hand to a human</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="18" class="sl"><img loading="lazy" class="main" src="img/agentic-perf-optimization/s18_590.webp" alt="slide at 09:50"></a><div class="slidecap">Slide at 09:50 &middot; click any slide to enlarge &middot; 4 more from this section below</div><div class=strip><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s17_490.webp" alt="slide at 08:10"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s19_630.webp" alt="slide at 10:30"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s20_660.webp" alt="slide at 11:00"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s21_710.webp" alt="slide at 11:50"></a></div></div>
+<div class="textcol"><h2>Closing the loop: fix, rerun tests, verify impact, then hand to a human</h2><ul class="takeaways"><li>The workflow&#x27;s key step is that the agent applies a fix, reruns tests, and confirms the measured impact on the affected flow before a human reviewer ever sees it, so the human is reviewing a verified result rather than a proposal.</li><li>Walter says this shifted the team from opening dozens of unreviewed PRs (which no one wanted) to a prioritized, human-readable report surfacing only the highest-ROI, lowest-risk opportunities.</li></ul><div class="quote"><p>&ldquo;the agent actually fixes it reruns the tests and sees the impact that it had on that specific flow that was optimized&rdquo;</p><span class="at">said at 07:44</span></div><div class="quote"><p>&ldquo;no one wants to wake up for, you know, a rain of 80 pull requests, as small as small as they can be. That&#x27;s just not how people operate.&rdquo;</p><span class="at">said at 16:01</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Function-level production context, not just service metrics</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="21" class="sl"><img loading="lazy" class="main" src="img/agentic-perf-optimization/s21_710.webp" alt="slide at 11:50"></a><div class="slidecap">Slide at 11:50 &middot; click any slide to enlarge &middot; 6 more from this section below</div><div class=strip><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s22_860.webp" alt="slide at 14:20"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s23_890.webp" alt="slide at 14:50"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s24_960.webp" alt="slide at 16:00"></a><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s25_1030.webp" alt="slide at 17:10"></a><a href="#" data-slide="26" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s26_1100.webp" alt="slide at 18:20"></a><a href="#" data-slide="27" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s27_1190.webp" alt="slide at 19:50"></a></div></div>
+<div class="textcol"><h2>Function-level production context, not just service metrics</h2><ul class="takeaways"><li>She describes building &#x27;prod-to-code&#x27; context that connects runtime data to the function and file level where coding agents actually reason, rather than leaving it at the service/endpoint level metrics like P90 latency, CPU, and memory.</li><li>This was paired with a query language over that data plus a set of reusable &#x27;skills&#x27; for specific investigation types (500 errors, memory spikes) to reduce variance in results.</li></ul><div class="quote"><p>&ldquo;our context is running on a function level, and it is also connected to the endpoint or event consumer or cron job that ended up starting this task&rdquo;</p><span class="at">said at 11:52</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">06</span><span>Autonomous automation requires a much higher trust bar than interactive coding</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="28" class="sl"><img loading="lazy" class="main" src="img/agentic-perf-optimization/s28_1340.webp" alt="slide at 22:20"></a><div class="slidecap">Slide at 22:20 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="29" class="sl"><img loading="lazy" class="thumb" src="img/agentic-perf-optimization/s29_1360.webp" alt="slide at 22:40"></a></div></div>
+<div class="textcol"><h2>Autonomous automation requires a much higher trust bar than interactive coding</h2><ul class="takeaways"><li>Walter closes by distinguishing agentic engineering used interactively, where a human is present to steer and catch mistakes, from an autonomous automation that runs unsupervised.</li><li>She says reaching the point where the team trusted the automation&#x27;s output required crossing roughly 80-90% confidence, which she calls dramatically different from using an agent directly as an engineer.</li></ul><div class="quote"><p>&ldquo;getting to that agentic engineering automation level requires crossing towards the 80-90% trust, and it&#x27;s something that is dramatically different than using an agent directly as an engineer&rdquo;</p><span class="at">said at 22:18</span></div></div>
+</div>
+</section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/agentic-perf-optimization/s00_0.webp" alt="slide at 00:00"><div class="ts">00:00</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/agentic-perf-optimization/s01_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/agentic-perf-optimization/s02_70.webp" alt="slide at 01:10"><div class="ts">01:10</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/agentic-perf-optimization/s03_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/agentic-perf-optimization/s04_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/agentic-perf-optimization/s05_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/agentic-perf-optimization/s06_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/agentic-perf-optimization/s07_170.webp" alt="slide at 02:50"><div class="ts">02:50</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/agentic-perf-optimization/s08_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/agentic-perf-optimization/s09_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/agentic-perf-optimization/s10_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/agentic-perf-optimization/s11_280.webp" alt="slide at 04:40"><div class="ts">04:40</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/agentic-perf-optimization/s12_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/agentic-perf-optimization/s13_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/agentic-perf-optimization/s14_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/agentic-perf-optimization/s15_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/agentic-perf-optimization/s16_430.webp" alt="slide at 07:10"><div class="ts">07:10</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/agentic-perf-optimization/s17_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/agentic-perf-optimization/s18_590.webp" alt="slide at 09:50"><div class="ts">09:50</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/agentic-perf-optimization/s19_630.webp" alt="slide at 10:30"><div class="ts">10:30</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/agentic-perf-optimization/s20_660.webp" alt="slide at 11:00"><div class="ts">11:00</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/agentic-perf-optimization/s21_710.webp" alt="slide at 11:50"><div class="ts">11:50</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/agentic-perf-optimization/s22_860.webp" alt="slide at 14:20"><div class="ts">14:20</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/agentic-perf-optimization/s23_890.webp" alt="slide at 14:50"><div class="ts">14:50</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/agentic-perf-optimization/s24_960.webp" alt="slide at 16:00"><div class="ts">16:00</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/agentic-perf-optimization/s25_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/agentic-perf-optimization/s26_1100.webp" alt="slide at 18:20"><div class="ts">18:20</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/agentic-perf-optimization/s27_1190.webp" alt="slide at 19:50"><div class="ts">19:50</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/agentic-perf-optimization/s28_1340.webp" alt="slide at 22:20"><div class="ts">22:20</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/agentic-perf-optimization/s29_1360.webp" alt="slide at 22:40"><div class="ts">22:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (7)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>AI adoption&#x27;s biggest measured impact is individual effectiveness, while throughput stays flat and software delivery instability rises.</td><td class="tt">02:35</td></tr><tr><td class="st">asserts</td><td>Performance issues degrade into crises because the investigation phase to scope them is unpredictable and hard to prioritize.</td><td class="tt">03:36</td></tr><tr><td class="st">warns</td><td>Agent-proposed fixes commonly fail in three ways: sounding plausible but not working, struggling with complex ClickHouse queries, and taking lazy shortcuts like catching exceptions instead of fixing root cause.</td><td class="tt">08:47</td></tr><tr><td class="st">asserts</td><td>The agent applies the fix, reruns tests, and confirms measured impact before a human reviewer sees the result.</td><td class="tt">07:44</td></tr><tr><td class="st">warns</td><td>Opening dozens of automated PRs doesn&#x27;t work because people don&#x27;t have time or appetite to review a large batch of small fixes.</td><td class="tt">16:01</td></tr><tr><td class="st">asserts</td><td>Coding agents reason at the function and file level, so runtime context needs to be connected down to that level rather than staying at the service/endpoint metric level.</td><td class="tt">11:52</td></tr><tr><td class="st">asserts</td><td>Trusting an autonomous automation requires crossing roughly 80-90% confidence, categorically different from interactive agent use.</td><td class="tt">22:18</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/agentic-perf-optimization/s00_0.webp", "mmss": "00:00", "yt": "https://youtu.be/JJGbw4ggaFs?t=0"}, {"src": "img/agentic-perf-optimization/s01_30.webp", "mmss": "00:30", "yt": "https://youtu.be/JJGbw4ggaFs?t=30"}, {"src": "img/agentic-perf-optimization/s02_70.webp", "mmss": "01:10", "yt": "https://youtu.be/JJGbw4ggaFs?t=70"}, {"src": "img/agentic-perf-optimization/s03_100.webp", "mmss": "01:40", "yt": "https://youtu.be/JJGbw4ggaFs?t=100"}, {"src": "img/agentic-perf-optimization/s04_120.webp", "mmss": "02:00", "yt": "https://youtu.be/JJGbw4ggaFs?t=120"}, {"src": "img/agentic-perf-optimization/s05_130.webp", "mmss": "02:10", "yt": "https://youtu.be/JJGbw4ggaFs?t=130"}, {"src": "img/agentic-perf-optimization/s06_140.webp", "mmss": "02:20", "yt": "https://youtu.be/JJGbw4ggaFs?t=140"}, {"src": "img/agentic-perf-optimization/s07_170.webp", "mmss": "02:50", "yt": "https://youtu.be/JJGbw4ggaFs?t=170"}, {"src": "img/agentic-perf-optimization/s08_180.webp", "mmss": "03:00", "yt": "https://youtu.be/JJGbw4ggaFs?t=180"}, {"src": "img/agentic-perf-optimization/s09_200.webp", "mmss": "03:20", "yt": "https://youtu.be/JJGbw4ggaFs?t=200"}, {"src": "img/agentic-perf-optimization/s10_240.webp", "mmss": "04:00", "yt": "https://youtu.be/JJGbw4ggaFs?t=240"}, {"src": "img/agentic-perf-optimization/s11_280.webp", "mmss": "04:40", "yt": "https://youtu.be/JJGbw4ggaFs?t=280"}, {"src": "img/agentic-perf-optimization/s12_350.webp", "mmss": "05:50", "yt": "https://youtu.be/JJGbw4ggaFs?t=350"}, {"src": "img/agentic-perf-optimization/s13_360.webp", "mmss": "06:00", "yt": "https://youtu.be/JJGbw4ggaFs?t=360"}, {"src": "img/agentic-perf-optimization/s14_370.webp", "mmss": "06:10", "yt": "https://youtu.be/JJGbw4ggaFs?t=370"}, {"src": "img/agentic-perf-optimization/s15_380.webp", "mmss": "06:20", "yt": "https://youtu.be/JJGbw4ggaFs?t=380"}, {"src": "img/agentic-perf-optimization/s16_430.webp", "mmss": "07:10", "yt": "https://youtu.be/JJGbw4ggaFs?t=430"}, {"src": "img/agentic-perf-optimization/s17_490.webp", "mmss": "08:10", "yt": "https://youtu.be/JJGbw4ggaFs?t=490"}, {"src": "img/agentic-perf-optimization/s18_590.webp", "mmss": "09:50", "yt": "https://youtu.be/JJGbw4ggaFs?t=590"}, {"src": "img/agentic-perf-optimization/s19_630.webp", "mmss": "10:30", "yt": "https://youtu.be/JJGbw4ggaFs?t=630"}, {"src": "img/agentic-perf-optimization/s20_660.webp", "mmss": "11:00", "yt": "https://youtu.be/JJGbw4ggaFs?t=660"}, {"src": "img/agentic-perf-optimization/s21_710.webp", "mmss": "11:50", "yt": "https://youtu.be/JJGbw4ggaFs?t=710"}, {"src": "img/agentic-perf-optimization/s22_860.webp", "mmss": "14:20", "yt": "https://youtu.be/JJGbw4ggaFs?t=860"}, {"src": "img/agentic-perf-optimization/s23_890.webp", "mmss": "14:50", "yt": "https://youtu.be/JJGbw4ggaFs?t=890"}, {"src": "img/agentic-perf-optimization/s24_960.webp", "mmss": "16:00", "yt": "https://youtu.be/JJGbw4ggaFs?t=960"}, {"src": "img/agentic-perf-optimization/s25_1030.webp", "mmss": "17:10", "yt": "https://youtu.be/JJGbw4ggaFs?t=1030"}, {"src": "img/agentic-perf-optimization/s26_1100.webp", "mmss": "18:20", "yt": "https://youtu.be/JJGbw4ggaFs?t=1100"}, {"src": "img/agentic-perf-optimization/s27_1190.webp", "mmss": "19:50", "yt": "https://youtu.be/JJGbw4ggaFs?t=1190"}, {"src": "img/agentic-perf-optimization/s28_1340.webp", "mmss": "22:20", "yt": "https://youtu.be/JJGbw4ggaFs?t=1340"}, {"src": "img/agentic-perf-optimization/s29_1360.webp", "mmss": "22:40", "yt": "https://youtu.be/JJGbw4ggaFs?t=1360"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "JJGbw4ggaFs", "slug": "agentic-perf-optimization", "title": "From Blind Spots to Merged PRs: Continuous Agentic Performance Optimization", "speaker": "May Walter", "company": "Hud", "themes": ["agentic-engineering", "coding-agents", "infra-serving"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Verified-fix pipeline: prod data to human review (ours)", "lanes": ["Production data", "Agent workflow", "Human review"], "nodes": [{"id": "prod_context", "label": "Prod-to-code context", "sub": "connects runtime data to function/file level", "lane": 0, "kind": "store", "claim": "c6", "t": 712}, {"id": "weekly_run", "label": "Weekly agentic workflow", "sub": "runs against real production data", "lane": 1, "kind": "system", "claim": "c2", "t": 216}, {"id": "score_roi", "label": "Score by ROI", "sub": "flags high-ROI performance opportunities", "lane": 1, "kind": "system", "claim": "c2", "t": 216}, {"id": "propose_fix", "label": "Agent proposes fix", "sub": "sounds right but must be verified", "lane": 1, "kind": "system", "claim": "c3", "t": 527}, {"id": "rerun_tests", "label": "Rerun tests, verify impact", "sub": "confirms measured impact before human sees it", "lane": 1, "kind": "system", "claim": "c4", "t": 464}, {"id": "report", "label": "Prioritized report", "sub": "surfaces only highest-ROI, lowest-risk fixes", "lane": 2, "kind": "system", "claim": "c5", "t": 961}, {"id": "human", "label": "Human reviewer", "sub": "reviews a verified result, not a proposal", "lane": 2, "kind": "actor", "claim": "c4", "t": 464}], "edges": [{"from": "prod_context", "to": "weekly_run", "label": "context", "kind": "data"}, {"from": "weekly_run", "to": "score_roi", "label": "scans weekly", "kind": "flow"}, {"from": "score_roi", "to": "propose_fix", "label": "flags issue", "kind": "flow"}, {"from": "propose_fix", "to": "rerun_tests", "label": "applies fix", "kind": "flow"}, {"from": "rerun_tests", "to": "report", "label": "verified impact", "kind": "flow"}, {"from": "report", "to": "human", "label": "surfaces top fixes", "kind": "flow"}], "caption": "This traces Walter's weekly automation from production context through an agent-proposed and self-verified fix to a prioritized human report; the ROI-scoring step's exact position is inferred from her ordering of the talk (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "DORA metrics on AI adoption", "text": "AI adoption's biggest measured impact is individual effectiveness, while throughput stays flat and software delivery instability rises.", "quote": "the biggest impact of AI adoption on engineering is individual effectiveness", "t": 155}, {"id": "c2", "stance": "asserts", "topic": "investigation as the bottleneck", "text": "Performance issues degrade into crises because the investigation phase to scope them is unpredictable and hard to prioritize.", "quote": "that mostly happens because the research phase is a black box. It could take an hour or weeks and we have to pay that debt", "t": 216}, {"id": "c3", "stance": "warns", "topic": "agent fix failure modes", "text": "Agent-proposed fixes commonly fail in three ways: sounding plausible but not working, struggling with complex ClickHouse queries, and taking lazy shortcuts like catching exceptions instead of fixing root cause.", "quote": "the agent would suggest a fix. It sounds right. It would look fairly real and then after we verified it it it just didn't work", "t": 527}, {"id": "c4", "stance": "asserts", "topic": "verified fix before human review", "text": "The agent applies the fix, reruns tests, and confirms measured impact before a human reviewer sees the result.", "quote": "the agent actually fixes it reruns the tests and sees the impact that it had on that specific flow that was optimized", "t": 464}, {"id": "c5", "stance": "warns", "topic": "PR fatigue", "text": "Opening dozens of automated PRs doesn't work because people don't have time or appetite to review a large batch of small fixes.", "quote": "no one wants to wake up for, you know, a rain of 80 pull requests, as small as small as they can be. That's just not how people operate.", "t": 961}, {"id": "c6", "stance": "asserts", "topic": "function-level production context", "text": "Coding agents reason at the function and file level, so runtime context needs to be connected down to that level rather than staying at the service/endpoint metric level.", "quote": "our context is running on a function level, and it is also connected to the endpoint or event consumer or cron job that ended up starting this task", "t": 712}, {"id": "c7", "stance": "asserts", "topic": "trust threshold for autonomy", "text": "Trusting an autonomous automation requires crossing roughly 80-90% confidence, categorically different from interactive agent use.", "quote": "getting to that agentic engineering automation level requires crossing towards the 80-90% trust, and it's something that is dramatically different than using an agent directly as an engineer", "t": 1338}]}</script>
+</body></html>

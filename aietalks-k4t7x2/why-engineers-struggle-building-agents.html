@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Why (Senior) Engineers Struggle to Build AI Agents &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/3_gYbhABcAE" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 10 min</span><span class="ln"></span></div>
+<h1 class="lede">Why (Senior) Engineers Struggle to Build AI Agents</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Philipp Schmid &middot; Google DeepMind</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/3_gYbhABcAE" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/3_gYbhABcAE</a> &middot; 10 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">take</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Context engineering</span><span class="chip hot">Evals & benchmarks</span></div>
+<p class="deck" style="font-size:15px">Gives five concrete, practitioner-level distinctions between building traditional software and building agents, drawn from what the speaker sees internally at Google/Gemini and externally: iterative prompt loops instead of specs, semanti...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Agent-building replaces spec/code/test/deploy with an iterative instructions-run-observe-adjust loop, since the engineer no longer defines each execution step (c1, c2).</li><li>Long-running agents can&#x27;t just restart on failure -- errors need to feed back as input -- and can&#x27;t be graded with deterministic unit tests, which need to become evals measuring pass rate (c4, c5, c6).</li><li>APIs and tools need self-documenting, semantic interfaces because agents only see function schemas and docstrings, not years of institutional context a human engineer has (c7).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">WHY THE SOFTWARE MODEL BREAKS FOR AGENTS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 756.00 197.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 192.84)">
+<title>G</title>
+<!-- p1 -->
+<g id="node1" class="node">
+<title>p1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="343.79,-188.84 171.62,-188.84 171.62,-152.56 343.79,-152.56 343.79,-188.84"/>
+<text xml:space="preserve" text-anchor="start" x="184.58" y="-170.75" font-family="Geist Mono" font-size="11.00">Spec/code/test/deploy breaks</text>
+<text xml:space="preserve" text-anchor="start" x="191.33" y="-162.6" font-family="Geist Mono" font-size="8.00" fill="#807565">iterate: instruct, run, observe, adjust</text>
+</g>
+<!-- m1 -->
+<g id="node3" class="node">
+<title>m1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="147.42,-112.56 0,-112.56 0,-76.28 147.42,-76.28 147.42,-112.56"/>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-94.47" font-family="Geist Mono" font-size="11.00">Dispatcher, not controller</text>
+<text xml:space="preserve" text-anchor="start" x="15.21" y="-86.32" font-family="Geist Mono" font-size="8.00" fill="#807565">set the goal, not the exact route</text>
+</g>
+<!-- p1&#45;&gt;m1 -->
+<g id="edge1" class="edge">
+<title>p1&#45;&gt;m1</title>
+<path fill="none" stroke="#c8501f" d="M213.64,-151.91C187.11,-141.2 153.2,-127.51 125.41,-116.29"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="126.55,-114.11 119.14,-113.76 124.72,-118.65 126.55,-114.11"/>
+</g>
+<!-- m2 -->
+<g id="node4" class="node">
+<title>m2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="346.42,-112.56 169,-112.56 169,-76.28 346.42,-76.28 346.42,-112.56"/>
+<text xml:space="preserve" text-anchor="start" x="196.21" y="-94.47" font-family="Geist Mono" font-size="11.00">Errors feed back as input</text>
+<text xml:space="preserve" text-anchor="start" x="181.96" y="-86.32" font-family="Geist Mono" font-size="8.00" fill="#807565">restarting a 5&#45;15 min run wastes compute</text>
+</g>
+<!-- p1&#45;&gt;m2 -->
+<g id="edge2" class="edge">
+<title>p1&#45;&gt;m2</title>
+<path fill="none" stroke="#c8501f" d="M257.71,-152.1C257.71,-143 257.71,-131.73 257.71,-121.64"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="260.16,-121.67 257.71,-114.67 255.26,-121.67 260.16,-121.67"/>
+</g>
+<!-- m3 -->
+<g id="node5" class="node">
+<title>m3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="536.54,-112.56 368.88,-112.56 368.88,-76.28 536.54,-76.28 536.54,-112.56"/>
+<text xml:space="preserve" text-anchor="start" x="393.83" y="-94.47" font-family="Geist Mono" font-size="11.00">Unit tests become evals</text>
+<text xml:space="preserve" text-anchor="start" x="381.83" y="-86.32" font-family="Geist Mono" font-size="8.00" fill="#807565">same input, no guaranteed same result</text>
+</g>
+<!-- p1&#45;&gt;m3 -->
+<g id="edge3" class="edge">
+<title>p1&#45;&gt;m3</title>
+<path fill="none" stroke="#c8501f" d="M304.42,-151.91C332.65,-141.15 368.78,-127.39 398.3,-116.15"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="398.96,-118.52 404.63,-113.73 397.22,-113.94 398.96,-118.52"/>
+</g>
+<!-- p2 -->
+<g id="node2" class="node">
+<title>p2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="742.42,-188.84 565,-188.84 565,-152.56 742.42,-152.56 742.42,-188.84"/>
+<text xml:space="preserve" text-anchor="start" x="577.96" y="-170.75" font-family="Geist Mono" font-size="11.00">Agents lack institutional contex</text>
+<text xml:space="preserve" text-anchor="start" x="583.96" y="-162.6" font-family="Geist Mono" font-size="8.00" fill="#807565">only see schemas, docstrings, tool defs</text>
+</g>
+<!-- m4 -->
+<g id="node6" class="node">
+<title>m4</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="748.42,-112.56 559,-112.56 559,-76.28 748.42,-76.28 748.42,-112.56"/>
+<text xml:space="preserve" text-anchor="start" x="571.96" y="-94.47" font-family="Geist Mono" font-size="11.00">Tools need self&#45;documenting APIs</text>
+<text xml:space="preserve" text-anchor="start" x="576.09" y="-86.32" font-family="Geist Mono" font-size="8.00" fill="#807565">semantic schemas replace tribal knowledge</text>
+</g>
+<!-- p2&#45;&gt;m4 -->
+<g id="edge4" class="edge">
+<title>p2&#45;&gt;m4</title>
+<path fill="none" stroke="#c8501f" d="M653.71,-152.1C653.71,-143 653.71,-131.73 653.71,-121.64"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="656.16,-121.67 653.71,-114.67 651.26,-121.67 656.16,-121.67"/>
+</g>
+<!-- q2 -->
+<g id="node8" class="node">
+<title>q2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="245.04,-36.28 86.37,-36.28 86.37,0 245.04,0 245.04,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="118.08" y="-18.19" font-family="Geist Mono" font-size="11.00">Design for recovery</text>
+<text xml:space="preserve" text-anchor="start" x="99.33" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">assume failure, not reliable execution</text>
+</g>
+<!-- m1&#45;&gt;q2 -->
+<g id="edge7" class="edge">
+<title>m1&#45;&gt;q2</title>
+<path fill="none" stroke="#c8501f" d="M95.51,-75.82C108.02,-65.71 123.88,-52.92 137.35,-42.04"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="138.66,-44.13 142.57,-37.83 135.58,-40.32 138.66,-44.13"/>
+</g>
+<!-- m2&#45;&gt;q2 -->
+<g id="edge5" class="edge">
+<title>m2&#45;&gt;q2</title>
+<path fill="none" stroke="#c8501f" d="M235.91,-75.82C223.4,-65.71 207.54,-52.92 194.07,-42.04"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="195.84,-40.32 188.85,-37.83 192.76,-44.13 195.84,-40.32"/>
+</g>
+<!-- q1 -->
+<g id="node7" class="node">
+<title>q1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="543.67,-36.28 361.75,-36.28 361.75,0 543.67,0 543.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="374.71" y="-18.19" font-family="Geist Mono" font-size="11.00">1&#45;in&#45;10 success is not shippable</text>
+<text xml:space="preserve" text-anchor="start" x="375.08" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">same prompt succeeding rarely blocks prod</text>
+</g>
+<!-- m3&#45;&gt;q1 -->
+<g id="edge6" class="edge">
+<title>m3&#45;&gt;q1</title>
+<path fill="none" stroke="#c8501f" d="M452.71,-75.82C452.71,-66.72 452.71,-55.45 452.71,-45.36"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="455.16,-45.39 452.71,-38.39 450.26,-45.39 455.16,-45.39"/>
+</g>
+<!-- q3 -->
+<g id="node9" class="node">
+<title>q3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="731.17,-36.28 576.25,-36.28 576.25,0 731.17,0 731.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="598.96" y="-18.19" font-family="Geist Mono" font-size="11.00">Software is disposable</text>
+<text xml:space="preserve" text-anchor="start" x="589.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">expect to rebuild as models improve</text>
+</g>
+<!-- m4&#45;&gt;q3 -->
+<g id="edge8" class="edge">
+<title>m4&#45;&gt;q3</title>
+<path fill="none" stroke="#c8501f" d="M653.71,-75.82C653.71,-66.72 653.71,-55.45 653.71,-45.36"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="656.16,-45.39 653.71,-38.39 651.26,-45.39 656.16,-45.39"/>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces his argument from two premises about agents through the practices they force to the consequences for how teams ship and rebuild software (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>From writing code to writing instructions</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/why-engineers-struggle-building-agents/s01_80.webp" alt="slide at 01:20"></a><div class="slidecap">Slide at 01:20 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s02_110.webp" alt="slide at 01:50"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s03_120.webp" alt="slide at 02:00"></a></div></div>
+<div class="textcol"><h2>From writing code to writing instructions</h2><ul class="takeaways"><li>Traditional software development follows spec, code, test, deploy; building agents instead means defining instructions, running the agent, observing what it does, and adjusting prompts or tools in a loop.</li><li>He compares the shift to going from traffic controller (control every road and light) to dispatcher (define the destination, not the exact route).</li></ul><div class="quote"><p>&ldquo;We define instructions on what we want our agent to do. We run it, we observe what it does, we maybe adjust our prompts, maybe we adjust our tools&rdquo;</p><span class="at">said at 01:03</span></div><div class="quote"><p>&ldquo;traditional software is more like we acted as a traffic controller, right&rdquo;</p><span class="at">said at 01:03</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Text replaces data structures as the interface</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/why-engineers-struggle-building-agents/s03_120.webp" alt="slide at 02:00"></a><div class="slidecap">Slide at 02:00 &middot; click any slide to enlarge &middot; 5 more from this section below</div><div class=strip><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s04_220.webp" alt="slide at 03:40"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s05_250.webp" alt="slide at 04:10"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s06_270.webp" alt="slide at 04:30"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s07_290.webp" alt="slide at 04:50"></a><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s08_300.webp" alt="slide at 05:00"></a></div></div>
+<div class="textcol"><h2>Text replaces data structures as the interface</h2><ul class="takeaways"><li>Where traditional systems mapped everything to booleans and flags, LLM-based agents can hold semantic meaning in plain text -- for example, a deep-research agent&#x27;s plan can be approved while the user simultaneously injects new constraints in the same turn, instead of requiring a separate decline-and-resubmit step.</li></ul><div class="quote"><p>&ldquo;I can approve the initial plan, but I can also on the same time provide additional information&rdquo;</p><span class="at">said at 02:37</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Errors must feed back in, not trigger a restart</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="8" class="sl"><img loading="lazy" class="main" src="img/why-engineers-struggle-building-agents/s08_300.webp" alt="slide at 05:00"></a><div class="slidecap">Slide at 05:00 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s09_360.webp" alt="slide at 06:00"></a></div></div>
+<div class="textcol"><h2>Errors must feed back in, not trigger a restart</h2><ul class="takeaways"><li>For a long-running agent (5-15 minutes of work), restarting from scratch after a failure wastes compute and loses accumulated context, so failures need to be treated like any other model input and fed back in rather than causing a full re-run.</li></ul><div class="quote"><p>&ldquo;if you have like an agent which takes 5 minutes, 15 minutes and something in the flow breaks and you would start all all over, you would need to spend you need to spend a lot of compute again&rdquo;</p><span class="at">said at 05:14</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Unit tests give way to evals</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="10" class="sl"><img loading="lazy" class="main" src="img/why-engineers-struggle-building-agents/s10_380.webp" alt="slide at 06:20"></a><div class="slidecap">Slide at 06:20 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s11_400.webp" alt="slide at 06:40"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s12_460.webp" alt="slide at 07:40"></a></div></div>
+<div class="textcol"><h2>Unit tests give way to evals</h2><ul class="takeaways"><li>Because agents are non-deterministic, the same input won&#x27;t reliably produce the same output, so teams need to shift from unit tests asserting a fixed result to evals measuring how often something works, using an LLM-as-judge or human expert.</li><li>A customer agent that only succeeds one time in ten on the same prompt isn&#x27;t production-ready.</li></ul><div class="quote"><p>&ldquo;we cannot always guarantee that the same input will lead to the same steps and the same result. So we need to move from unit tests to eval&rdquo;</p><span class="at">said at 06:16</span></div><div class="quote"><p>&ldquo;If you have a customer agent and the same prompt only works one out of 10 times, it&#x27;s nothing really you want to put in production&rdquo;</p><span class="at">said at 06:46</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>APIs need to be rewritten for agents, and rebuilt often</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="12" class="sl"><img loading="lazy" class="main" src="img/why-engineers-struggle-building-agents/s12_460.webp" alt="slide at 07:40"></a><div class="slidecap">Slide at 07:40 &middot; click any slide to enlarge &middot; 5 more from this section below</div><div class=strip><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s13_490.webp" alt="slide at 08:10"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s14_530.webp" alt="slide at 08:50"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s15_540.webp" alt="slide at 09:00"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s16_590.webp" alt="slide at 09:50"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/why-engineers-struggle-building-agents/s17_610.webp" alt="slide at 10:10"></a></div></div>
+<div class="textcol"><h2>APIs need to be rewritten for agents, and rebuilt often</h2><ul class="takeaways"><li>Agents only see function schemas, docstrings, and tool definitions -- not the years of background an engineer has with an existing API -- so tools need self-documenting, semantic interfaces.</li><li>He closes with recommendations to design for recovery rather than assuming reliability, and to expect to rebuild agent systems repeatedly as models improve, since the software itself is disposable.</li></ul><div class="quote"><p>&ldquo;our agents only see like the function schemas and the doc strings and the tool definition&rdquo;</p><span class="at">said at 07:49</span></div><div class="quote"><p>&ldquo;We need to design for recovery. Models are not perfect. Agents are not perfect, especially if we have longer running agents&rdquo;</p><span class="at">said at 09:52</span></div><div class="quote"><p>&ldquo;software is disposable. We are going to rebuild many, many times the same things with better models, better agents&rdquo;</p><span class="at">said at 09:52</span></div></div>
+</div>
+</section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s00_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s01_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s02_110.webp" alt="slide at 01:50"><div class="ts">01:50</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s03_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s04_220.webp" alt="slide at 03:40"><div class="ts">03:40</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s05_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s06_270.webp" alt="slide at 04:30"><div class="ts">04:30</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s07_290.webp" alt="slide at 04:50"><div class="ts">04:50</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s08_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s09_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s10_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s11_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s12_460.webp" alt="slide at 07:40"><div class="ts">07:40</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s13_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s14_530.webp" alt="slide at 08:50"><div class="ts">08:50</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s15_540.webp" alt="slide at 09:00"><div class="ts">09:00</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s16_590.webp" alt="slide at 09:50"><div class="ts">09:50</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/why-engineers-struggle-building-agents/s17_610.webp" alt="slide at 10:10"><div class="ts">10:10</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Building agents replaces the traditional spec-code-test-deploy sequence with an iterative loop of defining instructions, running, observing, and adjusting prompts or tools.</td><td class="tt">01:03</td></tr><tr><td class="st">asserts</td><td>He compares traditional software engineering to acting as a traffic controller, versus agent engineering, which is more like a dispatcher who sets the goal but not the exact route.</td><td class="tt">01:03</td></tr><tr><td class="st">asserts</td><td>A deep-research agent&#x27;s plan can be approved while the user simultaneously provides additional constraints in the same step, because LLMs can parse semantic meaning that rigid data structures couldn&#x27;t.</td><td class="tt">02:37</td></tr><tr><td class="st">warns</td><td>For a long-running agent, restarting from scratch after a failure wastes significant compute and loses accumulated context, so errors need to be fed back to the model as input.</td><td class="tt">05:14</td></tr><tr><td class="st">recommends</td><td>Because the same input won&#x27;t reliably produce the same result from an agent, teams need to move from unit tests to evals measuring how often something works.</td><td class="tt">06:16</td></tr><tr><td class="st">warns</td><td>An agent that only succeeds one time in ten on an identical prompt is not something you want in production.</td><td class="tt">06:46</td></tr><tr><td class="st">warns</td><td>Agents only see function schemas, docstrings, and tool definitions, not the years of background knowledge a human engineer has with an existing API.</td><td class="tt">07:49</td></tr><tr><td class="st">recommends</td><td>Because agents are not perfect, especially longer-running ones, systems should be designed for recovery rather than assuming reliable execution.</td><td class="tt">09:52</td></tr><tr><td class="st">predicts</td><td>He expects agent software to be rebuilt repeatedly as better models and agents arrive, rather than treated as a durable, one-time build.</td><td class="tt">09:52</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/why-engineers-struggle-building-agents/s00_30.webp", "mmss": "00:30", "yt": "https://youtu.be/3_gYbhABcAE?t=30"}, {"src": "img/why-engineers-struggle-building-agents/s01_80.webp", "mmss": "01:20", "yt": "https://youtu.be/3_gYbhABcAE?t=80"}, {"src": "img/why-engineers-struggle-building-agents/s02_110.webp", "mmss": "01:50", "yt": "https://youtu.be/3_gYbhABcAE?t=110"}, {"src": "img/why-engineers-struggle-building-agents/s03_120.webp", "mmss": "02:00", "yt": "https://youtu.be/3_gYbhABcAE?t=120"}, {"src": "img/why-engineers-struggle-building-agents/s04_220.webp", "mmss": "03:40", "yt": "https://youtu.be/3_gYbhABcAE?t=220"}, {"src": "img/why-engineers-struggle-building-agents/s05_250.webp", "mmss": "04:10", "yt": "https://youtu.be/3_gYbhABcAE?t=250"}, {"src": "img/why-engineers-struggle-building-agents/s06_270.webp", "mmss": "04:30", "yt": "https://youtu.be/3_gYbhABcAE?t=270"}, {"src": "img/why-engineers-struggle-building-agents/s07_290.webp", "mmss": "04:50", "yt": "https://youtu.be/3_gYbhABcAE?t=290"}, {"src": "img/why-engineers-struggle-building-agents/s08_300.webp", "mmss": "05:00", "yt": "https://youtu.be/3_gYbhABcAE?t=300"}, {"src": "img/why-engineers-struggle-building-agents/s09_360.webp", "mmss": "06:00", "yt": "https://youtu.be/3_gYbhABcAE?t=360"}, {"src": "img/why-engineers-struggle-building-agents/s10_380.webp", "mmss": "06:20", "yt": "https://youtu.be/3_gYbhABcAE?t=380"}, {"src": "img/why-engineers-struggle-building-agents/s11_400.webp", "mmss": "06:40", "yt": "https://youtu.be/3_gYbhABcAE?t=400"}, {"src": "img/why-engineers-struggle-building-agents/s12_460.webp", "mmss": "07:40", "yt": "https://youtu.be/3_gYbhABcAE?t=460"}, {"src": "img/why-engineers-struggle-building-agents/s13_490.webp", "mmss": "08:10", "yt": "https://youtu.be/3_gYbhABcAE?t=490"}, {"src": "img/why-engineers-struggle-building-agents/s14_530.webp", "mmss": "08:50", "yt": "https://youtu.be/3_gYbhABcAE?t=530"}, {"src": "img/why-engineers-struggle-building-agents/s15_540.webp", "mmss": "09:00", "yt": "https://youtu.be/3_gYbhABcAE?t=540"}, {"src": "img/why-engineers-struggle-building-agents/s16_590.webp", "mmss": "09:50", "yt": "https://youtu.be/3_gYbhABcAE?t=590"}, {"src": "img/why-engineers-struggle-building-agents/s17_610.webp", "mmss": "10:10", "yt": "https://youtu.be/3_gYbhABcAE?t=610"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "3_gYbhABcAE", "slug": "why-engineers-struggle-building-agents", "title": "Why (Senior) Engineers Struggle to Build AI Agents", "speaker": "Philipp Schmid", "company": "Google DeepMind", "themes": ["agentic-engineering", "context-engineering", "evals-benchmarks"], "tier": "slide-brief", "depth": "take", "diagram": {"title": "Why the software model breaks for agents (ours)", "caption": "This traces his argument from two premises about agents through the practices they force to the consequences for how teams ship and rebuild software (ours).", "lanes": ["premise", "mechanism", "consequence"], "nodes": [{"id": "p1", "lane": 0, "kind": "system", "label": "Spec/code/test/deploy breaks", "sub": "iterate: instruct, run, observe, adjust", "t": 63, "claim": "c1"}, {"id": "p2", "lane": 0, "kind": "system", "label": "Agents lack institutional context", "sub": "only see schemas, docstrings, tool defs", "t": 469, "claim": "c7"}, {"id": "m1", "lane": 1, "kind": "actor", "label": "Dispatcher, not controller", "sub": "set the goal, not the exact route", "t": 63, "claim": "c2"}, {"id": "m2", "lane": 1, "kind": "system", "label": "Errors feed back as input", "sub": "restarting a 5-15 min run wastes compute", "t": 314, "claim": "c4"}, {"id": "m3", "lane": 1, "kind": "system", "label": "Unit tests become evals", "sub": "same input, no guaranteed same result", "t": 376, "claim": "c5"}, {"id": "m4", "lane": 1, "kind": "external", "label": "Tools need self-documenting APIs", "sub": "semantic schemas replace tribal knowledge", "t": 469, "claim": "c7"}, {"id": "q1", "lane": 2, "kind": "system", "label": "1-in-10 success is not shippable", "sub": "same prompt succeeding rarely blocks prod", "t": 406, "claim": "c6"}, {"id": "q2", "lane": 2, "kind": "system", "label": "Design for recovery", "sub": "assume failure, not reliable execution", "t": 592, "claim": "c8"}, {"id": "q3", "lane": 2, "kind": "system", "label": "Software is disposable", "sub": "expect to rebuild as models improve", "t": 592, "claim": "c9"}], "edges": [{"from": "p1", "to": "m1", "label": "", "kind": "flow"}, {"from": "p1", "to": "m2", "label": "", "kind": "flow"}, {"from": "p1", "to": "m3", "label": "", "kind": "flow"}, {"from": "p2", "to": "m4", "label": "", "kind": "flow"}, {"from": "m2", "to": "q2", "label": "", "kind": "flow"}, {"from": "m3", "to": "q1", "label": "", "kind": "flow"}, {"from": "m1", "to": "q2", "label": "", "kind": "flow"}, {"from": "m4", "to": "q3", "label": "", "kind": "flow"}]}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "agent-building loop", "text": "Building agents replaces the traditional spec-code-test-deploy sequence with an iterative loop of defining instructions, running, observing, and adjusting prompts or tools.", "quote": "We define instructions on what we want our agent to do. We run it, we observe what it does, we maybe adjust our prompts, maybe we adjust our tools", "t": 63}, {"id": "c2", "stance": "asserts", "topic": "dispatcher vs traffic controller", "text": "He compares traditional software engineering to acting as a traffic controller, versus agent engineering, which is more like a dispatcher who sets the goal but not the exact route.", "quote": "traditional software is more like we acted as a traffic controller, right", "t": 63}, {"id": "c3", "stance": "asserts", "topic": "semantic text plans", "text": "A deep-research agent's plan can be approved while the user simultaneously provides additional constraints in the same step, because LLMs can parse semantic meaning that rigid data structures couldn't.", "quote": "I can approve the initial plan, but I can also on the same time provide additional information", "t": 157}, {"id": "c4", "stance": "warns", "topic": "errors as inputs", "text": "For a long-running agent, restarting from scratch after a failure wastes significant compute and loses accumulated context, so errors need to be fed back to the model as input.", "quote": "if you have like an agent which takes 5 minutes, 15 minutes and something in the flow breaks and you would start all all over, you would need to spend you need to spend a lot of compute again", "t": 314}, {"id": "c5", "stance": "recommends", "topic": "unit tests to evals", "text": "Because the same input won't reliably produce the same result from an agent, teams need to move from unit tests to evals measuring how often something works.", "quote": "we cannot always guarantee that the same input will lead to the same steps and the same result. So we need to move from unit tests to eval", "t": 376}, {"id": "c6", "stance": "warns", "topic": "reliability bar for production", "text": "An agent that only succeeds one time in ten on an identical prompt is not something you want in production.", "quote": "If you have a customer agent and the same prompt only works one out of 10 times, it's nothing really you want to put in production", "t": 406}, {"id": "c7", "stance": "warns", "topic": "agents can't see institutional context", "text": "Agents only see function schemas, docstrings, and tool definitions, not the years of background knowledge a human engineer has with an existing API.", "quote": "our agents only see like the function schemas and the doc strings and the tool definition", "t": 469}, {"id": "c8", "stance": "recommends", "topic": "design for recovery", "text": "Because agents are not perfect, especially longer-running ones, systems should be designed for recovery rather than assuming reliable execution.", "quote": "We need to design for recovery. Models are not perfect. Agents are not perfect, especially if we have longer running agents", "t": 592}, {"id": "c9", "stance": "predicts", "topic": "build to delete", "text": "He expects agent software to be rebuilt repeatedly as better models and agents arrive, rather than treated as a durable, one-time build.", "quote": "software is disposable. We are going to rebuild many, many times the same things with better models, better agents", "t": 592}]}</script>
+</body></html>

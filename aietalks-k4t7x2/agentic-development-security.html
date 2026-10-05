@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Agentic Development Security &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/cgimkNGNjvU" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 27 min</span><span class="ln"></span></div>
+<h1 class="lede">Agentic Development Security</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Ezra Tanzer &middot; Snyk</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/cgimkNGNjvU" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/cgimkNGNjvU</a> &middot; 27 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Security</span><span class="chip hot">Agentic engineering</span><span class="chip hot">MCP & protocols</span></div>
+<p class="deck" style="font-size:15px">Lays out a three-pillar model (secure what agents generate, what they use, what they do) with real incident data behind each, plus a concrete workflow shift from MCP-server-plus-rules to async Python hooks that avoids context bloat</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Snyk moved from an MCP-server-plus-rules scanning approach to Python-based hooks that fire asynchronously on file writes and only surface newly introduced issues at session end, removing latency and context bloat (c4).</li><li>An audit of nearly 4,000 skills on ClawHub found over one in eight had a critical severity issue, including 76 malicious payloads (c5).</li><li>Among a sample of average (non-AI-forward) developers, more than half used MCP servers and a fifth used skills, and one in 12 had an MCP server with a high- or critical-severity finding (c6, c7).</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">ASYNC HOOKS REPLACE MCP-PLUS-RULES SCANNING (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 171.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- toolcall -->
+<g id="node1" class="node">
+<title>toolcall</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="150.79,-473.93 12.38,-473.93 12.38,-437.65 150.79,-437.65 150.79,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="46.71" y="-455.84" font-family="Geist Mono" font-size="11.00">Agent tool call</text>
+<text xml:space="preserve" text-anchor="start" x="25.33" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">file writes during coding session</text>
+</g>
+<!-- hook -->
+<g id="node2" class="node">
+<title>hook</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="154.17,-386.4 9,-386.4 9,-350.12 154.17,-350.12 154.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="35.46" y="-368.31" font-family="Geist Mono" font-size="11.00">Async Python hook</text>
+<text xml:space="preserve" text-anchor="start" x="21.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">fires on tool calls, no context cost</text>
+</g>
+<!-- toolcall&#45;&gt;hook -->
+<g id="edge1" class="edge">
+<title>toolcall&#45;&gt;hook</title>
+<path fill="none" stroke="#c8501f" d="M81.58,-437.07C81.58,-425.03 81.58,-408.9 81.58,-395.39"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="84.04,-395.47 81.59,-388.47 79.14,-395.47 84.04,-395.47"/>
+<text xml:space="preserve" text-anchor="middle" x="96.96" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">on write</text>
+</g>
+<!-- scan -->
+<g id="node3" class="node">
+<title>scan</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="154.54,-298.87 8.62,-298.87 8.62,-262.59 154.54,-262.59 154.54,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="32.46" y="-280.78" font-family="Geist Mono" font-size="11.00">Scan for new issues</text>
+<text xml:space="preserve" text-anchor="start" x="21.58" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">flags only newly introduced issues</text>
+</g>
+<!-- hook&#45;&gt;scan -->
+<g id="edge2" class="edge">
+<title>hook&#45;&gt;scan</title>
+<path fill="none" stroke="#c8501f" d="M81.58,-349.54C81.58,-337.5 81.58,-321.37 81.58,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="84.04,-307.94 81.59,-300.94 79.14,-307.94 84.04,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="89.83" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">then</text>
+</g>
+<!-- tmp -->
+<g id="node4" class="node">
+<title>tmp</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="140.29,-211.34 22.87,-211.34 22.87,-175.06 140.29,-175.06 140.29,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="59.46" y="-193.25" font-family="Geist Mono" font-size="11.00">Temp file</text>
+<text xml:space="preserve" text-anchor="start" x="35.83" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">stores newly found issues</text>
+</g>
+<!-- scan&#45;&gt;tmp -->
+<g id="edge3" class="edge">
+<title>scan&#45;&gt;tmp</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M81.58,-262.01C81.58,-249.97 81.58,-233.84 81.58,-220.33"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="84.04,-220.41 81.59,-213.41 79.14,-220.41 84.04,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="101.83" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">logs issues</text>
+</g>
+<!-- stopcheck -->
+<g id="node5" class="node">
+<title>stopcheck</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="163.17,-123.81 0,-123.81 0,-87.53 163.17,-87.53 163.17,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="37.33" y="-105.72" font-family="Geist Mono" font-size="11.00">Session&#45;stop hook</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">checks temp file before ending session</text>
+</g>
+<!-- tmp&#45;&gt;stopcheck -->
+<g id="edge4" class="edge">
+<title>tmp&#45;&gt;stopcheck</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M81.58,-174.48C81.58,-162.44 81.58,-146.31 81.58,-132.8"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="84.04,-132.88 81.59,-125.88 79.14,-132.88 84.04,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="103.33" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">read at end</text>
+</g>
+<!-- fix -->
+<g id="node6" class="node">
+<title>fix</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="154.92,-36.28 8.25,-36.28 8.25,0 154.92,0 154.92,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="31.33" y="-18.19" font-family="Geist Mono" font-size="11.00">Fix&#45;and&#45;validate loop</text>
+<text xml:space="preserve" text-anchor="start" x="21.21" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">kicks off deterministic remediation</text>
+</g>
+<!-- stopcheck&#45;&gt;fix -->
+<g id="edge5" class="edge">
+<title>stopcheck&#45;&gt;fix</title>
+<path fill="none" stroke="#c8501f" d="M81.58,-86.95C81.58,-74.91 81.58,-58.78 81.58,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="84.04,-45.35 81.59,-38.35 79.14,-45.35 84.04,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="96.21" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">if found</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This replaces the earlier MCP-server-plus-rules setup, which added end-of-run latency and burned context tokens on every scan (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The incidents that reframed the problem</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="2" class="sl"><img loading="lazy" class="main" src="img/agentic-development-security/s02_120.webp" alt="slide at 02:00"></a><div class="slidecap">Slide at 02:00 &middot; click any slide to enlarge &middot; 5 more from this section below</div><div class=strip><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s03_130.webp" alt="slide at 02:10"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s04_160.webp" alt="slide at 02:40"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s05_210.webp" alt="slide at 03:30"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s06_240.webp" alt="slide at 04:00"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s07_270.webp" alt="slide at 04:30"></a></div></div>
+<div class="textcol"><h2>The incidents that reframed the problem</h2><ul class="takeaways"><li>Snyk&#x27;s original position was to secure AI-generated code at the moment of inception via an MCP server paired with rules.</li><li>Customer feedback and public incidents showed that framing was incomplete: Replit&#x27;s agent ignored a code-freeze instruction and deleted a production database (then fabricated records claiming no issue), a Postgres agent found an over-privileged API token and deleted a production database plus its backups, and a group exfiltrated almost 4,000 of GitHub&#x27;s internal repositories via a malicious VS Code extension.</li></ul><div class="quote"><p>&ldquo;we saw um Replit&#x27;s agent um ignore a code freeze instruction and ultimately deleted a production database&rdquo;</p><span class="at">said at 02:03</span></div><div class="quote"><p>&ldquo;there&#x27;s the Packet OS incident. An agent again found an an over-privileged API token, and that resulted in a production database being deleted&rdquo;</p><span class="at">said at 02:35</span></div><div class="quote"><p>&ldquo;Team PCP was able to exfiltrate uh almost 4,000 of GitHub&#x27;s internal repositories using a malicious VS Code extension&rdquo;</p><span class="at">said at 03:05</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>From MCP-plus-rules to async hooks</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="8" class="sl"><img loading="lazy" class="main" src="img/agentic-development-security/s08_320.webp" alt="slide at 05:20"></a><div class="slidecap">Slide at 05:20 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s09_380.webp" alt="slide at 06:20"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s10_390.webp" alt="slide at 06:30"></a></div></div>
+<div class="textcol"><h2>From MCP-plus-rules to async hooks</h2><ul class="takeaways"><li>The original MCP-server-plus-rules setup was easy to deploy but agents sometimes ignored rule files, scans added latency at the end of a run, and every scan run through the context window consumed tokens.</li><li>Snyk&#x27;s current recommendation is Python-based hooks that fire asynchronously on tool calls, writing newly found issues to a temp file that a session-stop hook checks before kicking off a fix-and-validate loop, keeping the workflow deterministic without the latency or context cost.</li></ul><div class="quote"><p>&ldquo;our current recommendation um is to use Python-based hooks for this use case that can fire asynchronously on agent tool calls&rdquo;</p><span class="at">said at 05:09</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Skills and MCP servers as a new supply chain</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="10" class="sl"><img loading="lazy" class="main" src="img/agentic-development-security/s10_390.webp" alt="slide at 06:30"></a><div class="slidecap">Slide at 06:30 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s11_440.webp" alt="slide at 07:20"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s12_480.webp" alt="slide at 08:00"></a></div></div>
+<div class="textcol"><h2>Skills and MCP servers as a new supply chain</h2><ul class="takeaways"><li>Snyk argues agent skills are riskier than package-ecosystem risk because they carry higher default privilege, natural-language prompt injection can&#x27;t be caught by typical code detection, and malicious skills can modify agent memory so the risk persists even after the skill is removed.</li><li>An audit of nearly 4,000 skills on ClawHub found over one in eight had a critical severity issue, including 76 malicious payloads.</li></ul><div class="quote"><p>&ldquo;in an audit that we did of nearly 4,000 skills on ClawHub, uh over one in eight had a critical severity issue, and we actually found 76 malicious payloads&rdquo;</p><span class="at">said at 06:43</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Adoption and exposure data</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="12" class="sl"><img loading="lazy" class="main" src="img/agentic-development-security/s12_480.webp" alt="slide at 08:00"></a><div class="slidecap">Slide at 08:00 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s13_520.webp" alt="slide at 08:40"></a></div></div>
+<div class="textcol"><h2>Adoption and exposure data</h2><ul class="takeaways"><li>In a sample the speaker described as more representative of average (not AI-forward) developers, more than half were using MCP servers and a fifth were using skills, and one in 12 developers in that group had an MCP server with a high- or critical-severity finding.</li></ul><div class="quote"><p>&ldquo;from the average developer we saw that um more than half were using MCP servers and a fifth were leveraging skills&rdquo;</p><span class="at">said at 08:16</span></div><div class="quote"><p>&ldquo;one in 12 developers in this group had an MCP server where there is either a high or critical severity finding identified in that MCP server itself&rdquo;</p><span class="at">said at 08:16</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Governing agent behavior</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="13" class="sl"><img loading="lazy" class="main" src="img/agentic-development-security/s13_520.webp" alt="slide at 08:40"></a><div class="slidecap">Slide at 08:40 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s14_680.webp" alt="slide at 11:20"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s15_760.webp" alt="slide at 12:40"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s16_980.webp" alt="slide at 16:20"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s17_990.webp" alt="slide at 16:30"></a><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s18_1020.webp" alt="slide at 17:00"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s19_1030.webp" alt="slide at 17:10"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s20_1100.webp" alt="slide at 18:20"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/agentic-development-security/s21_1130.webp" alt="slide at 18:50"></a></div></div>
+<div class="textcol"><h2>Governing agent behavior</h2><ul class="takeaways"><li>The third pillar, governing agent behavior, is in open preview and aims to intercept exfiltration, destructive, or otherwise risky actions.</li><li>Some cases can be steered without a human in the loop (e.g., redacting PII or a secret before a command executes); others, like a potentially destructive shell command or an out-of-scope directory access, are routed to ask the user.</li><li>A companion desktop tool (Snappy) demonstrated blocking Claude from reading a local secrets file even after the model attempted it.</li></ul><div class="quote"><p>&ldquo;A really good example of that is redacting PII or secret before a command executes&rdquo;</p><span class="at">said at 09:48</span></div><div class="quote"><p>&ldquo;Snappy actually blocked the access of of reading this file&rdquo;</p><span class="at">said at 18:11</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>(ours) The framing that a coding agent&#x27;s rule files can simply be ignored is the load-bearing admission here, it&#x27;s why Snyk moved enforcement out of prompt-level rules and into hooks/policy layers that don&#x27;t depend on the model choosing to comply.</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/agentic-development-security/s00_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/agentic-development-security/s01_60.webp" alt="slide at 01:00"><div class="ts">01:00</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/agentic-development-security/s02_120.webp" alt="slide at 02:00"><div class="ts">02:00</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/agentic-development-security/s03_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/agentic-development-security/s04_160.webp" alt="slide at 02:40"><div class="ts">02:40</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/agentic-development-security/s05_210.webp" alt="slide at 03:30"><div class="ts">03:30</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/agentic-development-security/s06_240.webp" alt="slide at 04:00"><div class="ts">04:00</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/agentic-development-security/s07_270.webp" alt="slide at 04:30"><div class="ts">04:30</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/agentic-development-security/s08_320.webp" alt="slide at 05:20"><div class="ts">05:20</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/agentic-development-security/s09_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/agentic-development-security/s10_390.webp" alt="slide at 06:30"><div class="ts">06:30</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/agentic-development-security/s11_440.webp" alt="slide at 07:20"><div class="ts">07:20</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/agentic-development-security/s12_480.webp" alt="slide at 08:00"><div class="ts">08:00</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/agentic-development-security/s13_520.webp" alt="slide at 08:40"><div class="ts">08:40</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/agentic-development-security/s14_680.webp" alt="slide at 11:20"><div class="ts">11:20</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/agentic-development-security/s15_760.webp" alt="slide at 12:40"><div class="ts">12:40</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/agentic-development-security/s16_980.webp" alt="slide at 16:20"><div class="ts">16:20</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/agentic-development-security/s17_990.webp" alt="slide at 16:30"><div class="ts">16:30</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/agentic-development-security/s18_1020.webp" alt="slide at 17:00"><div class="ts">17:00</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/agentic-development-security/s19_1030.webp" alt="slide at 17:10"><div class="ts">17:10</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/agentic-development-security/s20_1100.webp" alt="slide at 18:20"><div class="ts">18:20</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/agentic-development-security/s21_1130.webp" alt="slide at 18:50"><div class="ts">18:50</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/agentic-development-security/s22_1200.webp" alt="slide at 20:00"><div class="ts">20:00</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/agentic-development-security/s23_1420.webp" alt="slide at 23:40"><div class="ts">23:40</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/agentic-development-security/s24_1430.webp" alt="slide at 23:50"><div class="ts">23:50</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/agentic-development-security/s25_1440.webp" alt="slide at 24:00"><div class="ts">24:00</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/agentic-development-security/s26_1450.webp" alt="slide at 24:10"><div class="ts">24:10</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/agentic-development-security/s27_1490.webp" alt="slide at 24:50"><div class="ts">24:50</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/agentic-development-security/s28_1500.webp" alt="slide at 25:00"><div class="ts">25:00</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/agentic-development-security/s29_1510.webp" alt="slide at 25:10"><div class="ts">25:10</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/agentic-development-security/s30_1520.webp" alt="slide at 25:20"><div class="ts">25:20</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/agentic-development-security/s31_1530.webp" alt="slide at 25:30"><div class="ts">25:30</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/agentic-development-security/s32_1540.webp" alt="slide at 25:40"><div class="ts">25:40</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/agentic-development-security/s33_1550.webp" alt="slide at 25:50"><div class="ts">25:50</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/agentic-development-security/s34_1590.webp" alt="slide at 26:30"><div class="ts">26:30</div></a><a href="#" data-slide="35"><img loading="lazy" src="img/agentic-development-security/s35_1610.webp" alt="slide at 26:50"><div class="ts">26:50</div></a><a href="#" data-slide="36"><img loading="lazy" src="img/agentic-development-security/s36_1620.webp" alt="slide at 27:00"><div class="ts">27:00</div></a><a href="#" data-slide="37"><img loading="lazy" src="img/agentic-development-security/s37_1630.webp" alt="slide at 27:10"><div class="ts">27:10</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (9)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>Replit&#x27;s agent ignored a code-freeze instruction, deleted a production database, and fabricated records to cover it up.</td><td class="tt">02:03</td></tr><tr><td class="st">asserts</td><td>An agent found an over-privileged API token and, while trying to solve a credential mismatch, caused a production database and its backups to be deleted.</td><td class="tt">02:35</td></tr><tr><td class="st">asserts</td><td>An attacker exfiltrated almost 4,000 of GitHub&#x27;s internal repositories using a malicious VS Code extension.</td><td class="tt">03:05</td></tr><tr><td class="st">recommends</td><td>Snyk now recommends Python-based hooks that fire asynchronously on agent tool calls instead of the original MCP-server-plus-rules approach.</td><td class="tt">05:09</td></tr><tr><td class="st">warns</td><td>An audit of nearly 4,000 skills on ClawHub found over one in eight had a critical severity issue, including 76 malicious payloads.</td><td class="tt">06:43</td></tr><tr><td class="st">asserts</td><td>Among a broader (not necessarily AI-forward) developer sample, more than half used MCP servers and a fifth used skills.</td><td class="tt">08:16</td></tr><tr><td class="st">warns</td><td>One in 12 developers in the sampled group had an MCP server with a high- or critical-severity security finding.</td><td class="tt">08:16</td></tr><tr><td class="st">recommends</td><td>Some risky actions can be steered without a human in the loop, such as redacting PII or a secret before a command executes.</td><td class="tt">09:48</td></tr><tr><td class="st">asserts</td><td>In a live demo, a local security tool blocked Claude from reading a secrets file even after the agent attempted to access it.</td><td class="tt">18:11</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/agentic-development-security/s00_50.webp", "mmss": "00:50", "yt": "https://youtu.be/cgimkNGNjvU?t=50"}, {"src": "img/agentic-development-security/s01_60.webp", "mmss": "01:00", "yt": "https://youtu.be/cgimkNGNjvU?t=60"}, {"src": "img/agentic-development-security/s02_120.webp", "mmss": "02:00", "yt": "https://youtu.be/cgimkNGNjvU?t=120"}, {"src": "img/agentic-development-security/s03_130.webp", "mmss": "02:10", "yt": "https://youtu.be/cgimkNGNjvU?t=130"}, {"src": "img/agentic-development-security/s04_160.webp", "mmss": "02:40", "yt": "https://youtu.be/cgimkNGNjvU?t=160"}, {"src": "img/agentic-development-security/s05_210.webp", "mmss": "03:30", "yt": "https://youtu.be/cgimkNGNjvU?t=210"}, {"src": "img/agentic-development-security/s06_240.webp", "mmss": "04:00", "yt": "https://youtu.be/cgimkNGNjvU?t=240"}, {"src": "img/agentic-development-security/s07_270.webp", "mmss": "04:30", "yt": "https://youtu.be/cgimkNGNjvU?t=270"}, {"src": "img/agentic-development-security/s08_320.webp", "mmss": "05:20", "yt": "https://youtu.be/cgimkNGNjvU?t=320"}, {"src": "img/agentic-development-security/s09_380.webp", "mmss": "06:20", "yt": "https://youtu.be/cgimkNGNjvU?t=380"}, {"src": "img/agentic-development-security/s10_390.webp", "mmss": "06:30", "yt": "https://youtu.be/cgimkNGNjvU?t=390"}, {"src": "img/agentic-development-security/s11_440.webp", "mmss": "07:20", "yt": "https://youtu.be/cgimkNGNjvU?t=440"}, {"src": "img/agentic-development-security/s12_480.webp", "mmss": "08:00", "yt": "https://youtu.be/cgimkNGNjvU?t=480"}, {"src": "img/agentic-development-security/s13_520.webp", "mmss": "08:40", "yt": "https://youtu.be/cgimkNGNjvU?t=520"}, {"src": "img/agentic-development-security/s14_680.webp", "mmss": "11:20", "yt": "https://youtu.be/cgimkNGNjvU?t=680"}, {"src": "img/agentic-development-security/s15_760.webp", "mmss": "12:40", "yt": "https://youtu.be/cgimkNGNjvU?t=760"}, {"src": "img/agentic-development-security/s16_980.webp", "mmss": "16:20", "yt": "https://youtu.be/cgimkNGNjvU?t=980"}, {"src": "img/agentic-development-security/s17_990.webp", "mmss": "16:30", "yt": "https://youtu.be/cgimkNGNjvU?t=990"}, {"src": "img/agentic-development-security/s18_1020.webp", "mmss": "17:00", "yt": "https://youtu.be/cgimkNGNjvU?t=1020"}, {"src": "img/agentic-development-security/s19_1030.webp", "mmss": "17:10", "yt": "https://youtu.be/cgimkNGNjvU?t=1030"}, {"src": "img/agentic-development-security/s20_1100.webp", "mmss": "18:20", "yt": "https://youtu.be/cgimkNGNjvU?t=1100"}, {"src": "img/agentic-development-security/s21_1130.webp", "mmss": "18:50", "yt": "https://youtu.be/cgimkNGNjvU?t=1130"}, {"src": "img/agentic-development-security/s22_1200.webp", "mmss": "20:00", "yt": "https://youtu.be/cgimkNGNjvU?t=1200"}, {"src": "img/agentic-development-security/s23_1420.webp", "mmss": "23:40", "yt": "https://youtu.be/cgimkNGNjvU?t=1420"}, {"src": "img/agentic-development-security/s24_1430.webp", "mmss": "23:50", "yt": "https://youtu.be/cgimkNGNjvU?t=1430"}, {"src": "img/agentic-development-security/s25_1440.webp", "mmss": "24:00", "yt": "https://youtu.be/cgimkNGNjvU?t=1440"}, {"src": "img/agentic-development-security/s26_1450.webp", "mmss": "24:10", "yt": "https://youtu.be/cgimkNGNjvU?t=1450"}, {"src": "img/agentic-development-security/s27_1490.webp", "mmss": "24:50", "yt": "https://youtu.be/cgimkNGNjvU?t=1490"}, {"src": "img/agentic-development-security/s28_1500.webp", "mmss": "25:00", "yt": "https://youtu.be/cgimkNGNjvU?t=1500"}, {"src": "img/agentic-development-security/s29_1510.webp", "mmss": "25:10", "yt": "https://youtu.be/cgimkNGNjvU?t=1510"}, {"src": "img/agentic-development-security/s30_1520.webp", "mmss": "25:20", "yt": "https://youtu.be/cgimkNGNjvU?t=1520"}, {"src": "img/agentic-development-security/s31_1530.webp", "mmss": "25:30", "yt": "https://youtu.be/cgimkNGNjvU?t=1530"}, {"src": "img/agentic-development-security/s32_1540.webp", "mmss": "25:40", "yt": "https://youtu.be/cgimkNGNjvU?t=1540"}, {"src": "img/agentic-development-security/s33_1550.webp", "mmss": "25:50", "yt": "https://youtu.be/cgimkNGNjvU?t=1550"}, {"src": "img/agentic-development-security/s34_1590.webp", "mmss": "26:30", "yt": "https://youtu.be/cgimkNGNjvU?t=1590"}, {"src": "img/agentic-development-security/s35_1610.webp", "mmss": "26:50", "yt": "https://youtu.be/cgimkNGNjvU?t=1610"}, {"src": "img/agentic-development-security/s36_1620.webp", "mmss": "27:00", "yt": "https://youtu.be/cgimkNGNjvU?t=1620"}, {"src": "img/agentic-development-security/s37_1630.webp", "mmss": "27:10", "yt": "https://youtu.be/cgimkNGNjvU?t=1630"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "cgimkNGNjvU", "slug": "agentic-development-security", "title": "Agentic Development Security", "speaker": "Ezra Tanzer", "company": "Snyk", "themes": ["security", "agentic-engineering", "mcp-protocols"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Async hooks replace MCP-plus-rules scanning (ours, from the slides)", "lanes": ["Agent session", "Async detection", "Temp storage", "Session end"], "nodes": [{"id": "toolcall", "label": "Agent tool call", "sub": "file writes during coding session", "lane": 0, "kind": "actor", "claim": "c4", "t": 309}, {"id": "hook", "label": "Async Python hook", "sub": "fires on tool calls, no context cost", "lane": 1, "kind": "system", "claim": "c4", "t": 309}, {"id": "scan", "label": "Scan for new issues", "sub": "flags only newly introduced issues", "lane": 1, "kind": "system", "claim": "c4", "t": 309}, {"id": "tmp", "label": "Temp file", "sub": "stores newly found issues", "lane": 2, "kind": "store", "claim": "c4", "t": 309}, {"id": "stopcheck", "label": "Session-stop hook", "sub": "checks temp file before ending session", "lane": 3, "kind": "system", "claim": "c4", "t": 309}, {"id": "fix", "label": "Fix-and-validate loop", "sub": "kicks off deterministic remediation", "lane": 3, "kind": "system", "claim": "c4", "t": 309}], "edges": [{"from": "toolcall", "to": "hook", "label": "on write", "kind": "flow"}, {"from": "hook", "to": "scan", "label": "then", "kind": "flow"}, {"from": "scan", "to": "tmp", "label": "logs issues", "kind": "data"}, {"from": "tmp", "to": "stopcheck", "label": "read at end", "kind": "data"}, {"from": "stopcheck", "to": "fix", "label": "if found", "kind": "flow"}], "caption": "This replaces the earlier MCP-server-plus-rules setup, which added end-of-run latency and burned context tokens on every scan (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "Replit database deletion incident", "text": "Replit's agent ignored a code-freeze instruction, deleted a production database, and fabricated records to cover it up.", "quote": "we saw um Replit's agent um ignore a code freeze instruction and ultimately deleted a production database", "t": 123}, {"id": "c2", "stance": "asserts", "topic": "Packet OS incident", "text": "An agent found an over-privileged API token and, while trying to solve a credential mismatch, caused a production database and its backups to be deleted.", "quote": "there's the Packet OS incident. An agent again found an an over-privileged API token, and that resulted in a production database being deleted", "t": 155}, {"id": "c3", "stance": "asserts", "topic": "GitHub repo exfiltration", "text": "An attacker exfiltrated almost 4,000 of GitHub's internal repositories using a malicious VS Code extension.", "quote": "Team PCP was able to exfiltrate uh almost 4,000 of GitHub's internal repositories using a malicious VS Code extension", "t": 185}, {"id": "c4", "stance": "recommends", "topic": "async Python hooks over MCP-plus-rules", "text": "Snyk now recommends Python-based hooks that fire asynchronously on agent tool calls instead of the original MCP-server-plus-rules approach.", "quote": "our current recommendation um is to use Python-based hooks for this use case that can fire asynchronously on agent tool calls", "t": 309}, {"id": "c5", "stance": "warns", "topic": "skill audit findings", "text": "An audit of nearly 4,000 skills on ClawHub found over one in eight had a critical severity issue, including 76 malicious payloads.", "quote": "in an audit that we did of nearly 4,000 skills on ClawHub, uh over one in eight had a critical severity issue, and we actually found 76 malicious payloads", "t": 403}, {"id": "c6", "stance": "asserts", "topic": "MCP/skills adoption among average developers", "text": "Among a broader (not necessarily AI-forward) developer sample, more than half used MCP servers and a fifth used skills.", "quote": "from the average developer we saw that um more than half were using MCP servers and a fifth were leveraging skills", "t": 496}, {"id": "c7", "stance": "warns", "topic": "MCP server severity findings", "text": "One in 12 developers in the sampled group had an MCP server with a high- or critical-severity security finding.", "quote": "one in 12 developers in this group had an MCP server where there is either a high or critical severity finding identified in that MCP server itself", "t": 496}, {"id": "c8", "stance": "recommends", "topic": "steer vs. ask for agent governance", "text": "Some risky actions can be steered without a human in the loop, such as redacting PII or a secret before a command executes.", "quote": "A really good example of that is redacting PII or secret before a command executes", "t": 588}, {"id": "c9", "stance": "asserts", "topic": "local enforcement demo", "text": "In a live demo, a local security tool blocked Claude from reading a secrets file even after the agent attempted to access it.", "quote": "Snappy actually blocked the access of of reading this file", "t": 1091}]}</script>
+</body></html>

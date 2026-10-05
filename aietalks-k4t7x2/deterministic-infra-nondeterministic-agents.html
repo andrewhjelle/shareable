@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Deterministic Infra for Non-Deterministic AI Agents &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/APh1Vx0oLmQ" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 7 min</span><span class="ln"></span></div>
+<h1 class="lede">Deterministic Infra for Non-Deterministic AI Agents</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Nishant Gupta &middot; Meta Superintelligence Labs</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/APh1Vx0oLmQ" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/APh1Vx0oLmQ</a> &middot; 7 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Infra & serving</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Security</span></div>
+<p class="deck" style="font-size:15px">Argues the production risk in agentic systems is mostly infrastructure failure (retry loops, memory poisoning, cost explosions) rather than model hallucination, and gives a concrete architecture rule -- the model proposes, infrastructure...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Infrastructure failures, not hallucinations, are the real production risk: recursive reasoning loops, workflow deadlocks, retry amplification, context corruption, and memory poisoning can turn a small model mistake into a compute incident or outage.</li><li>Core architecture rule: never let the model directly control production systems -- the model generates proposals, infrastructure validates them, a policy engine approves them, and an execution gateway enforces them.</li><li>The industry has moved through prompts-as-differentiator, then models-as-differentiator, both now commoditizing; the next competitive frontier is infrastructure reliability, requiring an &#x27;agentic control plane&#x27; analogous to Kubernetes for containers.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">MODEL PROPOSES, INFRASTRUCTURE DECIDES (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 399.00 394.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 390.4)">
+<title>G</title>
+<!-- model -->
+<g id="node1" class="node">
+<title>model</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="169.17,-386.4 0,-386.4 0,-350.12 169.17,-350.12 169.17,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="53.84" y="-368.31" font-family="Geist Mono" font-size="11.00">Agent model</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">generates proposals, never acts directly</text>
+</g>
+<!-- validate -->
+<g id="node3" class="node">
+<title>validate</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="237.8,-298.87 111.38,-298.87 111.38,-262.59 237.8,-262.59 237.8,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="138.21" y="-280.78" font-family="Geist Mono" font-size="11.00">Validation layer</text>
+<text xml:space="preserve" text-anchor="start" x="124.34" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">checks each model proposal</text>
+</g>
+<!-- model&#45;&gt;validate -->
+<g id="edge1" class="edge">
+<title>model&#45;&gt;validate</title>
+<path fill="none" stroke="#c8501f" d="M103.23,-349.54C116.75,-336.69 135.16,-319.2 149.9,-305.19"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="151.48,-307.07 154.86,-300.47 148.1,-303.52 151.48,-307.07"/>
+<text xml:space="preserve" text-anchor="middle" x="150.72" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">proposal</text>
+</g>
+<!-- memory -->
+<g id="node2" class="node">
+<title>memory</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="337.92,-386.4 191.25,-386.4 191.25,-350.12 337.92,-350.12 337.92,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="226.34" y="-368.31" font-family="Geist Mono" font-size="11.00">Shared memory</text>
+<text xml:space="preserve" text-anchor="start" x="204.21" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">probabilistic, retrieval&#45;based state</text>
+</g>
+<!-- memory&#45;&gt;validate -->
+<g id="edge2" class="edge">
+<title>memory&#45;&gt;validate</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M245.94,-349.54C232.42,-336.69 214.01,-319.2 199.27,-305.19"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="201.07,-303.52 194.31,-300.47 197.69,-307.07 201.07,-303.52"/>
+<text xml:space="preserve" text-anchor="middle" x="238.85" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">context</text>
+</g>
+<!-- policy -->
+<g id="node4" class="node">
+<title>policy</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="315.3,-211.34 185.88,-211.34 185.88,-175.06 315.3,-175.06 315.3,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="219.09" y="-193.25" font-family="Geist Mono" font-size="11.00">Policy engine</text>
+<text xml:space="preserve" text-anchor="start" x="198.84" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">approves validated proposals</text>
+</g>
+<!-- validate&#45;&gt;policy -->
+<g id="edge3" class="edge">
+<title>validate&#45;&gt;policy</title>
+<path fill="none" stroke="#c8501f" d="M190.33,-262.01C201.64,-249.28 217.02,-231.98 229.4,-218.04"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="231.03,-219.89 233.85,-213.03 227.37,-216.64 231.03,-219.89"/>
+<text xml:space="preserve" text-anchor="middle" x="234.39" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">validated</text>
+</g>
+<!-- gateway -->
+<g id="node6" class="node">
+<title>gateway</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="310.8,-123.81 190.38,-123.81 190.38,-87.53 310.8,-87.53 310.8,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="204.84" y="-105.72" font-family="Geist Mono" font-size="11.00">Execution gateway</text>
+<text xml:space="preserve" text-anchor="start" x="203.34" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">enforces approved actions</text>
+</g>
+<!-- policy&#45;&gt;gateway -->
+<g id="edge5" class="edge">
+<title>policy&#45;&gt;gateway</title>
+<path fill="none" stroke="#c8501f" d="M250.59,-174.48C250.59,-162.44 250.59,-146.31 250.59,-132.8"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="253.04,-132.88 250.59,-125.88 248.14,-132.88 253.04,-132.88"/>
+<text xml:space="preserve" text-anchor="middle" x="267.84" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">approved</text>
+</g>
+<!-- human -->
+<g id="node5" class="node">
+<title>human</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="391.42,-298.87 259.75,-298.87 259.75,-262.59 391.42,-262.59 391.42,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="285.84" y="-280.78" font-family="Geist Mono" font-size="11.00">Human reviewer</text>
+<text xml:space="preserve" text-anchor="start" x="272.71" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">permanent exception handler</text>
+</g>
+<!-- human&#45;&gt;policy -->
+<g id="edge4" class="edge">
+<title>human&#45;&gt;policy</title>
+<path fill="none" stroke="#c8501f" d="M310.04,-262.01C298.88,-249.28 283.71,-231.98 271.49,-218.04"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="273.56,-216.68 267.1,-213.04 269.88,-219.92 273.56,-216.68"/>
+<text xml:space="preserve" text-anchor="middle" x="306.83" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">reviews</text>
+</g>
+<!-- prod -->
+<g id="node7" class="node">
+<title>prod</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="318.67,-36.28 182.5,-36.28 182.5,0 318.67,0 318.67,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="203.34" y="-18.19" font-family="Geist Mono" font-size="11.00">Production systems</text>
+<text xml:space="preserve" text-anchor="start" x="195.46" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">stateful, long&#45;running, dynamic</text>
+</g>
+<!-- gateway&#45;&gt;prod -->
+<g id="edge6" class="edge">
+<title>gateway&#45;&gt;prod</title>
+<path fill="none" stroke="#c8501f" d="M250.59,-86.95C250.59,-74.91 250.59,-58.78 250.59,-45.27"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="253.04,-45.35 250.59,-38.35 248.14,-45.35 253.04,-45.35"/>
+<text xml:space="preserve" text-anchor="middle" x="279.46" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enforced action</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">Reconstructed from the talk&#x27;s architecture rule: the model only proposes, and a validation/policy/gateway chain (with humans as permanent exception handlers) stands between it and production (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Agents violate the assumptions cloud infrastructure was built on</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="0" class="sl"><img loading="lazy" class="main" src="img/deterministic-infra-nondeterministic-agents/s00_50.webp" alt="slide at 00:50"></a><div class="slidecap">Slide at 00:50 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="1" class="sl"><img loading="lazy" class="thumb" src="img/deterministic-infra-nondeterministic-agents/s01_80.webp" alt="slide at 01:20"></a><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/deterministic-infra-nondeterministic-agents/s02_110.webp" alt="slide at 01:50"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/deterministic-infra-nondeterministic-agents/s03_140.webp" alt="slide at 02:20"></a></div></div>
+<div class="textcol"><h2>Agents violate the assumptions cloud infrastructure was built on</h2><ul class="takeaways"><li>Modern cloud infrastructure assumes short-lived requests, deterministic services, known execution paths, and bounded failures.</li><li>Autonomous AI agents violate nearly all of these: they are stateful, long-running, make dynamic decisions, and may execute different workflows for the same input -- what the speaker calls &#x27;the great mismatch.&#x27;</li></ul><div class="quote"><p>&ldquo;We&#x27;re trying to run autonomous systems on infrastructure that was designed for deterministic workflows. This is probably the most important mindshift&rdquo;</p><span class="at">said at 01:02</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Retry loops turn a model mistake into a compute incident</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="3" class="sl"><img loading="lazy" class="main" src="img/deterministic-infra-nondeterministic-agents/s03_140.webp" alt="slide at 02:20"></a><div class="slidecap">Slide at 02:20 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/deterministic-infra-nondeterministic-agents/s04_180.webp" alt="slide at 03:00"></a></div></div>
+<div class="textcol"><h2>Retry loops turn a model mistake into a compute incident</h2><ul class="takeaways"><li>He walks through a failure pattern: an agent calls a tool incorrectly, gets an error, generates a slightly different but still-invalid request, and repeats -- each retry consuming more compute and increasing reasoning depth until GPU consumption grows exponentially, turning a minor API error into a compute incident.</li></ul><div class="quote"><p>&ldquo;Each retry consumes more compute. Reasoning depth increases, GPU consumption rises, eventually you get exponential resource growth. What started as a minor API error became a compute incident&rdquo;</p><span class="at">said at 02:36</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>The core architecture rule: model proposes, infrastructure decides</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="4" class="sl"><img loading="lazy" class="main" src="img/deterministic-infra-nondeterministic-agents/s04_180.webp" alt="slide at 03:00"></a><div class="slidecap">Slide at 03:00 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/deterministic-infra-nondeterministic-agents/s05_200.webp" alt="slide at 03:20"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/deterministic-infra-nondeterministic-agents/s06_230.webp" alt="slide at 03:50"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/deterministic-infra-nondeterministic-agents/s07_250.webp" alt="slide at 04:10"></a></div></div>
+<div class="textcol"><h2>The core architecture rule: model proposes, infrastructure decides</h2><ul class="takeaways"><li>His most strongly recommended architecture principle is never letting the model directly control production systems: the model generates proposals, infrastructure validates them, a policy engine approves them, and an execution gateway enforces them, keeping the system reliable even though the underlying model stays probabilistic.</li></ul><div class="quote"><p>&ldquo;Never let the model directly control production systems. The model should generate proposals, infrastructure validates them, policy engine approves them, execution gateway enforces them&rdquo;</p><span class="at">said at 03:08</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Memory sharing creates distributed-systems-style consistency failures</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="8" class="sl"><img loading="lazy" class="main" src="img/deterministic-infra-nondeterministic-agents/s08_280.webp" alt="slide at 04:40"></a><div class="slidecap">Slide at 04:40 &middot; click any slide to enlarge</div></div>
+<div class="textcol"><h2>Memory sharing creates distributed-systems-style consistency failures</h2><ul class="takeaways"><li>Once multiple agents share state, familiar distributed-systems issues appear -- stale reads, conflicting updates, context drift, inconsistent views -- made harder because the memory itself may be probabilistic and retrieval-based.</li><li>He states many multi-agent failures are actually consistency failures disguised as reasoning failures.</li></ul><div class="quote"><p>&ldquo;Many multi-agent failures are actually consistency failures masquerading as reasoning failures&rdquo;</p><span class="at">said at 04:40</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Safety must be layered, and humans stay as exception handlers permanently</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="9" class="sl"><img loading="lazy" class="main" src="img/deterministic-infra-nondeterministic-agents/s09_300.webp" alt="slide at 05:00"></a><div class="slidecap">Slide at 05:00 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="8" class="sl"><img loading="lazy" class="thumb" src="img/deterministic-infra-nondeterministic-agents/s08_280.webp" alt="slide at 04:40"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/deterministic-infra-nondeterministic-agents/s10_320.webp" alt="slide at 05:20"></a><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/deterministic-infra-nondeterministic-agents/s11_350.webp" alt="slide at 05:50"></a></div></div>
+<div class="textcol"><h2>Safety must be layered, and humans stay as exception handlers permanently</h2><ul class="takeaways"><li>He argues safety can&#x27;t be a single component -- it needs prompt-level controls, tool permissions, policy validations, human approvals, and audit systems as layered defense.</li><li>He disputes the framing of human oversight as a temporary necessity, arguing the most successful systems will remain human-supervised, with humans acting as exception handlers for ambiguous situations rather than being removed entirely.</li></ul><div class="quote"><p>&ldquo;safety cannot be a single component. It must be layered. Prompt level controls, tool permissions, policy validations, human approvals, audit systems&rdquo;</p><span class="at">said at 04:40</span></div><div class="quote"><p>&ldquo;The most successful systems are likely to remain human supervised. Humans became become exception handlers. They review ambiguous situations&rdquo;</p><span class="at">said at 05:11</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">06</span><span>Infrastructure is the next competitive frontier, not prompts or models</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="12" class="sl"><img loading="lazy" class="main" src="img/deterministic-infra-nondeterministic-agents/s12_380.webp" alt="slide at 06:20"></a><div class="slidecap">Slide at 06:20 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/deterministic-infra-nondeterministic-agents/s13_400.webp" alt="slide at 06:40"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/deterministic-infra-nondeterministic-agents/s14_420.webp" alt="slide at 07:00"></a></div></div>
+<div class="textcol"><h2>Infrastructure is the next competitive frontier, not prompts or models</h2><ul class="takeaways"><li>He traces the industry through phases where prompts, then models, were the differentiator, both now rapidly commoditizing; he predicts the next frontier and the source of competitive advantage is infrastructure reliability, requiring what he calls an &#x27;agentic control plane&#x27; as a foundational layer, similar to how containers gave rise to Kubernetes.</li></ul><div class="quote"><p>&ldquo;The next frontier is infrastructure. The organization that won&#x27;t that wins is not necessarily have the best prompts. They&#x27;ll have the most reliable systems&rdquo;</p><span class="at">said at 06:13</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The claim that &#x27;the organization that wins... will have the most reliable systems&#x27; rather than the best models is a strong bet against continued model-layer differentiation -- it assumes model capability convergence that hasn&#x27;t fully happened yet across providers, so it&#x27;s worth treating as a directional prediction rather than settled (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s00_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s01_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s02_110.webp" alt="slide at 01:50"><div class="ts">01:50</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s03_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s04_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s05_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s06_230.webp" alt="slide at 03:50"><div class="ts">03:50</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s07_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s08_280.webp" alt="slide at 04:40"><div class="ts">04:40</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s09_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s10_320.webp" alt="slide at 05:20"><div class="ts">05:20</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s11_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s12_380.webp" alt="slide at 06:20"><div class="ts">06:20</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s13_400.webp" alt="slide at 06:40"><div class="ts">06:40</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/deterministic-infra-nondeterministic-agents/s14_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (7)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">warns</td><td>Autonomous agents are stateful, long-running, and make dynamic decisions, violating the deterministic assumptions cloud infrastructure was designed around.</td><td class="tt">01:02</td></tr><tr><td class="st">warns</td><td>An agent that retries a failed tool call with slightly different invalid requests can trigger exponential compute growth, turning a minor API error into a compute incident.</td><td class="tt">02:36</td></tr><tr><td class="st">recommends</td><td>The model should never directly control production systems; it should generate proposals that infrastructure validates, a policy engine approves, and an execution gateway enforces.</td><td class="tt">03:08</td></tr><tr><td class="st">warns</td><td>Many multi-agent failures are actually distributed-systems consistency failures rather than genuine reasoning failures.</td><td class="tt">04:40</td></tr><tr><td class="st">recommends</td><td>Safety must be layered across prompt-level controls, tool permissions, policy validations, human approvals, and audit systems, since each layer catches a different failure class.</td><td class="tt">04:40</td></tr><tr><td class="st">asserts</td><td>The most successful agentic systems are likely to remain human-supervised permanently, with humans serving as exception handlers rather than a temporary bridge to full autonomy.</td><td class="tt">05:11</td></tr><tr><td class="st">predicts</td><td>As prompts and models both commoditize, infrastructure reliability becomes the next competitive frontier, and the winning organization will have the most reliable systems rather than the best prompts.</td><td class="tt">06:13</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/deterministic-infra-nondeterministic-agents/s00_50.webp", "mmss": "00:50", "yt": "https://youtu.be/APh1Vx0oLmQ?t=50"}, {"src": "img/deterministic-infra-nondeterministic-agents/s01_80.webp", "mmss": "01:20", "yt": "https://youtu.be/APh1Vx0oLmQ?t=80"}, {"src": "img/deterministic-infra-nondeterministic-agents/s02_110.webp", "mmss": "01:50", "yt": "https://youtu.be/APh1Vx0oLmQ?t=110"}, {"src": "img/deterministic-infra-nondeterministic-agents/s03_140.webp", "mmss": "02:20", "yt": "https://youtu.be/APh1Vx0oLmQ?t=140"}, {"src": "img/deterministic-infra-nondeterministic-agents/s04_180.webp", "mmss": "03:00", "yt": "https://youtu.be/APh1Vx0oLmQ?t=180"}, {"src": "img/deterministic-infra-nondeterministic-agents/s05_200.webp", "mmss": "03:20", "yt": "https://youtu.be/APh1Vx0oLmQ?t=200"}, {"src": "img/deterministic-infra-nondeterministic-agents/s06_230.webp", "mmss": "03:50", "yt": "https://youtu.be/APh1Vx0oLmQ?t=230"}, {"src": "img/deterministic-infra-nondeterministic-agents/s07_250.webp", "mmss": "04:10", "yt": "https://youtu.be/APh1Vx0oLmQ?t=250"}, {"src": "img/deterministic-infra-nondeterministic-agents/s08_280.webp", "mmss": "04:40", "yt": "https://youtu.be/APh1Vx0oLmQ?t=280"}, {"src": "img/deterministic-infra-nondeterministic-agents/s09_300.webp", "mmss": "05:00", "yt": "https://youtu.be/APh1Vx0oLmQ?t=300"}, {"src": "img/deterministic-infra-nondeterministic-agents/s10_320.webp", "mmss": "05:20", "yt": "https://youtu.be/APh1Vx0oLmQ?t=320"}, {"src": "img/deterministic-infra-nondeterministic-agents/s11_350.webp", "mmss": "05:50", "yt": "https://youtu.be/APh1Vx0oLmQ?t=350"}, {"src": "img/deterministic-infra-nondeterministic-agents/s12_380.webp", "mmss": "06:20", "yt": "https://youtu.be/APh1Vx0oLmQ?t=380"}, {"src": "img/deterministic-infra-nondeterministic-agents/s13_400.webp", "mmss": "06:40", "yt": "https://youtu.be/APh1Vx0oLmQ?t=400"}, {"src": "img/deterministic-infra-nondeterministic-agents/s14_420.webp", "mmss": "07:00", "yt": "https://youtu.be/APh1Vx0oLmQ?t=420"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "APh1Vx0oLmQ", "slug": "deterministic-infra-nondeterministic-agents", "title": "Deterministic Infra for Non-Deterministic AI Agents", "speaker": "Nishant Gupta", "company": "Meta Superintelligence Labs", "themes": ["infra-serving", "agentic-engineering", "security"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "Model proposes, infrastructure decides (ours)", "lanes": ["Model", "Control plane", "Production"], "nodes": [{"id": "model", "label": "Agent model", "sub": "generates proposals, never acts directly", "lane": 0, "kind": "actor", "claim": "c3", "t": 188}, {"id": "memory", "label": "Shared memory", "sub": "probabilistic, retrieval-based state", "lane": 0, "kind": "store", "claim": "c4", "t": 280}, {"id": "validate", "label": "Validation layer", "sub": "checks each model proposal", "lane": 1, "kind": "system", "claim": "c3", "t": 188}, {"id": "policy", "label": "Policy engine", "sub": "approves validated proposals", "lane": 1, "kind": "system", "claim": "c3", "t": 188}, {"id": "human", "label": "Human reviewer", "sub": "permanent exception handler", "lane": 1, "kind": "actor", "claim": "c6", "t": 311}, {"id": "gateway", "label": "Execution gateway", "sub": "enforces approved actions", "lane": 2, "kind": "system", "claim": "c3", "t": 188}, {"id": "prod", "label": "Production systems", "sub": "stateful, long-running, dynamic", "lane": 2, "kind": "external", "claim": "c1", "t": 62}], "edges": [{"from": "model", "to": "validate", "label": "proposal", "kind": "flow"}, {"from": "memory", "to": "validate", "label": "context", "kind": "data"}, {"from": "validate", "to": "policy", "label": "validated", "kind": "flow"}, {"from": "human", "to": "policy", "label": "reviews", "kind": "flow"}, {"from": "policy", "to": "gateway", "label": "approved", "kind": "flow"}, {"from": "gateway", "to": "prod", "label": "enforced action", "kind": "flow"}], "caption": "Reconstructed from the talk's architecture rule: the model only proposes, and a validation/policy/gateway chain (with humans as permanent exception handlers) stands between it and production (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "warns", "topic": "the great mismatch", "text": "Autonomous agents are stateful, long-running, and make dynamic decisions, violating the deterministic assumptions cloud infrastructure was designed around.", "quote": "We're trying to run autonomous systems on infrastructure that was designed for deterministic workflows. This is probably the most important mindshift", "t": 62}, {"id": "c2", "stance": "warns", "topic": "retry amplification", "text": "An agent that retries a failed tool call with slightly different invalid requests can trigger exponential compute growth, turning a minor API error into a compute incident.", "quote": "Each retry consumes more compute. Reasoning depth increases, GPU consumption rises, eventually you get exponential resource growth. What started as a minor API error became a compute incident", "t": 156}, {"id": "c3", "stance": "recommends", "topic": "model proposes, infra decides", "text": "The model should never directly control production systems; it should generate proposals that infrastructure validates, a policy engine approves, and an execution gateway enforces.", "quote": "Never let the model directly control production systems. The model should generate proposals, infrastructure validates them, policy engine approves them, execution gateway enforces them", "t": 188}, {"id": "c4", "stance": "warns", "topic": "consistency failures disguised as reasoning failures", "text": "Many multi-agent failures are actually distributed-systems consistency failures rather than genuine reasoning failures.", "quote": "Many multi-agent failures are actually consistency failures masquerading as reasoning failures", "t": 280}, {"id": "c5", "stance": "recommends", "topic": "layered safety", "text": "Safety must be layered across prompt-level controls, tool permissions, policy validations, human approvals, and audit systems, since each layer catches a different failure class.", "quote": "safety cannot be a single component. It must be layered. Prompt level controls, tool permissions, policy validations, human approvals, audit systems", "t": 280}, {"id": "c6", "stance": "asserts", "topic": "humans as permanent exception handlers", "text": "The most successful agentic systems are likely to remain human-supervised permanently, with humans serving as exception handlers rather than a temporary bridge to full autonomy.", "quote": "The most successful systems are likely to remain human supervised. Humans became become exception handlers. They review ambiguous situations", "t": 311}, {"id": "c7", "stance": "predicts", "topic": "infrastructure as next frontier", "text": "As prompts and models both commoditize, infrastructure reliability becomes the next competitive frontier, and the winning organization will have the most reliable systems rather than the best prompts.", "quote": "The next frontier is infrastructure. The organization that won't that wins is not necessarily have the best prompts. They'll have the most reliable systems", "t": 373}]}</script>
+</body></html>

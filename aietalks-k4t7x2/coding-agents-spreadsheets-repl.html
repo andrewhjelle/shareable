@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Teaching Coding Agents to do Spreadsheets &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/HEFSExa0xl0" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 19 min</span><span class="ln"></span></div>
+<h1 class="lede">Teaching Coding Agents to do Spreadsheets</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Nuno Campos &middot; Witan Labs</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/HEFSExa0xl0" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/HEFSExa0xl0</a> &middot; 19 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">pattern</span><span class="chip hot">Coding agents</span><span class="chip hot">Agentic engineering</span><span class="chip hot">Evals & benchmarks</span></div>
+<p class="deck" style="font-size:15px">Reports a concrete accuracy path (50% to 92%) on a financial-analysis spreadsheet benchmark, driven mainly by replacing ~15 discrete tools with a single stateful JavaScript REPL</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Replacing 15 separate tools with one stateful Node.js REPL was the single biggest driver of accuracy, taking the benchmark from 50% to 74%.</li><li>A high-fidelity formula/render engine that lets the agent verify its own output against ground truth is essential; an incomplete engine makes results worse, not better.</li><li>Deterministic evaluation (golden spreadsheets with known input/output pairs) proved more trustworthy than LLM-as-judge, which couldn&#x27;t distinguish agent changes from evaluator drift.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">FROM 15 TOOLS TO ONE REPL (OURS, FROM THE SLIDES)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 557.00 307.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 302.87)">
+<title>G</title>
+<!-- three_agent -->
+<g id="node1" class="node">
+<title>three_agent</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="179.17,-298.87 27.25,-298.87 27.25,-262.59 179.17,-262.59 179.17,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="42.46" y="-280.78" font-family="Geist Mono" font-size="11.00">Three&#45;agent architecture</text>
+<text xml:space="preserve" text-anchor="start" x="40.21" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">discovery ran once, no context flow</text>
+</g>
+<!-- repl -->
+<g id="node3" class="node">
+<title>repl</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="260.92,-211.34 119.5,-211.34 119.5,-175.06 260.92,-175.06 260.92,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="147.09" y="-193.25" font-family="Geist Mono" font-size="11.00">Node.js REPL tool</text>
+<text xml:space="preserve" text-anchor="start" x="132.46" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">replaced ~15 accumulated tools</text>
+</g>
+<!-- three_agent&#45;&gt;repl -->
+<g id="edge1" class="edge">
+<title>three_agent&#45;&gt;repl</title>
+<path fill="none" stroke="#c8501f" d="M121.24,-262.01C134.3,-249.16 152.1,-231.67 166.34,-217.66"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="167.85,-219.61 171.13,-212.96 164.42,-216.12 167.85,-219.61"/>
+<text xml:space="preserve" text-anchor="middle" x="173.67" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+<!-- many_tools -->
+<g id="node2" class="node">
+<title>many_tools</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="354.92,-298.87 201.5,-298.87 201.5,-262.59 354.92,-262.59 354.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="214.46" y="-280.78" font-family="Geist Mono" font-size="11.00">10&#45;15 sequential tool calls</text>
+<text xml:space="preserve" text-anchor="start" x="218.59" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">often timed out exploring a sheet</text>
+</g>
+<!-- many_tools&#45;&gt;repl -->
+<g id="edge2" class="edge">
+<title>many_tools&#45;&gt;repl</title>
+<path fill="none" stroke="#c8501f" d="M259.98,-262.01C246.76,-249.16 228.76,-231.67 214.35,-217.66"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="216.23,-216.08 209.51,-212.95 212.82,-219.59 216.23,-216.08"/>
+<text xml:space="preserve" text-anchor="middle" x="261.23" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+<!-- persistent_state -->
+<g id="node4" class="node">
+<title>persistent_state</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="180.42,-123.81 0,-123.81 0,-87.53 180.42,-87.53 180.42,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="51.96" y="-105.72" font-family="Geist Mono" font-size="11.00">Persistent state</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">shorter scripts, more interleaved reasoning</text>
+</g>
+<!-- repl&#45;&gt;persistent_state -->
+<g id="edge3" class="edge">
+<title>repl&#45;&gt;persistent_state</title>
+<path fill="none" stroke="#c8501f" d="M169.49,-174.48C154.34,-161.52 133.65,-143.82 117.2,-129.76"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="118.97,-128.04 112.05,-125.35 115.78,-131.76 118.97,-128.04"/>
+<text xml:space="preserve" text-anchor="middle" x="160.45" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">enables</text>
+</g>
+<!-- engine -->
+<g id="node6" class="node">
+<title>engine</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="379.55,-123.81 202.88,-123.81 202.88,-87.53 379.55,-87.53 379.55,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="230.46" y="-105.72" font-family="Geist Mono" font-size="11.00">Formula + render engine</text>
+<text xml:space="preserve" text-anchor="start" x="215.84" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">source of truth agent checks work against</text>
+</g>
+<!-- repl&#45;&gt;engine -->
+<g id="edge5" class="edge">
+<title>repl&#45;&gt;engine</title>
+<path fill="none" stroke="#c8501f" d="M211.14,-174.48C226.44,-161.52 247.34,-143.82 263.95,-129.76"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="265.4,-131.74 269.15,-125.35 262.23,-128 265.4,-131.74"/>
+<text xml:space="preserve" text-anchor="middle" x="276.76" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">checks work via</text>
+</g>
+<!-- benchmark -->
+<g id="node5" class="node">
+<title>benchmark</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="272.55,-36.28 77.88,-36.28 77.88,0 272.55,0 272.55,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="120.84" y="-18.19" font-family="Geist Mono" font-size="11.00">50% to 92% accuracy</text>
+<text xml:space="preserve" text-anchor="start" x="90.84" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">internal financial&#45;analysis benchmark, 4 months</text>
+</g>
+<!-- persistent_state&#45;&gt;benchmark -->
+<g id="edge4" class="edge">
+<title>persistent_state&#45;&gt;benchmark</title>
+<path fill="none" stroke="#c8501f" d="M107.82,-86.95C120.59,-74.1 137.98,-56.61 151.89,-42.6"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="153.36,-44.6 156.55,-37.91 149.88,-41.15 153.36,-44.6"/>
+<text xml:space="preserve" text-anchor="middle" x="159.55" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">drove gains</text>
+</g>
+<!-- engine&#45;&gt;benchmark -->
+<g id="edge8" class="edge">
+<title>engine&#45;&gt;benchmark</title>
+<path fill="none" stroke="#c8501f" d="M265.58,-86.93C256.91,-80.85 247.22,-73.96 238.46,-67.53 227.31,-59.34 215.21,-50.16 204.61,-42.01"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="206.12,-40.09 199.08,-37.75 203.13,-43.97 206.12,-40.09"/>
+<text xml:space="preserve" text-anchor="middle" x="271.84" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">supports accuracy</text>
+</g>
+<!-- golden_sheet -->
+<g id="node8" class="node">
+<title>golden_sheet</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="515.55,-36.28 350.88,-36.28 350.88,0 515.55,0 515.55,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="370.59" y="-18.19" font-family="Geist Mono" font-size="11.00">Golden spreadsheet tests</text>
+<text xml:space="preserve" text-anchor="start" x="363.84" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">known inputs/outputs, black&#45;box check</text>
+</g>
+<!-- engine&#45;&gt;golden_sheet -->
+<g id="edge6" class="edge">
+<title>engine&#45;&gt;golden_sheet</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M320.63,-86.95C342.72,-73.65 373.09,-55.35 396.72,-41.12"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="397.8,-43.33 402.53,-37.62 395.27,-39.13 397.8,-43.33"/>
+<text xml:space="preserve" text-anchor="middle" x="390.96" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">verified by</text>
+</g>
+<!-- llm_judge -->
+<g id="node7" class="node">
+<title>llm_judge</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="548.55,-123.81 401.88,-123.81 401.88,-87.53 548.55,-87.53 548.55,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="442.96" y="-105.72" font-family="Geist Mono" font-size="11.00">LLM&#45;as&#45;judge</text>
+<text xml:space="preserve" text-anchor="start" x="414.84" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">couldn&#39;t tell agent change vs. drift</text>
+</g>
+<!-- llm_judge&#45;&gt;golden_sheet -->
+<g id="edge7" class="edge">
+<title>llm_judge&#45;&gt;golden_sheet</title>
+<path fill="none" stroke="#c8501f" d="M466.51,-86.95C460.43,-74.56 452.22,-57.85 445.47,-44.12"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="447.85,-43.4 442.57,-38.2 443.45,-45.56 447.85,-43.4"/>
+<text xml:space="preserve" text-anchor="middle" x="478.47" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">replaced by</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">The REPL replaced both the rigid three-agent pipeline and ad hoc tool chains, while a high-fidelity formula engine and golden-spreadsheet tests replaced LLM-as-judge as the verification loop (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>Why spreadsheets are hard for LLMs</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="1" class="sl"><img loading="lazy" class="main" src="img/coding-agents-spreadsheets-repl/s01_20.webp" alt="slide at 00:20"></a><div class="slidecap">Slide at 00:20 &middot; click any slide to enlarge &middot; 6 more from this section below</div><div class=strip><a href="#" data-slide="2" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s02_80.webp" alt="slide at 01:20"></a><a href="#" data-slide="3" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s03_100.webp" alt="slide at 01:40"></a><a href="#" data-slide="4" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s04_110.webp" alt="slide at 01:50"></a><a href="#" data-slide="5" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s05_130.webp" alt="slide at 02:10"></a><a href="#" data-slide="6" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s06_140.webp" alt="slide at 02:20"></a><a href="#" data-slide="7" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s07_200.webp" alt="slide at 03:20"></a></div></div>
+<div class="textcol"><h2>Why spreadsheets are hard for LLMs</h2><ul class="takeaways"><li>Unlike a human opening Excel and instantly seeing structure (a revenue table, assumptions, a chart), an LLM has no visual sense of a spreadsheet and must disambiguate which &#x27;revenue&#x27; is meant, whether a cell is an input or a formula.</li><li>Early architectures split the work into three agents with a five-step edit process, but this proved too rigid because discovery ran once up front and context didn&#x27;t flow between agents.</li></ul><div class="quote"><p>&ldquo;We started at uh, around 50% accuracy on a financial analysis benchmark and got to 92%&rdquo;</p><span class="at">said at 00:30</span></div><div class="quote"><p>&ldquo;this architecture in the end was too rigid because, you know, discovery ran once up front, uh, and then you couldn&#x27;t revisit it and uh, the context wouldn&#x27;t flow between the different agents&rdquo;</p><span class="at">said at 01:34</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Representation dead ends before the REPL breakthrough</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="8" class="sl"><img loading="lazy" class="main" src="img/coding-agents-spreadsheets-repl/s08_250.webp" alt="slide at 04:10"></a><div class="slidecap">Slide at 04:10 &middot; click any slide to enlarge &middot; 2 more from this section below</div><div class=strip><a href="#" data-slide="9" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s09_350.webp" alt="slide at 05:50"></a><a href="#" data-slide="10" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s10_370.webp" alt="slide at 06:10"></a></div></div>
+<div class="textcol"><h2>Representation dead ends before the REPL breakthrough</h2><ul class="takeaways"><li>The team tried representing spreadsheets to the LLM as SQL, as raw XML (how Excel stores files on disk), and other formats; none worked standalone, though CSV/TSV views and an HTML-based rendered image became useful components.</li><li>The eventual breakthrough was replacing roughly 15 accumulated tools with a single Node.js REPL tool, letting the agent combine many operations in one call instead of making 10-15 sequential tool calls that often timed out.</li></ul><div class="quote"><p>&ldquo;we uh hit on uh what was probably ended up being the biggest uh breakthrough, which was to replace the, you know, the many tools that we accumulated over time. I think at that time we had around 15 tools&rdquo;</p><span class="at">said at 04:00</span></div><div class="quote"><p>&ldquo;before it would be you&#x27;d have, you know, 10 or 15 tool calls usually for an agent to to explore a spreadsheet and get to an answer&rdquo;</p><span class="at">said at 05:13</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>REPL vs. code mode: persistent state matters</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="11" class="sl"><img loading="lazy" class="main" src="img/coding-agents-spreadsheets-repl/s11_410.webp" alt="slide at 06:50"></a><div class="slidecap">Slide at 06:50 &middot; click any slide to enlarge &middot; 6 more from this section below</div><div class=strip><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s12_420.webp" alt="slide at 07:00"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s13_450.webp" alt="slide at 07:30"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s14_460.webp" alt="slide at 07:40"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s15_470.webp" alt="slide at 07:50"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s16_490.webp" alt="slide at 08:10"></a><a href="#" data-slide="17" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s17_620.webp" alt="slide at 10:20"></a></div></div>
+<div class="textcol"><h2>REPL vs. code mode: persistent state matters</h2><ul class="takeaways"><li>The REPL differs from plain &#x27;code mode&#x27; (bundling multiple tool calls into one script) by keeping state persistent across calls, so the agent defines variables once and reuses them later.</li><li>This led agents to write shorter scripts with more interleaved reasoning between steps, which often reached better answers faster than one long script.</li></ul><div class="quote"><p>&ldquo;just pure code mode without the REPL semantics, uh, agents would very often write quite long scripts, like 50 lines of JavaScript would be pretty common&rdquo;</p><span class="at">said at 06:47</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Verification loop needs a high-fidelity engine</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="17" class="sl"><img loading="lazy" class="main" src="img/coding-agents-spreadsheets-repl/s17_620.webp" alt="slide at 10:20"></a><div class="slidecap">Slide at 10:20 &middot; click any slide to enlarge &middot; 7 more from this section below</div><div class=strip><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s18_670.webp" alt="slide at 11:10"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s19_680.webp" alt="slide at 11:20"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s20_730.webp" alt="slide at 12:10"></a><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s21_750.webp" alt="slide at 12:30"></a><a href="#" data-slide="22" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s22_760.webp" alt="slide at 12:40"></a><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s23_800.webp" alt="slide at 13:20"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s24_840.webp" alt="slide at 14:00"></a></div></div>
+<div class="textcol"><h2>Verification loop needs a high-fidelity engine</h2><ul class="takeaways"><li>A formula engine (to calculate results) and a render engine (to produce an image of a range with formatting) act as the source of truth the agent checks its work against.</li><li>If the engine only implements a fraction of Excel&#x27;s formulas, results get worse because the agent writes formulas it believes are correct that then fail or error in the incomplete engine.</li></ul><div class="quote"><p>&ldquo;if you use an incomplete engine that implements, say, 50% of the formulas in Excel, then what you end up with is actually worse results&rdquo;</p><span class="at">said at 10:26</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Evaluation: deterministic beats LLM-as-judge where possible</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="24" class="sl"><img loading="lazy" class="main" src="img/coding-agents-spreadsheets-repl/s24_840.webp" alt="slide at 14:00"></a><div class="slidecap">Slide at 14:00 &middot; click any slide to enlarge &middot; 8 more from this section below</div><div class=strip><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s25_870.webp" alt="slide at 14:30"></a><a href="#" data-slide="26" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s26_890.webp" alt="slide at 14:50"></a><a href="#" data-slide="27" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s27_900.webp" alt="slide at 15:00"></a><a href="#" data-slide="28" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s28_920.webp" alt="slide at 15:20"></a><a href="#" data-slide="29" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s29_960.webp" alt="slide at 16:00"></a><a href="#" data-slide="30" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s30_980.webp" alt="slide at 16:20"></a><a href="#" data-slide="31" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s31_1000.webp" alt="slide at 16:40"></a><a href="#" data-slide="32" class="sl"><img loading="lazy" class="thumb" src="img/coding-agents-spreadsheets-repl/s32_1040.webp" alt="slide at 17:20"></a></div></div>
+<div class="textcol"><h2>Evaluation: deterministic beats LLM-as-judge where possible</h2><ul class="takeaways"><li>The team started with LLM-as-judge only, but couldn&#x27;t tell whether a score change reflected an actual agent change or evaluator drift.</li><li>They shifted to deterministic comparisons where possible, such as feeding known inputs into a golden spreadsheet and the model-produced spreadsheet and checking whether outputs matched.</li></ul><div class="quote"><p>&ldquo;the annoying part is sometimes you can&#x27;t really tell if when a score changes is it because the, you know, the agent changed something or the evaluator changed what it outputs&rdquo;</p><span class="at">said at 14:05</span></div><div class="quote"><p>&ldquo;take a golden spreadsheet that had a set of inputs and a set of outputs and then use that as kind of a black black box to test a spreadsheet that the model produced&rdquo;</p><span class="at">said at 14:37</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The REPL-over-many-tools pattern generalizes past spreadsheets: any domain where an agent is chaining 10+ sequential or parallel tool calls is a sign you&#x27;ve built an ad hoc scripting language and should just give it a real one (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s02_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s03_100.webp" alt="slide at 01:40"><div class="ts">01:40</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s04_110.webp" alt="slide at 01:50"><div class="ts">01:50</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s05_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s06_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s07_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s08_250.webp" alt="slide at 04:10"><div class="ts">04:10</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s09_350.webp" alt="slide at 05:50"><div class="ts">05:50</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s10_370.webp" alt="slide at 06:10"><div class="ts">06:10</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s11_410.webp" alt="slide at 06:50"><div class="ts">06:50</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s12_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s13_450.webp" alt="slide at 07:30"><div class="ts">07:30</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s14_460.webp" alt="slide at 07:40"><div class="ts">07:40</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s15_470.webp" alt="slide at 07:50"><div class="ts">07:50</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s16_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s17_620.webp" alt="slide at 10:20"><div class="ts">10:20</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s18_670.webp" alt="slide at 11:10"><div class="ts">11:10</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s19_680.webp" alt="slide at 11:20"><div class="ts">11:20</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s20_730.webp" alt="slide at 12:10"><div class="ts">12:10</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s21_750.webp" alt="slide at 12:30"><div class="ts">12:30</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s22_760.webp" alt="slide at 12:40"><div class="ts">12:40</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s23_800.webp" alt="slide at 13:20"><div class="ts">13:20</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s24_840.webp" alt="slide at 14:00"><div class="ts">14:00</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s25_870.webp" alt="slide at 14:30"><div class="ts">14:30</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s26_890.webp" alt="slide at 14:50"><div class="ts">14:50</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s27_900.webp" alt="slide at 15:00"><div class="ts">15:00</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s28_920.webp" alt="slide at 15:20"><div class="ts">15:20</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s29_960.webp" alt="slide at 16:00"><div class="ts">16:00</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s30_980.webp" alt="slide at 16:20"><div class="ts">16:20</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s31_1000.webp" alt="slide at 16:40"><div class="ts">16:40</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s32_1040.webp" alt="slide at 17:20"><div class="ts">17:20</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s33_1110.webp" alt="slide at 18:30"><div class="ts">18:30</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/coding-agents-spreadsheets-repl/s34_1120.webp" alt="slide at 18:40"><div class="ts">18:40</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The team went from around 50% to 92% accuracy on an internal financial-analysis spreadsheet benchmark over four months.</td><td class="tt">00:30</td></tr><tr><td class="st">warns</td><td>An early three-agent architecture with a five-step edit process was too rigid because discovery ran once up front and context didn&#x27;t flow between agents.</td><td class="tt">01:34</td></tr><tr><td class="st">asserts</td><td>The biggest breakthrough was replacing around 15 accumulated tools with a single Node.js REPL tool.</td><td class="tt">04:00</td></tr><tr><td class="st">warns</td><td>Before the REPL, agents needed 10-15 sequential tool calls to explore a spreadsheet, which often timed out.</td><td class="tt">05:13</td></tr><tr><td class="st">asserts</td><td>With plain code mode agents wrote long ~50-line scripts, but with REPL persistent state they wrote shorter scripts with more interleaved reasoning between steps.</td><td class="tt">06:47</td></tr><tr><td class="st">warns</td><td>Using an incomplete formula engine that implements only part of Excel&#x27;s formulas produces worse results, because the agent writes formulas that fail or error against the engine.</td><td class="tt">10:26</td></tr><tr><td class="st">warns</td><td>With LLM-as-judge alone, it was hard to tell if a score change came from the agent changing or the evaluator changing what it outputs.</td><td class="tt">14:05</td></tr><tr><td class="st">recommends</td><td>Where possible, use golden spreadsheets with known inputs and outputs as deterministic black-box tests instead of relying only on LLM-as-judge.</td><td class="tt">14:37</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/coding-agents-spreadsheets-repl/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/HEFSExa0xl0?t=10"}, {"src": "img/coding-agents-spreadsheets-repl/s01_20.webp", "mmss": "00:20", "yt": "https://youtu.be/HEFSExa0xl0?t=20"}, {"src": "img/coding-agents-spreadsheets-repl/s02_80.webp", "mmss": "01:20", "yt": "https://youtu.be/HEFSExa0xl0?t=80"}, {"src": "img/coding-agents-spreadsheets-repl/s03_100.webp", "mmss": "01:40", "yt": "https://youtu.be/HEFSExa0xl0?t=100"}, {"src": "img/coding-agents-spreadsheets-repl/s04_110.webp", "mmss": "01:50", "yt": "https://youtu.be/HEFSExa0xl0?t=110"}, {"src": "img/coding-agents-spreadsheets-repl/s05_130.webp", "mmss": "02:10", "yt": "https://youtu.be/HEFSExa0xl0?t=130"}, {"src": "img/coding-agents-spreadsheets-repl/s06_140.webp", "mmss": "02:20", "yt": "https://youtu.be/HEFSExa0xl0?t=140"}, {"src": "img/coding-agents-spreadsheets-repl/s07_200.webp", "mmss": "03:20", "yt": "https://youtu.be/HEFSExa0xl0?t=200"}, {"src": "img/coding-agents-spreadsheets-repl/s08_250.webp", "mmss": "04:10", "yt": "https://youtu.be/HEFSExa0xl0?t=250"}, {"src": "img/coding-agents-spreadsheets-repl/s09_350.webp", "mmss": "05:50", "yt": "https://youtu.be/HEFSExa0xl0?t=350"}, {"src": "img/coding-agents-spreadsheets-repl/s10_370.webp", "mmss": "06:10", "yt": "https://youtu.be/HEFSExa0xl0?t=370"}, {"src": "img/coding-agents-spreadsheets-repl/s11_410.webp", "mmss": "06:50", "yt": "https://youtu.be/HEFSExa0xl0?t=410"}, {"src": "img/coding-agents-spreadsheets-repl/s12_420.webp", "mmss": "07:00", "yt": "https://youtu.be/HEFSExa0xl0?t=420"}, {"src": "img/coding-agents-spreadsheets-repl/s13_450.webp", "mmss": "07:30", "yt": "https://youtu.be/HEFSExa0xl0?t=450"}, {"src": "img/coding-agents-spreadsheets-repl/s14_460.webp", "mmss": "07:40", "yt": "https://youtu.be/HEFSExa0xl0?t=460"}, {"src": "img/coding-agents-spreadsheets-repl/s15_470.webp", "mmss": "07:50", "yt": "https://youtu.be/HEFSExa0xl0?t=470"}, {"src": "img/coding-agents-spreadsheets-repl/s16_490.webp", "mmss": "08:10", "yt": "https://youtu.be/HEFSExa0xl0?t=490"}, {"src": "img/coding-agents-spreadsheets-repl/s17_620.webp", "mmss": "10:20", "yt": "https://youtu.be/HEFSExa0xl0?t=620"}, {"src": "img/coding-agents-spreadsheets-repl/s18_670.webp", "mmss": "11:10", "yt": "https://youtu.be/HEFSExa0xl0?t=670"}, {"src": "img/coding-agents-spreadsheets-repl/s19_680.webp", "mmss": "11:20", "yt": "https://youtu.be/HEFSExa0xl0?t=680"}, {"src": "img/coding-agents-spreadsheets-repl/s20_730.webp", "mmss": "12:10", "yt": "https://youtu.be/HEFSExa0xl0?t=730"}, {"src": "img/coding-agents-spreadsheets-repl/s21_750.webp", "mmss": "12:30", "yt": "https://youtu.be/HEFSExa0xl0?t=750"}, {"src": "img/coding-agents-spreadsheets-repl/s22_760.webp", "mmss": "12:40", "yt": "https://youtu.be/HEFSExa0xl0?t=760"}, {"src": "img/coding-agents-spreadsheets-repl/s23_800.webp", "mmss": "13:20", "yt": "https://youtu.be/HEFSExa0xl0?t=800"}, {"src": "img/coding-agents-spreadsheets-repl/s24_840.webp", "mmss": "14:00", "yt": "https://youtu.be/HEFSExa0xl0?t=840"}, {"src": "img/coding-agents-spreadsheets-repl/s25_870.webp", "mmss": "14:30", "yt": "https://youtu.be/HEFSExa0xl0?t=870"}, {"src": "img/coding-agents-spreadsheets-repl/s26_890.webp", "mmss": "14:50", "yt": "https://youtu.be/HEFSExa0xl0?t=890"}, {"src": "img/coding-agents-spreadsheets-repl/s27_900.webp", "mmss": "15:00", "yt": "https://youtu.be/HEFSExa0xl0?t=900"}, {"src": "img/coding-agents-spreadsheets-repl/s28_920.webp", "mmss": "15:20", "yt": "https://youtu.be/HEFSExa0xl0?t=920"}, {"src": "img/coding-agents-spreadsheets-repl/s29_960.webp", "mmss": "16:00", "yt": "https://youtu.be/HEFSExa0xl0?t=960"}, {"src": "img/coding-agents-spreadsheets-repl/s30_980.webp", "mmss": "16:20", "yt": "https://youtu.be/HEFSExa0xl0?t=980"}, {"src": "img/coding-agents-spreadsheets-repl/s31_1000.webp", "mmss": "16:40", "yt": "https://youtu.be/HEFSExa0xl0?t=1000"}, {"src": "img/coding-agents-spreadsheets-repl/s32_1040.webp", "mmss": "17:20", "yt": "https://youtu.be/HEFSExa0xl0?t=1040"}, {"src": "img/coding-agents-spreadsheets-repl/s33_1110.webp", "mmss": "18:30", "yt": "https://youtu.be/HEFSExa0xl0?t=1110"}, {"src": "img/coding-agents-spreadsheets-repl/s34_1120.webp", "mmss": "18:40", "yt": "https://youtu.be/HEFSExa0xl0?t=1120"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "HEFSExa0xl0", "slug": "coding-agents-spreadsheets-repl", "title": "Teaching Coding Agents to do Spreadsheets", "speaker": "Nuno Campos", "company": "Witan Labs", "themes": ["coding-agents", "agentic-engineering", "evals-benchmarks"], "tier": "slide-brief", "depth": "pattern", "diagram": {"title": "From 15 tools to one REPL (ours, from the slides)", "lanes": ["Old approach", "REPL breakthrough", "Verification loop"], "nodes": [{"id": "three_agent", "label": "Three-agent architecture", "sub": "discovery ran once, no context flow", "lane": 0, "kind": "system", "claim": "c2", "t": 94}, {"id": "many_tools", "label": "10-15 sequential tool calls", "sub": "often timed out exploring a sheet", "lane": 0, "kind": "system", "claim": "c4", "t": 313}, {"id": "repl", "label": "Node.js REPL tool", "sub": "replaced ~15 accumulated tools", "lane": 1, "kind": "system", "claim": "c3", "t": 240}, {"id": "persistent_state", "label": "Persistent state", "sub": "shorter scripts, more interleaved reasoning", "lane": 1, "kind": "system", "claim": "c5", "t": 407}, {"id": "engine", "label": "Formula + render engine", "sub": "source of truth agent checks work against", "lane": 2, "kind": "system", "claim": "c6", "t": 626}, {"id": "llm_judge", "label": "LLM-as-judge", "sub": "couldn't tell agent change vs. drift", "lane": 2, "kind": "external", "claim": "c7", "t": 845}, {"id": "golden_sheet", "label": "Golden spreadsheet tests", "sub": "known inputs/outputs, black-box check", "lane": 2, "kind": "store", "claim": "c8", "t": 877}, {"id": "benchmark", "label": "50% to 92% accuracy", "sub": "internal financial-analysis benchmark, 4 months", "lane": 1, "kind": "system", "claim": "c1", "t": 30}], "edges": [{"from": "three_agent", "to": "repl", "label": "replaced by", "kind": "flow"}, {"from": "many_tools", "to": "repl", "label": "replaced by", "kind": "flow"}, {"from": "repl", "to": "persistent_state", "label": "enables", "kind": "flow"}, {"from": "persistent_state", "to": "benchmark", "label": "drove gains", "kind": "flow"}, {"from": "repl", "to": "engine", "label": "checks work via", "kind": "flow"}, {"from": "engine", "to": "golden_sheet", "label": "verified by", "kind": "data"}, {"from": "llm_judge", "to": "golden_sheet", "label": "replaced by", "kind": "flow"}, {"from": "engine", "to": "benchmark", "label": "supports accuracy", "kind": "flow"}], "caption": "The REPL replaced both the rigid three-agent pipeline and ad hoc tool chains, while a high-fidelity formula engine and golden-spreadsheet tests replaced LLM-as-judge as the verification loop (ours)."}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "benchmark improvement", "text": "The team went from around 50% to 92% accuracy on an internal financial-analysis spreadsheet benchmark over four months.", "quote": "We started at uh, around 50% accuracy on a financial analysis benchmark and got to 92%", "t": 30}, {"id": "c2", "stance": "warns", "topic": "three-agent architecture dead end", "text": "An early three-agent architecture with a five-step edit process was too rigid because discovery ran once up front and context didn't flow between agents.", "quote": "this architecture in the end was too rigid because, you know, discovery ran once up front, uh, and then you couldn't revisit it and uh, the context wouldn't flow between the different agents", "t": 94}, {"id": "c3", "stance": "asserts", "topic": "REPL replaced 15 tools", "text": "The biggest breakthrough was replacing around 15 accumulated tools with a single Node.js REPL tool.", "quote": "we uh hit on uh what was probably ended up being the biggest uh breakthrough, which was to replace the, you know, the many tools that we accumulated over time. I think at that time we had around 15 tools", "t": 240}, {"id": "c4", "stance": "warns", "topic": "sequential tool calls timing out", "text": "Before the REPL, agents needed 10-15 sequential tool calls to explore a spreadsheet, which often timed out.", "quote": "before it would be you'd have, you know, 10 or 15 tool calls usually for an agent to to explore a spreadsheet and get to an answer", "t": 313}, {"id": "c5", "stance": "asserts", "topic": "REPL vs code mode script length", "text": "With plain code mode agents wrote long ~50-line scripts, but with REPL persistent state they wrote shorter scripts with more interleaved reasoning between steps.", "quote": "just pure code mode without the REPL semantics, uh, agents would very often write quite long scripts, like 50 lines of JavaScript would be pretty common", "t": 407}, {"id": "c6", "stance": "warns", "topic": "incomplete engine hurts results", "text": "Using an incomplete formula engine that implements only part of Excel's formulas produces worse results, because the agent writes formulas that fail or error against the engine.", "quote": "if you use an incomplete engine that implements, say, 50% of the formulas in Excel, then what you end up with is actually worse results", "t": 626}, {"id": "c7", "stance": "warns", "topic": "LLM-as-judge limitation", "text": "With LLM-as-judge alone, it was hard to tell if a score change came from the agent changing or the evaluator changing what it outputs.", "quote": "the annoying part is sometimes you can't really tell if when a score changes is it because the, you know, the agent changed something or the evaluator changed what it outputs", "t": 845}, {"id": "c8", "stance": "recommends", "topic": "deterministic evaluation", "text": "Where possible, use golden spreadsheets with known inputs and outputs as deterministic black-box tests instead of relying only on LLM-as-judge.", "quote": "take a golden spreadsheet that had a set of inputs and a set of outputs and then use that as kind of a black black box to test a spreadsheet that the model produced", "t": 877}]}</script>
+</body></html>

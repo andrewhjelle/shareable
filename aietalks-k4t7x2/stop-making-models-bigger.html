@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Stop Making Models Bigger, Make Them Behave &middot; Talk Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDE9DF;--bg2:#E2DDD0;--bg3:#F6F3EA;--paper:#FFFFFF;--ink:#14110D;--ink2:#2A241D;
+--ink3:#4F4639;--ink4:#807565;--mark:#C8501F;--mark2:#1F3F5C;--rule:rgba(20,17,13,.14);--rule2:rgba(20,17,13,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Geist',-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--bg3)}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(237,233,223,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:22px;
+font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.topbar .wm{font-family:'Instrument Serif',serif;font-size:18px;color:var(--ink);text-transform:none;letter-spacing:-.01em}
+.topbar .wm em{font-style:italic;color:var(--mark)}
+.topbar nav{margin-left:auto;display:flex;gap:18px}
+.topbar nav a:hover{color:var(--ink)}
+.frame{max-width:1180px;margin:0 auto;padding:0 28px}
+section.block{padding:64px 0;border-bottom:1px solid var(--rule)}
+section.block:last-of-type{border-bottom:0}
+.seclabel{display:flex;align-items:baseline;gap:12px;font-family:'Geist Mono',monospace;font-size:11px;
+letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px}
+.seclabel .num{color:var(--mark);font-weight:600}
+.seclabel .ln{flex:1;height:1px;background:var(--rule);margin-left:10px}
+h1.lede,h2.lede{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-.02em;line-height:.98;text-wrap:pretty}
+h1.lede{font-size:clamp(38px,6vw,66px);max-width:20ch;margin-bottom:20px}
+h2.lede{font-size:clamp(28px,3.6vw,44px);max-width:24ch;margin-bottom:18px}
+h1 em,h2 em{font-style:italic;color:var(--mark)}
+.deck{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(17px,1.5vw,21px);line-height:1.5;color:var(--ink3);max-width:60ch;margin-bottom:18px}
+.prose p{font-size:16px;line-height:1.68;color:var(--ink2);margin-bottom:14px;max-width:68ch}
+.prose strong{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+padding:5px 10px;border:1px solid var(--rule2);border-radius:999px;color:var(--ink3);background:var(--bg3)}
+.chip.hot{border-color:var(--mark);color:var(--mark)}
+.tldr{background:var(--paper);border:1px solid var(--rule);border-left:4px solid var(--mark);padding:22px 26px;max-width:74ch;margin:22px 0}
+.tldr h3{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--mark);margin-bottom:12px}
+.tldr li{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0 0 10px 18px}
+.quote{border-left:3px solid var(--mark2);padding:10px 18px;margin:16px 0;max-width:66ch;background:var(--bg3)}
+.quote p{font-family:'Instrument Serif',serif;font-style:italic;font-size:17.5px;line-height:1.5;color:var(--ink2)}
+.quote a{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mark2);border-bottom:1px dotted var(--mark2)}
+figure.slide{margin:22px 0;max-width:820px}
+figure.slide img{width:100%;display:block;border:1px solid var(--rule2);box-shadow:4px 4px 0 rgba(20,17,13,.10)}
+figure.slide figcaption{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:8px}
+figure.slide figcaption a{color:var(--mark);border-bottom:1px dotted var(--mark)}
+.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.deckgrid a{display:block;background:var(--paper);border:1px solid var(--rule);padding:8px}
+.deckgrid a:hover{border-color:var(--mark)}
+.deckgrid img{width:100%;display:block}
+.deckgrid .ts{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink4);padding-top:6px;text-transform:uppercase}
+.callout{background:var(--bg2);border:1px solid var(--rule);padding:22px 26px;max-width:74ch;margin:20px 0}
+.callout h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px}
+.callout.ours h4{color:var(--mark)}
+.callout.cross h4{color:var(--mark2)}
+.callout p,.callout li{font-size:15px;line-height:1.62;color:var(--ink2)}
+.callout li{margin:0 0 8px 18px}
+details.claims{max-width:100%;margin:18px 0}
+details.claims summary{font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+color:var(--mark);cursor:pointer;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+table.claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+table.claims th{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule2)}
+table.claims td{padding:10px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5;color:var(--ink2)}
+table.claims td.st{font-family:'Geist Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--mark);white-space:nowrap}
+table.claims td.tt a{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mark2);border-bottom:1px dotted var(--mark2);white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;margin-top:8px}
+.card{background:var(--paper);border:1px solid var(--rule2);display:flex;flex-direction:column;transition:box-shadow .15s}
+.card:hover{box-shadow:6px 6px 0 rgba(200,80,31,.18)}
+.card img{width:100%;display:block;border-bottom:1px solid var(--rule)}
+.card .pad{padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:27px;line-height:1.05;letter-spacing:-.01em}
+.card .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.card .why{font-size:14.5px;line-height:1.6;color:var(--ink2)}
+.card .why strong{color:var(--ink)}
+.card .cta{margin-top:auto;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mark)}
+.svgwrap{background:var(--paper);border:1px solid var(--rule);padding:26px;margin:22px 0;max-width:900px;overflow-x:auto}
+.svgwrap svg{width:100%;height:auto;display:block}
+footer{padding:40px 0 60px;font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4)}
+.meta-kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;color:var(--ink2);max-width:60ch;margin:14px 0}
+.meta-kv .k{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink4);padding-top:2px}
+@media(max-width:640px){.frame{padding:0 18px}section.block{padding:44px 0}}
+.frame.wide{max-width:1600px}
+.quote .at{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink4)}
+.sec2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:44px;align-items:start}
+.sec2.noslide{grid-template-columns:minmax(0,1fr)}
+.sec2 .slidecol a.sl{display:block}
+.sec2 img.main{width:100%;display:block;border:1px solid var(--rule2);box-shadow:6px 6px 0 rgba(20,17,13,.10);background:#fff;cursor:zoom-in}
+.sec2 .slidecap{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);padding-top:10px}
+.sec2 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sec2 .strip a.sl{width:calc(25% - 6px)}
+.sec2 img.thumb{width:100%;display:block;border:1px solid var(--rule);background:#fff;cursor:zoom-in}
+.sec2 img.thumb:hover{border-color:var(--mark)}
+.sec2 .textcol h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(26px,2.4vw,36px);line-height:1.06;letter-spacing:-.015em;margin-bottom:18px;text-wrap:pretty}
+.takeaways{margin:0 0 8px}
+.takeaways li{font-size:16.5px;line-height:1.58;color:var(--ink2);margin:0 0 12px 20px}
+.takeaways li::marker{color:var(--mark)}
+.sec2 .quote{max-width:none}
+@media(max-width:1000px){.sec2{grid-template-columns:1fr}}
+.deckgrid a{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;z-index:100;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lb.on{display:flex}
+#lb img{max-width:min(96vw,1700px);max-height:84vh;border:1px solid rgba(255,255,255,.25);background:#fff}
+#lb .cap{color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:16px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+#lb .cap a{color:#F0A080;border-bottom:1px dotted #F0A080}
+#lb button{background:none;border:1px solid rgba(255,255,255,.4);color:#EDE9DF;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+#lb button:hover{border-color:#fff}
+
+.trows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.trow{display:flex;align-items:center;gap:20px;padding:20px 6px;border-bottom:1px solid var(--rule)}
+.trow:hover{background:var(--bg3)}
+.trow h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:23px;line-height:1.1;letter-spacing:-.01em;margin-bottom:5px}
+.trow .who{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.trow .why{font-size:14px;line-height:1.55;color:var(--ink2);max-width:78ch}
+.trow .cta{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mark);white-space:nowrap}
+</style></head><body>
+<div class="topbar"><div class="topbar-inner">
+<span class="wm">Talk <em>Briefs</em></span><span>AI Engineer &middot; Summer 2026</span>
+<nav><a href="index.html">&larr; All talks</a><a href="https://youtu.be/TNwJ1LMiENk" target="_blank">Watch</a></nav></div></div>
+
+<div class="frame wide">
+<section class="block">
+<div class="seclabel"><span class="num">TALK</span><span>Slide brief &middot; 20 min</span><span class="ln"></span></div>
+<h1 class="lede">Stop Making Models Bigger, Make Them Behave</h1>
+<div class="meta-kv">
+<span class="k">Speaker</span><span>Kobie Crawford &middot; Snorkel</span>
+<span class="k">Watch</span><span><a href="https://youtu.be/TNwJ1LMiENk" target="_blank" rel="noopener" style="color:var(--mark2);border-bottom:1px dotted var(--mark2)">youtu.be/TNwJ1LMiENk</a> &middot; 20 min</span>
+<span class="k">Source</span><span style="max-width:80ch">Recording of this talk at AI Engineer (2026), published on YouTube by the conference.
+Slides below are frames from that recording, reproduced for reference and study; rights remain with the speaker and the conference. Quotes are verbatim from the talk transcript with the time they were said.</span>
+</div>
+<div class="chips"><span class="chip">take</span><span class="chip hot">Post-training</span><span class="chip hot">Data curation</span><span class="chip hot">Evals & benchmarks</span></div>
+<p class="deck" style="font-size:15px">Reports a specific RL fine-tuning result -- a 4B model beating a 235B model on a financial tool-use benchmark for under $500 -- and pinpoints the fix as tool-use discipline, not reasoning depth, which is directly actionable for teams dec...</p>
+<div class="tldr"><h3>If you only read one thing</h3><ul><li>Snorkel + UC Berkeley&#x27;s RLLM team RL-trained a 4B parameter model to outperform a 235B parameter model (Qwen3-235B) on a financial-analysis tool-use benchmark, for under $500 and about a day of training.</li><li>The 235B model failed not from lack of reasoning but from poor tool discipline: it guessed at nonexistent database tables twice, got no results, then hallucinated an answer instead of inspecting the schema first.</li><li>Training on single-table questions only (not mixed or curriculum multi-table) produced the biggest uplift, and that same training regime still roughly doubled pass@1 on the harder multi-table benchmark, from 13.9% to 26.6%.</li></ul></div>
+</section>
+<section class="block"><div class="seclabel"><span class="num">&#9635;</span><span>The system in one picture (ours, from the slides and the transcript)</span><span class="ln"></span></div><div class="svgwrap"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2px;color:#807565;margin-bottom:10px">WHY TOOL DISCIPLINE BEAT BIGGER MODELS (OURS)</div><svg style="width:100%;height:auto;display:block"  
+ viewBox="0.00 0.00 376.00 482.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 477.93)">
+<title>G</title>
+<!-- n1 -->
+<g id="node1" class="node">
+<title>n1</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="199.92,-473.93 0,-473.93 0,-437.65 199.92,-437.65 199.92,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="35.84" y="-455.84" font-family="Geist Mono" font-size="11.00">Bigger model = default fix</text>
+<text xml:space="preserve" text-anchor="start" x="12.96" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">teams swap in larger model when perf falls short</text>
+</g>
+<!-- n3 -->
+<g id="node3" class="node">
+<title>n3</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="294.67,-386.4 99.25,-386.4 99.25,-350.12 294.67,-350.12 294.67,-386.4"/>
+<text xml:space="preserve" text-anchor="start" x="154.21" y="-368.31" font-family="Geist Mono" font-size="11.00">235B hallucinates</text>
+<text xml:space="preserve" text-anchor="start" x="112.21" y="-360.16" font-family="Geist Mono" font-size="8.00" fill="#807565">queried nonexistent tables twice, then guessed</text>
+</g>
+<!-- n1&#45;&gt;n3 -->
+<g id="edge1" class="edge">
+<title>n1&#45;&gt;n3</title>
+<path fill="none" stroke="#c8501f" d="M120.06,-437.07C134.76,-424.11 154.82,-406.41 170.78,-392.35"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="172.12,-394.43 175.75,-387.96 168.88,-390.75 172.12,-394.43"/>
+<text xml:space="preserve" text-anchor="middle" x="185.02" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">assumption fails</text>
+</g>
+<!-- n2 -->
+<g id="node2" class="node">
+<title>n2</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" stroke-dasharray="5,2" points="367.55,-473.93 222.38,-473.93 222.38,-437.65 367.55,-437.65 367.55,-473.93"/>
+<text xml:space="preserve" text-anchor="start" x="246.96" y="-455.84" font-family="Geist Mono" font-size="11.00">Goal: 4B beat 235B</text>
+<text xml:space="preserve" text-anchor="start" x="235.34" y="-447.69" font-family="Geist Mono" font-size="8.00" fill="#807565">tool&#45;use task for financial analysis</text>
+</g>
+<!-- n2&#45;&gt;n3 -->
+<g id="edge2" class="edge">
+<title>n2&#45;&gt;n3</title>
+<path fill="none" stroke="#c8501f" d="M274.65,-437.07C259.81,-424.11 239.53,-406.41 223.41,-392.35"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="225.26,-390.71 218.38,-387.95 222.04,-394.4 225.26,-390.71"/>
+<text xml:space="preserve" text-anchor="middle" x="272.83" y="-409.57" font-family="Geist Mono" font-size="8.50" fill="#c8501f">sets stakes</text>
+</g>
+<!-- n4 -->
+<g id="node4" class="node">
+<title>n4</title>
+<polygon fill="#f6f3ea" stroke="#14110d" stroke-width="1.4" points="296.92,-298.87 97,-298.87 97,-262.59 296.92,-262.59 296.92,-298.87"/>
+<text xml:space="preserve" text-anchor="start" x="142.96" y="-280.78" font-family="Geist Mono" font-size="11.00">FinQA RL environment</text>
+<text xml:space="preserve" text-anchor="start" x="109.96" y="-272.63" font-family="Geist Mono" font-size="8.00" fill="#807565">290 single&#45;table + 79 multi&#45;table samples, GRPO</text>
+</g>
+<!-- n3&#45;&gt;n4 -->
+<g id="edge3" class="edge">
+<title>n3&#45;&gt;n4</title>
+<path fill="none" stroke="#c8501f" d="M196.96,-349.54C196.96,-337.5 196.96,-321.37 196.96,-307.86"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="199.41,-307.94 196.96,-300.94 194.51,-307.94 199.41,-307.94"/>
+<text xml:space="preserve" text-anchor="middle" x="223.96" y="-322.04" font-family="Geist Mono" font-size="8.50" fill="#c8501f">motivates env</text>
+</g>
+<!-- n5 -->
+<g id="node5" class="node">
+<title>n5</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="269.55,-211.34 124.38,-211.34 124.38,-175.06 269.55,-175.06 269.55,-211.34"/>
+<text xml:space="preserve" text-anchor="start" x="137.34" y="-193.25" font-family="Geist Mono" font-size="11.00">Single&#45;table&#45;only training</text>
+<text xml:space="preserve" text-anchor="start" x="141.84" y="-185.1" font-family="Geist Mono" font-size="8.00" fill="#807565">beat mixed/curriculum regimes</text>
+</g>
+<!-- n4&#45;&gt;n5 -->
+<g id="edge4" class="edge">
+<title>n4&#45;&gt;n5</title>
+<path fill="none" stroke="#1f3f5c" stroke-dasharray="5,2" d="M196.96,-262.01C196.96,-249.97 196.96,-233.84 196.96,-220.33"/>
+<polygon fill="#1f3f5c" stroke="#1f3f5c" points="199.41,-220.41 196.96,-213.41 194.51,-220.41 199.41,-220.41"/>
+<text xml:space="preserve" text-anchor="middle" x="213.46" y="-234.51" font-family="Geist Mono" font-size="8.50" fill="#1f3f5c">trains on</text>
+</g>
+<!-- n6 -->
+<g id="node6" class="node">
+<title>n6</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="186.8,-123.81 73.12,-123.81 73.12,-87.53 186.8,-87.53 186.8,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="93.96" y="-105.72" font-family="Geist Mono" font-size="11.00">4B beats 235B</text>
+<text xml:space="preserve" text-anchor="start" x="86.09" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">pass@1 roughly doubled</text>
+</g>
+<!-- n5&#45;&gt;n6 -->
+<g id="edge5" class="edge">
+<title>n5&#45;&gt;n6</title>
+<path fill="none" stroke="#c8501f" d="M183.08,-174.48C173.2,-161.86 159.8,-144.76 148.93,-130.89"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="151,-129.56 144.76,-125.56 147.15,-132.58 151,-129.56"/>
+<text xml:space="preserve" text-anchor="middle" x="178.35" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">yields</text>
+</g>
+<!-- n7 -->
+<g id="node7" class="node">
+<title>n7</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="323.55,-123.81 208.38,-123.81 208.38,-87.53 323.55,-87.53 323.55,-123.81"/>
+<text xml:space="preserve" text-anchor="start" x="226.96" y="-105.72" font-family="Geist Mono" font-size="11.00">Multi&#45;table jump</text>
+<text xml:space="preserve" text-anchor="start" x="221.34" y="-97.57" font-family="Geist Mono" font-size="8.00" fill="#807565">pass@1 13.9% to 26.6%</text>
+</g>
+<!-- n5&#45;&gt;n7 -->
+<g id="edge6" class="edge">
+<title>n5&#45;&gt;n7</title>
+<path fill="none" stroke="#c8501f" d="M211.26,-174.48C221.43,-161.86 235.23,-144.76 246.42,-130.89"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="248.24,-132.53 250.73,-125.55 244.43,-129.46 248.24,-132.53"/>
+<text xml:space="preserve" text-anchor="middle" x="261.84" y="-146.99" font-family="Geist Mono" font-size="8.50" fill="#c8501f">generalizes to</text>
+</g>
+<!-- n8 -->
+<g id="node8" class="node">
+<title>n8</title>
+<polygon fill="#ffffff" stroke="#14110d" stroke-width="1.4" points="291.17,-36.28 104.75,-36.28 104.75,0 291.17,0 291.17,-36.28"/>
+<text xml:space="preserve" text-anchor="start" x="152.21" y="-18.19" font-family="Geist Mono" font-size="11.00">Rubric&#45;based evals</text>
+<text xml:space="preserve" text-anchor="start" x="117.71" y="-10.04" font-family="Geist Mono" font-size="8.00" fill="#807565">break correctness into per&#45;question checklist</text>
+</g>
+<!-- n6&#45;&gt;n8 -->
+<g id="edge7" class="edge">
+<title>n6&#45;&gt;n8</title>
+<path fill="none" stroke="#c8501f" d="M144.05,-86.95C154.08,-74.33 167.68,-57.23 178.71,-43.36"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="180.51,-45.03 182.95,-38.02 176.67,-41.98 180.51,-45.03"/>
+<text xml:space="preserve" text-anchor="middle" x="193.53" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">measured via</text>
+</g>
+<!-- n7&#45;&gt;n8 -->
+<g id="edge8" class="edge">
+<title>n7&#45;&gt;n8</title>
+<path fill="none" stroke="#c8501f" d="M251.87,-86.95C241.84,-74.33 228.24,-57.23 217.21,-43.36"/>
+<polygon fill="#c8501f" stroke="#c8501f" points="219.25,-41.98 212.97,-38.02 215.41,-45.03 219.25,-41.98"/>
+<text xml:space="preserve" text-anchor="middle" x="261.53" y="-59.45" font-family="Geist Mono" font-size="8.50" fill="#c8501f">measured via</text>
+</g>
+</g>
+</svg>
+<div style="font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:.08em;color:var(--ink4);margin-top:10px">solid <span style="color:#C8501F">&#9472;&#9654;</span> flow &middot; dashed <span style="color:#1F3F5C">&#9472;&#9654;</span> data &middot; shaded box = store &middot; dashed box = external or person</div></div><p class="deck" style="font-size:15px;margin-top:12px">This traces the talk argument from a stalled 235B-vs-4B comparison to tool-discipline training as the fix, using only claims made in the talk; the single-table generalization result is reported as given and would benefit from independent replication (ours).</p></section>
+
+
+
+<section class="block">
+<div class="seclabel"><span class="num">01</span><span>The experiment: small RL-tuned model vs. large reasoning model</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="10" class="sl"><img loading="lazy" class="main" src="img/stop-making-models-bigger/s10_160.webp" alt="slide at 02:40"></a><div class="slidecap">Slide at 02:40 &middot; click any slide to enlarge &middot; 6 more from this section below</div><div class=strip><a href="#" data-slide="11" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s11_180.webp" alt="slide at 03:00"></a><a href="#" data-slide="12" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s12_200.webp" alt="slide at 03:20"></a><a href="#" data-slide="13" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s13_300.webp" alt="slide at 05:00"></a><a href="#" data-slide="14" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s14_330.webp" alt="slide at 05:30"></a><a href="#" data-slide="15" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s15_360.webp" alt="slide at 06:00"></a><a href="#" data-slide="16" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s16_420.webp" alt="slide at 07:00"></a></div></div>
+<div class="textcol"><h2>The experiment: small RL-tuned model vs. large reasoning model</h2><ul class="takeaways"><li>Snorkel&#x27;s research team, in partnership with UC Berkeley&#x27;s RLLM (Agentic Project) lab, set out to make a 4 billion parameter model outperform a 235 billion parameter model on a tool-use task for financial analysis, arguing that bigger models are sometimes &#x27;a sledgehammer to crack a walnut&#x27; when the real gap is behavior, not knowledge.</li></ul><div class="quote"><p>&ldquo;making a 4 billion parameter model outperform outperform a 235 billion parameter model on a tool use task for financial analysis&rdquo;</p><span class="at">said at 02:38</span></div><div class="quote"><p>&ldquo;we didn&#x27;t get the performance that we wanted with this right now. We&#x27;ll just drop in a larger model&rdquo;</p><span class="at">said at 04:13</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">02</span><span>Where the 235B model actually failed</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="17" class="sl"><img loading="lazy" class="main" src="img/stop-making-models-bigger/s17_470.webp" alt="slide at 07:50"></a><div class="slidecap">Slide at 07:50 &middot; click any slide to enlarge &middot; 3 more from this section below</div><div class=strip><a href="#" data-slide="18" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s18_490.webp" alt="slide at 08:10"></a><a href="#" data-slide="19" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s19_540.webp" alt="slide at 09:00"></a><a href="#" data-slide="20" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s20_650.webp" alt="slide at 10:50"></a></div></div>
+<div class="textcol"><h2>Where the 235B model actually failed</h2><ul class="takeaways"><li>Given a year-over-year revenue growth question, the 235B model queried a table that didn&#x27;t exist, tried again with no result, and then fell back to hallucinating an answer rather than inspecting the environment&#x27;s available tables and schema first -- despite having full reasoning capability.</li></ul><div class="quote"><p>&ldquo;having not gotten anything back in either of those two uh attempts, it falls back to just hallucinating an answer&rdquo;</p><span class="at">said at 07:48</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">03</span><span>Training setup and cost</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="20" class="sl"><img loading="lazy" class="main" src="img/stop-making-models-bigger/s20_650.webp" alt="slide at 10:50"></a><div class="slidecap">Slide at 10:50 &middot; click any slide to enlarge &middot; 1 more from this section below</div><div class=strip><a href="#" data-slide="21" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s21_680.webp" alt="slide at 11:20"></a></div></div>
+<div class="textcol"><h2>Training setup and cost</h2><ul class="takeaways"><li>The team built a self-contained FinQA RL environment (290 single-table samples plus a harder 79-sample multi-table &#x27;FinQA reasoning&#x27; set) using GRPO on a 4B base model via the RLLM framework, published on PrimeIntellect, OpenEnv, and Hugging Face.</li><li>The full training run took about a day and cost under $500.</li></ul><div class="quote"><p>&ldquo;this is something that was able to be done like in a 24 21-hour job and the total cost of running that job was under $500 per run&rdquo;</p><span class="at">said at 10:55</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">04</span><span>Results: tool discipline, not reasoning, was the fix</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="22" class="sl"><img loading="lazy" class="main" src="img/stop-making-models-bigger/s22_810.webp" alt="slide at 13:30"></a><div class="slidecap">Slide at 13:30 &middot; click any slide to enlarge &middot; 6 more from this section below</div><div class=strip><a href="#" data-slide="23" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s23_820.webp" alt="slide at 13:40"></a><a href="#" data-slide="24" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s24_850.webp" alt="slide at 14:10"></a><a href="#" data-slide="25" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s25_870.webp" alt="slide at 14:30"></a><a href="#" data-slide="26" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s26_980.webp" alt="slide at 16:20"></a><a href="#" data-slide="27" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s27_1000.webp" alt="slide at 16:40"></a><a href="#" data-slide="28" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s28_1010.webp" alt="slide at 16:50"></a></div></div>
+<div class="textcol"><h2>Results: tool discipline, not reasoning, was the fix</h2><ul class="takeaways"><li>After training, the 4B model outperformed the 235B model, roughly doubling pass@1 performance; the fine-tuned model now checks available tables, inspects schema, and self-corrects on query errors -- the exact steps the larger model skipped.</li><li>Single-table-only training produced the best uplift and generalized to the harder multi-table benchmark, where pass@1 rose from 13.9% to 26.6%.</li></ul><div class="quote"><p>&ldquo;It&#x27;s performs better than the 235 billion parameter model with that RL training loop. And the performance in terms of pass at one was essentially double of what it had been percentage-wise in terms of like solving problems&rdquo;</p><span class="at">said at 13:29</span></div><div class="quote"><p>&ldquo;it turned out the single-table only training was actually the one that yielded the greatest uplift for these kinds of questions&rdquo;</p><span class="at">said at 16:34</span></div><div class="quote"><p>&ldquo;the harder multi-question multi-table Q&amp;A in the FinQA reasoning question set also saw 13.9 to 26.6 percentage jump after this training&rdquo;</p><span class="at">said at 17:36</span></div></div>
+</div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">05</span><span>Using rubrics to target what to fix</span><span class="ln"></span></div>
+<div class="sec2"><div class="slidecol"><a href="#" data-slide="29" class="sl"><img loading="lazy" class="main" src="img/stop-making-models-bigger/s29_1120.webp" alt="slide at 18:40"></a><div class="slidecap">Slide at 18:40 &middot; click any slide to enlarge &middot; 5 more from this section below</div><div class=strip><a href="#" data-slide="30" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s30_1150.webp" alt="slide at 19:10"></a><a href="#" data-slide="31" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s31_1170.webp" alt="slide at 19:30"></a><a href="#" data-slide="32" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s32_1200.webp" alt="slide at 20:00"></a><a href="#" data-slide="33" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s33_1220.webp" alt="slide at 20:20"></a><a href="#" data-slide="34" class="sl"><img loading="lazy" class="thumb" src="img/stop-making-models-bigger/s34_1230.webp" alt="slide at 20:30"></a></div></div>
+<div class="textcol"><h2>Using rubrics to target what to fix</h2><ul class="takeaways"><li>Snorkel&#x27;s broader eval approach breaks a model response&#x27;s correctness into a rubric of individual questions rather than a single pass/fail signal, which helps identify the specific failure behavior (e.g. tool discipline) worth building training data for, even though RL itself (GRPO) still consumes a single scalar reward.</li></ul><div class="quote"><p>&ldquo;building rubrics as part of our evals. And then those rubrics by breaking down the rightness or wrongness of a model&#x27;s response into a full list of different questions that can be answered&rdquo;</p><span class="at">said at 18:37</span></div></div>
+</div>
+</section>
+
+<section class="block"><div class="callout ours"><h4>Commentary (ours)</h4><p>The single-table-only training regime generalizing better to multi-table questions than mixed or curriculum training is the most counterintuitive result here and worth replicating before trusting it as a general pattern -- it may be specific to how discrete the &#x27;check tables first&#x27; behavior is versus more continuous reasoning skills (ours).</p></div></section>
+
+<section class="block">
+<div class="seclabel"><span class="num">&#9632;</span><span>The deck: every slide, in order (click to enlarge)</span><span class="ln"></span></div>
+<div class="deckgrid"><a href="#" data-slide="0"><img loading="lazy" src="img/stop-making-models-bigger/s00_10.webp" alt="slide at 00:10"><div class="ts">00:10</div></a><a href="#" data-slide="1"><img loading="lazy" src="img/stop-making-models-bigger/s01_20.webp" alt="slide at 00:20"><div class="ts">00:20</div></a><a href="#" data-slide="2"><img loading="lazy" src="img/stop-making-models-bigger/s02_30.webp" alt="slide at 00:30"><div class="ts">00:30</div></a><a href="#" data-slide="3"><img loading="lazy" src="img/stop-making-models-bigger/s03_40.webp" alt="slide at 00:40"><div class="ts">00:40</div></a><a href="#" data-slide="4"><img loading="lazy" src="img/stop-making-models-bigger/s04_50.webp" alt="slide at 00:50"><div class="ts">00:50</div></a><a href="#" data-slide="5"><img loading="lazy" src="img/stop-making-models-bigger/s05_80.webp" alt="slide at 01:20"><div class="ts">01:20</div></a><a href="#" data-slide="6"><img loading="lazy" src="img/stop-making-models-bigger/s06_90.webp" alt="slide at 01:30"><div class="ts">01:30</div></a><a href="#" data-slide="7"><img loading="lazy" src="img/stop-making-models-bigger/s07_130.webp" alt="slide at 02:10"><div class="ts">02:10</div></a><a href="#" data-slide="8"><img loading="lazy" src="img/stop-making-models-bigger/s08_140.webp" alt="slide at 02:20"><div class="ts">02:20</div></a><a href="#" data-slide="9"><img loading="lazy" src="img/stop-making-models-bigger/s09_150.webp" alt="slide at 02:30"><div class="ts">02:30</div></a><a href="#" data-slide="10"><img loading="lazy" src="img/stop-making-models-bigger/s10_160.webp" alt="slide at 02:40"><div class="ts">02:40</div></a><a href="#" data-slide="11"><img loading="lazy" src="img/stop-making-models-bigger/s11_180.webp" alt="slide at 03:00"><div class="ts">03:00</div></a><a href="#" data-slide="12"><img loading="lazy" src="img/stop-making-models-bigger/s12_200.webp" alt="slide at 03:20"><div class="ts">03:20</div></a><a href="#" data-slide="13"><img loading="lazy" src="img/stop-making-models-bigger/s13_300.webp" alt="slide at 05:00"><div class="ts">05:00</div></a><a href="#" data-slide="14"><img loading="lazy" src="img/stop-making-models-bigger/s14_330.webp" alt="slide at 05:30"><div class="ts">05:30</div></a><a href="#" data-slide="15"><img loading="lazy" src="img/stop-making-models-bigger/s15_360.webp" alt="slide at 06:00"><div class="ts">06:00</div></a><a href="#" data-slide="16"><img loading="lazy" src="img/stop-making-models-bigger/s16_420.webp" alt="slide at 07:00"><div class="ts">07:00</div></a><a href="#" data-slide="17"><img loading="lazy" src="img/stop-making-models-bigger/s17_470.webp" alt="slide at 07:50"><div class="ts">07:50</div></a><a href="#" data-slide="18"><img loading="lazy" src="img/stop-making-models-bigger/s18_490.webp" alt="slide at 08:10"><div class="ts">08:10</div></a><a href="#" data-slide="19"><img loading="lazy" src="img/stop-making-models-bigger/s19_540.webp" alt="slide at 09:00"><div class="ts">09:00</div></a><a href="#" data-slide="20"><img loading="lazy" src="img/stop-making-models-bigger/s20_650.webp" alt="slide at 10:50"><div class="ts">10:50</div></a><a href="#" data-slide="21"><img loading="lazy" src="img/stop-making-models-bigger/s21_680.webp" alt="slide at 11:20"><div class="ts">11:20</div></a><a href="#" data-slide="22"><img loading="lazy" src="img/stop-making-models-bigger/s22_810.webp" alt="slide at 13:30"><div class="ts">13:30</div></a><a href="#" data-slide="23"><img loading="lazy" src="img/stop-making-models-bigger/s23_820.webp" alt="slide at 13:40"><div class="ts">13:40</div></a><a href="#" data-slide="24"><img loading="lazy" src="img/stop-making-models-bigger/s24_850.webp" alt="slide at 14:10"><div class="ts">14:10</div></a><a href="#" data-slide="25"><img loading="lazy" src="img/stop-making-models-bigger/s25_870.webp" alt="slide at 14:30"><div class="ts">14:30</div></a><a href="#" data-slide="26"><img loading="lazy" src="img/stop-making-models-bigger/s26_980.webp" alt="slide at 16:20"><div class="ts">16:20</div></a><a href="#" data-slide="27"><img loading="lazy" src="img/stop-making-models-bigger/s27_1000.webp" alt="slide at 16:40"><div class="ts">16:40</div></a><a href="#" data-slide="28"><img loading="lazy" src="img/stop-making-models-bigger/s28_1010.webp" alt="slide at 16:50"><div class="ts">16:50</div></a><a href="#" data-slide="29"><img loading="lazy" src="img/stop-making-models-bigger/s29_1120.webp" alt="slide at 18:40"><div class="ts">18:40</div></a><a href="#" data-slide="30"><img loading="lazy" src="img/stop-making-models-bigger/s30_1150.webp" alt="slide at 19:10"><div class="ts">19:10</div></a><a href="#" data-slide="31"><img loading="lazy" src="img/stop-making-models-bigger/s31_1170.webp" alt="slide at 19:30"><div class="ts">19:30</div></a><a href="#" data-slide="32"><img loading="lazy" src="img/stop-making-models-bigger/s32_1200.webp" alt="slide at 20:00"><div class="ts">20:00</div></a><a href="#" data-slide="33"><img loading="lazy" src="img/stop-making-models-bigger/s33_1220.webp" alt="slide at 20:20"><div class="ts">20:20</div></a><a href="#" data-slide="34"><img loading="lazy" src="img/stop-making-models-bigger/s34_1230.webp" alt="slide at 20:30"><div class="ts">20:30</div></a></div>
+</section>
+<section class="block">
+<div class="seclabel"><span class="num">&#9670;</span><span>Underlying detail &mdash; every claim, typed and timestamped</span><span class="ln"></span></div>
+<details class="claims"><summary>Underlying detail &mdash; every claim, typed and timestamped (8)</summary><table class="claims"><tr><th>Stance</th><th>Claim</th><th>t</th></tr><tr><td class="st">asserts</td><td>The stated goal was making a 4B parameter model outperform a 235B parameter model on a financial-analysis tool-use task.</td><td class="tt">02:38</td></tr><tr><td class="st">warns</td><td>The 235B model queried nonexistent tables twice and then hallucinated an answer instead of inspecting the schema.</td><td class="tt">07:48</td></tr><tr><td class="st">warns</td><td>Teams often default to swapping in a larger model when performance falls short, which isn&#x27;t always the right fix.</td><td class="tt">04:13</td></tr><tr><td class="st">asserts</td><td>The RL training run took about a day and cost under $500 total.</td><td class="tt">10:55</td></tr><tr><td class="st">asserts</td><td>The RL-trained 4B model outperformed the 235B model, roughly doubling pass@1 performance percentage-wise.</td><td class="tt">13:29</td></tr><tr><td class="st">asserts</td><td>Training on single-table questions only produced the greatest performance uplift, beating mixed and curriculum training regimes.</td><td class="tt">16:34</td></tr><tr><td class="st">asserts</td><td>The single-table-trained model&#x27;s pass@1 on the harder multi-table FinQA reasoning set rose from 13.9% to 26.6%.</td><td class="tt">17:36</td></tr><tr><td class="st">recommends</td><td>Break eval correctness into a rubric of individual questions to identify the specific behavior worth targeting with new training data.</td><td class="tt">18:37</td></tr></table><p style="font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--ink4);padding:12px 0">Machine-readable copy embedded in this page (script#ontology) and in the corpus ontology.</p></details>
+</section>
+</div>
+
+<div id="lb" role="dialog" aria-modal="true" aria-label="Slide viewer"><img alt="">
+<div class="cap"><button data-nav="-1">&larr; prev</button><span class="n"></span><button data-nav="1">next &rarr;</button>
+<a target="_blank" rel="noopener">open the talk at this point &#8599;</a><button data-close>close (esc)</button></div></div>
+<script id="slides-data" type="application/json">[{"src": "img/stop-making-models-bigger/s00_10.webp", "mmss": "00:10", "yt": "https://youtu.be/TNwJ1LMiENk?t=10"}, {"src": "img/stop-making-models-bigger/s01_20.webp", "mmss": "00:20", "yt": "https://youtu.be/TNwJ1LMiENk?t=20"}, {"src": "img/stop-making-models-bigger/s02_30.webp", "mmss": "00:30", "yt": "https://youtu.be/TNwJ1LMiENk?t=30"}, {"src": "img/stop-making-models-bigger/s03_40.webp", "mmss": "00:40", "yt": "https://youtu.be/TNwJ1LMiENk?t=40"}, {"src": "img/stop-making-models-bigger/s04_50.webp", "mmss": "00:50", "yt": "https://youtu.be/TNwJ1LMiENk?t=50"}, {"src": "img/stop-making-models-bigger/s05_80.webp", "mmss": "01:20", "yt": "https://youtu.be/TNwJ1LMiENk?t=80"}, {"src": "img/stop-making-models-bigger/s06_90.webp", "mmss": "01:30", "yt": "https://youtu.be/TNwJ1LMiENk?t=90"}, {"src": "img/stop-making-models-bigger/s07_130.webp", "mmss": "02:10", "yt": "https://youtu.be/TNwJ1LMiENk?t=130"}, {"src": "img/stop-making-models-bigger/s08_140.webp", "mmss": "02:20", "yt": "https://youtu.be/TNwJ1LMiENk?t=140"}, {"src": "img/stop-making-models-bigger/s09_150.webp", "mmss": "02:30", "yt": "https://youtu.be/TNwJ1LMiENk?t=150"}, {"src": "img/stop-making-models-bigger/s10_160.webp", "mmss": "02:40", "yt": "https://youtu.be/TNwJ1LMiENk?t=160"}, {"src": "img/stop-making-models-bigger/s11_180.webp", "mmss": "03:00", "yt": "https://youtu.be/TNwJ1LMiENk?t=180"}, {"src": "img/stop-making-models-bigger/s12_200.webp", "mmss": "03:20", "yt": "https://youtu.be/TNwJ1LMiENk?t=200"}, {"src": "img/stop-making-models-bigger/s13_300.webp", "mmss": "05:00", "yt": "https://youtu.be/TNwJ1LMiENk?t=300"}, {"src": "img/stop-making-models-bigger/s14_330.webp", "mmss": "05:30", "yt": "https://youtu.be/TNwJ1LMiENk?t=330"}, {"src": "img/stop-making-models-bigger/s15_360.webp", "mmss": "06:00", "yt": "https://youtu.be/TNwJ1LMiENk?t=360"}, {"src": "img/stop-making-models-bigger/s16_420.webp", "mmss": "07:00", "yt": "https://youtu.be/TNwJ1LMiENk?t=420"}, {"src": "img/stop-making-models-bigger/s17_470.webp", "mmss": "07:50", "yt": "https://youtu.be/TNwJ1LMiENk?t=470"}, {"src": "img/stop-making-models-bigger/s18_490.webp", "mmss": "08:10", "yt": "https://youtu.be/TNwJ1LMiENk?t=490"}, {"src": "img/stop-making-models-bigger/s19_540.webp", "mmss": "09:00", "yt": "https://youtu.be/TNwJ1LMiENk?t=540"}, {"src": "img/stop-making-models-bigger/s20_650.webp", "mmss": "10:50", "yt": "https://youtu.be/TNwJ1LMiENk?t=650"}, {"src": "img/stop-making-models-bigger/s21_680.webp", "mmss": "11:20", "yt": "https://youtu.be/TNwJ1LMiENk?t=680"}, {"src": "img/stop-making-models-bigger/s22_810.webp", "mmss": "13:30", "yt": "https://youtu.be/TNwJ1LMiENk?t=810"}, {"src": "img/stop-making-models-bigger/s23_820.webp", "mmss": "13:40", "yt": "https://youtu.be/TNwJ1LMiENk?t=820"}, {"src": "img/stop-making-models-bigger/s24_850.webp", "mmss": "14:10", "yt": "https://youtu.be/TNwJ1LMiENk?t=850"}, {"src": "img/stop-making-models-bigger/s25_870.webp", "mmss": "14:30", "yt": "https://youtu.be/TNwJ1LMiENk?t=870"}, {"src": "img/stop-making-models-bigger/s26_980.webp", "mmss": "16:20", "yt": "https://youtu.be/TNwJ1LMiENk?t=980"}, {"src": "img/stop-making-models-bigger/s27_1000.webp", "mmss": "16:40", "yt": "https://youtu.be/TNwJ1LMiENk?t=1000"}, {"src": "img/stop-making-models-bigger/s28_1010.webp", "mmss": "16:50", "yt": "https://youtu.be/TNwJ1LMiENk?t=1010"}, {"src": "img/stop-making-models-bigger/s29_1120.webp", "mmss": "18:40", "yt": "https://youtu.be/TNwJ1LMiENk?t=1120"}, {"src": "img/stop-making-models-bigger/s30_1150.webp", "mmss": "19:10", "yt": "https://youtu.be/TNwJ1LMiENk?t=1150"}, {"src": "img/stop-making-models-bigger/s31_1170.webp", "mmss": "19:30", "yt": "https://youtu.be/TNwJ1LMiENk?t=1170"}, {"src": "img/stop-making-models-bigger/s32_1200.webp", "mmss": "20:00", "yt": "https://youtu.be/TNwJ1LMiENk?t=1200"}, {"src": "img/stop-making-models-bigger/s33_1220.webp", "mmss": "20:20", "yt": "https://youtu.be/TNwJ1LMiENk?t=1220"}, {"src": "img/stop-making-models-bigger/s34_1230.webp", "mmss": "20:30", "yt": "https://youtu.be/TNwJ1LMiENk?t=1230"}]</script>
+<script>
+(function(){var LB=JSON.parse(document.getElementById('slides-data').textContent),cur=0,lb=document.getElementById('lb'),
+im=lb.querySelector('img'),nn=lb.querySelector('.n'),yl=lb.querySelector('a');
+function show(i){cur=(i+LB.length)%LB.length;var s=LB[cur];im.src=s.src;nn.textContent='slide '+(cur+1)+' / '+LB.length+' \u00b7 '+s.mmss;yl.href=s.yt;lb.classList.add('on')}
+document.querySelectorAll('[data-slide]').forEach(function(el){el.addEventListener('click',function(e){e.preventDefault();show(+el.dataset.slide)})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.hasAttribute('data-close'))lb.classList.remove('on')});
+lb.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){show(cur+ +b.dataset.nav)})});
+document.addEventListener('keydown',function(e){if(!lb.classList.contains('on'))return;if(e.key==='Escape')lb.classList.remove('on');
+if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});})();
+</script>
+<div class="frame wide"><footer>Slide brief &mdash; verbatim quotes, timestamped &middot; deck extracted via ffmpeg + pHash &middot; ontology embedded (script#ontology)</footer></div>
+<script type="application/json" id="ontology">{"id": "TNwJ1LMiENk", "slug": "stop-making-models-bigger", "title": "Stop Making Models Bigger, Make Them Behave", "speaker": "Kobie Crawford", "company": "Snorkel", "themes": ["post-training", "data-curation", "evals-benchmarks"], "tier": "slide-brief", "depth": "take", "diagram": {"title": "Why tool discipline beat bigger models (ours)", "caption": "This traces the talk argument from a stalled 235B-vs-4B comparison to tool-discipline training as the fix, using only claims made in the talk; the single-table generalization result is reported as given and would benefit from independent replication (ours).", "lanes": ["premise", "mechanism", "consequence"], "nodes": [{"id": "n1", "lane": 0, "label": "Bigger model = default fix", "sub": "teams swap in larger model when perf falls short", "t": 253, "claim": "c3", "kind": "actor"}, {"id": "n2", "lane": 0, "label": "Goal: 4B beat 235B", "sub": "tool-use task for financial analysis", "t": 158, "claim": "c1", "kind": "actor"}, {"id": "n3", "lane": 1, "label": "235B hallucinates", "sub": "queried nonexistent tables twice, then guessed", "t": 468, "claim": "c2", "kind": "system"}, {"id": "n4", "lane": 1, "label": "FinQA RL environment", "sub": "290 single-table + 79 multi-table samples, GRPO", "t": 655, "claim": "c4", "kind": "store"}, {"id": "n5", "lane": 1, "label": "Single-table-only training", "sub": "beat mixed/curriculum regimes", "t": 994, "claim": "c6", "kind": "system"}, {"id": "n6", "lane": 2, "label": "4B beats 235B", "sub": "pass@1 roughly doubled", "t": 809, "claim": "c5", "kind": "system"}, {"id": "n7", "lane": 2, "label": "Multi-table jump", "sub": "pass@1 13.9% to 26.6%", "t": 1056, "claim": "c7", "kind": "system"}, {"id": "n8", "lane": 2, "label": "Rubric-based evals", "sub": "break correctness into per-question checklist", "t": 1117, "claim": "c8", "kind": "system"}], "edges": [{"from": "n1", "to": "n3", "label": "assumption fails", "kind": "flow"}, {"from": "n2", "to": "n3", "label": "sets stakes", "kind": "flow"}, {"from": "n3", "to": "n4", "label": "motivates env", "kind": "flow"}, {"from": "n4", "to": "n5", "label": "trains on", "kind": "data"}, {"from": "n5", "to": "n6", "label": "yields", "kind": "flow"}, {"from": "n5", "to": "n7", "label": "generalizes to", "kind": "flow"}, {"from": "n6", "to": "n8", "label": "measured via", "kind": "flow"}, {"from": "n7", "to": "n8", "label": "measured via", "kind": "flow"}]}, "architecture": null, "claims": [{"id": "c1", "stance": "asserts", "topic": "research objective", "text": "The stated goal was making a 4B parameter model outperform a 235B parameter model on a financial-analysis tool-use task.", "quote": "making a 4 billion parameter model outperform outperform a 235 billion parameter model on a tool use task for financial analysis", "t": 158}, {"id": "c2", "stance": "warns", "topic": "235B model hallucination", "text": "The 235B model queried nonexistent tables twice and then hallucinated an answer instead of inspecting the schema.", "quote": "having not gotten anything back in either of those two uh attempts, it falls back to just hallucinating an answer", "t": 468}, {"id": "c3", "stance": "warns", "topic": "bigger-model-as-default-fix", "text": "Teams often default to swapping in a larger model when performance falls short, which isn't always the right fix.", "quote": "we didn't get the performance that we wanted with this right now. We'll just drop in a larger model", "t": 253}, {"id": "c4", "stance": "asserts", "topic": "training cost and time", "text": "The RL training run took about a day and cost under $500 total.", "quote": "this is something that was able to be done like in a 24 21-hour job and the total cost of running that job was under $500 per run", "t": 655}, {"id": "c5", "stance": "asserts", "topic": "overall performance result", "text": "The RL-trained 4B model outperformed the 235B model, roughly doubling pass@1 performance percentage-wise.", "quote": "It's performs better than the 235 billion parameter model with that RL training loop. And the performance in terms of pass at one was essentially double of what it had been percentage-wise in terms of like solving problems", "t": 809}, {"id": "c6", "stance": "asserts", "topic": "single-table training regime wins", "text": "Training on single-table questions only produced the greatest performance uplift, beating mixed and curriculum training regimes.", "quote": "it turned out the single-table only training was actually the one that yielded the greatest uplift for these kinds of questions", "t": 994}, {"id": "c7", "stance": "asserts", "topic": "multi-table benchmark jump", "text": "The single-table-trained model's pass@1 on the harder multi-table FinQA reasoning set rose from 13.9% to 26.6%.", "quote": "the harder multi-question multi-table Q&A in the FinQA reasoning question set also saw 13.9 to 26.6 percentage jump after this training", "t": 1056}, {"id": "c8", "stance": "recommends", "topic": "rubric-based evals", "text": "Break eval correctness into a rubric of individual questions to identify the specific behavior worth targeting with new training data.", "quote": "building rubrics as part of our evals. And then those rubrics by breaking down the rightness or wrongness of a model's response into a full list of different questions that can be answered", "t": 1117}]}</script>
+</body></html>
