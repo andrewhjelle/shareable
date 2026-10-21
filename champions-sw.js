@@ -23,7 +23,7 @@ self.addEventListener('fetch', e => {
     e.respondWith((async () => {
       const c = await caches.open(CACHE);
       try {
-        const r = await fetch(req);
+        const r = await fetch(key, { cache: 'no-cache' });   // always revalidate with GitHub, never a stale HTTP-cache copy
         if (r.ok) c.put(key, r.clone());
         return r;
       } catch (_) {
