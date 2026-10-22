@@ -32,6 +32,17 @@ self.addEventListener('fetch', e => {
     })());
     return;
   }
+  if (/\/champions-img-[^/]+\.bin$/.test(url.pathname)) {      // picture packs: name carries a content hash, so cache first
+    e.respondWith((async () => {
+      const c = await caches.open(CACHE);
+      const hit = await c.match(url.href);
+      if (hit) return hit;
+      const r = await fetch(req);
+      if (r.ok) c.put(url.href, r.clone());
+      return r;
+    })());
+    return;
+  }
   if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
     e.respondWith((async () => {
       const c = await caches.open(CACHE);
