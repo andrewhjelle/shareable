@@ -1,5 +1,5 @@
 /* Nevermore Academy offline cache. Scope is the game page only (registered with scope = the page URL),
-   so no other hub page is affected. Holds the encrypted page and the web fonts; contains no private data.
+   so no other hub page is affected. Holds the encrypted page, the encrypted songs and the web fonts; contains no private data.
    Page: network first (so updates arrive when online), cache when offline. Fonts: cache first. */
 const CACHE = 'nevermore-v1';
 self.addEventListener('install', e => { self.skipWaiting(); });
@@ -29,6 +29,15 @@ self.addEventListener('fetch', e => {
       } catch (_) {
         return (await c.match(key)) || new Response('Offline and not cached yet. Open the game once with internet.', { status: 503, headers: { 'content-type': 'text/plain' } });
       }
+    })());
+    return;
+  }
+  if (url.pathname.includes('/nevermore-music/')) {   // encrypted songs; content-hashed names, so cache-first is safe
+    e.respondWith((async () => {
+      const c = await caches.open(CACHE);
+      const hit = await c.match(url.href);
+      if (hit) return hit;
+      try { const r = await fetch(url.href); if (r.ok) c.put(url.href, r.clone()); return r; } catch (_) { return new Response('', { status: 504 }); }
     })());
     return;
   }
